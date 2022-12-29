@@ -63,7 +63,7 @@ CDASP::CDASP()
 
 	memset(m_cNonce, 0x00, NAME_BUFFER_LEN);
 	memset(m_cPlateFormID, 0x00, NAME_BUFFER_LEN);
-	m_ClientSessionID = 0x1234;
+	m_ClientSessionID = 0x0234;
 	m_ServerSessionID = 0x0000;
 }
 
@@ -143,6 +143,7 @@ void CDASP::sendDiscoveryRequest()
 	DASP_MESSAGE daspHeader;
 	daspHeader.sessionId = (short)0xFFFF;
 	daspHeader.seqNum = m_currentSeqNum = rand() % 0xFFFF;
+	m_currentSeqNum++ ;
 	//  The client sends a discover message with no header fields.
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DISCOVER) << 4) | 0x00 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
@@ -157,7 +158,8 @@ void CDASP::sendHelloRequest()
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
 	daspHeader.sessionId = (short)0xFFFF;
-	daspHeader.seqNum = m_currentSeqNum = rand() % 0xFFFF;
+	daspHeader.seqNum = m_currentSeqNum = rand() % 0x2000;
+	m_currentSeqNum++ ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_HELLO) << 4) | 0x02 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -178,7 +180,8 @@ void CDASP::sendKeepAliveRequest()
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
 	daspHeader.sessionId = m_ServerSessionID;
-	daspHeader.seqNum = m_currentSeqNum ;
+	// keepAlives的seqNum应该是0xffff。
+	daspHeader.seqNum = 0xFFFF ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_KEEPALIVE) << 4) | 0x01 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -203,46 +206,44 @@ int CDASP::generateDigestAlgorithm(char * strInputBuf, int iLen)
 
 void CDASP::sendAuthenticateRequest()
 {
-	if(m_currentSeqNum > 0x00)
-	{
-		int iOutLen = 0;
-		// char cDigest[SHA1OUTPUT_BUFFER_LEN];
-		DASP_MESSAGE daspHeader;
-		char * sendBufPtr = m_sendBuf;
-		memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
-		daspHeader.sessionId = m_ServerSessionID;
-		// The seqNum should be the same as that used by the hello message.
-		daspHeader.seqNum = m_currentSeqNum;
-		daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_AUTHENTICATE) << 4) | 0x02 ;
-		memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
-		sendBufPtr += sizeof(DASP_MESSAGE);
-		// Write credentials 
-		sendBufPtr[0] =  ((char)(CDASP::HEADER_IDS_USERNAME)); 
-		sendBufPtr++;
-		memcpy(sendBufPtr, "admin", strlen("admin"));
-		sendBufPtr += strlen("admin") + 1;
+	int iOutLen = 0;
+	// char cDigest[SHA1OUTPUT_BUFFER_LEN];
+	DASP_MESSAGE daspHeader;
+	char * sendBufPtr = m_sendBuf;
+	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
+	daspHeader.sessionId = m_ServerSessionID;
+	// The seqNum should be the same as that used by the hello message.
+	daspHeader.seqNum = m_currentSeqNum;
+	m_currentSeqNum++ ;
+	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_AUTHENTICATE) << 4) | 0x02 ;
+	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
+	sendBufPtr += sizeof(DASP_MESSAGE);
+	// Write credentials 
+	sendBufPtr[0] =  ((char)(CDASP::HEADER_IDS_USERNAME)); 
+	sendBufPtr++;
+	memcpy(sendBufPtr, "admin", strlen("admin"));
+	sendBufPtr += strlen("admin") + 1;
 
-		// Write digest
-		// memset(cDigest, 0x00, SHA1OUTPUT_BUFFER_LEN);
-		// credentials = digestAlgorithm(username + ":" + password)
-		// iOutLen = generateDigestAlgorithm("admin:", strlen("admin:"));
-		//strncpy(cDigest, m_csha1Output, iOutLen);
-		// digest      = digestAlgorithm(credentials + nonce)
-		// sprintf(cDigest, "\x84\x4e\x3d\x92\xc4\xe1\x80\x07\x8b\x91\x60\x77\x77\x77\x35\x45\x35\x35\x67\x83\x3b\x9e");
-		// memcpy(cDigest + strlen(cDigest), m_cNonce, m_cNonceLen);
-		// iOutLen = generateDigestAlgorithm(cDigest, strlen(cDigest));
-		iOutLen = 20;
-		memset(m_csha1Output, 0x00, SHA1OUTPUT_BUFFER_LEN);
-		sprintf(m_csha1Output, "\x7a\x71\xd1\x5e\x42\xb6\xe7\x0d\x01\xdc\x22\x3a\x89\xc0\x0c\xfc\xc1\xf1\xd3\xf8");
+	// Write digest
+	// memset(cDigest, 0x00, SHA1OUTPUT_BUFFER_LEN);
+	// credentials = digestAlgorithm(username + ":" + password)
+	// iOutLen = generateDigestAlgorithm("admin:", strlen("admin:"));
+	//strncpy(cDigest, m_csha1Output, iOutLen);
+	// digest      = digestAlgorithm(credentials + nonce)
+	// sprintf(cDigest, "\x84\x4e\x3d\x92\xc4\xe1\x80\x07\x8b\x91\x60\x77\x77\x77\x35\x45\x35\x35\x67\x83\x3b\x9e");
+	// memcpy(cDigest + strlen(cDigest), m_cNonce, m_cNonceLen);
+	// iOutLen = generateDigestAlgorithm(cDigest, strlen(cDigest));
+	iOutLen = 20;
+	memset(m_csha1Output, 0x00, SHA1OUTPUT_BUFFER_LEN);
+	sprintf(m_csha1Output, "\x7a\x71\xd1\x5e\x42\xb6\xe7\x0d\x01\xdc\x22\x3a\x89\xc0\x0c\xfc\xc1\xf1\xd3\xf8");
 
-		sendBufPtr[0] = (char)(CDASP::HEADER_IDS_DIGEST) ; 
-		sendBufPtr++;
-		sendBufPtr[0] = iOutLen;
-		sendBufPtr++;
-		memcpy(sendBufPtr, m_csha1Output, iOutLen);
-		sendBufPtr += iOutLen;
-		send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
-	}
+	sendBufPtr[0] = (char)(CDASP::HEADER_IDS_DIGEST) ; 
+	sendBufPtr++;
+	sendBufPtr[0] = iOutLen;
+	sendBufPtr++;
+	memcpy(sendBufPtr, m_csha1Output, iOutLen);
+	sendBufPtr += iOutLen;
+	send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
 
 }
 
@@ -253,6 +254,7 @@ void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
 	DASP_MESSAGE daspHeader;
 	daspHeader.sessionId = m_ServerSessionID;  // (short)0xFFFF;
 	daspHeader.seqNum = m_currentSeqNum;
+	m_currentSeqNum++ ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DATAGRAM) << 4) | 0x01 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -290,6 +292,9 @@ void CDASP::dealKeepAliveResponse(int numFields, char *recvBufPtr)
 			m_shortAckCode  = (unsigned char)recvBufPtr[1];
 			m_shortAckCode *= 0x100;
 			m_shortAckCode += (unsigned char)recvBufPtr[2];
+			// m_shortAckCode++;
+			m_currentSeqNum = m_shortAckCode;
+			cout << "shortAckCode = " << m_shortAckCode << endl;
 			if(m_currentSeqNum >= m_shortAckCode)
 				cout << "ACK ERROR " << endl;
 		}

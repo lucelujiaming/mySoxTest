@@ -19,7 +19,7 @@ public:
 
 	void startRecvThread();
 	void handShake();
-
+	BOOL getRecvThreadStatus();
 
 public:
 	//	a	add	Add a new component to the application
@@ -67,8 +67,10 @@ public:
 	void sendErrorCommand();
 	//
 
-	
 public:
 	CDASP m_objDASPMsg;
+	
+private:
+	BOOL m_bExitRecvThread;
 };
 

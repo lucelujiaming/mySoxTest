@@ -26,6 +26,7 @@ typedef struct _SOX_FILEOPEN_MESSAGE
 
 CSoxMsg::CSoxMsg()
 {
+	m_bExitRecvThread = TRUE;
 }
 
 
@@ -53,19 +54,41 @@ char CSoxMsg::recvResponse()
 	return m_objDASPMsg.recvResponse();
 }
 
-void recv_thread_func(void * arg){
+void recv_thread_func(void * arg)
+{
 	CSoxMsg * objSoxMsg = (CSoxMsg *)arg;
 
 	while (1)
 	{
 		char cRet = objSoxMsg->recvResponse();
+		// Error
+		if (cRet == CDASP::MESSAGE_TYPES_CLOSE)
+		{
+			// sendHelloRequest();
+			break;
+		}
+		else if (cRet == CDASP::MESSAGE_TYPES_DATAGRAM)
+		{
+			cout << "MESSAGE_TYPES_DATAGRAM " << endl;
+			continue;
+		}
 		Sleep(1);
+		if (objSoxMsg->getRecvThreadStatus() == TRUE)
+		{
+			break;
+		}
 	}
+}
+
+BOOL CSoxMsg::getRecvThreadStatus()
+{
+	return m_bExitRecvThread;
 }
 
 void CSoxMsg::startRecvThread()
 {
-	_beginthread(recv_thread_func, 0, NULL);
+	m_bExitRecvThread = FALSE;
+	_beginthread(recv_thread_func, 0, this);
 }
 
 //	a	add	Add a new component to the application

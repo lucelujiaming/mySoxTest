@@ -65,6 +65,7 @@ CDASP::CDASP()
 	memset(m_cPlateFormID, 0x00, NAME_BUFFER_LEN);
 	m_ClientSessionID = 0x0234;
 	m_ServerSessionID = 0x0000;
+	iReceiveLeftBufLen = 0;
 }
 
 
@@ -293,8 +294,9 @@ void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
 }
 
 
-void CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
+int CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
 {
+	int iSize = 0;
 	for (int i = 0 ; i < (int)numFields; i++)
 	{
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_ERROR_CODE)
@@ -305,12 +307,17 @@ void CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
 			m_shortErrorCode += (unsigned char)recvBufPtr[2];
 			printf("ERROR_CODE = %04X\r\n", m_shortErrorCode);
 			recvBufPtr += 3;
+			iSize      += 3;
+			// Send KeepAlive Request
+			sendKeepAliveRequest();
 		}
 	}
+	return iSize;
 }
 
-void CDASP::dealKeepAliveResponse(int numFields, char *recvBufPtr)
+int CDASP::dealKeepAliveResponse(int numFields, char *recvBufPtr)
 {
+	int iSize = 0;
 	for (int i = 0 ; i < (int)numFields; i++)
 	{
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_ACK)
@@ -324,24 +331,31 @@ void CDASP::dealKeepAliveResponse(int numFields, char *recvBufPtr)
 			// m_shortAckCode++;
 			m_ServerSeqNum = m_shortAckCode;
 			printf("shortAckCode = %04X\r\n", m_shortAckCode);
+			recvBufPtr += 3;
+			iSize      += 3;
 		}
 	}
+	return iSize;
 }
 
-void CDASP::dealDiscoverResponse(int numFields, char *recvBufPtr)
+int CDASP::dealDiscoverResponse(int numFields, char *recvBufPtr)
 {
+	int iSize = 0;
 	for (int i = 0 ; i < (int)numFields; i++)
 	{
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_PLATFORM_ID)
 		{
 			strcpy(m_cPlateFormID, recvBufPtr + 1);
 			printf("m_cPlateFormID = %s\r\n", m_cPlateFormID);
+			iSize      += strlen(m_cPlateFormID) + 1;
 		}
 	}
+	return iSize;
 }
 
-void CDASP::dealChallengeResponse(int numFields, char *recvBufPtr)
+int CDASP::dealChallengeResponse(int numFields, char *recvBufPtr)
 {
+	int iSize = 0;
 	for (int i = 0 ; i < (int)numFields; i++)
 	{
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_REMOTE_ID)
@@ -352,6 +366,7 @@ void CDASP::dealChallengeResponse(int numFields, char *recvBufPtr)
 			m_ServerSessionID += (unsigned char)recvBufPtr[2];
 			printf("ServerSessionID = %04X\r\n", m_ServerSessionID);
 			recvBufPtr += 3;
+			iSize      += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_NONCE)
 		{
@@ -359,12 +374,15 @@ void CDASP::dealChallengeResponse(int numFields, char *recvBufPtr)
 			memset(m_cNonce, 0x00, NAME_BUFFER_LEN);
 			memcpy(m_cNonce, m_receiveBuf + 2, m_cNonceLen);
 			recvBufPtr += m_cNonceLen + 2;
+			iSize      += m_cNonceLen + 2;
 		}
 	}
+	return iSize;
 }
 
-void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
+int CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 {
+	int iSize = 0;
 	for (int i = 0 ; i < (int)numFields; i++)
 	{
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_IDEAL_MAX)
@@ -375,6 +393,7 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_idealMax += (unsigned char)recvBufPtr[1];
 			printf("m_idealMax = %04X\r\n", m_idealMax);
 			recvBufPtr += 3;
+			iSize      += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_RECEIVE_MAX)
 		{
@@ -384,6 +403,7 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_receiveMax += (unsigned char)recvBufPtr[1];
 			printf("m_receiveMax = %04X\r\n", m_receiveMax);
 			recvBufPtr += 3;
+			iSize      += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_RECEIVE_TIMEOUT)
 		{
@@ -393,12 +413,50 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_receiveTimeout += (unsigned char)recvBufPtr[1];
 			printf("m_receiveTimeout = %04X\r\n", m_receiveTimeout);
 			recvBufPtr += 3;
+			iSize      += 3;
 		}
 	}
+	return iSize;
+}
+
+int CDASP::dealDataGramResponse(int numFields, char *recvBufPtr)
+{
+	int iSize = 0;
+	for (int i = 0 ; i < (int)numFields; i++)
+	{
+		if(recvBufPtr[0] == CDASP::HEADER_IDS_ACK)
+		{
+			// Convert network byte order to local byte order
+			m_shortAckCode  = (unsigned char)recvBufPtr[1];
+			m_shortAckCode *= 0x100;
+			m_shortAckCode += (unsigned char)recvBufPtr[2];
+			if(m_ServerSeqNum >= m_shortAckCode)
+				printf("ACK ERROR\r\n");
+			// m_shortAckCode++;
+			m_ServerSeqNum = m_shortAckCode;
+			printf("shortAckCode = %04X\r\n", m_shortAckCode);
+			recvBufPtr += 3;
+			iSize      += 3;
+			// Send KeepAlive Request
+			sendKeepAliveRequest();
+		}
+		else if(recvBufPtr[0] == CDASP::HEADER_IDS_ACK_MORE)
+		{
+			char cLen = recvBufPtr[1];
+			char cTemp[NAME_BUFFER_LEN] ;
+			memset(cTemp, 0x00, NAME_BUFFER_LEN);
+			memcpy(cTemp, recvBufPtr + 2, cLen);
+			recvBufPtr += cLen + 2;
+			iSize      += cLen + 2;
+		}
+	}
+	return iSize;
 }
 
 char CDASP::recvResponse()
 {
+	int iDealLen = 0 ;
+	iReceiveLeftBufLen = 0;
 	char * recvBufPtr = m_receiveBuf;
 	DASP_MESSAGE * daspHeaderPtr = (DASP_MESSAGE *)m_receiveBuf;
 	memset(m_receiveBuf, 0x00, MAX_BUFFER_LEN);
@@ -411,28 +469,37 @@ char CDASP::recvResponse()
 	// Deal command
 	if(cType == (char)CDASP::MESSAGE_TYPES_CLOSE)
 	{
-		dealCloseResponse(numFields, recvBufPtr);
+		iDealLen = dealCloseResponse(numFields, recvBufPtr);
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_KEEPALIVE)
 	{
-		dealKeepAliveResponse(numFields, recvBufPtr);
-		// Send KeepAlive Request
-		sendKeepAliveRequest();
+		iDealLen = dealKeepAliveResponse(numFields, recvBufPtr);
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_DISCOVER)
 	{
-		dealDiscoverResponse(numFields, recvBufPtr);
+		iDealLen = dealDiscoverResponse(numFields, recvBufPtr);
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_CHALLENGE)
 	{
 		m_ServerSeqNum = daspHeaderPtr->seqNum[0] * 0x100 + daspHeaderPtr->seqNum[1];
-		dealChallengeResponse(numFields, recvBufPtr);
+		iDealLen = dealChallengeResponse(numFields, recvBufPtr);
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_WELCOME)
 	{
-		dealWelcomeResponse(numFields, recvBufPtr);
+		iDealLen = dealWelcomeResponse(numFields, recvBufPtr);
 	}
-	
+	else if(cType == (char)CDASP::MESSAGE_TYPES_DATAGRAM)
+	{
+		iDealLen = dealDataGramResponse(numFields, recvBufPtr);
+	}
+	recvBufPtr += iDealLen;
+
+	if(recvBufPtr < m_receiveBuf + iLen)
+	{
+		memset(m_receiveLeftBuf, 0x00, MAX_BUFFER_LEN);
+		memcpy(m_receiveLeftBuf, recvBufPtr, m_receiveBuf + iLen - recvBufPtr);
+		iReceiveLeftBufLen = m_receiveBuf + iLen - recvBufPtr;
+	}
 	return cType;
 }
 

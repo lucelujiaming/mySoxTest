@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 	objCSoxMsg.handShake();
 	objCSoxMsg.startRecvThread();
 
-	objCSoxMsg.sendFileOpenCommand('g', "app.scode", 
+	objCSoxMsg.sendFileOpenCommand('g', "./app.scode", 
 								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 
 								  1024, 
 								   "app.scode.name",  "app.scode.value");

@@ -22,6 +22,9 @@ public:
 	BOOL getRecvThreadStatus();
 
 public:
+	void dealSoxResponse(char * cDataBuf);
+
+public:
 	//	a	add	Add a new component to the application
 	void sendAddCommand();
 	//	b	fileRename	Rename or move a file

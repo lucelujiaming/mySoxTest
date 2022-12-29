@@ -77,6 +77,8 @@ public:
 public:
 	void sendDatagramRequest(char *SoxBuf, int iSoxBufLen);
 	char recvResponse();
+	char * getReceiveLeftBuf() {  return m_receiveLeftBuf; }
+	int    getReceiveLeftBufLen() {  return iReceiveLeftBufLen; }
 
 private:
 
@@ -88,17 +90,21 @@ private:
 	int generateDigestAlgorithm(char * strInputBuf, int iLen);
 
 private:
-	void dealCloseResponse(int numFields, char *recvBufPtr);
-	void dealKeepAliveResponse(int numFields, char *recvBufPtr);
-	void dealDiscoverResponse(int numFields, char *recvBufPtr);
-	void dealChallengeResponse(int numFields, char *recvBufPtr);
-	void dealWelcomeResponse(int numFields, char *recvBufPtr);
+	int dealCloseResponse(int numFields, char *recvBufPtr);
+	int dealKeepAliveResponse(int numFields, char *recvBufPtr);
+	int dealDiscoverResponse(int numFields, char *recvBufPtr);
+	int dealChallengeResponse(int numFields, char *recvBufPtr);
+	int dealWelcomeResponse(int numFields, char *recvBufPtr);
+	int dealDataGramResponse(int numFields, char *recvBufPtr);
 
 private:
 	SOCKET m_clientSocket;
 
 	char m_sendBuf[MAX_BUFFER_LEN];
 	char m_receiveBuf[MAX_BUFFER_LEN];
+	
+	char m_receiveLeftBuf[MAX_BUFFER_LEN];
+	int  iReceiveLeftBufLen ;
 
 
 	unsigned short m_shortErrorCode;

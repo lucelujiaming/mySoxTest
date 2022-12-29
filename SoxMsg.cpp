@@ -69,6 +69,11 @@ void recv_thread_func(void * arg)
 		}
 		else if (cRet == CDASP::MESSAGE_TYPES_DATAGRAM)
 		{
+			if(objSoxMsg->m_objDASPMsg.getReceiveLeftBufLen() > 0)
+			{
+				char * cLeftDataPtr = objSoxMsg->m_objDASPMsg.getReceiveLeftBuf();
+				objSoxMsg->dealSoxResponse(cLeftDataPtr);
+			}
 			printf("MESSAGE_TYPES_DATAGRAM \r\n");
 			continue;
 		}
@@ -77,6 +82,77 @@ void recv_thread_func(void * arg)
 		{
 			break;
 		}
+	}
+}
+
+void CSoxMsg::dealSoxResponse(char * cDataBuf)
+{
+	char cReplyNum = 0x00;
+	switch(cDataBuf[0]) {
+	//	a	add	Add a new component to the application
+	case 'A':
+		break;
+	//	b	fileRename	Rename or move a file
+	case 'B':
+		break;
+	//	c	readComp	Read a component in the application
+	case 'C':
+		break;
+	//	d	delete	Delete an component and its children from the application
+	case 'D':
+		break;
+	//	e	event	COV event for a subscribed component
+	case 'E':
+		break;
+	//	f	fileOpen	Begin a get or put file transfer operation
+	case 'F':
+		break;
+	//	i	invoke	Invoke a component action
+	case 'I':
+		break;
+	//	k	fileChunk	Receive or send a chunk during a file transfer
+	case 'K':
+		break;
+	//	l	link	Add or delete a link
+	case 'L':
+		break;
+	//	n	rename	Rename a component
+	case 'N':
+		break;
+	//	o	reorder	Reorder a component's children
+	case 'O':
+		break;
+	//	q	query	Query installed services
+	case 'Q':
+		break;
+	//	r	readProp	Read a single property from a component
+	case 'R':
+		break;
+	//	s	subscribe	Subscribe to a component for COV events
+	case 'S':
+		break;
+	//	u	unsubscribe	Unsubscribe from a component for COV events
+	case 'U':
+		break;
+	//	v	version	Query for the kits installed
+	case 'V':
+		break;
+	//	w	write	Write the value of a single component property
+	case 'W':
+		break;
+	//	y	versionMore	Query for additional version meta-data
+	case 'Y':
+		break;
+	//	z	fileClose	Close a file transfer operation
+	case 'Z':
+		break;
+	//	!	error	Response id for a command that could not be processed
+	case '!':
+		cReplyNum = cDataBuf[1];
+		printf("ERROR: %s\r\n", cDataBuf + 2);
+		break;
+	default:
+		break;
 	}
 }
 

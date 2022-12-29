@@ -61,6 +61,9 @@ private:
 	// unsigned short m_shortRemotID;
 	unsigned short m_ClientSessionID;
 	unsigned short m_ServerSessionID;
+	
+	unsigned short m_ClientSeqNum;
+	unsigned short m_ServerSeqNum;
 
 	unsigned short m_idealMax;
 	unsigned short m_receiveMax;
@@ -97,7 +100,6 @@ private:
 	char m_sendBuf[MAX_BUFFER_LEN];
 	char m_receiveBuf[MAX_BUFFER_LEN];
 
-	unsigned short m_currentSeqNum;
 
 	unsigned short m_shortErrorCode;
 	

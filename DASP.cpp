@@ -46,9 +46,9 @@ extern "C" void sedona_sha1(char* input, int inputOff, int len, char* output, in
 #pragma pack(1)
 typedef struct _DASP_MESSAGE
 {
-	short      sessionId;
-	short      seqNum;
-	char       typeAndfieldsNum; //  high 4 - bits msgType, low 4 - bits numFields
+	unsigned char       sessionId[2];
+	unsigned char       seqNum[2];
+	unsigned char       typeAndfieldsNum; //  high 4 - bits msgType, low 4 - bits numFields
 //	field[] headerFields
 //	u1[]    payload
 } DASP_MESSAGE, *PDASP_MESSAGE;
@@ -75,7 +75,8 @@ CDASP::~CDASP()
 int CDASP::start()
 {
 	srand((unsigned)time(NULL));
-	m_currentSeqNum = 0x00;
+	m_ClientSeqNum = 0x00;
+	m_ServerSeqNum = 0x00;
 	return initializeSocket();
 }
 
@@ -119,11 +120,11 @@ int CDASP::initializeSocket()
 	WSADATA wsadata;
 	if (0 == WSAStartup(MAKEWORD(2, 2), &wsadata))
 	{
-		cout << "客户端嵌套字已打开" << endl;
+		printf("客户端嵌套字已打开\r\n");
 	}
 	else
 	{
-		cout << "客户端嵌套字打开失败" << endl;
+		printf("客户端嵌套字打开失败\r\n");
 	}
 	m_clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -141,9 +142,16 @@ void CDASP::sendDiscoveryRequest()
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
-	daspHeader.sessionId = (short)0xFFFF;
-	daspHeader.seqNum = m_currentSeqNum = rand() % 0xFFFF;
-	m_currentSeqNum++ ;
+
+	daspHeader.sessionId[0] = (short)0xFF;
+	daspHeader.sessionId[1] = (short)0xFF;
+
+	m_ClientSeqNum = rand() % 0x2000;
+	// Convert local byte order to network byte order
+	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
+	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
+	m_ClientSeqNum++ ;
+
 	//  The client sends a discover message with no header fields.
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DISCOVER) << 4) | 0x00 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
@@ -157,9 +165,15 @@ void CDASP::sendHelloRequest()
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
-	daspHeader.sessionId = (short)0xFFFF;
-	daspHeader.seqNum = m_currentSeqNum = rand() % 0x2000;
-	m_currentSeqNum++ ;
+	daspHeader.sessionId[0] = (short)0xFF;
+	daspHeader.sessionId[1] = (short)0xFF;
+
+	m_ClientSeqNum = rand() % 0x2000;
+	// Convert local byte order to network byte order
+	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
+	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
+	m_ClientSeqNum++ ;
+
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_HELLO) << 4) | 0x02 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -179,9 +193,13 @@ void CDASP::sendKeepAliveRequest()
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
-	daspHeader.sessionId = m_ServerSessionID;
+	// Convert local byte order to network byte order
+	daspHeader.sessionId[0] = m_ServerSessionID / 0x100;
+	daspHeader.sessionId[1] = m_ServerSessionID % 0x100;
+
 	// keepAlives的seqNum应该是0xffff。
-	daspHeader.seqNum = 0xFFFF ;
+	daspHeader.seqNum[0] = 0xFF ;
+	daspHeader.seqNum[1] = 0xFF ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_KEEPALIVE) << 4) | 0x01 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -211,10 +229,15 @@ void CDASP::sendAuthenticateRequest()
 	DASP_MESSAGE daspHeader;
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
-	daspHeader.sessionId = m_ServerSessionID;
+	// Convert local byte order to network byte order
+	daspHeader.sessionId[0] = m_ServerSessionID / 0x100;
+	daspHeader.sessionId[1] = m_ServerSessionID % 0x100;
+
 	// The seqNum should be the same as that used by the hello message.
-	daspHeader.seqNum = m_currentSeqNum;
-	m_currentSeqNum++ ;
+	// Convert local byte order to network byte order
+	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
+	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
+	m_ClientSeqNum++ ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_AUTHENTICATE) << 4) | 0x02 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -252,9 +275,13 @@ void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
 	DASP_MESSAGE daspHeader;
-	daspHeader.sessionId = m_ServerSessionID;  // (short)0xFFFF;
-	daspHeader.seqNum = m_currentSeqNum;
-	m_currentSeqNum++ ;
+	// Convert local byte order to network byte order
+	daspHeader.sessionId[0] = m_ServerSessionID / 0x100;
+	daspHeader.sessionId[1] = m_ServerSessionID % 0x100;
+	// Convert local byte order to network byte order
+	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
+	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
+	m_ClientSeqNum++ ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DATAGRAM) << 4) | 0x01 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
@@ -276,7 +303,7 @@ void CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
 			m_shortErrorCode  = (unsigned char)recvBufPtr[1];
 			m_shortErrorCode *= 0x100;
 			m_shortErrorCode += (unsigned char)recvBufPtr[2];
-			cout << "ERROR_CODE = " << m_shortErrorCode << endl;
+			printf("ERROR_CODE = %04X\r\n", m_shortErrorCode);
 			recvBufPtr += 3;
 		}
 	}
@@ -292,11 +319,11 @@ void CDASP::dealKeepAliveResponse(int numFields, char *recvBufPtr)
 			m_shortAckCode  = (unsigned char)recvBufPtr[1];
 			m_shortAckCode *= 0x100;
 			m_shortAckCode += (unsigned char)recvBufPtr[2];
+			if(m_ServerSeqNum >= m_shortAckCode)
+				printf("ACK ERROR\r\n");
 			// m_shortAckCode++;
-			m_currentSeqNum = m_shortAckCode;
-			cout << "shortAckCode = " << m_shortAckCode << endl;
-			if(m_currentSeqNum >= m_shortAckCode)
-				cout << "ACK ERROR " << endl;
+			m_ServerSeqNum = m_shortAckCode;
+			printf("shortAckCode = %04X\r\n", m_shortAckCode);
 		}
 	}
 }
@@ -308,7 +335,7 @@ void CDASP::dealDiscoverResponse(int numFields, char *recvBufPtr)
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_PLATFORM_ID)
 		{
 			strcpy(m_cPlateFormID, recvBufPtr + 1);
-			cout << "ERROR_CODE = " << m_cPlateFormID << endl;
+			printf("m_cPlateFormID = %s\r\n", m_cPlateFormID);
 		}
 	}
 }
@@ -320,10 +347,10 @@ void CDASP::dealChallengeResponse(int numFields, char *recvBufPtr)
 		if(recvBufPtr[0] == CDASP::HEADER_IDS_REMOTE_ID)
 		{
 			// Convert network byte order to local byte order
-			m_ServerSessionID  = (unsigned char)recvBufPtr[2];
+			m_ServerSessionID  = (unsigned char)recvBufPtr[1];
 			m_ServerSessionID *= 0x100;
-			m_ServerSessionID += (unsigned char)recvBufPtr[1];
-			cout << "ServerSessionID = " << m_ServerSessionID << endl;
+			m_ServerSessionID += (unsigned char)recvBufPtr[2];
+			printf("ServerSessionID = %04X\r\n", m_ServerSessionID);
 			recvBufPtr += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_NONCE)
@@ -346,7 +373,7 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_idealMax  = (unsigned char)recvBufPtr[2];
 			m_idealMax *= 0x100;
 			m_idealMax += (unsigned char)recvBufPtr[1];
-			cout << "m_idealMax = " << m_idealMax << endl;
+			printf("m_idealMax = %04X\r\n", m_idealMax);
 			recvBufPtr += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_RECEIVE_MAX)
@@ -355,7 +382,7 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_receiveMax  = (unsigned char)recvBufPtr[2];
 			m_receiveMax *= 0x100;
 			m_receiveMax += (unsigned char)recvBufPtr[1];
-			cout << "m_idealMax = " << m_receiveMax << endl;
+			printf("m_receiveMax = %04X\r\n", m_receiveMax);
 			recvBufPtr += 3;
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_RECEIVE_TIMEOUT)
@@ -364,7 +391,7 @@ void CDASP::dealWelcomeResponse(int numFields, char *recvBufPtr)
 			m_receiveTimeout  = (unsigned char)recvBufPtr[2];
 			m_receiveTimeout *= 0x100;
 			m_receiveTimeout += (unsigned char)recvBufPtr[1];
-			cout << "m_idealMax = " << m_receiveTimeout << endl;
+			printf("m_receiveTimeout = %04X\r\n", m_receiveTimeout);
 			recvBufPtr += 3;
 		}
 	}
@@ -398,7 +425,7 @@ char CDASP::recvResponse()
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_CHALLENGE)
 	{
-		m_currentSeqNum = daspHeaderPtr->seqNum;
+		m_ServerSeqNum = daspHeaderPtr->seqNum[0] * 0x100 + daspHeaderPtr->seqNum[1];
 		dealChallengeResponse(numFields, recvBufPtr);
 	}
 	else if(cType == (char)CDASP::MESSAGE_TYPES_WELCOME)

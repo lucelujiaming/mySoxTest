@@ -69,7 +69,7 @@ void recv_thread_func(void * arg)
 		}
 		else if (cRet == CDASP::MESSAGE_TYPES_DATAGRAM)
 		{
-			cout << "MESSAGE_TYPES_DATAGRAM " << endl;
+			printf("MESSAGE_TYPES_DATAGRAM \r\n");
 			continue;
 		}
 		Sleep(1);

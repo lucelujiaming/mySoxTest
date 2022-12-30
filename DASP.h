@@ -7,7 +7,7 @@
 using namespace std;
 
 # define MAX_BUFFER_LEN 1024
-# define NAME_BUFFER_LEN 64
+# define NAME_BUFFER_LEN 128
 # define SHA1OUTPUT_BUFFER_LEN 64
 
 class CDASP
@@ -84,7 +84,7 @@ private:
 
 	void sendDiscoveryRequest();
 	void sendHelloRequest();
-	void sendKeepAliveRequest();
+	void sendKeepAliveRequest(unsigned char * seqNum);
 	void sendAuthenticateRequest();
 
 	int generateDigestAlgorithm(char * strInputBuf, int iLen);
@@ -108,7 +108,6 @@ private:
 
 
 	unsigned short m_shortErrorCode;
-	
 	unsigned short m_shortAckCode;	
 
 	char  m_cNonceLen;

@@ -63,7 +63,7 @@ CDASP::CDASP()
 
 	memset(m_cNonce, 0x00, NAME_BUFFER_LEN);
 	memset(m_cPlateFormID, 0x00, NAME_BUFFER_LEN);
-	m_ClientSessionID = 0x0234;
+	m_ClientSessionID = 0x1234;
 	m_ServerSessionID = 0x0000;
 	iReceiveLeftBufLen = 0;
 }
@@ -184,12 +184,12 @@ void CDASP::sendHelloRequest()
 	sendBufPtr[2] = 0x00;
 	
 	sendBufPtr[3] = (char)(CDASP::HEADER_IDS_REMOTE_ID) ; 
-	sendBufPtr[4] = m_ClientSessionID % 0x100; // 0x34;
-	sendBufPtr[5] = m_ClientSessionID / 0x100; // 0x12;
+	sendBufPtr[4] = m_ClientSessionID / 0x100; // 0x34;
+	sendBufPtr[5] = m_ClientSessionID % 0x100; // 0x12;
 	send(m_clientSocket, m_sendBuf, sizeof(DASP_MESSAGE) + 6, 0);
 }
 
-void CDASP::sendKeepAliveRequest()
+void CDASP::sendKeepAliveRequest(unsigned char * seqNum)
 {
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
@@ -204,10 +204,43 @@ void CDASP::sendKeepAliveRequest()
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_KEEPALIVE) << 4) | 0x01 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);
+	//for (int iSeq = m_shortAckCode; iSeq <= m_ClientSeqNum; iSeq++)
+	//{
+	sendBufPtr[0] = ((char)(CDASP::HEADER_IDS_ACK)) ; 
+	//	sendBufPtr[1] = iSeq / 0x100 ; 
+	sendBufPtr[1] = seqNum[0] ; 
+	//	sendBufPtr[2] = iSeq % 0x100 ; 
+	sendBufPtr[2] = seqNum[1] ; 
+	sendBufPtr += 3;
+	//}
+	send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
+}
+
+void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
+{
+	char * sendBufPtr = m_sendBuf;
+	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
+	DASP_MESSAGE daspHeader;
+	// Convert local byte order to network byte order
+	daspHeader.sessionId[0] = m_ServerSessionID / 0x100;
+	daspHeader.sessionId[1] = m_ServerSessionID % 0x100;
+	// Convert local byte order to network byte order
+	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
+	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
+	m_ClientSeqNum++ ;
+	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DATAGRAM) << 4) | 0x01 ;
+	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
+	sendBufPtr += sizeof(DASP_MESSAGE);
+
 	sendBufPtr[0] = ((char)(CDASP::HEADER_IDS_ACK)) ; 
 	sendBufPtr[1] = m_shortAckCode / 0x100 ; 
 	sendBufPtr[2] = m_shortAckCode % 0x100 ; 
-	send(m_clientSocket, m_sendBuf, sizeof(DASP_MESSAGE) + 3, 0);
+	sendBufPtr += 3;
+
+	memcpy(sendBufPtr, SoxBuf, iSoxBufLen);
+	sendBufPtr += iSoxBufLen;
+
+	send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
 }
 
 int CDASP::generateDigestAlgorithm(char * strInputBuf, int iLen)
@@ -271,29 +304,6 @@ void CDASP::sendAuthenticateRequest()
 
 }
 
-void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
-{
-	char * sendBufPtr = m_sendBuf;
-	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);
-	DASP_MESSAGE daspHeader;
-	// Convert local byte order to network byte order
-	daspHeader.sessionId[0] = m_ServerSessionID / 0x100;
-	daspHeader.sessionId[1] = m_ServerSessionID % 0x100;
-	// Convert local byte order to network byte order
-	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
-	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
-	m_ClientSeqNum++ ;
-	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DATAGRAM) << 4) | 0x01 ;
-	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
-	sendBufPtr += sizeof(DASP_MESSAGE);
-
-	memcpy(sendBufPtr, SoxBuf, iSoxBufLen);
-	sendBufPtr += iSoxBufLen;
-
-	send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
-}
-
-
 int CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
 {
 	int iSize = 0;
@@ -309,7 +319,7 @@ int CDASP::dealCloseResponse(int numFields, char *recvBufPtr)
 			recvBufPtr += 3;
 			iSize      += 3;
 			// Send KeepAlive Request
-			sendKeepAliveRequest();
+			// sendKeepAliveRequest();
 		}
 	}
 	return iSize;
@@ -438,7 +448,7 @@ int CDASP::dealDataGramResponse(int numFields, char *recvBufPtr)
 			recvBufPtr += 3;
 			iSize      += 3;
 			// Send KeepAlive Request
-			sendKeepAliveRequest();
+			// sendKeepAliveRequest();
 		}
 		else if(recvBufPtr[0] == CDASP::HEADER_IDS_ACK_MORE)
 		{
@@ -492,6 +502,7 @@ char CDASP::recvResponse()
 	{
 		iDealLen = dealDataGramResponse(numFields, recvBufPtr);
 	}
+	sendKeepAliveRequest(daspHeaderPtr->seqNum);
 	recvBufPtr += iDealLen;
 
 	if(recvBufPtr < m_receiveBuf + iLen)

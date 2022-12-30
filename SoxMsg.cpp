@@ -27,6 +27,7 @@ typedef struct _SOX_FILEOPEN_MESSAGE
 CSoxMsg::CSoxMsg()
 {
 	m_bExitRecvThread = TRUE;
+	resetFileOpenInfo();
 }
 
 
@@ -422,7 +423,18 @@ void CSoxMsg::dealFileChunkRequest(char * cDataBuf, int iDataBufLen)
 	if(chunkNum == m_numChunks)
 	{
 		mergeFileChunkToFile();
+		if(strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
+		{
+			m_objSCodeReader.readSCodeFile(m_currentURI);
+		}
+		resetFileOpenInfo();
 	}
+}
+
+void CSoxMsg::resetFileOpenInfo()
+{
+	memset(m_currentURI, 0x00, MAX_BUFFER_LEN);
+	m_fileSize = m_actualChunkSize = m_numChunks = 0;
 }
 
 void CSoxMsg::mergeFileChunkToFile()
@@ -580,8 +592,8 @@ void CSoxMsg::sendFileOpenRequest(char method, char * uri,
 	// u1 end of headers '\0'
 	sendBufPtr++;
 	// 
+	resetFileOpenInfo();
 	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
-
 }
 //	i	invoke	Invoke a component action
 void CSoxMsg::sendInvokeRequest()

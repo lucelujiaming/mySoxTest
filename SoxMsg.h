@@ -1,5 +1,6 @@
 #pragma once
 #include "DASP.h"
+#include "SCodeReader.h"
 
 #define URI_SUGGESTED_LEN                 1024          // 
 #define SCODE_FILE_SUGGESTED_CHUNKSIZE    (100 * 1024)  // Normal size is 92K
@@ -156,9 +157,11 @@ public:
 
 public:
 	void mergeFileChunkToFile();
+	void resetFileOpenInfo();
 
 public:
 	CDASP m_objDASPMsg;
+	SCodeReader m_objSCodeReader;
 	
 private:
 	BOOL m_bExitRecvThread;

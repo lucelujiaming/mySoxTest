@@ -6,9 +6,9 @@
 #pragma comment (lib,"ws2_32.lib")
 using namespace std;
 
-# define MAX_BUFFER_LEN 1024
-# define NAME_BUFFER_LEN 128
-# define SHA1OUTPUT_BUFFER_LEN 64
+#define MAX_BUFFER_LEN 1024
+#define NAME_BUFFER_LEN 128
+#define SHA1OUTPUT_BUFFER_LEN 64
 
 class CDASP
 {
@@ -85,9 +85,9 @@ private:
 	void sendDiscoveryRequest();
 	void sendHelloRequest();
 	void sendKeepAliveRequest(unsigned char * seqNum);
-	void sendAuthenticateRequest();
+	void sendAuthenticateRequest(char * cUserName, char * cPassword);
 
-	int generateDigestAlgorithm(char * strInputBuf, int iLen);
+	int generateDigestAlgorithm(unsigned char * strInputBuf, int iLen);
 
 private:
 	int dealCloseResponse(int numFields, char *recvBufPtr);
@@ -111,9 +111,9 @@ private:
 	unsigned short m_shortAckCode;	
 
 	char  m_cNonceLen;
-	char  m_cNonce[NAME_BUFFER_LEN];
+	unsigned char  m_cNonce[NAME_BUFFER_LEN];
 	
-	char m_csha1Output[SHA1OUTPUT_BUFFER_LEN];
+	unsigned char m_csha1Output[SHA1OUTPUT_BUFFER_LEN];
 	
 public:
 	char m_cPlateFormID[NAME_BUFFER_LEN];

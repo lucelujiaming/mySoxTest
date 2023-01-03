@@ -16,7 +16,7 @@
 //
 // static void sha1(byte[] input, int inputOff, int len, byte[] output, int outputOff)
 //
-void sedona_sha1(char* input, int inputOff, int len, char* output, int outputOff)
+void sedona_sha1(unsigned char* input, unsigned int inputOff, unsigned int len, unsigned char* output, unsigned int outputOff)
 {
   SHA1Context cx;
 
@@ -28,4 +28,19 @@ void sedona_sha1(char* input, int inputOff, int len, char* output, int outputOff
   SHA1Result(&cx, output);
 
 //  return nullCell;
+}
+
+int sedona_checkEndian()
+{
+	union
+	{
+		int a;
+		char b[4];
+	}u;
+
+	u.a = 1;
+	if (u.b[0] == 1) 
+		return 0;
+	else 
+		return 1;
 }

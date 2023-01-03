@@ -42,6 +42,8 @@
 #ifndef _SHA1_H_
 #define _SHA1_H_
 
+#include <stdio.h>
+#include <memory.h>
 /*
  * If you do not have the ISO standard stdint.h header file, then you
  * must typdef the following:
@@ -76,9 +78,10 @@ typedef struct SHA1Context
     unsigned int Length_Low;            /* Message length in bits      */
     unsigned int Length_High;           /* Message length in bits      */
 
-                               /* Index into message block array   */
+										  /* Index into message block array   */
     short Message_Block_Index;
-    char Message_Block[64];      /* 512-bit message blocks      */
+	/* Use unsigned to fix Authenticate */
+    unsigned char Message_Block[64];      /* 512-bit message blocks      */
 
     int Computed;               /* Is the digest computed?         */
     int Corrupted;             /* Is the message digest corrupted? */
@@ -87,10 +90,9 @@ typedef struct SHA1Context
 /*
  *  Function Prototypes
  */
-int SHA1Reset(  SHA1Context *);
-int SHA1Input(  SHA1Context *,
-                const char *,
-                unsigned int);
-int SHA1Result( SHA1Context *,
-                char Message_Digest[SHA1HashSize]);
+int SHA1Reset(SHA1Context *);
+int SHA1Input(SHA1Context * context, const unsigned char * message_array, unsigned int length);
+int SHA1Result(SHA1Context *context, unsigned char Message_Digest[SHA1HashSize]);
+void sedona_sha1(unsigned char* input, unsigned int inputOff, unsigned int len, unsigned char* output, unsigned int outputOff);
+int  sedona_checkEndian();
 #endif

@@ -155,6 +155,8 @@ int SHA1Result( SHA1Context *context,
     {
         Message_Digest[i] = context->Intermediate_Hash[i>>2]
                             >> 8 * ( 3 - ( i & 0x03 ) );
+//		printf(" context->Intermediate_Hash[%d] = %u and calc = %02X\r\n", 
+//			i>>2, context->Intermediate_Hash[i>>2], Message_Digest[i]);
     }
 
     return shaSuccess;
@@ -182,7 +184,7 @@ int SHA1Result( SHA1Context *context,
  */
 int SHA1Input(    SHA1Context    *context,
                   const unsigned char  *message_array,
-                  unsigned       length)
+                  unsigned int   length)
 {
     if (!length)
     {
@@ -206,26 +208,26 @@ int SHA1Input(    SHA1Context    *context,
     }
     while(length-- && !context->Corrupted)
     {
-    context->Message_Block[context->Message_Block_Index++] =
-                    (*message_array & 0xFF);
+		context->Message_Block[context->Message_Block_Index++] =
+						(*message_array & 0xFF);
 
-    context->Length_Low += 8;
-    if (context->Length_Low == 0)
-    {
-        context->Length_High++;
-        if (context->Length_High == 0)
-        {
-            /* Message is too long */
-            context->Corrupted = 1;
-        }
-    }
+		context->Length_Low += 8;
+		if (context->Length_Low == 0)
+		{
+			context->Length_High++;
+			if (context->Length_High == 0)
+			{
+				/* Message is too long */
+				context->Corrupted = 1;
+			}
+		}
 
-    if (context->Message_Block_Index == 64)
-    {
-        SHA1ProcessMessageBlock(context);
-    }
+		if (context->Message_Block_Index == 64)
+		{
+			SHA1ProcessMessageBlock(context);
+		}
 
-    message_array++;
+		message_array++;
     }
 
     return shaSuccess;
@@ -264,20 +266,29 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
     unsigned int      W[80];             /* Word sequence               */
     unsigned int      A, B, C, D, E;     /* Word buffers                */
 
+	memset(W, 0x00, sizeof(unsigned int) * 80);
     /*
      *  Initialize the first 16 words in the array W
      */
     for(t = 0; t < 16; t++)
     {
         W[t] = context->Message_Block[t * 4] << 24;
+	    // printf(" Create W[%d] by %08X -> ", t, W[t]);
         W[t] |= context->Message_Block[t * 4 + 1] << 16;
+	    // printf(" %08X -> ", W[t]);
         W[t] |= context->Message_Block[t * 4 + 2] << 8;
+	    // printf(" %08X -> ", W[t]);
         W[t] |= context->Message_Block[t * 4 + 3];
+	    // printf(" %08X  \r\n", W[t]);
     }
 
     for(t = 16; t < 80; t++)
     {
        W[t] = SHA1CircularShift(1,W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
+	 //   printf(" W[%d] = %08X with %08X ", t, W[t],
+	 // 		(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]));
+	 //   printf("from (W[%d]: %08X, W[%d]: %08X, W[%d]: %08X, W[%d]: %08X)\r\n", 
+	 // 		t-3, W[t-3], t-8, W[t-8], t-14, W[t-14], t-16, W[t-16]);
     }
 
     A = context->Intermediate_Hash[0];
@@ -286,6 +297,7 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
     D = context->Intermediate_Hash[3];
     E = context->Intermediate_Hash[4];
 
+	// printf(" A = %u, B = %u, C = %u, D = %u, E = %u \r\n", A, B, C, D, E);
     for(t = 0; t < 20; t++)
     {
         temp =  SHA1CircularShift(5,A) +
@@ -327,6 +339,12 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
         B = A;
         A = temp;
     }
+	// printf(" A = %u, B = %u, C = %u, D = %u, E = %u \r\n", A, B, C, D, E);
+	// printf(" context->Intermediate_Hash[0] = %u \r\n", context->Intermediate_Hash[0]);
+	// printf(" context->Intermediate_Hash[1] = %u \r\n", context->Intermediate_Hash[1]);
+	// printf(" context->Intermediate_Hash[2] = %u \r\n", context->Intermediate_Hash[2]);
+	// printf(" context->Intermediate_Hash[3] = %u \r\n", context->Intermediate_Hash[3]);
+	// printf(" context->Intermediate_Hash[4] = %u \r\n", context->Intermediate_Hash[4]);
 
     context->Intermediate_Hash[0] += A;
     context->Intermediate_Hash[1] += B;

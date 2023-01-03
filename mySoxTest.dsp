@@ -119,6 +119,14 @@ SOURCE=.\mySoxTest.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SabReader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SCodeReader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SoxMsg.cpp
 # End Source File
 # Begin Source File
@@ -137,6 +145,14 @@ SOURCE=.\DASP.h
 # Begin Source File
 
 SOURCE=.\sha1\inet_sha1.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SabReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SCodeReader.h
 # End Source File
 # Begin Source File
 

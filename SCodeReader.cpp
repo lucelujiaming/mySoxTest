@@ -101,6 +101,24 @@ SCodeReader::~SCodeReader()
 
 void SCodeReader::readSCodeFile(char * cFileName)
 {
+	SCODE_HEADER objSCodeHeader;
 	FILE * fpSCode = fopen(cFileName, "rb");
+	int iLen = fread(&objSCodeHeader, 1, sizeof(SCODE_HEADER), fpSCode);
+	printf("SCODE_HEADER.magic[0] = %02X \r\n", objSCodeHeader.magic[0]);
+	printf("SCODE_HEADER.magic[1] = %02X \r\n", objSCodeHeader.magic[1]);
+	printf("SCODE_HEADER.magic[2] = %02X \r\n", objSCodeHeader.magic[2]);
+	printf("SCODE_HEADER.magic[3] = %02X \r\n", objSCodeHeader.magic[3]);
+	printf("SCODE_HEADER.majorVer = %d \r\n", objSCodeHeader.majorVer);
+	printf("SCODE_HEADER.minorVer = %d \r\n", objSCodeHeader.minorVer);
 	
+	printf("SCODE_HEADER.blockSize = %d \r\n", objSCodeHeader.blockSize);
+	printf("SCODE_HEADER.refSize = %d \r\n", objSCodeHeader.refSize);
+	printf("SCODE_HEADER.imageSize = %04X \r\n", objSCodeHeader.imageSize);
+	printf("SCODE_HEADER.dataSize = %04X \r\n", objSCodeHeader.dataSize);
+
+	printf("SCODE_HEADER.mainMethodBlockIndex = %02X \r\n", objSCodeHeader.mainMethodBlockIndex);
+	printf("SCODE_HEADER.testTable = %02X \r\n", objSCodeHeader.testTable);
+	printf("SCODE_HEADER.kitsArrayBlockIndex = %02X \r\n", objSCodeHeader.kitsArrayBlockIndex);
+	printf("SCODE_HEADER.numberOfKits = %02X \r\n", objSCodeHeader.numberOfKits);
+	fclose(fpSCode);
 }

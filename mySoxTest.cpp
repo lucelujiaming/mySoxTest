@@ -7,6 +7,7 @@
 
 int main(int argc, char* argv[])
 {
+/*
 	SCodeReader objSCodeReader;
 	char cCurrentURI[MAX_BUFFER_LEN];
 	strcpy(cCurrentURI, "./app.scode");
@@ -18,7 +19,8 @@ int main(int argc, char* argv[])
 			objSCodeReader.readSCodeFile(cCurrentURI);
 		}
 	}
-/*
+*/
+
 	char cRet = 0 ;
 	CSoxMsg objCSoxMsg ;
 	objCSoxMsg.start();
@@ -37,7 +39,6 @@ int main(int argc, char* argv[])
 	}
 
 	objCSoxMsg.close();
-*/
 	printf("Hello World!\n");
 	return 0;
 }

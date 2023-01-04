@@ -4,10 +4,10 @@
 #include "stdafx.h"
 #include "SoxMsg.h"
 #include "SCodeReader.h"
+#include "SabReader.h"
 
-int main(int argc, char* argv[])
+void testSCodeReader()
 {
-/*
 	SCodeReader objSCodeReader;
 	char cCurrentURI[MAX_BUFFER_LEN];
 	strcpy(cCurrentURI, "./app.scode");
@@ -19,8 +19,25 @@ int main(int argc, char* argv[])
 			objSCodeReader.readSCodeFile(cCurrentURI);
 		}
 	}
-*/
+}
 
+void testSabReader()
+{
+	SabReader objSabReader;
+	char cCurrentURI[MAX_BUFFER_LEN];
+	strcpy(cCurrentURI, "./app.sab");
+	char * cPos = strstr(cCurrentURI, "app.sab");
+	if (cPos)
+	{
+		if(strcmp(cPos, "app.sab") == 0)
+		{
+			objSabReader.readSabFile(cCurrentURI);
+		}
+	}
+}
+
+void testSoxMsg()
+{
 	char cRet = 0 ;
 	CSoxMsg objCSoxMsg ;
 	objCSoxMsg.start();
@@ -39,6 +56,13 @@ int main(int argc, char* argv[])
 	}
 
 	objCSoxMsg.close();
+}
+
+int main(int argc, char* argv[])
+{
+// 	testSabReader();
+	testSCodeReader();
+	// testSoxMsg();
 	printf("Hello World!\n");
 	return 0;
 }

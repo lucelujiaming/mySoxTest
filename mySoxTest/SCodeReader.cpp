@@ -78,6 +78,25 @@ unsigned int SCodeReader::calcAndSkipUnsignedIntValue()
 	return uValue;
 }
 
+unsigned long  SCodeReader::calcAndSkipUnsignedLongValue()
+{
+	unsigned long uValue = 0x00;
+	unsigned int uValueOne = 0x00;
+	uValueOne = calcAndSkipUnsignedIntValue();
+	unsigned int uValueTwo = 0x00;
+	uValueTwo = calcAndSkipUnsignedIntValue();
+	
+	if (m_bBigEndian)
+	{
+		uValue = uValueOne * 0x100000000 + uValueTwo;
+	}
+	else 
+	{
+		uValue = uValueTwo * 0x100000000 + uValueOne;
+	}
+	return uValue;
+}
+
 void SCodeReader::printSCodeHeader()
 {
 	printf("m_head_magic[0] = %02X \r\n", m_head_magic[0]);
@@ -178,12 +197,24 @@ void SCodeReader::printMethods()
 	std::vector<SCODE_METHOD>::iterator iter;
 	for (iter = m_scode_method_veclist.begin(); iter != m_scode_method_veclist.end(); iter++)
 	{
-		printMethod(*iter);
+		printMethod(*iter, true);
 	}
 }
 
-void SCodeReader::printMethod(SCODE_METHOD objMethod)
+void SCodeReader::printMethod(SCODE_METHOD objMethod, bool bPrintOpCodeInfo)
 {
+	printf("\tSCode::Method(numParams, numLocals) = (%02d, %02d) \r\n", 
+		objMethod.numParamsOpCode, objMethod.numLocalsOpCode);
+	if (bPrintOpCodeInfo)
+	{
+		printf("\tSCode::Method content is \r\n");
+		std::vector<std::string>::iterator iter;
+		for (iter = objMethod.opcodeInfo.begin(); iter != objMethod.opcodeInfo.end(); iter++)
+		{
+
+			printf("\t\t%s\r\n", iter->c_str());
+		}
+	}
 }
 
 void SCodeReader::printTests()
@@ -192,7 +223,7 @@ void SCodeReader::printTests()
     {
 		printf("SCode::Test(slotBix, codeBix) = (%02d, %02d) \r\n", 
 			m_scode_test_table[i].slotBix, m_scode_test_table[i].codeBix);
-		printMethod(m_scode_test_table[i].method);
+		printMethod(m_scode_test_table[i].method, true);
 	}
 }
 
@@ -224,7 +255,8 @@ void SCodeReader::readSCodeFile(char * cFileName)
 
 	parseLogs(m_endSlotBix);
 	printSCodeLogs();
-	// parseMethods(m_endLogBix);
+	parseMethods(m_endLogBix);
+	printMethods();
 		
     if (m_head_testBlockIndex > 0)
     {
@@ -270,9 +302,10 @@ void SCodeReader::parseLogs(unsigned int logTabBix)
 	m_cFileBufPtr = savePos;
 }
 
-void SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestorePos)
+int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestorePos)
 {
     int       opCode;
+    char      opCodeInfo[SCODE_ARG_LEN];
     char      argStr[SCODE_ARG_LEN];
     unsigned char * savePos = m_cFileBufPtr;
 	// If codeBix<0 then buf.pos already at correct position
@@ -307,20 +340,34 @@ void SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestor
     //
     while (!bDone) 
     {
+		memset(opCodeInfo, 0x00, SCODE_ARG_LEN);
+		memset(argStr, 0x00, SCODE_ARG_LEN);
 		// Get next opcode
 		opCode = m_cFileBufPtr[0];
 		m_cFileBufPtr ++;
-
+		sprintf(opCodeInfo, "%04X %02X %s ", (m_cFileBufPtr - m_fileBuf),
+			opCode, get_scode_name(opCode));
 		// Print opcode & name
 		// System.out.print( opFormat(opPos, opCode, SCode.name(opCode)) );
 
-		// argStr = getArgString(opCode);
+		int iRet = getArgString(argStr, opCode);
+		if (iRet == -1)
+		{
+			return -1;
+		}
+		strcat(opCodeInfo, argStr);
 
-		// Print arg if any
-		// if (argStr!=null) System.out.println(argStr);
-		// else System.out.println();
+		objMethod.opcodeInfo.push_back(std::string(opCodeInfo));
+		printf("\tobjMethod.opcodeInfo.size() = %d and add %s . \r\n", 
+			objMethod.opcodeInfo.size(), opCodeInfo);
 
-
+		if(m_scode_method_veclist.size() >= 1273)
+		{
+			if(objMethod.opcodeInfo.size() == 64)
+			{
+				printf("AAA");
+			}
+		}
 		// Quit when we reach the first return, unless there's a jump that
 		// takes us past it (not sure this is sufficient test?)
 		switch (opCode)
@@ -362,24 +409,205 @@ void SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestor
 
 	}  // while (!bDone)
 	
-	m_cFileBufPtr = savePos;
+	if (bRestorePos)
+	{
+		m_cFileBufPtr = savePos;
+	}
+	return 0;
+}
+
+inline float intBitsToFloat(int i)
+{
+    union
+    {
+        int i;
+        float f;
+    } u;
+    u.i = i;
+    return u.f;
+}
+ 
+inline int floatToRawIntBits(float f)
+{
+    union
+    {
+    int i;
+    float f;
+    } u;
+    u.f = f;
+    return u.i;
+}
+
+inline double longBitsToDouble(long i)
+{
+    union
+    {
+        long i;
+        double f;
+    } u;
+    u.i = i;
+    return u.f;
+}
+ 
+inline long doubleToRawLongBits(double f)
+{
+    union
+    {
+    long i;
+    double f;
+    } u;
+    u.f = f;
+    return u.i;
+}
+
+int SCodeReader::getArgString(char *argStr, int op)
+{     
+    // Find width of opcode's arg and read it in.
+    // Return string showing arg value (incl 0x prefix for hex),
+    // or null if no arg.
+
+    // For now, keep it simple - just get hex value of arg bytes
+    switch (scode_argType(op))
+    {
+      // signed 1-byte arg
+      case g_scode_jmpArg    : 
+		  // argStr = String.valueOf(buf.s1());
+		  sprintf(argStr, "%c", m_cFileBufPtr[0]);
+		  m_cFileBufPtr++;
+          break;
+      // unsigned 1-byte arg
+      case g_scode_u1Arg     : 
+		  // argStr = "0x" + tHS(buf.u1());
+		  sprintf(argStr, "0x%02X", m_cFileBufPtr[0]);
+          break;
+      // signed 2-byte arg 
+      case g_scode_jmpfarArg : 
+		  // argStr = String.valueOf(buf.s2());
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+          break;
+      // unsigned 2-byte arg 
+      case g_scode_strArg    :
+      case g_scode_bufArg    :
+      case g_scode_typeArg   :
+      case g_scode_slotArg   :
+      case g_scode_u2Arg     : 
+		  // argStr = "0x" + tHS(u2aligned(buf));
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+          break;
+      // unsigned 2-byte arg, not necessarily aligned
+      case g_scode_methodArg : 
+		  // argStr = "0x" + tHS(buf.u2());
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+          break;
+      // signed 4-byte arg
+      case g_scode_intArg    : 
+		  // argStr = String.valueOf(i4aligned(buf));
+		  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue());
+          break;
+      case g_scode_floatArg  : 
+		  // argStr = String.valueOf(f4aligned(buf));
+		  sprintf(argStr, "%f", intBitsToFloat(calcAndSkipUnsignedIntValue()));
+          break;
+      // unsigned 4-byte arg
+      case g_scode_s4Arg     : 
+		  // argStr = "0x" + tHS(i4aligned(buf));
+		  sprintf(argStr, "%04X", calcAndSkipUnsignedIntValue());
+          break;
+      // unsigned 8-byte arg
+      case g_scode_longArg   : 
+		  // argStr = "0x" + java.lang.Long.toHexString(i8aligned(buf));
+		  sprintf(argStr, "%08lX", calcAndSkipUnsignedLongValue());
+          break;
+      // signed 8-byte arg
+      case g_scode_doubleArg : 
+		  // argStr = String.valueOf(f8aligned(buf)); 
+		  sprintf(argStr, "%f", longBitsToDouble(calcAndSkipUnsignedLongValue()));
+          break;
+
+      // switch has multiple args, first is #args to follow
+      case g_scode_switchArg : 
+		  {
+			  int nArgs = calcAndSkipUnsignedShortValue();
+			  if(nArgs > 128)
+			  {
+				  printf("ERROR: g_scode_switchArg::nArgs = %d \r\n", nArgs);
+				  return -1;
+			  }
+			  sprintf(argStr, "(%d) ", nArgs);
+			  for (int k = 0; k < nArgs; k++)
+			  {
+				  if (k > 0) 
+					  sprintf(argStr + strlen(argStr), ", ");
+				  // argStr += "0x" + tHS(u2aligned(buf));
+				  sprintf(argStr + strlen(argStr), "0x%X", calcAndSkipUnsignedShortValue());
+			  }
+		  }
+		  break;
+      // field arg (varies with opcode, usually unsigned)
+      case g_scode_fieldArg  : 
+		  {
+			  const char * retName = get_scode_name(op);
+			  char endChar = retName[strlen(retName) - 1];
+			  if (endChar == '1')
+			  {
+				  // argStr = "0x" + tHS(buf.u1());
+				  sprintf(argStr, "0x%X", m_cFileBufPtr[0]);
+				  m_cFileBufPtr++;
+			  }
+			  else if (endChar == '2')
+			  {
+				  // argStr = "0x" + tHS(u2aligned(buf));
+				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+			  }
+			  else if (endChar == '2')
+			  {
+				  // argStr = "0x" + tHS(i4aligned(buf));
+				  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue());
+			  }
+			  else 
+			  {
+				  // argStr = "0x" + tHS(u2aligned(buf));  // width of "Const Static" arg?
+				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+			  }
+			  break;
+		  }
+      // no arg
+      case g_scode_noArg     : 
+      default              : 
+		  return 0;
+    }
+
+    return 1;
 }
 
 void SCodeReader::parseMethods(unsigned int methodTabBix)
 {
 	SCODE_METHOD  objMethod;
-	unsigned char * cMethodEnd = NULL;
+	unsigned char * cImageEnd = NULL;
 	// If methodTabBix<0 then buf.pos already at correct position
     if (methodTabBix > 0) 
 	{
 		m_cFileBufPtr = m_fileBuf + methodTabBix * m_head_blockSize;
 	}
-	cMethodEnd = m_cFileBufPtr + m_head_imageSize;
-
+	cImageEnd = m_fileBuf + m_head_imageSize;
+	m_scode_method_veclist.reserve(102400);
     // Not sure how to tell we're done???
-    while (m_cFileBufPtr < cMethodEnd)
+    while (m_cFileBufPtr < cImageEnd)
     {
-		parseMethod(objMethod, -1, false);
+		objMethod.opcodeInfo.reserve(102400);
+		objMethod.opcodeInfo.clear();
+		if(m_scode_method_veclist.size() == 1273)
+		{
+			printf("AAA");
+		}
+		int iRet = parseMethod(objMethod, -1, false);
+		if (iRet == -1)
+		{
+			break;
+		}
+		// printMethod(objMethod, false);
+		printf("\tm_scode_method_veclist.size() = %d at %d (%08X, %08X). \r\n", 
+			m_scode_method_veclist.size(), cImageEnd - m_cFileBufPtr, cImageEnd, m_cFileBufPtr);
 		m_scode_method_veclist.push_back(objMethod);
     }
 }

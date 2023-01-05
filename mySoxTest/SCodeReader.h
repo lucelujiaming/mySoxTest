@@ -9,8 +9,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#pragma warning(disable : 4786)
 #include "FileReader.h"
 #include <vector>
+#include <string>
 
 #define SCODE_ARG_LEN          256 
 #define SCODE_LOGNAME_LEN      256 
@@ -60,11 +62,13 @@ typedef struct _SCODE_LOG
     char cName[SCODE_LOGNAME_LEN];
 } SCODE_LOG, *PSCODE_LOG;
 
-typedef struct _SCODE_METHOD 
+
+
+typedef struct _SCODE_METHOD
 {
     unsigned char numParamsOpCode;
     unsigned char numLocalsOpCode;
-	std::vector<unsigned char> opcodes; 
+	std::vector<std::string> opcodeInfo; 
 } SCODE_METHOD, *PSCODE_METHOD;
 
 typedef struct _SCODE_TEST
@@ -89,7 +93,7 @@ private:
 	void parseSlot(SCODE_KIT_TYPE_SLOT& objScodeKitTypeSlot, unsigned int typeBix);
 	void parseLogs(unsigned int endSlotBix);
 	void parseMethods(unsigned int endLogBix);
-	void parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestorePos);
+	int  parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestorePos);
 	void parseTests();
 	void parseBootstrap();
 
@@ -100,7 +104,8 @@ private:
 	void printTests();
 	
 	void printMethods();
-	void printMethod(SCODE_METHOD objMethod);
+	void printMethod(SCODE_METHOD objMethod, bool bPrintOpCodeInfo);
+	int getArgString(char *argStr, int op);
 
 	FileReader         m_objFileReader;
 	
@@ -113,6 +118,7 @@ private:
 	bool           m_bBigEndian;
 	unsigned short calcAndSkipUnsignedShortValue();
 	unsigned int   calcAndSkipUnsignedIntValue();
+	unsigned long  calcAndSkipUnsignedLongValue();
 
 private:
 	unsigned char *    m_fileBuf;

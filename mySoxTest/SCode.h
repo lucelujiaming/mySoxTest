@@ -302,4 +302,385 @@ static const int g_scode_Cast               = 237;  // only used for Java byteco
 static const int g_scode_LoadArrayLiteral   = 238;  // in SVM we use LoadBuf as pointer to array in code section
 static const int g_scode_LoadSlotId         = 239;  // arg is slot qname; subst id at image gen
 
+// OpCodes by name
+static const char * g_scode_names[] =
+{
+    "Nop",                // 0
+    "LoadIM1",            // 1
+    "LoadI0",             // 2
+    "LoadI1",             // 3
+    "LoadI2",             // 4
+    "LoadI3",             // 5
+    "LoadI4",             // 6
+    "LoadI5",             // 7
+    "LoadIntU1",          // 8
+    "LoadIntU2",          // 9
+    "LoadL0",             // 10
+    "LoadL1",             // 11
+    "LoadF0",             // 12
+    "LoadF1",             // 13
+    "LoadD0",             // 14
+    "LoadD1",             // 15
+    "LoadNull",           // 16
+    "LoadNullBool",       // 17
+    "LoadNullFloat",      // 18
+    "LoadNullDouble",     // 19
+    "LoadInt",            // 20
+    "LoadFloat",          // 21
+    "LoadLong",           // 22
+    "LoadDouble",         // 23
+    "LoadStr",            // 24
+    "LoadBuf",            // 25
+    "LoadType",           // 26
+    "LoadSlot",           // 27
+    "LoadDefine",         // 28
+    "LoadParam0",         // 29
+    "LoadParam1",         // 30
+    "LoadParam2",         // 31
+    "LoadParam3",         // 32
+    "LoadParam",          // 33
+    "LoadParamWide",      // 34
+    "StoreParam",         // 35
+    "StoreParamWide",     // 36
+    "LoadLocal0",         // 37
+    "LoadLocal1",         // 38
+    "LoadLocal2",         // 39
+    "LoadLocal3",         // 40
+    "LoadLocal4",         // 41
+    "LoadLocal5",         // 42
+    "LoadLocal6",         // 43
+    "LoadLocal7",         // 44
+    "LoadLocal",          // 45
+    "LoadLocalWide",      // 46
+    "StoreLocal0",        // 47
+    "StoreLocal1",        // 48
+    "StoreLocal2",        // 49
+    "StoreLocal3",        // 50
+    "StoreLocal4",        // 51
+    "StoreLocal5",        // 52
+    "StoreLocal6",        // 53
+    "StoreLocal7",        // 54
+    "StoreLocal",         // 55
+    "StoreLocalWide",     // 56
+    "IntEq",              // 57
+    "IntNotEq",           // 58
+    "IntGt",              // 59
+    "IntGtEq",            // 60
+    "IntLt",              // 61
+    "IntLtEq",            // 62
+    "IntMul",             // 63
+    "IntDiv",             // 64
+    "IntMod",             // 65
+    "IntAdd",             // 66
+    "IntSub",             // 67
+    "IntOr",              // 68
+    "IntXor",             // 69
+    "IntAnd",             // 70
+    "IntNot",             // 71
+    "IntNeg",             // 72
+    "IntShiftL",          // 73
+    "IntShiftR",          // 74
+    "IntInc",             // 75
+    "IntDec",             // 76
+    "LongEq",             // 77
+    "LongNotEq",          // 78
+    "LongGt",             // 79
+    "LongGtEq",           // 80
+    "LongLt",             // 81
+    "LongLtEq",           // 82
+    "LongMul",            // 83
+    "LongDiv",            // 84
+    "LongMod",            // 85
+    "LongAdd",            // 86
+    "LongSub",            // 87
+    "LongOr",             // 88
+    "LongXor",            // 89
+    "LongAnd",            // 90
+    "LongNot",            // 91
+    "LongNeg",            // 92
+    "LongShiftL",         // 93
+    "LongShiftR",         // 94
+    "FloatEq",            // 95
+    "FloatNotEq",         // 96
+    "FloatGt",            // 97
+    "FloatGtEq",          // 98
+    "FloatLt",            // 99
+    "FloatLtEq",          // 100
+    "FloatMul",           // 101
+    "FloatDiv",           // 102
+    "FloatAdd",           // 103
+    "FloatSub",           // 104
+    "FloatNeg",           // 105
+    "DoubleEq",           // 106
+    "DoubleNotEq",        // 107
+    "DoubleGt",           // 108
+    "DoubleGtEq",         // 109
+    "DoubleLt",           // 110
+    "DoubleLtEq",         // 111
+    "DoubleMul",          // 112
+    "DoubleDiv",          // 113
+    "DoubleAdd",          // 114
+    "DoubleSub",          // 115
+    "DoubleNeg",          // 116
+    "IntToFloat",         // 117
+    "IntToLong",          // 118
+    "IntToDouble",        // 119
+    "LongToInt",          // 120
+    "LongToFloat",        // 121
+    "LongToDouble",       // 122
+    "FloatToInt",         // 123
+    "FloatToLong",        // 124
+    "FloatToDouble",      // 125
+    "DoubleToInt",        // 126
+    "DoubleToLong",       // 127
+    "DoubleToFloat",      // 128
+    "ObjEq",              // 129
+    "ObjNotEq",           // 130
+    "EqZero",             // 131
+    "NotEqZero",          // 132
+    "Pop",                // 133
+    "Pop2",               // 134
+    "Pop3",               // 135
+    "Dup",                // 136
+    "Dup2",               // 137
+    "DupDown2",           // 138
+    "DupDown3",           // 139
+    "Dup2Down2",          // 140
+    "Dup2Down3",          // 141
+    "Jump",               // 142
+    "JumpNonZero",        // 143
+    "JumpZero",           // 144
+    "Foreach",            // 145
+    "JumpFar",            // 146
+    "JumpFarNonZero",     // 147
+    "JumpFarZero",        // 148
+    "ForeachFar",         // 149
+    "JumpIntEq",          // 150
+    "JumpIntNotEq",       // 151
+    "JumpIntGt",          // 152
+    "JumpIntGtEq",        // 153
+    "JumpIntLt",          // 154
+    "JumpIntLtEq",        // 155
+    "JumpFarIntEq",       // 156
+    "JumpFarIntNotEq",    // 157
+    "JumpFarIntGt",       // 158
+    "JumpFarIntGtEq",     // 159
+    "JumpFarIntLt",       // 160
+    "JumpFarIntLtEq",     // 161
+    "LoadDataAddr",       // 162
+    "Load8BitFieldU1",    // 163
+    "Load8BitFieldU2",    // 164
+    "Load8BitFieldU4",    // 165
+    "Load8BitArray",      // 166
+    "Store8BitFieldU1",   // 167
+    "Store8BitFieldU2",   // 168
+    "Store8BitFieldU4",   // 169
+    "Store8BitArray",     // 170
+    "Add8BitArray",       // 171
+    "Load16BitFieldU1",   // 172
+    "Load16BitFieldU2",   // 173
+    "Load16BitFieldU4",   // 174
+    "Load16BitArray",     // 175
+    "Store16BitFieldU1",  // 176
+    "Store16BitFieldU2",  // 177
+    "Store16BitFieldU4",  // 178
+    "Store16BitArray",    // 179
+    "Add16BitArray",      // 180
+    "Load32BitFieldU1",   // 181
+    "Load32BitFieldU2",   // 182
+    "Load32BitFieldU4",   // 183
+    "Load32BitArray",     // 184
+    "Store32BitFieldU1",  // 185
+    "Store32BitFieldU2",  // 186
+    "Store32BitFieldU4",  // 187
+    "Store32BitArray",    // 188
+    "Add32BitArray",      // 189
+    "Load64BitFieldU1",   // 190
+    "Load64BitFieldU2",   // 191
+    "Load64BitFieldU4",   // 192
+    "Load64BitArray",     // 193
+    "Store64BitFieldU1",  // 194
+    "Store64BitFieldU2",  // 195
+    "Store64BitFieldU4",  // 196
+    "Store64BitArray",    // 197
+    "Add64BitArray",      // 198
+    "LoadRefFieldU1",     // 199
+    "LoadRefFieldU2",     // 200
+    "LoadRefFieldU4",     // 201
+    "LoadRefArray",       // 202
+    "StoreRefFieldU1",    // 203
+    "StoreRefFieldU2",    // 204
+    "StoreRefFieldU4",    // 205
+    "StoreRefArray",      // 206
+    "AddRefArray",        // 207
+    "LoadConstFieldU1",   // 208
+    "LoadConstFieldU2",   // 209
+    "LoadConstStatic",    // 210
+    "LoadConstArray",     // 211
+    "LoadInlineFieldU1",  // 212
+    "LoadInlineFieldU2",  // 213
+    "LoadInlineFieldU4",  // 214
+    "LoadParam0InlineFieldU1", // 215
+    "LoadParam0InlineFieldU2", // 216
+    "LoadParam0InlineFieldU4", // 217
+    "LoadDataInlineFieldU1", // 218
+    "LoadDataInlineFieldU2", // 219
+    "LoadDataInlineFieldU4", // 220
+    "Call",               // 221
+    "CallVirtual",        // 222
+    "CallNative",         // 223
+    "CallNativeWide",     // 224
+    "CallNativeVoid",     // 225
+    "ReturnVoid",         // 226
+    "ReturnPop",          // 227
+    "ReturnPopWide",      // 228
+    "LoadParam0Call",     // 229
+    "InitArray",          // 230
+    "InitVirt",           // 231
+    "InitComp",           // 232
+    "SizeOf",             // 233
+    "Assert",             // 234
+    "Switch",             // 235
+    "MetaSlot",           // 236
+    "Cast",               // 237
+    "LoadArrayLiteral",   // 238
+    "LoadSlotId",         // 239
+  };
+
+  ////////////////////////////////////////////////////////////////
+// OpCode Argument Types
+////////////////////////////////////////////////////////////////
+
+static const int g_scode_noArg     = 0;
+static const int g_scode_u1Arg     = 1;
+static const int g_scode_u2Arg     = 2;
+static const int g_scode_s4Arg     = 3;
+static const int g_scode_intArg    = 4;
+static const int g_scode_longArg   = 5;
+static const int g_scode_floatArg  = 6;
+static const int g_scode_doubleArg = 7;
+static const int g_scode_strArg    = 8;
+static const int g_scode_bufArg    = 9;
+static const int g_scode_typeArg   = 10;
+static const int g_scode_slotArg   = 11; // slot literal
+static const int g_scode_fieldArg  = 12;
+static const int g_scode_methodArg = 13;
+static const int g_scode_jmpArg    = 14;
+static const int g_scode_jmpfarArg = 15;
+static const int g_scode_switchArg = 16;
+static const int g_scode_arrayArg  = 17; // array literal
+
+  // OpCodes arguments
+static int scode_argType(int opcode)
+{
+    switch(opcode)
+    {
+      case g_scode_LoadIntU1:           return g_scode_u1Arg;
+      case g_scode_LoadIntU2:           return g_scode_u2Arg;
+      case g_scode_LoadInt:             return g_scode_intArg;
+      case g_scode_LoadFloat:           return g_scode_floatArg;
+      case g_scode_LoadLong:            return g_scode_longArg;
+      case g_scode_LoadDouble:          return g_scode_doubleArg;
+      case g_scode_LoadStr:             return g_scode_strArg;
+      case g_scode_LoadBuf:             return g_scode_bufArg;
+      case g_scode_LoadType:            return g_scode_typeArg;
+      case g_scode_LoadSlot:            return g_scode_slotArg;
+      case g_scode_LoadDefine:          return g_scode_fieldArg;
+      case g_scode_LoadParam:           return g_scode_u1Arg;
+      case g_scode_LoadParamWide:       return g_scode_u1Arg;
+      case g_scode_StoreParam:          return g_scode_u1Arg;
+      case g_scode_StoreParamWide:      return g_scode_u1Arg;
+      case g_scode_LoadLocal:           return g_scode_u1Arg;
+      case g_scode_LoadLocalWide:       return g_scode_u1Arg;
+      case g_scode_StoreLocal:          return g_scode_u1Arg;
+      case g_scode_StoreLocalWide:      return g_scode_u1Arg;
+      case g_scode_Jump:                return g_scode_jmpArg;
+      case g_scode_JumpNonZero:         return g_scode_jmpArg;
+      case g_scode_JumpZero:            return g_scode_jmpArg;
+      case g_scode_Foreach:             return g_scode_jmpArg;
+      case g_scode_JumpFar:             return g_scode_jmpfarArg;
+      case g_scode_JumpFarNonZero:      return g_scode_jmpfarArg;
+      case g_scode_JumpFarZero:         return g_scode_jmpfarArg;
+      case g_scode_ForeachFar:          return g_scode_jmpfarArg;
+      case g_scode_JumpIntEq:           return g_scode_jmpArg;
+      case g_scode_JumpIntNotEq:        return g_scode_jmpArg;
+      case g_scode_JumpIntGt:           return g_scode_jmpArg;
+      case g_scode_JumpIntGtEq:         return g_scode_jmpArg;
+      case g_scode_JumpIntLt:           return g_scode_jmpArg;
+      case g_scode_JumpIntLtEq:         return g_scode_jmpArg;
+      case g_scode_JumpFarIntEq:        return g_scode_jmpfarArg;
+      case g_scode_JumpFarIntNotEq:     return g_scode_jmpfarArg;
+      case g_scode_JumpFarIntGt:        return g_scode_jmpfarArg;
+      case g_scode_JumpFarIntGtEq:      return g_scode_jmpfarArg;
+      case g_scode_JumpFarIntLt:        return g_scode_jmpfarArg;
+      case g_scode_JumpFarIntLtEq:      return g_scode_jmpfarArg;
+      case g_scode_Load8BitFieldU1:     return g_scode_fieldArg;
+      case g_scode_Load8BitFieldU2:     return g_scode_fieldArg;
+      case g_scode_Load8BitFieldU4:     return g_scode_fieldArg;
+      case g_scode_Store8BitFieldU1:    return g_scode_fieldArg;
+      case g_scode_Store8BitFieldU2:    return g_scode_fieldArg;
+      case g_scode_Store8BitFieldU4:    return g_scode_fieldArg;
+      case g_scode_Load16BitFieldU1:    return g_scode_fieldArg;
+      case g_scode_Load16BitFieldU2:    return g_scode_fieldArg;
+      case g_scode_Load16BitFieldU4:    return g_scode_fieldArg;
+      case g_scode_Store16BitFieldU1:   return g_scode_fieldArg;
+      case g_scode_Store16BitFieldU2:   return g_scode_fieldArg;
+      case g_scode_Store16BitFieldU4:   return g_scode_fieldArg;
+      case g_scode_Load32BitFieldU1:    return g_scode_fieldArg;
+      case g_scode_Load32BitFieldU2:    return g_scode_fieldArg;
+      case g_scode_Load32BitFieldU4:    return g_scode_fieldArg;
+      case g_scode_Store32BitFieldU1:   return g_scode_fieldArg;
+      case g_scode_Store32BitFieldU2:   return g_scode_fieldArg;
+      case g_scode_Store32BitFieldU4:   return g_scode_fieldArg;
+      case g_scode_Load64BitFieldU1:    return g_scode_fieldArg;
+      case g_scode_Load64BitFieldU2:    return g_scode_fieldArg;
+      case g_scode_Load64BitFieldU4:    return g_scode_fieldArg;
+      case g_scode_Store64BitFieldU1:   return g_scode_fieldArg;
+      case g_scode_Store64BitFieldU2:   return g_scode_fieldArg;
+      case g_scode_Store64BitFieldU4:   return g_scode_fieldArg;
+      case g_scode_LoadRefFieldU1:      return g_scode_fieldArg;
+      case g_scode_LoadRefFieldU2:      return g_scode_fieldArg;
+      case g_scode_LoadRefFieldU4:      return g_scode_fieldArg;
+      case g_scode_StoreRefFieldU1:     return g_scode_fieldArg;
+      case g_scode_StoreRefFieldU2:     return g_scode_fieldArg;
+      case g_scode_StoreRefFieldU4:     return g_scode_fieldArg;
+      case g_scode_LoadConstFieldU1:    return g_scode_fieldArg;
+      case g_scode_LoadConstFieldU2:    return g_scode_fieldArg;
+      case g_scode_LoadConstStatic:     return g_scode_fieldArg;
+      case g_scode_LoadInlineFieldU1:   return g_scode_fieldArg;
+      case g_scode_LoadInlineFieldU2:   return g_scode_fieldArg;
+      case g_scode_LoadInlineFieldU4:   return g_scode_fieldArg;
+      case g_scode_LoadParam0InlineFieldU1: return g_scode_fieldArg;
+      case g_scode_LoadParam0InlineFieldU2: return g_scode_fieldArg;
+      case g_scode_LoadParam0InlineFieldU4: return g_scode_fieldArg;
+      case g_scode_LoadDataInlineFieldU1:   return g_scode_fieldArg;
+      case g_scode_LoadDataInlineFieldU2:   return g_scode_fieldArg;
+      case g_scode_LoadDataInlineFieldU4:   return g_scode_fieldArg;
+      case g_scode_Call:                return g_scode_methodArg;
+      case g_scode_CallVirtual:         return g_scode_methodArg;
+      case g_scode_CallNative:          return g_scode_methodArg;
+      case g_scode_CallNativeWide:      return g_scode_methodArg;
+      case g_scode_CallNativeVoid:      return g_scode_methodArg;
+      case g_scode_LoadParam0Call:      return g_scode_methodArg;
+      case g_scode_InitVirt:            return g_scode_typeArg;
+      case g_scode_InitComp:            return g_scode_typeArg;
+      case g_scode_SizeOf:              return g_scode_typeArg;
+      case g_scode_Assert:              return g_scode_u2Arg;
+      case g_scode_Switch:              return g_scode_switchArg;
+      case g_scode_MetaSlot:            return g_scode_u2Arg;
+      case g_scode_Cast:                return g_scode_typeArg;
+      case g_scode_LoadArrayLiteral:    return g_scode_arrayArg;
+      case g_scode_LoadSlotId:          return g_scode_u1Arg;
+      default:                  		return g_scode_noArg;
+    }
+}
+
+static const char * get_scode_name(int opcode)
+{
+	if (opcode < 0 || opcode >= sizeof(g_scode_names))
+		return "?";
+	else
+		return g_scode_names[opcode];
+}
+
 #endif // !defined(AFX_SCODE_H)

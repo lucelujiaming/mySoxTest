@@ -89,6 +89,10 @@ SOURCE=.\DASP.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FileReader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sha1\inet_Crypto_sha1.c
 
 !IF  "$(CFG)" == "mySoxTest - Win32 Release"
@@ -144,11 +148,19 @@ SOURCE=.\DASP.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FileReader.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sha1\inet_sha1.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\SabReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SCode.h
 # End Source File
 # Begin Source File
 

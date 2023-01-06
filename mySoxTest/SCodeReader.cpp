@@ -144,6 +144,37 @@ void SCodeReader::setSCodeHeader()
 	m_cFileBufPtr += 2;
 }
 
+void SCodeReader::generateRtFlagsInfo(char * cRtFlagsInfo, int rtFlags)
+{
+	if((rtFlags > RTFLAGS_MAX) |(rtFlags <= 0))
+	{
+		sprintf(cRtFlagsInfo, " ERROR ");
+		return;
+	}
+	if(rtFlags & RTFLAGS_ACTION)
+	{
+		sprintf(cRtFlagsInfo, " ACTION |");
+	}
+	if(rtFlags & RTFLAGS_CONFIG)
+	{
+		sprintf(cRtFlagsInfo, "%s CONFIG |", cRtFlagsInfo);
+	}
+	if(rtFlags & RTFLAGS_AS_STR)
+	{
+		sprintf(cRtFlagsInfo, "%s AS_STR |", cRtFlagsInfo);
+	}
+	if(rtFlags & RTFLAGS_OPERATOR)
+	{
+		sprintf(cRtFlagsInfo, "%s OPERATOR |", cRtFlagsInfo);
+	}
+	// Remove last '|'
+	if (strlen(cRtFlagsInfo) > 0)
+	{
+		cRtFlagsInfo[strlen(cRtFlagsInfo) - 1] = '\0';
+	}
+
+}
+
 void SCodeReader::printSCodeKits()
 {
 	for (int i=0; i< m_head_numberOfKits; ++i) 
@@ -169,10 +200,13 @@ void SCodeReader::printSCodeKits()
 			
 			for (int k=0; k < m_scode_kit_list[i].kit_type_list[j].slotsLen; k++)
 			{
+				char cRtFlagsInfo[SCODE_NAME_LEN];
+				memset(cRtFlagsInfo, 0x00, SCODE_NAME_LEN);
+				generateRtFlagsInfo(cRtFlagsInfo, m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].rtFlags);
 				printf("\t\t SCode::kit[%d].type[%d].slot[%d].(id, rtFlags, nameBix, cName, fpBix, codeBix) "
-					"  = (%02d, %02d, %02d, %s, %d, %d) \r\n", i, j, k, 
+					"  = (%02d, %02d(%s), %02d, %s, %02X, %02X) \r\n", i, j, k, 
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].id, 
-					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].rtFlags,
+					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].rtFlags, cRtFlagsInfo,
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].nameBix,
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cName, 
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix,
@@ -203,11 +237,11 @@ void SCodeReader::printMethods()
 
 void SCodeReader::printMethod(SCODE_METHOD objMethod, bool bPrintOpCodeInfo)
 {
-	printf("\tSCode::Method(numParams, numLocals) = (%02d, %02d) \r\n", 
+	printf("\tSCode::Method(numParams, numLocals) = (%02d, %02d) ", 
 		objMethod.numParamsOpCode, objMethod.numLocalsOpCode);
 	if (bPrintOpCodeInfo)
 	{
-		printf("\tSCode::Method content is \r\n");
+		printf("and SCode::Method content is \r\n");
 		std::vector<std::string>::iterator iter;
 		for (iter = objMethod.opcodeInfo.begin(); iter != objMethod.opcodeInfo.end(); iter++)
 		{
@@ -215,14 +249,22 @@ void SCodeReader::printMethod(SCODE_METHOD objMethod, bool bPrintOpCodeInfo)
 			printf("\t\t%s\r\n", iter->c_str());
 		}
 	}
+	else
+	{
+		printf(". \r\n");
+
+	}
 }
 
 void SCodeReader::printTests()
 {
 	for (int i=0; i< m_numTests; ++i) 
     {
-		printf("SCode::Test(slotBix, codeBix) = (%02d, %02d) \r\n", 
-			m_scode_test_table[i].slotBix, m_scode_test_table[i].codeBix);
+		printf("SCode::Test(slotBix, codeBix) = (%02d, %02d) and (%s:%s.%s) \r\n", 
+			m_scode_test_table[i].slotBix, m_scode_test_table[i].codeBix,
+			m_scode_test_table[i].qnameSlot.typeName, 
+			m_scode_test_table[i].qnameSlot.slotName, 
+			m_scode_test_table[i].qnameSlot.methodName);
 		printMethod(m_scode_test_table[i].method, true);
 	}
 }
@@ -238,6 +280,7 @@ void SCodeReader::readSCodeFile(char * cFileName)
 	setSCodeHeader();
 	printSCodeHeader();
 
+	parseBootstrap();
 	if (m_head_numberOfKits > 0)
 	{
 		m_scode_kit_list = (SCODE_KIT *)malloc(sizeof(SCODE_KIT) * m_head_numberOfKits);
@@ -250,18 +293,18 @@ void SCodeReader::readSCodeFile(char * cFileName)
 			iPos = calcAndSkipUnsignedShortValue();
 			parseKit(m_scode_kit_list[i], iPos);
 		}
-		// printSCodeKits();
+		printSCodeKits();
 	}
 
 	parseLogs(m_endSlotBix);
 	printSCodeLogs();
 	parseMethods(m_endLogBix);
-	printMethods();
+	// printMethods();
 		
     if (m_head_testBlockIndex > 0)
     {
 		parseTests();
-		printTests();
+		// printTests();
 	}
 }
 
@@ -340,6 +383,7 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
     //
     while (!bDone) 
     {
+		int opPos = m_cFileBufPtr - m_fileBuf;
 		memset(opCodeInfo, 0x00, SCODE_ARG_LEN);
 		memset(argStr, 0x00, SCODE_ARG_LEN);
 		// Get next opcode
@@ -358,16 +402,16 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 		strcat(opCodeInfo, argStr);
 
 		objMethod.opcodeInfo.push_back(std::string(opCodeInfo));
-		printf("\tobjMethod.opcodeInfo.size() = %d and add %s . \r\n", 
-			objMethod.opcodeInfo.size(), opCodeInfo);
+		// printf("\tobjMethod.opcodeInfo.size() = %d and add %s . \r\n", 
+		//  	objMethod.opcodeInfo.size(), opCodeInfo);
 
-		if(m_scode_method_veclist.size() >= 1273)
-		{
-			if(objMethod.opcodeInfo.size() == 64)
-			{
-				printf("AAA");
-			}
-		}
+//		if(m_scode_method_veclist.size() >= 1273)
+//		{
+//			if(objMethod.opcodeInfo.size() == 64)
+//			{
+//				printf("AAA");
+//			}
+//		}
 		// Quit when we reach the first return, unless there's a jump that
 		// takes us past it (not sure this is sufficient test?)
 		switch (opCode)
@@ -393,8 +437,8 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 			case g_scode_JumpFarIntGtEq:
 			case g_scode_JumpFarIntLt:
 			case g_scode_JumpFarIntLtEq:  // update maxjmp as needed
-				if (m_cFileBufPtr - m_fileBuf + atoi(argStr) > maxjmp)
-					maxjmp = m_cFileBufPtr - m_fileBuf + atoi(argStr);
+				if (opPos + atoi(argStr) > maxjmp)
+					maxjmp = opPos + atoi(argStr);
 				break;
 
 			case g_scode_ReturnVoid:
@@ -596,20 +640,21 @@ void SCodeReader::parseMethods(unsigned int methodTabBix)
     {
 		objMethod.opcodeInfo.reserve(102400);
 		objMethod.opcodeInfo.clear();
-		if(m_scode_method_veclist.size() == 1273)
-		{
-			printf("AAA");
-		}
+//		if(m_scode_method_veclist.size() == 1273)
+//		{
+//			printf("AAA");
+//		}
 		int iRet = parseMethod(objMethod, -1, false);
 		if (iRet == -1)
 		{
 			break;
 		}
-		// printMethod(objMethod, false);
-		printf("\tm_scode_method_veclist.size() = %d at %d (%08X, %08X). \r\n", 
-			m_scode_method_veclist.size(), cImageEnd - m_cFileBufPtr, cImageEnd, m_cFileBufPtr);
+		// printf("\tm_scode_method_veclist.size() = %d at %d (%08X, %08X). \r\n", 
+		//	m_scode_method_veclist.size(), cImageEnd - m_cFileBufPtr, cImageEnd, m_cFileBufPtr);
 		m_scode_method_veclist.push_back(objMethod);
     }
+	printf("m_scode_method_veclist.size() = %d at %d (%08X, %08X). \r\n", 
+		m_scode_method_veclist.size(), cImageEnd - m_cFileBufPtr, cImageEnd, m_cFileBufPtr);
 }
 
 void SCodeReader::parseTests()
@@ -629,6 +674,7 @@ void SCodeReader::parseTests()
 			m_scode_test_table[i].codeBix = calcAndSkipUnsignedShortValue();
 		//	System.out.print("\nTest " + i + ": qname bix = 0x" + tHS(slotBix));
 		//	System.out.println(", code bix = 0x" + tHS(codeBix));
+			parseQnameSlot(m_scode_test_table[i].qnameSlot, m_scode_test_table[i].slotBix);
 		//	System.out.println("  Name = " + parseQnameSlot(slotBix));
 		//	System.out.println();
 
@@ -636,6 +682,25 @@ void SCodeReader::parseTests()
 		}
 	}
 }
+
+void SCodeReader::parseQnameSlot(SCODE_TEST_QNAMESLOT& objQnameSlot, int bi)
+{                               
+    unsigned char * savePos = m_cFileBufPtr;
+
+	m_cFileBufPtr = m_fileBuf + bi * m_head_blockSize;
+    objQnameSlot.qnameBix  = calcAndSkipUnsignedShortValue();
+    objQnameSlot.methodBix = calcAndSkipUnsignedShortValue();
+
+	m_cFileBufPtr = m_fileBuf + objQnameSlot.qnameBix * m_head_blockSize;
+    objQnameSlot.typeNameBix = calcAndSkipUnsignedShortValue();
+    objQnameSlot.slotNameBix = calcAndSkipUnsignedShortValue();
+    parseStr(objQnameSlot.typeName, objQnameSlot.typeNameBix);
+    parseStr(objQnameSlot.slotName, objQnameSlot.slotNameBix);
+	parseStr(objQnameSlot.methodName, objQnameSlot.methodBix);
+
+	m_cFileBufPtr = savePos;
+    // return (typeName + ":" + slotName + "." + methodName);
+} 
 
 void SCodeReader::parseBootstrap()
 {

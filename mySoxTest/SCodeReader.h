@@ -16,10 +16,21 @@
 
 #define SCODE_ARG_LEN          256 
 #define SCODE_LOGNAME_LEN      256 
-#define SCODE_NAME_LEN   16 // (8 * 2)
+#define SCODE_NAME_LEN         256 
 
 #define  SCODE_DEBUG_FLAG  0x01   // is debug compiled in
 #define  SCODE_TEST_FLAG   0x02   // are unit tests compiled in
+
+//  ** Flag to indicate property versus action
+#define RTFLAGS_ACTION            0x01
+//  ** Flag to indicate configuration property versus runtime property
+#define RTFLAGS_CONFIG            0x02
+//  ** Flag to indicate if a Buf should be treated as a Str
+#define RTFLAGS_AS_STR            0x04
+//  ** Flag to indicate if slot is operator level - if not 
+//  ** operator then a slot is consider admin level.
+#define RTFLAGS_OPERATOR          0x08
+#define RTFLAGS_MAX               (RTFLAGS_ACTION + RTFLAGS_CONFIG + RTFLAGS_AS_STR + RTFLAGS_OPERATOR)
 
 typedef struct _SCODE_KIT_TYPE_SLOT
 {
@@ -71,13 +82,28 @@ typedef struct _SCODE_METHOD
 	std::vector<std::string> opcodeInfo; 
 } SCODE_METHOD, *PSCODE_METHOD;
 
+typedef struct _SCODE_TEST_QNAMESLOT
+{
+    unsigned short qnameBix;
+    unsigned short methodBix;
+
+    unsigned short typeNameBix;
+    unsigned short slotNameBix;
+
+    char typeName[SCODE_LOGNAME_LEN];
+    char slotName[SCODE_LOGNAME_LEN];
+    char methodName[SCODE_LOGNAME_LEN];
+} SCODE_TEST_QNAMESLOT, *PSCODE_TEST_QNAMESLOT;
+
 typedef struct _SCODE_TEST
 {
     unsigned short slotBix;
     unsigned short codeBix;
+	SCODE_TEST_QNAMESLOT qnameSlot;
 	SCODE_METHOD   method; 
 } SCODE_TEST, *PSCODE_TEST;
 
+// Based on SCodeValidator.java
 class SCodeReader  
 {
 public:
@@ -95,11 +121,13 @@ private:
 	void parseMethods(unsigned int endLogBix);
 	int  parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestorePos);
 	void parseTests();
+	void parseQnameSlot(SCODE_TEST_QNAMESLOT& objQnameSlot, int bi);
 	void parseBootstrap();
 
 	void setSCodeHeader();
 	void printSCodeHeader();
 	void printSCodeKits();
+	void generateRtFlagsInfo(char * cInfo, int rtFlags);
 	void printSCodeLogs();
 	void printTests();
 	

@@ -8,19 +8,85 @@
 #include <memory.h>
 #include "SabReader.h"
 
-#define SAB_NAME_LEN   16 // (8 * 2)
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 SabReader::SabReader()
 {
+	// svm use little endian
+	setLittleEndian();
 	m_fileBuf = NULL;
 }
 
 SabReader::~SabReader()
 {
 
+}
+unsigned short SabReader::calcAndSkipUnsignedShortValue()
+{
+	unsigned short uValue = 0x00;
+	if (m_bBigEndian)
+	{
+		uValue        = (unsigned char)m_cFileBufPtr[0];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[1];
+	}
+	else 
+	{
+		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[0];
+	}
+	m_cFileBufPtr += 2;
+	return uValue;
+}
+
+unsigned int SabReader::calcAndSkipUnsignedIntValue()
+{
+	unsigned int uValue = 0x00;
+	if (m_bBigEndian)
+	{
+		uValue        = (unsigned char)m_cFileBufPtr[0];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[2];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[3];
+	}
+	else 
+	{
+		uValue        = (unsigned char)m_cFileBufPtr[3];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[2];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)m_cFileBufPtr[0];
+	}
+	m_cFileBufPtr += 4;
+	return uValue;
+}
+
+#pragma warning(disable : 4244)
+unsigned long  SabReader::calcAndSkipUnsignedLongValue()
+{
+	unsigned long uValue = 0x00;
+	unsigned int uValueOne = 0x00;
+	uValueOne = calcAndSkipUnsignedIntValue();
+	unsigned int uValueTwo = 0x00;
+	uValueTwo = calcAndSkipUnsignedIntValue();
+	
+	if (m_bBigEndian)
+	{
+		uValue = uValueOne * 0x100000000 + uValueTwo;
+	}
+	else 
+	{
+		uValue = uValueTwo * 0x100000000 + uValueOne;
+	}
+	return uValue;
 }
 
 // 这里补充一下sab文件的串行化二进制结构。
@@ -53,32 +119,46 @@ void SabReader::readSabFile(char * cFileName)
 	m_cFileBufPtr += 4;
 	memcpy(m_head_Version, m_cFileBufPtr, 4);
 	m_cFileBufPtr += 4;
-	m_schema_count = m_cFileBufPtr[0];
-	m_cFileBufPtr ++;
 	loadSchema();
-	m_maxid = m_cFileBufPtr[0] * 0x100 + m_cFileBufPtr[1];
+	printSchema();
+	m_maxid = calcAndSkipUnsignedShortValue();
 	loadComponents();
 }
 
+#define SYS_KITSLEN     1
 void SabReader::loadSchema()
 {
+	m_numkits = m_cFileBufPtr[0];
+	m_cFileBufPtr ++;
+//	if (m_numkits > SYS_KITSLEN)
+//	{
+//		printf("m_numkits = %d.\r\n", m_numkits);
+//		return;
+//	}
+	m_kitIdMap = (int *)malloc(sizeof(int) * m_numkits);
+    int n = m_numkits;
+
 	// loadSchema
-	m_schema_kit_list = (SCHEMA_KIT *)malloc(m_schema_count * sizeof(SCHEMA_KIT *));
-	for (int i = 0 ; i < m_schema_count; i++)
+	m_schema_kit_list = (SCHEMA_KIT *)malloc(m_numkits * sizeof(SCHEMA_KIT *));
+	memset(m_schema_kit_list, 0x00, m_numkits * sizeof(SCHEMA_KIT *));
+	for (int i = 0 ; i < m_numkits; i++)
 	{
-		m_schema_kit_list[i].name = (char *)malloc(SAB_NAME_LEN);
-		memset(m_schema_kit_list[i].name, 0x00, SAB_NAME_LEN);
-		strcpy(m_schema_kit_list[i].name, (char *)m_cFileBufPtr);
-		m_cFileBufPtr += strlen((char *)m_cFileBufPtr);
-		m_schema_kit_list[i].checksum        = (unsigned char)m_cFileBufPtr[0];
-		m_schema_kit_list[i].checksum       *= 0x100;
-		m_schema_kit_list[i].checksum       += (unsigned char)m_cFileBufPtr[1];
-		m_schema_kit_list[i].checksum       *= 0x100;
-		m_schema_kit_list[i].checksum       += (unsigned char)m_cFileBufPtr[2];
-		m_schema_kit_list[i].checksum       *= 0x100;
-		m_schema_kit_list[i].checksum       += (unsigned char)m_cFileBufPtr[3];
-		m_cFileBufPtr += 4;
+		memset(m_schema_kit_list[i].cName, 0x00, SAB_NAME_LEN);
+		strcpy(m_schema_kit_list[i].cName, (char *)m_cFileBufPtr);
+		m_cFileBufPtr += strlen((char *)m_cFileBufPtr) + 1;
+		m_schema_kit_list[i].checksum        = calcAndSkipUnsignedIntValue();
+
+		// m_kitIdMap[ m_numkits-n-1 ] = kit.id;
 	}
+}
+
+void SabReader::printSchema()
+{
+	for (int i=0; i< m_numkits; ++i) 
+    {
+		printf("Sab::Schema[%d].(cName, checksum) = (%s, %04X) \r\n", i, 
+			m_schema_kit_list[i].cName, m_schema_kit_list[i].checksum);
+	}	
 }
 
 // 这里补充一下sab文件的串行化二进制结构。
@@ -99,35 +179,45 @@ void SabReader::loadComponents()
 {
 	while (1)
 	{
-		int compId = 0;
-		compId = m_cFileBufPtr[0] * 0x100 + m_cFileBufPtr[1];
-		m_cFileBufPtr += 2;
-		if (compId == 0xFFFF) 
+		int compId = calcAndSkipUnsignedShortValue();
+		if ((compId == 0xFFFF) | (compId < 0)) 
 			break;
 		unsigned char kit_id  = m_cFileBufPtr[0];
 		unsigned char type_id = m_cFileBufPtr[1];
 		m_cFileBufPtr += 2;
-
 		loadAppComp();
 	}
 }
 
-void SabReader::loadAppComp()
+int SabReader::loadAppComp()
 {
 	char name[SAB_NAME_LEN];
 	strcpy(name, (char *)m_cFileBufPtr);
-	m_cFileBufPtr += strlen((char *)m_cFileBufPtr);
+	m_cFileBufPtr += strlen((char *)m_cFileBufPtr) + 1;
 	
-	unsigned short parent   = m_cFileBufPtr[0] * 0x100 + m_cFileBufPtr[1];
-	m_cFileBufPtr += 2;
-	unsigned short children = m_cFileBufPtr[0] * 0x100 + m_cFileBufPtr[1];
-	m_cFileBufPtr += 2;
-	unsigned short nextSibling = m_cFileBufPtr[0] * 0x100 + m_cFileBufPtr[1];
-	m_cFileBufPtr += 2;
-	loadProps();
+	unsigned short parent      = calcAndSkipUnsignedShortValue();
+	unsigned short children    = calcAndSkipUnsignedShortValue();
+	unsigned short nextSibling = calcAndSkipUnsignedShortValue();
+	loadProps('c');
+	if (m_cFileBufPtr[0] == ';')
+	{
+		m_cFileBufPtr++;
+		return 0;
+	}
+	else
+	{
+		m_cFileBufPtr++;
+		return 1;
+	}
 }
 
-void SabReader::loadProps()
+//  **
+//  ** Load the property values to the output stream.
+//  ** Filter:
+//  **   0   = all
+//  **   'c' = config only
+//  **   'r' = runtime only
+void SabReader::loadProps(char filter)
 {
 	
 }

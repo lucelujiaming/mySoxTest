@@ -60,8 +60,8 @@ void testSoxMsg()
 
 int main(int argc, char* argv[])
 {
-// 	testSabReader();
 	testSCodeReader();
+ 	testSabReader();
 	// testSoxMsg();
 	printf("Hello World!\n");
 	return 0;

@@ -546,6 +546,7 @@ static const char * g_scode_names[] =
     "LoadArrayLiteral",   // 238
     "LoadSlotId",         // 239
   };
+#define  SCODE_NAME_IDX_MAX  240
 
   ////////////////////////////////////////////////////////////////
 // OpCode Argument Types
@@ -677,7 +678,7 @@ static int scode_argType(int opcode)
 
 static const char * get_scode_name(int opcode)
 {
-	if (opcode < 0 || opcode >= sizeof(g_scode_names))
+	if (opcode < 0 || opcode >= SCODE_NAME_IDX_MAX) // sizeof(g_scode_names))
 		return "?";
 	else
 		return g_scode_names[opcode];

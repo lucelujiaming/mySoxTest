@@ -43,10 +43,18 @@ typedef struct _SCHEMA_KIT
 	int        checksum;
 } SCHEMA_KIT, *PSCHEMA_KIT;
 
+typedef struct _SAB_LINK
+{
+	int      fromComp;
+	int      fromSlot;
+	int      toComp;
+	int      toSlot;
+} SAB_LINK, *PSAB_LINK;
+
 typedef struct _SAB_COMP_INFO
 {
 	int      compID;
-	int      kidID;
+	int      kitID;
 	int      typeID;
 	char     cName[SAB_NAME_LEN];
 } SAB_COMP_INFO, *PSAB_COMP_INFO;
@@ -85,7 +93,11 @@ private:
 	void loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr);
 	void printProps();
 	void printSchema();
+	void createSchemaAssociationTable();
 	
+	void loadLinks();
+	void printLinks();
+
 public:
 	void           setBigEndian() { m_bBigEndian = true; }
 	void           setLittleEndian() { m_bBigEndian = false; }
@@ -110,8 +122,11 @@ private:
 	unsigned char       m_numkits; 
 	SCHEMA_KIT *        m_schema_kit_list;
 	unsigned short      m_maxid; 
+	
+	int                 m_objSchemaAssociationTable[256];
 
 	std::vector<SAB_PROP>    m_objSabPropList;
+	std::vector<SAB_LINK>    m_objSabLinkList;
 };
 
 #endif // !defined(AFX_SABREADER_H__B4EE535F_3490_4897_A9A6_2888CD958741__INCLUDED_)

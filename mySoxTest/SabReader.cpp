@@ -128,16 +128,34 @@ void SabReader::readSabFile(char * cFileName)
 		printf("We need the scode file.");
 		return;
 	}
-	m_objFileReader.readSCodeFileBuffer(&m_fileBuf, cFileName);
+	int iFileLen = m_objFileReader.readSCodeFileBuffer(&m_fileBuf, cFileName);
 	m_cFileBufPtr = m_fileBuf;
 	memcpy(m_head_magic, m_cFileBufPtr, 4);
 	m_cFileBufPtr += 4;
 	memcpy(m_head_Version, m_cFileBufPtr, 4);
 	m_cFileBufPtr += 4;
 	loadSchema();
+	createSchemaAssociationTable();
 	printSchema();
 	m_maxid = calcAndSkipUnsignedShortValue();
+	// components
 	loadComponents();
+	if ((m_fileBuf + iFileLen - m_cFileBufPtr) < 4)
+	{
+		printf("Left space is %d and stop analyze \r\n", 
+			(m_fileBuf + iFileLen - m_cFileBufPtr));
+		return;
+	}
+	// links
+	loadLinks();
+	printLinks();
+	if ((m_fileBuf + iFileLen - m_cFileBufPtr) < 4)
+	{
+		printf("Left space is %d and stop analyze \r\n", 
+			(m_fileBuf + iFileLen - m_cFileBufPtr));
+		return;
+	}
+
 }
 
 #define SYS_KITSLEN     1
@@ -168,9 +186,42 @@ void SabReader::printSchema()
 {
 	for (int i=0; i< m_numkits; ++i) 
     {
-		printf("Sab::Schema[%d].(cName, checksum) = (%s, %04X) \r\n", i, 
-			m_schema_kit_list[i].cName, m_schema_kit_list[i].checksum);
-	}	
+		printf("Sab::Schema[%d].(cName, checksum) = (%s, %04X) and relate to %d \r\n", i, 
+			m_schema_kit_list[i].cName, m_schema_kit_list[i].checksum, 
+			m_objSchemaAssociationTable[i]);
+	}
+
+	SCODE_KIT *  objKitsList = m_objSCodeReader.getSCodeKits();
+    int         numberOfKits = m_objSCodeReader.getNumberOfKits();
+
+	printf("==================================== start ==================================== \r\n");
+	for (int j=0; j< numberOfKits; ++j) 
+    {
+		printf("objSCodeKitType[%d] is %s \r\n", j , objKitsList[j].cName);
+	}
+
+
+}
+
+void SabReader::createSchemaAssociationTable()
+{
+	memset(m_objSchemaAssociationTable, 0x00, 256);
+
+	SCODE_KIT *  objKitsList = m_objSCodeReader.getSCodeKits();
+    int         numberOfKits = m_objSCodeReader.getNumberOfKits();
+
+	for (int i=0; i< m_numkits; ++i) 
+    {	
+		for (int j=0; j< numberOfKits; ++j) 
+		{
+			if (stricmp(m_schema_kit_list[i].cName, objKitsList[j].cName) == 0)
+			{
+				m_objSchemaAssociationTable[i] = j;
+				break;
+			}
+		}
+	}
+	m_objSchemaAssociationTable[m_numkits] = 0xFF;
 }
 
 // 这里补充一下sab文件的串行化二进制结构。
@@ -196,7 +247,7 @@ void SabReader::loadComponents()
 		objSabCompInfo.compID = calcAndSkipUnsignedShortValue();
 		if ((objSabCompInfo.compID == 0xFFFF) || (objSabCompInfo.compID < 0)) 
 			break;
-		objSabCompInfo.kidID  = m_cFileBufPtr[0];
+		objSabCompInfo.kitID  = m_cFileBufPtr[0];
 		objSabCompInfo.typeID = m_cFileBufPtr[1];
 		m_cFileBufPtr += 2;
 		loadAppComp(objSabCompInfo);
@@ -214,26 +265,32 @@ int SabReader::loadAppComp(SAB_COMP_INFO& objSabCompInfo)
 	unsigned short nextSibling = calcAndSkipUnsignedShortValue();
 
 	SCODE_KIT *  objKitsList = m_objSCodeReader.getSCodeKits();
-	for (int i = 0; i < objKitsList[objSabCompInfo.compID].typesLen; i++)
+    int         numberOfKits = m_objSCodeReader.getNumberOfKits();
+
+	// if (stricmp(objKitsList[objSabCompInfo.kitID].kit_type_list[objSabCompInfo.typeID].cName, objSabCompInfo.cName) == 0)
+	// 
+	objSCodeKitType = NULL;
+
+	if(objSabCompInfo.kitID >= m_numkits)
 	{
-		if (stricmp(objKitsList[objSabCompInfo.compID].kit_type_list[i].cName, objSabCompInfo.cName) == 0)
-		{
-			objSCodeKitType = &objKitsList[objSabCompInfo.compID].kit_type_list[i];
-			break;
-		}
-	}
-	loadProps(objSabCompInfo, objSCodeKitType, 'c');
-	printProps();
-	if (m_cFileBufPtr[0] == ';')
-	{
-		m_cFileBufPtr++;
-		return 0;
-	}
-	else
-	{
-		m_cFileBufPtr++;
 		return 1;
 	}
+	int iAssociationIdx = m_objSchemaAssociationTable[objSabCompInfo.kitID];
+
+	objSCodeKitType = &objKitsList[iAssociationIdx].kit_type_list[objSabCompInfo.typeID];
+	if (objSCodeKitType)
+	{
+		printf("objSCodeKitType is %s::%s \r\n", objKitsList[iAssociationIdx].cName, 
+			objKitsList[iAssociationIdx].kit_type_list[objSabCompInfo.typeID].cName);
+		loadProps(objSabCompInfo, objSCodeKitType, 'c');
+		printProps();
+		if (m_cFileBufPtr[0] == ';')
+		{
+			m_cFileBufPtr++;
+			return 0;
+		}
+	}
+	return 1;
 }
 
 void SabReader::printProps()
@@ -243,7 +300,7 @@ void SabReader::printProps()
 	for (iter = m_objSabPropList.begin(); iter != m_objSabPropList.end(); iter++)
 	{
 		printf("objSabCompInfo(compID, nameBix, cName) = (%02d, %02d, %02d, %s), (propType) = (%03X) ", 
-			iter->objSabCompInfo.compID, iter->objSabCompInfo.kidID, 
+			iter->objSabCompInfo.compID, iter->objSabCompInfo.kitID, 
 			iter->objSabCompInfo.typeID, iter->objSabCompInfo.cName,
 			iter->propType);
 		switch (iter->propType)
@@ -351,4 +408,34 @@ void SabReader::loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr)
 		objSabProp.shortRet = calcAndSkipUnsignedShortValue();
 		break;
     }
+}
+
+void SabReader::loadLinks()
+{
+	SAB_LINK objSabLinkInfo;
+	while (1)
+	{
+		memset(&objSabLinkInfo, 0x00, sizeof(SAB_LINK));
+		objSabLinkInfo.fromComp  = calcAndSkipUnsignedShortValue();
+		if ((objSabLinkInfo.fromComp == 0xFFFF) || (objSabLinkInfo.fromComp < 0)) 
+			break;
+		objSabLinkInfo.fromSlot  = m_cFileBufPtr[0];
+		m_cFileBufPtr++;
+		objSabLinkInfo.toComp    = calcAndSkipUnsignedShortValue();
+		objSabLinkInfo.toSlot    = m_cFileBufPtr[0];
+		m_cFileBufPtr++;
+		m_objSabLinkList.push_back(objSabLinkInfo);
+	}
+}
+
+void SabReader::printLinks()
+{
+	std::vector<SAB_LINK>::iterator iter;
+	printf("==================================== start ==================================== \r\n");
+	for (iter = m_objSabLinkList.begin(); iter != m_objSabLinkList.end(); iter++)
+	{
+		printf("SAB_LINK(fromComp, fromSlot, toComp, toSlot) = (%02d, %02d, %02d, %02d) \r\n", 
+			iter->fromComp, iter->fromSlot, iter->toComp, iter->toSlot);
+	}
+	printf("====================================  end  ==================================== \r\n");
 }

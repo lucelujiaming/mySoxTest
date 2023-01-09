@@ -58,7 +58,7 @@ int FileReader::CalcAlign(int value , int align)
 }
 
 
-void FileReader::readSCodeFileBuffer(unsigned char ** cFileBuf, char * cFileName)
+int FileReader::readSCodeFileBuffer(unsigned char ** cFileBuf, char * cFileName)
 {
 	int iFileSize = GetFileSize(cFileName);
 	FILE * fpSCode = fopen(cFileName, "rb");
@@ -70,4 +70,5 @@ void FileReader::readSCodeFileBuffer(unsigned char ** cFileBuf, char * cFileName
 	*cFileBuf = (unsigned char *)malloc(CalcAlign(iFileSize,4));
 	int iLen = fread(*cFileBuf, 1, CalcAlign(iFileSize,4), fpSCode);
 	fclose(fpSCode);
+	return iLen;
 }

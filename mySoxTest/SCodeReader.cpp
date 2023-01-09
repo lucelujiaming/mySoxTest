@@ -21,6 +21,8 @@ SCodeReader::SCodeReader()
 	setLittleEndian();
 	m_fileBuf = NULL;
 	m_scode_log_veclist.reserve(8);
+	m_scode_kit_list = NULL;
+	m_scode_test_table = NULL;
 }
 
 SCodeReader::~SCodeReader()
@@ -142,6 +144,33 @@ void SCodeReader::setSCodeHeader()
 	m_head_debugFlag    = (m_head_scodeFlags & SCODE_DEBUG_FLAG)!=0;
 	m_head_testFlag     = (m_head_scodeFlags & SCODE_TEST_FLAG)!=0;
 	m_cFileBufPtr += 2;
+}
+
+//	**
+//	** Return if this slot is a property against the specified
+//	** filter:
+//	**    '*' = any property
+//	**    'c' = only config properties
+//	**    'r' = only runtime properties
+//	**    'C' = only operator level config properties
+//	**    'R' = only operator level runtime properties
+//	**
+bool SCodeReader::matchRtFlagsProp(int filter, int rtFlags)
+{
+	if (isRtFlagsProp(rtFlags))
+	{
+		if (filter == '*') 
+			return true;
+		if (filter == 'c') 
+			return (rtFlags & RTFLAGS_CONFIG) != 0;
+		if (filter == 'r') 
+			return (rtFlags & RTFLAGS_CONFIG) == 0;
+		if (filter == 'C') 
+			return (rtFlags & (RTFLAGS_CONFIG|RTFLAGS_OPERATOR)) == (RTFLAGS_CONFIG|RTFLAGS_OPERATOR);
+		if (filter == 'R') 
+			return (rtFlags & (RTFLAGS_CONFIG|RTFLAGS_OPERATOR)) == RTFLAGS_OPERATOR;
+	}
+	return false;
 }
 
 void SCodeReader::generateRtFlagsInfo(char * cRtFlagsInfo, int rtFlags)
@@ -458,50 +487,6 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 		m_cFileBufPtr = savePos;
 	}
 	return 0;
-}
-
-inline float intBitsToFloat(int i)
-{
-    union
-    {
-        int i;
-        float f;
-    } u;
-    u.i = i;
-    return u.f;
-}
- 
-inline int floatToRawIntBits(float f)
-{
-    union
-    {
-    int i;
-    float f;
-    } u;
-    u.f = f;
-    return u.i;
-}
-
-inline double longBitsToDouble(long i)
-{
-    union
-    {
-        long i;
-        double f;
-    } u;
-    u.i = i;
-    return u.f;
-}
- 
-inline long doubleToRawLongBits(double f)
-{
-    union
-    {
-    long i;
-    double f;
-    } u;
-    u.f = f;
-    return u.i;
 }
 
 int SCodeReader::getArgString(char *argStr, int op)

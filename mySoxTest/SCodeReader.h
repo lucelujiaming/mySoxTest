@@ -108,8 +108,19 @@ class SCodeReader
 {
 public:
 	void readSCodeFile(char * cFileName);
+	SCODE_KIT * getSCodeKits() { return m_scode_kit_list; }
+	int         getNumberOfKits() { return (int)m_head_numberOfKits; }
+	
 	SCodeReader();
 	virtual ~SCodeReader();
+
+public:
+	bool matchRtFlagsProp(int filter, int rtFlags);
+	bool isRtFlagsProp(int rtFlags)     { return (rtFlags & RTFLAGS_ACTION) == 0; }
+	bool isRtFlagsAction(int rtFlags)   { return (rtFlags & RTFLAGS_ACTION) != 0; }
+	bool isRtFlagsConfig(int rtFlags)   { return (rtFlags & RTFLAGS_CONFIG) != 0; }
+	bool isRtFlagsAsStr(int rtFlags)    { return (rtFlags & RTFLAGS_AS_STR) != 0; }
+	bool isRtFlagsOperator(int rtFlags) { return (rtFlags & RTFLAGS_OPERATOR) != 0; }
 
 private:
 	void parseStr(char * strBuf, unsigned int iOffset);

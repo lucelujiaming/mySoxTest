@@ -31,6 +31,7 @@ void testSabReader()
 	{
 		if(strcmp(cPos, "app.sab") == 0)
 		{
+			objSabReader.loadSCodeFile("./app.scode");
 			objSabReader.readSabFile(cCurrentURI);
 		}
 	}
@@ -60,7 +61,7 @@ void testSoxMsg()
 
 int main(int argc, char* argv[])
 {
-	testSCodeReader();
+	// testSCodeReader();
  	testSabReader();
 	// testSoxMsg();
 	printf("Hello World!\n");

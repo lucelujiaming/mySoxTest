@@ -684,4 +684,50 @@ static const char * get_scode_name(int opcode)
 		return g_scode_names[opcode];
 }
 
+
+inline float intBitsToFloat(int i)
+{
+    union
+    {
+        int i;
+        float f;
+    } u;
+    u.i = i;
+    return u.f;
+}
+ 
+inline int floatToRawIntBits(float f)
+{
+    union
+    {
+    int i;
+    float f;
+    } u;
+    u.f = f;
+    return u.i;
+}
+
+inline double longBitsToDouble(long i)
+{
+    union
+    {
+        long i;
+        double f;
+    } u;
+    u.i = i;
+    return u.f;
+}
+ 
+inline long doubleToRawLongBits(double f)
+{
+    union
+    {
+    long i;
+    double f;
+    } u;
+    u.f = f;
+    return u.i;
+}
+
+
 #endif // !defined(AFX_SCODE_H)

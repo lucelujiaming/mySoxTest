@@ -10,6 +10,8 @@
 #endif // _MSC_VER > 1000
 
 #include "FileReader.h"
+#include "SCodeReader.h"
+
 #define SAB_NAME_LEN   16 // (8 * 2)
 
 // I got it by observation and I am not sure about it .
@@ -41,10 +43,36 @@ typedef struct _SCHEMA_KIT
 	int        checksum;
 } SCHEMA_KIT, *PSCHEMA_KIT;
 
+typedef struct _SAB_COMP_INFO
+{
+	int      compID;
+	int      kidID;
+	int      typeID;
+	char     cName[SAB_NAME_LEN];
+} SAB_COMP_INFO, *PSAB_COMP_INFO;
+
+typedef struct _SAB_PROP
+{
+	SAB_COMP_INFO        objSabCompInfo;
+	int                  propType;
+	unsigned int         uBufLen ;
+	union {
+		bool            bRet ;
+		unsigned char   cByte ;
+		unsigned short  shortRet ;
+		unsigned int    uRet ;
+		unsigned long   ulRet ;
+		double          udRet ;
+		char            cBuf[1024] ;
+	};
+} SAB_PROP, *PSAB_PROP;
+
+
 // Based on App.sedona
 class SabReader  
 {
 public:
+	bool loadSCodeFile(char * cFileName);
 	void readSabFile(char * cFileName);
 	SabReader();
 	virtual ~SabReader();
@@ -52,9 +80,10 @@ public:
 private:
 	void loadSchema();
 	void loadComponents();
-	int loadAppComp();
-	void loadProps(char filter);
-
+	int  loadAppComp(SAB_COMP_INFO& objSabCompInfo);
+	void loadProps(SAB_COMP_INFO& objSabCompInfo, SCODE_KIT_TYPE * objSCodeKitType, char filter);
+	void loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr);
+	void printProps();
 	void printSchema();
 	
 public:
@@ -70,6 +99,7 @@ private:
 	
 private:
 	FileReader         m_objFileReader;
+	SCodeReader        m_objSCodeReader;
 	
 	unsigned char *    m_fileBuf;
 	unsigned char *    m_cFileBufPtr;
@@ -81,8 +111,7 @@ private:
 	SCHEMA_KIT *        m_schema_kit_list;
 	unsigned short      m_maxid; 
 
-	int        *        m_kitIdMap;
-	
+	std::vector<SAB_PROP>    m_objSabPropList;
 };
 
 #endif // !defined(AFX_SABREADER_H__B4EE535F_3490_4897_A9A6_2888CD958741__INCLUDED_)

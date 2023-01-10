@@ -85,6 +85,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\base64_convert.cpp
+
+!IF  "$(CFG)" == "mySoxTest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "mySoxTest - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\DASP.cpp
 # End Source File
 # Begin Source File
@@ -142,6 +155,10 @@ SOURCE=.\StdAfx.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\base64_convert.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\DASP.h

@@ -17,6 +17,7 @@ void testSCodeReader()
 		if(strcmp(cPos, "app.scode") == 0)
 		{
 			objSCodeReader.readSCodeFile(cCurrentURI);
+			objSCodeReader.releaseSCodeFileBuffer();
 		}
 	}
 }
@@ -31,8 +32,16 @@ void testSabReader()
 	{
 		if(strcmp(cPos, "app.sab") == 0)
 		{
-			objSabReader.loadSCodeFile("./app.scode");
-			objSabReader.readSabFile(cCurrentURI);
+			bool bRet = objSabReader.loadSCodeFile("./app.scode");
+			if (bRet)
+			{
+				objSabReader.readSabFile(cCurrentURI);
+				// We can use Sab info now.
+				// After we finish the operation, we should release memory of SCode and Sab File
+				objSabReader.unloadSCodeFile();
+				objSabReader.releaseSabFileBuffer();
+				return ;
+			}
 		}
 	}
 }
@@ -41,15 +50,22 @@ void testSoxMsg()
 {
 	char cRet = 0 ;
 	CSoxMsg objCSoxMsg ;
+	objCSoxMsg.loadSabFile("./app.sab");
 	objCSoxMsg.start();
 	
 	objCSoxMsg.handShake();
 	objCSoxMsg.startRecvThread();
 
-	objCSoxMsg.sendFileOpenRequest('g', "./app.scode", 
-								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 
-								  1024);
-						//	  ,  "app.scode.name",  "app.scode.value");
+	SOX_PROP objSoxProp[2];
+	objSoxProp[0].uRet    = 1;
+	objSoxProp[1].uBufLen = 1;
+	memset(objSoxProp[1].cBuf, 0x00, PROP_VALUE_LEN);
+	objCSoxMsg.sendAddRequest(7, 11, 0, "AliasVa", objSoxProp, 2);
+
+//	objCSoxMsg.sendFileOpenRequest('g', "./app.scode", 
+//								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 
+//								  1024);
+//						//	  ,  "app.scode.name",  "app.scode.value");
 	
 	while (objCSoxMsg.getRecvThreadStatus() == FALSE)
 	{
@@ -59,11 +75,23 @@ void testSoxMsg()
 	objCSoxMsg.close();
 }
 
+void test_buf(char ** buf)
+{
+	strcpy(*buf, "12345");
+	*buf += 5;
+}
+
+
 int main(int argc, char* argv[])
 {
-	// testSCodeReader();
- 	testSabReader();
-	// testSoxMsg();
+//	char cTest[100];
+//	char *cTestPtr = cTest;
+//	test_buf(&cTestPtr);
+//	test_buf(&cTestPtr);
+//	test_buf(&cTestPtr);
+	// // testSCodeReader();
+ 	// testSabReader();
+	testSoxMsg();
 	printf("Hello World!\n");
 	return 0;
 }

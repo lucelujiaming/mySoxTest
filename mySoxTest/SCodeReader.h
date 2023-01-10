@@ -32,6 +32,12 @@
 #define RTFLAGS_OPERATOR          0x08
 #define RTFLAGS_MAX               (RTFLAGS_ACTION + RTFLAGS_CONFIG + RTFLAGS_AS_STR + RTFLAGS_OPERATOR)
 
+#define RTFLAGS_FILTER_ANY                    '*'
+#define RTFLAGS_FILTER_CONFIG                 'c'
+#define RTFLAGS_FILTER_RUNTIME                'r'
+#define RTFLAGS_FILTER_OPERATOR_CONFIG        'C'
+#define RTFLAGS_FILTER_OPERATOR_RUNTIME       'R'
+
 typedef struct _SCODE_KIT_TYPE_SLOT
 {
     int id;
@@ -107,7 +113,8 @@ typedef struct _SCODE_TEST
 class SCodeReader  
 {
 public:
-	void readSCodeFile(char * cFileName);
+	bool readSCodeFile(char * cFileName);
+	void releaseSCodeFileBuffer();
 	SCODE_KIT * getSCodeKits() { return m_scode_kit_list; }
 	int         getNumberOfKits() { return (int)m_head_numberOfKits; }
 	

@@ -3,27 +3,6 @@
 #include "SoxMsg.h"
 #include <windows.h>
 
-#pragma pack(1)
-typedef struct _SOX_MESSAGE
-{
-	char      cmd;
-	char      seqNum;
-//	u1[]    payload
-} SOX_MESSAGE, *PSOX_MESSAGE;
-
-typedef struct _SOX_FILEOPEN_MESSAGE
-{
-	SOX_MESSAGE     header;
-	char            seqNum;
-	char            method;
-	char *          uri_ptr;
-	unsigned int    fileSize;
-	short			suggestedChunkSize;
-	char *          headers_name_ptr;
-	char *          value_ptr;
-} SOX_FILEOPEN_MESSAGE, *PSOX_FILEOPEN_MESSAGE;
-
-
 CSoxMsg::CSoxMsg()
 {
 	m_bExitRecvThread = TRUE;
@@ -33,6 +12,38 @@ CSoxMsg::CSoxMsg()
 
 CSoxMsg::~CSoxMsg()
 {
+}
+
+bool CSoxMsg::loadSabFile(char * cFileName)
+{
+	char * cReplacePtr;
+	char cScodePath[URI_SUGGESTED_LEN];
+	memset(cScodePath, 0x00, URI_SUGGESTED_LEN);
+	strncpy(cScodePath, cFileName, URI_SUGGESTED_LEN);
+	// Replace *.sab to *.scode
+	cReplacePtr = strstr(cScodePath, ".sab");
+	if (cReplacePtr)
+	{
+		strcpy(cReplacePtr, ".scode");
+	}
+	else
+	{
+		return false;
+	}
+
+	bool bRet = m_objSabReader.loadSCodeFile(cScodePath);
+	if (bRet)
+	{
+		int iRet = m_objSabReader.readSabFile(cFileName);
+		return (iRet == SAB_OK);
+	}
+	return bRet;
+}
+
+void CSoxMsg::unloadSabFile()
+{
+	m_objSabReader.unloadSCodeFile();
+	m_objSabReader.releaseSabFileBuffer();
 }
 
 int CSoxMsg::start()
@@ -245,18 +256,109 @@ void CSoxMsg::startRecvThread()
 	_beginthread(recv_thread_func, 0, this);
 }
 
+//	a	add	Add a new component to the application
+void CSoxMsg::dealAddRequest(char * cDataBuf, int iDataBufLen)
+{
+	// Not implement
+}
 //	A	add	Add a new component to the application
 void CSoxMsg::dealAddResponse(char * cDataBuf, int iDataBufLen)
 {
+	char replyNum  = cDataBuf[1];
+	char compID    = cDataBuf[2];
+	printf("replyNum = %d, compID = %d.\r\n", (int)replyNum, (int)compID);
+}
+//	a	add	Add a new component to the application
+bool CSoxMsg::sendAddRequest(unsigned short	parentID,
+							 unsigned char   kitId,
+							 unsigned char   typeId,
+							 char *          cName,
+							 SOX_PROP *      configProps, int configPropsLen)
+{
+	unsigned char cPropsBuf[PROP_VALUE_LEN];
+	SCODE_KIT_TYPE * objSCodeKitType = NULL;
+	if (m_objSabReader.getSCodeKits() == NULL)
+	{
+		printf("We need the scode file.");
+		return false;
+	}
+	if (strlen(cName) >= PROP_PROP_NAME)
+	{
+		printf(" Name should be less than eight characters.");
+		return false;
+	}
+	
+	objSCodeKitType = m_objSabReader.getScodeKitType(kitId, typeId);
+	if (objSCodeKitType)
+	{
+		memset(cPropsBuf, 0x00, PROP_VALUE_LEN);
+		int iPropsLen = m_objSabReader.serializePropsBuf(cPropsBuf, 
+			           objSCodeKitType, configProps, configPropsLen);
+		int iDataLen = sizeof(SOX_ADD_REQ) 
+				 + strlen(cName) + iPropsLen + 1;
+		char* msg_buffer = (char *)malloc(iDataLen);
+		char * sendBufPtr = msg_buffer;
+		// u1   'a'
+		sendBufPtr[0] = 'a';
+		// u1   replyNum
+		sendBufPtr[1] = rand() % 0xFF;
+		sendBufPtr += 2;
+		// u2    parentId
+		sendBufPtr[0] = (parentID >> 8) & 0xFF;
+		sendBufPtr[1] =  parentID & 0xFF;
+		sendBufPtr += 2;
+		// u1    kitId
+		sendBufPtr[0] = kitId;
+		// u1    typeId
+		sendBufPtr[1] = typeId;
+		sendBufPtr += 2;
+		// str  uri
+		memcpy(sendBufPtr, cName, strlen(cName));
+		sendBufPtr += strlen(cName) + 1;
+		// val[] configProps
+		memcpy(sendBufPtr, cPropsBuf, iPropsLen);
 
+		m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+		return true;
+	}
+	// SOX_PROP
+	return false;
+}
+
+//	b	fileRename	Rename or move a file
+void CSoxMsg::dealFileRenameRequest(char * cDataBuf, int iDataBufLen)
+{
+	
 }
 //	B	fileRename	Rename or move a file
 void CSoxMsg::dealFileRenameResponse(char * cDataBuf, int iDataBufLen)
 {
 	
 }
+//	b	fileRename	Rename or move a file
+bool CSoxMsg::sendFileRenameRequest()
+{
+	return true;
+	
+}
+//	c	readComp	Read a component in the application
+void CSoxMsg::dealReadCompRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
 //	C	readComp	Read a component in the application
 void CSoxMsg::dealReadCompResponse(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	c	readComp	Read a component in the application
+bool CSoxMsg::sendReadCompRequest()
+{
+	return true;
+
+}
+//	d	delete	Delete an component and its children from the application
+void CSoxMsg::dealReleteRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -265,11 +367,35 @@ void CSoxMsg::dealReleteResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
+//	d	delete	Delete an component and its children from the application
+bool CSoxMsg::sendReleteRequest()
+{
+	return true;
+
+}
+
+//	e	event	COV event for a subscribed component
+void CSoxMsg::dealEventRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
 //	E	event	COV event for a subscribed component
 void CSoxMsg::dealEventResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
+//	e	event	COV event for a subscribed component
+bool CSoxMsg::sendEventRequest()
+{
+
+	return true;
+}
+
+//	f	fileOpen	Begin a get or put file transfer operation
+void CSoxMsg::dealFileOpenRequest(char * cDataBuf, int iDataBufLen)
+{
+}
+
 //	F	fileOpen	Begin a get or put file transfer operation
 void CSoxMsg::dealFileOpenResponse(char * cDataBuf, int iDataBufLen)
 {
@@ -289,270 +415,14 @@ void CSoxMsg::dealFileOpenResponse(char * cDataBuf, int iDataBufLen)
     m_numChunks = m_fileSize/m_actualChunkSize - 1;
     if (m_fileSize % m_actualChunkSize != 0) m_numChunks++;
 }
-//	I	invoke	Invoke a component action
-void CSoxMsg::dealInvokeResponse(char * cDataBuf, int iDataBufLen)
-{
 
-}
-//	k	fileChunk	Receive or send a chunk during a file transfer
-void CSoxMsg::dealFileChunkResponse(char * cDataBuf, int iDataBufLen)
-{
-}
-
-//	l	link	Add or delete a link
-void CSoxMsg::dealLinkResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	n	rename	Rename a component
-void CSoxMsg::dealRenameResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	o	reorder	Reorder a component's children
-void CSoxMsg::dealReorderResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	q	query	Query installed services
-void CSoxMsg::dealQueryResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	r	readProp	Read a single property from a component
-void CSoxMsg::dealReadPropResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	s	subscribe	Subscribe to a component for COV events
-void CSoxMsg::dealSubscribeResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	u	unsubscribe	Unsubscribe from a component for COV events
-void CSoxMsg::dealUnsubscribeResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	v	version	Query for the kits installed
-void CSoxMsg::dealVersionResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	w	write	Write the value of a single component property
-void CSoxMsg::dealWriteResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	y	versionMore	Query for additional version meta-data
-void CSoxMsg::dealVersionMoreResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	z	fileClose	Close a file transfer operation
-void CSoxMsg::dealFileCloseResponse(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	!	error	Response id for a Response that could not be processed
-void CSoxMsg::dealErrorResponse(char * cDataBuf, int iDataBufLen)
-{
-	char cReplyNum = cDataBuf[1];
-	printf("ERROR: %s\r\n", cDataBuf + 2);
-}
-
-//	a	add	Add a new component to the application
-void CSoxMsg::dealAddRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	b	fileRename	Rename or move a file
-void CSoxMsg::dealFileRenameRequest(char * cDataBuf, int iDataBufLen)
-{
-	
-}
-//	c	readComp	Read a component in the application
-void CSoxMsg::dealReadCompRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	d	delete	Delete an component and its children from the application
-void CSoxMsg::dealReleteRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	e	event	COV event for a subscribed component
-void CSoxMsg::dealEventRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
 //	f	fileOpen	Begin a get or put file transfer operation
-void CSoxMsg::dealFileOpenRequest(char * cDataBuf, int iDataBufLen)
-{
-}
-
-//	i	invoke	Invoke a component action
-void CSoxMsg::dealInvokeRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	k	fileChunk	Receive or send a chunk during a file transfer
-void CSoxMsg::dealFileChunkRequest(char * cDataBuf, int iDataBufLen)
-{
-	char cFileChunkName[NAME_BUFFER_LEN];
-	
-	char replyNum  = cDataBuf[1];
-	unsigned short chunkNum  = (unsigned char)cDataBuf[2];
-	chunkNum                *= 0x100;
-	chunkNum                += (unsigned char)cDataBuf[3];
-	unsigned short chunkSize = (unsigned char)cDataBuf[4];
-	chunkSize               *= 0x100; 
-	chunkSize               += (unsigned char)cDataBuf[5];
-	// Create FileChunk Name
-	memset(cFileChunkName, 0x00, NAME_BUFFER_LEN);
-	sprintf(cFileChunkName, "%s.%d", m_currentURI, chunkNum);
-	// Save FileContent
-	char * cFileContent = (char *)malloc(chunkSize + 2);
-	memset(cFileContent, 0x00, chunkSize + 2);
-	memcpy(cFileContent, cDataBuf + 6, chunkSize);
-	FILE * fp = fopen(cFileChunkName, "wb");
-	fwrite(cFileContent, 1, chunkSize, fp);
-	fclose(fp);
-	free(cFileContent);
-
-	if(chunkNum == m_numChunks)
-	{
-		mergeFileChunkToFile();
-		if(strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
-		{
-			m_objSCodeReader.readSCodeFile(m_currentURI);
-		}
-		resetFileOpenInfo();
-	}
-}
-
-void CSoxMsg::resetFileOpenInfo()
-{
-	memset(m_currentURI, 0x00, MAX_BUFFER_LEN);
-	m_fileSize = m_actualChunkSize = m_numChunks = 0;
-}
-
-void CSoxMsg::mergeFileChunkToFile()
-{
-	char cFileName[NAME_BUFFER_LEN];
-	char cFileChunkName[NAME_BUFFER_LEN];
-	char * cFileContent = (char *)malloc(MAX_BUFFER_LEN);
-	
-	memset(cFileName, 0x00, NAME_BUFFER_LEN);
-	sprintf(cFileName, "%s", m_currentURI);
-
-	FILE * fpFile = fopen(cFileName, "wb");
-	for (int i =0; i <= m_numChunks; i++)
-	{
-		// Create FileChunk Name
-		memset(cFileChunkName, 0x00, NAME_BUFFER_LEN);
-		sprintf(cFileChunkName, "%s.%d", m_currentURI, i);
-
-		// Merge FileChunk to File
-		memset(cFileContent, 0x00, MAX_BUFFER_LEN);
-		FILE * fpChunk = fopen(cFileChunkName, "rb");
-		int iLen = fread(cFileContent, 1, MAX_BUFFER_LEN, fpChunk);
-		fclose(fpChunk);
-		remove(cFileChunkName);
-		fwrite(cFileContent, 1, iLen, fpFile);
-	}
-	fclose(fpFile);
-	free(cFileContent);
-}
-
-//	l	link	Add or delete a link
-void CSoxMsg::dealLinkRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	n	rename	Rename a component
-void CSoxMsg::dealRenameRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	o	reorder	Reorder a component's children
-void CSoxMsg::dealReorderRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	q	query	Query installed services
-void CSoxMsg::dealQueryRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	r	readProp	Read a single property from a component
-void CSoxMsg::dealReadPropRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	s	subscribe	Subscribe to a component for COV events
-void CSoxMsg::dealSubscribeRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	u	unsubscribe	Unsubscribe from a component for COV events
-void CSoxMsg::dealUnsubscribeRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	v	version	Query for the kits installed
-void CSoxMsg::dealVersionRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	w	write	Write the value of a single component property
-void CSoxMsg::dealWriteRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	y	versionMore	Query for additional version meta-data
-void CSoxMsg::dealVersionMoreRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-//	z	fileClose	Close a file transfer operation
-void CSoxMsg::dealFileCloseRequest(char * cDataBuf, int iDataBufLen)
-{
-
-}
-
-//	a	add	Add a new component to the application
-void CSoxMsg::sendAddRequest()
-{
-
-}
-//	b	fileRename	Rename or move a file
-void CSoxMsg::sendFileRenameRequest()
-{
-	
-}
-//	c	readComp	Read a component in the application
-void CSoxMsg::sendReadCompRequest()
-{
-
-}
-//	d	delete	Delete an component and its children from the application
-void CSoxMsg::sendReleteRequest()
-{
-
-}
-//	e	event	COV event for a subscribed component
-void CSoxMsg::sendEventRequest()
-{
-
-}
-//	f	fileOpen	Begin a get or put file transfer operation
-void CSoxMsg::sendFileOpenRequest(char method, char * uri, 
+bool CSoxMsg::sendFileOpenRequest(char method, char * uri, 
 								  unsigned int fileSize, 
 								  unsigned short suggestedChunkSize)
 							//	  , char * name, char * value)
 {
-	int iDataLen = sizeof(SOX_FILEOPEN_MESSAGE) 
+	int iDataLen = sizeof(SOX_FILEOPEN_REQ) 
 		+ strlen(uri) + 16; // + strlen(name) + strlen(value) 
 	char* msg_buffer = (char *)malloc(iDataLen);
 	memset(msg_buffer, 0x00, iDataLen);
@@ -594,74 +464,306 @@ void CSoxMsg::sendFileOpenRequest(char method, char * uri,
 	// 
 	resetFileOpenInfo();
 	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	return true;
 }
+
 //	i	invoke	Invoke a component action
-void CSoxMsg::sendInvokeRequest()
+void CSoxMsg::dealInvokeRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
+//	I	invoke	Invoke a component action
+void CSoxMsg::dealInvokeResponse(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	i	invoke	Invoke a component action
+bool CSoxMsg::sendInvokeRequest()
+{
+	return true;
+
+}
 //	k	fileChunk	Receive or send a chunk during a file transfer
-void CSoxMsg::sendFileChunkRequest()
+void CSoxMsg::dealFileChunkRequest(char * cDataBuf, int iDataBufLen)
+{
+	char cFileChunkName[NAME_BUFFER_LEN];
+	
+	char replyNum  = cDataBuf[1];
+	unsigned short chunkNum  = (unsigned char)cDataBuf[2];
+	chunkNum                *= 0x100;
+	chunkNum                += (unsigned char)cDataBuf[3];
+	unsigned short chunkSize = (unsigned char)cDataBuf[4];
+	chunkSize               *= 0x100; 
+	chunkSize               += (unsigned char)cDataBuf[5];
+	// Create FileChunk Name
+	memset(cFileChunkName, 0x00, NAME_BUFFER_LEN);
+	sprintf(cFileChunkName, "%s.%d", m_currentURI, chunkNum);
+	// Save FileContent
+	char * cFileContent = (char *)malloc(chunkSize + 2);
+	memset(cFileContent, 0x00, chunkSize + 2);
+	memcpy(cFileContent, cDataBuf + 6, chunkSize);
+	FILE * fp = fopen(cFileChunkName, "wb");
+	fwrite(cFileContent, 1, chunkSize, fp);
+	fclose(fp);
+	free(cFileContent);
+
+	if(chunkNum == m_numChunks)
+	{
+		mergeFileChunkToFile();
+		// If we get new app.scode, we would read scode information from app.scode 
+		// and empty all information of app.sab. Otherwise, we would get reference error.
+		if(strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
+		{
+			if (m_objSabReader.getSCodeKits())
+			{
+				m_objSabReader.unloadSCodeFile();
+				// Empty all information of app.sab. Otherwise, we would get reference error.
+				m_objSabReader.releaseSabFileBuffer();
+				m_objSabReader.loadSCodeFile(m_currentURI);
+				// Now, youcan use m_objSabReader.getSCodeKits get info of app.scode
+			}
+		}
+		// If we get new app.sab, we would update app.scode and app.sab at the same time.
+		else if(strcmp(strstr(m_currentURI, "app.sab"), "app.sab") == 0)
+		{
+		}
+		resetFileOpenInfo();
+	}
+}
+
+void CSoxMsg::resetFileOpenInfo()
+{
+	memset(m_currentURI, 0x00, MAX_BUFFER_LEN);
+	m_fileSize = m_actualChunkSize = m_numChunks = 0;
+}
+
+void CSoxMsg::mergeFileChunkToFile()
+{
+	char cFileName[NAME_BUFFER_LEN];
+	char cFileChunkName[NAME_BUFFER_LEN];
+	char * cFileContent = (char *)malloc(MAX_BUFFER_LEN);
+	
+	memset(cFileName, 0x00, NAME_BUFFER_LEN);
+	sprintf(cFileName, "%s", m_currentURI);
+
+	FILE * fpFile = fopen(cFileName, "wb");
+	for (int i =0; i <= m_numChunks; i++)
+	{
+		// Create FileChunk Name
+		memset(cFileChunkName, 0x00, NAME_BUFFER_LEN);
+		sprintf(cFileChunkName, "%s.%d", m_currentURI, i);
+
+		// Merge FileChunk to File
+		memset(cFileContent, 0x00, MAX_BUFFER_LEN);
+		FILE * fpChunk = fopen(cFileChunkName, "rb");
+		int iLen = fread(cFileContent, 1, MAX_BUFFER_LEN, fpChunk);
+		fclose(fpChunk);
+		remove(cFileChunkName);
+		fwrite(cFileContent, 1, iLen, fpFile);
+	}
+	fclose(fpFile);
+	free(cFileContent);
+}
+
+//	K	fileChunk	Receive or send a chunk during a file transfer
+void CSoxMsg::dealFileChunkResponse(char * cDataBuf, int iDataBufLen)
+{
+}
+//	k	fileChunk	Receive or send a chunk during a file transfer
+bool CSoxMsg::sendFileChunkRequest()
+{
+	return true;
+
+}
+
+//	l	link	Add or delete a link
+void CSoxMsg::dealLinkRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	L	link	Add or delete a link
+void CSoxMsg::dealLinkResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	l	link	Add or delete a link
-void CSoxMsg::sendLinkRequest()
+bool CSoxMsg::sendLinkRequest()
+{
+	return true;
+
+}
+//	n	rename	Rename a component
+void CSoxMsg::dealRenameRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	N	rename	Rename a component
+void CSoxMsg::dealRenameResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	n	rename	Rename a component
-void CSoxMsg::sendRenameRequest()
+bool CSoxMsg::sendRenameRequest()
+{
+	return true;
+
+}
+
+//	o	reorder	Reorder a component's children
+void CSoxMsg::dealReorderRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	O	reorder	Reorder a component's children
+void CSoxMsg::dealReorderResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	o	reorder	Reorder a component's children
-void CSoxMsg::sendReorderRequest()
+bool CSoxMsg::sendReorderRequest()
+{
+	return true;
+
+}
+//	q	query	Query installed services
+void CSoxMsg::dealQueryRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	Q	query	Query installed services
+void CSoxMsg::dealQueryResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	q	query	Query installed services
-void CSoxMsg::sendQueryRequest()
+bool CSoxMsg::sendQueryRequest()
+{
+	return true;
+
+}
+
+//	r	readProp	Read a single property from a component
+void CSoxMsg::dealReadPropRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	R	readProp	Read a single property from a component
+void CSoxMsg::dealReadPropResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	r	readProp	Read a single property from a component
-void CSoxMsg::sendReadPropRequest()
+bool CSoxMsg::sendReadPropRequest()
+{
+	return true;
+
+}
+//	s	subscribe	Subscribe to a component for COV events
+void CSoxMsg::dealSubscribeRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	S	subscribe	Subscribe to a component for COV events
+void CSoxMsg::dealSubscribeResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	s	subscribe	Subscribe to a component for COV events
-void CSoxMsg::sendSubscribeRequest()
+bool CSoxMsg::sendSubscribeRequest()
+{
+	return true;
+
+}
+//	u	unsubscribe	Unsubscribe from a component for COV events
+void CSoxMsg::dealUnsubscribeRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
-void CSoxMsg::sendUnsubscribeRequest()
+void CSoxMsg::dealUnsubscribeResponse(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	u	unsubscribe	Unsubscribe from a component for COV events
+bool CSoxMsg::sendUnsubscribeRequest()
+{
+	return true;
+
+}
+//	v	version	Query for the kits installed
+void CSoxMsg::dealVersionRequest(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	V	version	Query for the kits installed
+void CSoxMsg::dealVersionResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	v	version	Query for the kits installed
-void CSoxMsg::sendVersionRequest()
+bool CSoxMsg::sendVersionRequest()
+{
+	return true;
+
+}
+//	w	write	Write the value of a single component property
+void CSoxMsg::dealWriteRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	w	write	Write the value of a single component property
-void CSoxMsg::sendWriteRequest()
+void CSoxMsg::dealWriteResponse(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	w	write	Write the value of a single component property
+bool CSoxMsg::sendWriteRequest()
+{
+	return true;
+
+}
+//	y	versionMore	Query for additional version meta-data
+void CSoxMsg::dealVersionMoreRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	y	versionMore	Query for additional version meta-data
-void CSoxMsg::sendVersionMoreRequest()
+void CSoxMsg::dealVersionMoreResponse(char * cDataBuf, int iDataBufLen)
+{
+
+}
+//	y	versionMore	Query for additional version meta-data
+bool CSoxMsg::sendVersionMoreRequest()
+{
+	return true;
+
+}
+//	z	fileClose	Close a file transfer operation
+void CSoxMsg::dealFileCloseRequest(char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	z	fileClose	Close a file transfer operation
-void CSoxMsg::sendFileCloseRequest()
+void CSoxMsg::dealFileCloseResponse(char * cDataBuf, int iDataBufLen)
 {
 
 }
-//	!	error	Response id for a command that could not be processed
-void CSoxMsg::sendErrorRequest()
+//	z	fileClose	Close a file transfer operation
+bool CSoxMsg::sendFileCloseRequest()
 {
+	return true;
+
+}
+//	!	error	Response id for a Response that could not be processed
+void CSoxMsg::dealErrorResponse(char * cDataBuf, int iDataBufLen)
+{
+	char cReplyNum = cDataBuf[1];
+	printf("ERROR: %s\r\n", cDataBuf + 2);
+}
+
+//	!	error	Response id for a command that could not be processed
+bool CSoxMsg::sendErrorRequest()
+{
+	return true;
 
 }

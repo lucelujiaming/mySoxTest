@@ -14,6 +14,15 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+#define HEAD_MAGIC_BIG_ENDIAN_FIRST       0x5E
+#define HEAD_MAGIC_BIG_ENDIAN_SECOND      0xD0
+#define HEAD_MAGIC_BIG_ENDIAN_THIRD       0xBA
+#define HEAD_MAGIC_BIG_ENDIAN_FOURTH      0x07
+
+#define HEAD_MAGIC_LITTLE_ENDIAN_FIRST       0x07
+#define HEAD_MAGIC_LITTLE_ENDIAN_SECOND      0xBA
+#define HEAD_MAGIC_LITTLE_ENDIAN_THIRD       0xD0
+#define HEAD_MAGIC_LITTLE_ENDIAN_FOURTH      0x5E
 
 SCodeReader::SCodeReader()
 {
@@ -125,6 +134,20 @@ void SCodeReader::setSCodeHeader()
 {
 	memcpy(m_head_magic, m_cFileBufPtr, 4);
 	m_cFileBufPtr += 4;
+	if ((m_head_magic[0] == HEAD_MAGIC_BIG_ENDIAN_FIRST ) &&
+		(m_head_magic[1] == HEAD_MAGIC_BIG_ENDIAN_SECOND) &&
+		(m_head_magic[2] == HEAD_MAGIC_BIG_ENDIAN_THIRD ) &&
+		(m_head_magic[3] == HEAD_MAGIC_BIG_ENDIAN_FOURTH))
+	{
+		setBigEndian();
+	}
+	else if ((m_head_magic[0] == HEAD_MAGIC_LITTLE_ENDIAN_FIRST ) &&
+	    	 (m_head_magic[1] == HEAD_MAGIC_LITTLE_ENDIAN_SECOND) &&
+	    	 (m_head_magic[2] == HEAD_MAGIC_LITTLE_ENDIAN_THIRD ) &&
+	    	 (m_head_magic[3] == HEAD_MAGIC_LITTLE_ENDIAN_FOURTH))
+	{
+		setLittleEndian();
+	}
 	m_head_majorVer    =  m_cFileBufPtr[0];
 	m_head_minorVer    =  m_cFileBufPtr[1];
 	m_head_blockSize   =  m_cFileBufPtr[2];
@@ -159,15 +182,15 @@ bool SCodeReader::matchRtFlagsProp(int filter, int rtFlags)
 {
 	if (isRtFlagsProp(rtFlags))
 	{
-		if (filter == '*') 
+		if (filter == RTFLAGS_FILTER_ANY) 
 			return true;
-		if (filter == 'c') 
+		if (filter == RTFLAGS_FILTER_CONFIG) 
 			return (rtFlags & RTFLAGS_CONFIG) != 0;
-		if (filter == 'r') 
+		if (filter == RTFLAGS_FILTER_RUNTIME) 
 			return (rtFlags & RTFLAGS_CONFIG) == 0;
-		if (filter == 'C') 
+		if (filter == RTFLAGS_FILTER_OPERATOR_CONFIG) 
 			return (rtFlags & (RTFLAGS_CONFIG|RTFLAGS_OPERATOR)) == (RTFLAGS_CONFIG|RTFLAGS_OPERATOR);
-		if (filter == 'R') 
+		if (filter == RTFLAGS_FILTER_OPERATOR_RUNTIME) 
 			return (rtFlags & (RTFLAGS_CONFIG|RTFLAGS_OPERATOR)) == RTFLAGS_OPERATOR;
 	}
 	return false;
@@ -298,13 +321,17 @@ void SCodeReader::printTests()
 	}
 }
 
-void SCodeReader::readSCodeFile(char * cFileName)
+bool SCodeReader::readSCodeFile(char * cFileName)
 {
 	m_sysKitBix = -1;
 	m_endTypeBix = -1;
 	m_endSlotBix = -1;
 	m_endLogBix = -1;
-	m_objFileReader.readSCodeFileBuffer(&m_fileBuf, cFileName);
+	int iRet = m_objFileReader.readSCodeFileBuffer(&m_fileBuf, cFileName);
+	if (iRet == 0)
+	{
+		return false;
+	}
 	m_cFileBufPtr = m_fileBuf;
 	setSCodeHeader();
 	printSCodeHeader();
@@ -334,6 +361,42 @@ void SCodeReader::readSCodeFile(char * cFileName)
     {
 		parseTests();
 		// printTests();
+	}
+	m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+	return true;
+}
+
+void SCodeReader::releaseSCodeFileBuffer()
+{
+	if (m_scode_kit_list)
+	{
+		for (int i=0; i< m_head_numberOfKits; ++i) 
+		{
+			for (int j=0; j < m_scode_kit_list[i].typesLen; j++)
+			{
+				if (m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list)
+				{
+					free(m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list);
+					// m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list = NULL;
+				}
+			}
+			if (m_scode_kit_list[i].kit_type_list)
+			{
+				free(m_scode_kit_list[i].kit_type_list);
+				// m_scode_kit_list[i].kit_type_list = NULL;
+			}
+		}
+		free(m_scode_kit_list);
+		m_scode_kit_list = NULL;
+	}
+	// Release Logs
+	m_scode_log_veclist.clear();
+	// Release Methods
+	m_scode_method_veclist.clear();
+	if (m_scode_test_table)
+	{
+		free(m_scode_test_table);
+		m_scode_test_table = NULL;
 	}
 }
 

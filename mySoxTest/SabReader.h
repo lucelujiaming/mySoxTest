@@ -12,7 +12,14 @@
 #include "FileReader.h"
 #include "SCodeReader.h"
 
-#define SAB_NAME_LEN   16 // (8 * 2)
+
+#define SAB_OK           0
+#define SAB_APPCOMP_NG   1
+#define SAB_MISS_SCODE   2
+
+#define SAB_NAME_LEN		16 // (8 * 2)
+#define SAB_TYPE_NAME_LEN   64 // (8 * 2)
+#define SAB_PROP_VALUE_LEN  1024
 
 // I got it by observation and I am not sure about it .
 #define MAGIC_SLOT_TYPE_VOID			0x02DB
@@ -59,10 +66,8 @@ typedef struct _SAB_COMP_INFO
 	char     cName[SAB_NAME_LEN];
 } SAB_COMP_INFO, *PSAB_COMP_INFO;
 
-typedef struct _SAB_PROP
+typedef struct _SOX_PROP
 {
-	SAB_COMP_INFO        objSabCompInfo;
-	int                  propType;
 	unsigned int         uBufLen ;
 	union {
 		bool            bRet ;
@@ -70,9 +75,20 @@ typedef struct _SAB_PROP
 		unsigned short  shortRet ;
 		unsigned int    uRet ;
 		unsigned long   ulRet ;
+		float           ufRet ;
 		double          udRet ;
-		char            cBuf[1024] ;
+		char            cBuf[SAB_PROP_VALUE_LEN] ;
 	};
+} SOX_PROP, *PSOX_PROP;
+
+typedef struct _SAB_PROP
+{
+	SAB_COMP_INFO        objSabCompInfo;
+	char                 cType[SAB_TYPE_NAME_LEN];
+	char                 cPropName[SAB_TYPE_NAME_LEN];
+	int                  propType;
+	// SOX_PROP
+	SOX_PROP             objSoxProp;
 } SAB_PROP, *PSAB_PROP;
 
 
@@ -81,15 +97,27 @@ class SabReader
 {
 public:
 	bool loadSCodeFile(char * cFileName);
-	void readSabFile(char * cFileName);
+	void unloadSCodeFile();
+	
+	SCODE_KIT * getSCodeKits()    { return m_objSCodeReader.getSCodeKits(); }
+	int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
+	SCODE_KIT_TYPE * getScodeKitType(unsigned char   kitId, unsigned char   typeId);
+	int  serializePropsBuf(unsigned char * cPropsBuf, SCODE_KIT_TYPE * objSCodeKitType, 
+						                       SOX_PROP *       configProps, 
+											   int configPropsLen);
+	
+	int  readSabFile(char * cFileName);
+	void releaseSabFileBuffer();
 	SabReader();
 	virtual ~SabReader();
 
+
 private:
 	void loadSchema();
-	void loadComponents();
+	int  loadComponents();
 	int  loadAppComp(SAB_COMP_INFO& objSabCompInfo);
-	void loadProps(SAB_COMP_INFO& objSabCompInfo, SCODE_KIT_TYPE * objSCodeKitType, char filter);
+	void loadProps(SAB_COMP_INFO& objSabCompInfo, 
+	        SCODE_KIT_TYPE * objSCodeKitType, char* cTypeStr, char filter);
 	void loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr);
 	void printProps();
 	void printSchema();
@@ -98,6 +126,8 @@ private:
 	void loadLinks();
 	void printLinks();
 
+	bool serializeProp(unsigned char ** cBuf, SOX_PROP configProps, 
+						 int         iFpBix,      bool isStr);
 public:
 	void           setBigEndian() { m_bBigEndian = true; }
 	void           setLittleEndian() { m_bBigEndian = false; }
@@ -123,7 +153,7 @@ private:
 	SCHEMA_KIT *        m_schema_kit_list;
 	unsigned short      m_maxid; 
 	
-	int                 m_objSchemaAssociationTable[256];
+	int *               m_objSchemaAssociationTable;
 
 	std::vector<SAB_PROP>    m_objSabPropList;
 	std::vector<SAB_LINK>    m_objSabLinkList;

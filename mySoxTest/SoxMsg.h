@@ -1,14 +1,48 @@
 #pragma once
 #include "DASP.h"
-#include "SCodeReader.h"
+#include "SabReader.h"
 
 #define URI_SUGGESTED_LEN                 1024          // 
 #define SCODE_FILE_SUGGESTED_CHUNKSIZE    (100 * 1024)  // Normal size is 92K
 #define APP_FILE_SUGGESTED_CHUNKSIZE      (1 * 1024)    // Normal size is 1-2K
+#define PROP_VALUE_LEN                    1024  
+#define PROP_PROP_NAME                    8  
+
+#pragma pack(1)
+typedef struct _SOX_MESSAGE
+{
+	unsigned char      cmd;
+	unsigned char      seqNum;
+//	u1[]    payload
+} SOX_MESSAGE, *PSOX_MESSAGE;
+
+typedef struct _SOX_ADD_REQ
+{
+	SOX_MESSAGE     header;
+	unsigned short	parentID;
+	unsigned char   kitId;
+	unsigned char   typeId;
+	char *          name;
+	SOX_PROP *      configProps;
+} SOX_ADD_REQ, *PSOX_ADD_REQ;
+
+typedef struct _SOX_FILEOPEN_REQ
+{
+	SOX_MESSAGE     header;
+	char            method;
+	char *          uri_ptr;
+	unsigned int    fileSize;
+	short			suggestedChunkSize;
+	char *          headers_name_ptr;
+	char *          value_ptr;
+} SOX_FILEOPEN_REQ, *PSOX_FILEOPEN_REQ;
+#pragma pack()
 
 class CSoxMsg
 {
 public:
+	bool loadSabFile(char * cFileName);
+	void unloadSabFile();
 	CSoxMsg();
 	~CSoxMsg();
 
@@ -27,48 +61,52 @@ public:
 
 public:
 	//	a	add	Add a new component to the application
-	void sendAddRequest();
+	bool sendAddRequest(unsigned short	parentID,
+							 unsigned char   kitId,
+							 unsigned char   typeId,
+							 char *          cName,
+							 SOX_PROP *      configProps, int configPropsLen);
 	//	b	fileRename	Rename or move a file
-	void sendFileRenameRequest();
+	bool sendFileRenameRequest();
 	//	c	readComp	Read a component in the application
-	void sendReadCompRequest();
+	bool sendReadCompRequest();
 	//	d	delete	Delete an component and its children from the application
-	void sendReleteRequest();
+	bool sendReleteRequest();
 	//	e	event	COV event for a subscribed component
-	void sendEventRequest();
+	bool sendEventRequest();
 	//	f	fileOpen	Begin a get or put file transfer operation
-	void sendFileOpenRequest(char method, char * uri, 
+	bool sendFileOpenRequest(char method, char * uri, 
 								  unsigned int fileSize, 
 								  unsigned short suggestedChunkSize);
 							//	  ,char * name, char * value);
 	//	i	invoke	Invoke a component action
-	void sendInvokeRequest();
+	bool sendInvokeRequest();
 	//	k	fileChunk	Receive or send a chunk during a file transfer
-	void sendFileChunkRequest();
+	bool sendFileChunkRequest();
 	//	l	link	Add or delete a link
-	void sendLinkRequest();
+	bool sendLinkRequest();
 	//	n	rename	Rename a component
-	void sendRenameRequest();
+	bool sendRenameRequest();
 	//	o	reorder	Reorder a component's children
-	void sendReorderRequest();
+	bool sendReorderRequest();
 	//	q	query	Query installed services
-	void sendQueryRequest();
+	bool sendQueryRequest();
 	//	r	readProp	Read a single property from a component
-	void sendReadPropRequest();
+	bool sendReadPropRequest();
 	//	s	subscribe	Subscribe to a component for COV events
-	void sendSubscribeRequest();
+	bool sendSubscribeRequest();
 	//	u	unsubscribe	Unsubscribe from a component for COV events
-	void sendUnsubscribeRequest();
+	bool sendUnsubscribeRequest();
 	//	v	version	Query for the kits installed
-	void sendVersionRequest();
+	bool sendVersionRequest();
 	//	w	write	Write the value of a single component property
-	void sendWriteRequest();
+	bool sendWriteRequest();
 	//	y	versionMore	Query for additional version meta-data
-	void sendVersionMoreRequest();
+	bool sendVersionMoreRequest();
 	//	z	fileClose	Close a file transfer operation
-	void sendFileCloseRequest();
+	bool sendFileCloseRequest();
 	//	!	error	Response id for a command that could not be processed
-	void sendErrorRequest();
+	bool sendErrorRequest();
 	//
 
 public:
@@ -160,8 +198,8 @@ public:
 	void resetFileOpenInfo();
 
 public:
-	CDASP m_objDASPMsg;
-	SCodeReader m_objSCodeReader;
+	CDASP       m_objDASPMsg;
+	SabReader   m_objSabReader;
 	
 private:
 	BOOL m_bExitRecvThread;

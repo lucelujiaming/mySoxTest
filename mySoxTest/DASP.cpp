@@ -217,7 +217,7 @@ void CDASP::sendKeepAliveRequest(unsigned char * seqNum)
 	send(m_clientSocket, m_sendBuf, sendBufPtr - m_sendBuf, 0);
 }
 
-void CDASP::sendDatagramRequest(char *SoxBuf, int iSoxBufLen)
+void CDASP::sendDatagramRequest(unsigned char *SoxBuf, int iSoxBufLen)
 {
 	char * sendBufPtr = m_sendBuf;
 	memset(m_sendBuf, 0x00, MAX_BUFFER_LEN);

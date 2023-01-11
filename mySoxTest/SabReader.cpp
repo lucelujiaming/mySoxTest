@@ -128,6 +128,7 @@ unsigned long  SabReader::calcAndSkipUnsignedLongValue()
 //   }
 int SabReader::readSabFile(char * cFileName)
 {
+	int iRet = SAB_OK;
 	if (m_objSCodeReader.getSCodeKits() == NULL)
 	{
 		printf("We need the scode file.");
@@ -140,15 +141,20 @@ int SabReader::readSabFile(char * cFileName)
 	memcpy(m_head_Version, m_cFileBufPtr, 4);
 	m_cFileBufPtr += 4;
 	loadSchema();
-	createSchemaAssociationTable();
+	iRet = createSchemaAssociationTable();
+	if (iRet != SAB_OK)
+	{
+		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+		return iRet;
+	}
 	printSchema();
 	m_maxid = calcAndSkipUnsignedShortValue();
 	// components
-	int iRet = loadComponents();
-	if (iRet == SAB_APPCOMP_NG)
+	iRet = loadComponents();
+	if (iRet != SAB_OK)
 	{
 		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
-		return SAB_APPCOMP_NG;
+		return iRet;
 	}
 	if ((m_fileBuf + iFileLen - m_cFileBufPtr) < 4)
 	{
@@ -228,7 +234,7 @@ void SabReader::printSchema()
 	}
 }
 
-void SabReader::createSchemaAssociationTable()
+int SabReader::createSchemaAssociationTable()
 {
 
 	SCODE_KIT *  objKitsList = m_objSCodeReader.getSCodeKits();
@@ -241,11 +247,16 @@ void SabReader::createSchemaAssociationTable()
 		{
 			if (stricmp(m_schema_kit_list[i].cName, objKitsList[j].cName) == 0)
 			{
+				if (m_schema_kit_list[i].checksum != objKitsList[j].checksum)
+				{
+					return SAB_APPCOMP_NG;
+				}
 				m_objSchemaAssociationTable[i] = j;
 				break;
 			}
 		}
 	}
+	return SAB_OK;
 }
 
 

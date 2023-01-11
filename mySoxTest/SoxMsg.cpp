@@ -5,13 +5,74 @@
 
 CSoxMsg::CSoxMsg()
 {
+	setBigEndian();
 	m_bExitRecvThread = TRUE;
 	resetFileOpenInfo();
 }
 
-
 CSoxMsg::~CSoxMsg()
 {
+}
+
+void CSoxMsg::setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 8) & 0xFF;
+		(*cBuffer)[1] =  uValue & 0xFF;
+	}
+	else 
+	{
+		(*cBuffer)[1] = (uValue >> 8) & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 2;
+}
+
+void CSoxMsg::setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer, unsigned int uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[3] =  uValue & 0xFF;
+	}
+	else 
+	{
+		(*cBuffer)[3] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 4;
+}
+
+void CSoxMsg::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned long uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 56) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 48) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 40) & 0xFF;
+		(*cBuffer)[3] = (uValue >> 32) & 0xFF;
+		(*cBuffer)[4] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[5] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[6] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[7] =  uValue & 0xFF;
+	}
+	else 
+	{
+		(*cBuffer)[7] = (uValue >> 56) & 0xFF;
+		(*cBuffer)[6] = (uValue >> 48) & 0xFF;
+		(*cBuffer)[5] = (uValue >> 40) & 0xFF;
+		(*cBuffer)[4] = (uValue >> 32) & 0xFF;
+		(*cBuffer)[3] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 8;
 }
 
 bool CSoxMsg::loadSabFile(char * cFileName)
@@ -22,7 +83,7 @@ bool CSoxMsg::loadSabFile(char * cFileName)
 	strncpy(cScodePath, cFileName, URI_SUGGESTED_LEN);
 	// Replace *.sab to *.scode
 	cReplacePtr = strstr(cScodePath, ".sab");
-	if (cReplacePtr)
+	if (cReplacePtr == cScodePath + strlen(cScodePath) - strlen(".sab"))
 	{
 		strcpy(cReplacePtr, ".scode");
 	}
@@ -296,17 +357,16 @@ bool CSoxMsg::sendAddRequest(unsigned short	parentID,
 			           objSCodeKitType, configProps, configPropsLen);
 		int iDataLen = sizeof(SOX_ADD_REQ) 
 				 + strlen(cName) + iPropsLen + 1;
-		char* msg_buffer = (char *)malloc(iDataLen);
-		char * sendBufPtr = msg_buffer;
+		unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+		memset(msg_buffer, 0x00, iDataLen);
+		unsigned char * sendBufPtr = msg_buffer;
 		// u1   'a'
 		sendBufPtr[0] = 'a';
 		// u1   replyNum
 		sendBufPtr[1] = rand() % 0xFF;
 		sendBufPtr += 2;
 		// u2    parentId
-		sendBufPtr[0] = (parentID >> 8) & 0xFF;
-		sendBufPtr[1] =  parentID & 0xFF;
-		sendBufPtr += 2;
+		setAndSkipUnsignedShortValueToBuf(&sendBufPtr, parentID);
 		// u1    kitId
 		sendBufPtr[0] = kitId;
 		// u1    typeId
@@ -424,10 +484,10 @@ bool CSoxMsg::sendFileOpenRequest(char method, char * uri,
 {
 	int iDataLen = sizeof(SOX_FILEOPEN_REQ) 
 		+ strlen(uri) + 16; // + strlen(name) + strlen(value) 
-	char* msg_buffer = (char *)malloc(iDataLen);
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
 	memset(msg_buffer, 0x00, iDataLen);
 
-	char * sendBufPtr = msg_buffer;
+	unsigned char * sendBufPtr = msg_buffer;
 	// u1   'f'
 	sendBufPtr[0] = 'f';
 	// u1   replyNum
@@ -443,15 +503,9 @@ bool CSoxMsg::sendFileOpenRequest(char method, char * uri,
 	memset(m_currentURI, 0x00, MAX_BUFFER_LEN);
 	strcpy(m_currentURI, uri);
 	// u4   fileSize
-	sendBufPtr[0] = fileSize >> 24;
-	sendBufPtr[1] = (fileSize >> 16) & 0xFF;
-	sendBufPtr[2] = (fileSize >> 8) & 0xFF;
-	sendBufPtr[3] =  fileSize & 0xFF;
-	sendBufPtr += 4;
+	setAndSkipUnsignedIntValueToBuf(&sendBufPtr, fileSize);
 	// u2   suggestedChunkSize  (suggested by client)
-	sendBufPtr[0] = (suggestedChunkSize >> 8) & 0xFF;
-	sendBufPtr[1] =  suggestedChunkSize & 0xFF;
-	sendBufPtr += 2;
+	setAndSkipUnsignedIntValueToBuf(&sendBufPtr, suggestedChunkSize);
 /*
 	memcpy(sendBufPtr, name, strlen(name));
 	sendBufPtr += strlen(name) + 1;

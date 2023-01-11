@@ -75,20 +75,35 @@ void testSoxMsg()
 	objCSoxMsg.close();
 }
 
-void test_buf(char ** buf)
+void test_copy_buf(unsigned char ** buf)
 {
-	strcpy(*buf, "12345");
+	strcpy((char *)*buf, "12345");
 	*buf += 5;
 }
 
+void test_buf()
+{
+	unsigned short parentID = 7;
+	unsigned char cTest[100];
+	memset(cTest, 0x00, 100);
+	unsigned char *cTestPtr = cTest;
+	
+	CSoxMsg objCSoxMsg ;
+	objCSoxMsg.setAndSkipUnsignedShortValueToBuf(&cTestPtr, parentID);
+	objCSoxMsg.setAndSkipUnsignedShortValueToBuf(&cTestPtr, parentID);
+	objCSoxMsg.setAndSkipUnsignedShortValueToBuf(&cTestPtr, parentID);
+	objCSoxMsg.setAndSkipUnsignedShortValueToBuf(&cTestPtr, parentID);
+//	test_copy_buf(&cTestPtr);
+//	test_copy_buf(&cTestPtr);
+//	test_copy_buf(&cTestPtr);
+
+
+}
 
 int main(int argc, char* argv[])
 {
-//	char cTest[100];
-//	char *cTestPtr = cTest;
-//	test_buf(&cTestPtr);
-//	test_buf(&cTestPtr);
-//	test_buf(&cTestPtr);
+	// test_buf();
+
 	// // testSCodeReader();
  	// testSabReader();
 	testSoxMsg();

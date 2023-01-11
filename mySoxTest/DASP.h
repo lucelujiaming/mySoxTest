@@ -75,7 +75,7 @@ public:
 	void handShake();
 
 public:
-	void sendDatagramRequest(char *SoxBuf, int iSoxBufLen);
+	void sendDatagramRequest(unsigned char *SoxBuf, int iSoxBufLen);
 	char recvResponse();
 	char * getReceiveLeftBuf() {  return m_receiveLeftBuf; }
 	int    getReceiveLeftBufLen() {  return iReceiveLeftBufLen; }

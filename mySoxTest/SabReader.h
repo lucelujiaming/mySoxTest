@@ -46,8 +46,8 @@
 
 typedef struct _SCHEMA_KIT
 {
-	char       cName[SAB_NAME_LEN];
-	int        checksum;
+	char                cName[SAB_NAME_LEN];
+	unsigned int        checksum;
 } SCHEMA_KIT, *PSCHEMA_KIT;
 
 typedef struct _SAB_LINK
@@ -121,7 +121,7 @@ private:
 	void loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr);
 	void printProps();
 	void printSchema();
-	void createSchemaAssociationTable();
+	int  createSchemaAssociationTable();
 	
 	void loadLinks();
 	void printLinks();
@@ -129,9 +129,10 @@ private:
 	bool serializeProp(unsigned char ** cBuf, SOX_PROP configProps, 
 						 int         iFpBix,      bool isStr);
 public:
-	void           setBigEndian() { m_bBigEndian = true; }
+	void           setBigEndian()    { m_bBigEndian = true; }
 	void           setLittleEndian() { m_bBigEndian = false; }
-	bool           isBigEndian()     { return m_bBigEndian;  }
+	bool           isBigEndian()     { return (m_bBigEndian == true);  }
+	bool           isLittleEndian()  { return (m_bBigEndian == false); }
 
 private:
 	bool           m_bBigEndian;

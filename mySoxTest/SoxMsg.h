@@ -194,6 +194,18 @@ public:
 	void dealErrorRequest(char * cDataBuf, int iDataBufLen);
 
 public:
+	void           setBigEndian()    { m_bBigEndian = true; }
+	void           setLittleEndian() { m_bBigEndian = false; }
+	bool           isBigEndian()     { return (m_bBigEndian == true);  }
+	bool           isLittleEndian()  { return (m_bBigEndian == false); }
+
+public:
+	bool           m_bBigEndian;
+	void setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue);
+	void setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer,   unsigned int uValue);
+	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned long uValue);
+
+public:
 	void mergeFileChunkToFile();
 	void resetFileOpenInfo();
 

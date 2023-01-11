@@ -68,7 +68,7 @@ typedef struct _SCODE_KIT
     char cName[SCODE_NAME_LEN];
     char cVer[SCODE_NAME_LEN];
     int pad;
-    int checksum;
+    unsigned int checksum;
 	SCODE_KIT_TYPE * kit_type_list;
 } SCODE_KIT, *PSCODE_KIT;
 
@@ -156,9 +156,10 @@ private:
 	FileReader         m_objFileReader;
 	
 public:
-	void           setBigEndian() { m_bBigEndian = true; }
+	void           setBigEndian()    { m_bBigEndian = true; }
 	void           setLittleEndian() { m_bBigEndian = false; }
-	bool           isBigEndian()     { return m_bBigEndian;  }
+	bool           isBigEndian()     { return (m_bBigEndian == true);  }
+	bool           isLittleEndian()  { return (m_bBigEndian == false); }
 
 private:
 	bool           m_bBigEndian;

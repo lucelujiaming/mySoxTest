@@ -77,7 +77,7 @@ public:
 public:
 	void sendDatagramRequest(unsigned char *SoxBuf, int iSoxBufLen);
 	char recvResponse();
-	char * getReceiveLeftBuf() {  return m_receiveLeftBuf; }
+	unsigned char * getReceiveLeftBuf() {  return m_receiveLeftBuf; }
 	int    getReceiveLeftBufLen() {  return iReceiveLeftBufLen; }
 
 private:
@@ -103,7 +103,7 @@ private:
 	char m_sendBuf[MAX_BUFFER_LEN];
 	char m_receiveBuf[MAX_BUFFER_LEN];
 	
-	char m_receiveLeftBuf[MAX_BUFFER_LEN];
+	unsigned char m_receiveLeftBuf[MAX_BUFFER_LEN];
 	int  iReceiveLeftBufLen ;
 
 

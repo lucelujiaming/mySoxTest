@@ -43,59 +43,59 @@ SCodeReader::~SCodeReader()
 	}
 }
 
-unsigned short SCodeReader::calcAndSkipUnsignedShortValue()
+unsigned short SCodeReader::calcAndSkipUnsignedShortValue(unsigned char ** cBuf)
 {
 	unsigned short uValue = 0x00;
 	if (m_bBigEndian)
 	{
-		uValue        = (unsigned char)m_cFileBufPtr[0];
+		uValue        = (unsigned char)(*cBuf)[0];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       += (unsigned char)(*cBuf)[1];
 	}
 	else 
 	{
-		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       += (unsigned char)(*cBuf)[1];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[0];
+		uValue       += (unsigned char)(*cBuf)[0];
 	}
-	m_cFileBufPtr += 2;
+	(*cBuf) += 2;
 	return uValue;
 }
 
-unsigned int SCodeReader::calcAndSkipUnsignedIntValue()
+unsigned int SCodeReader::calcAndSkipUnsignedIntValue(unsigned char ** cBuf)
 {
 	unsigned int uValue = 0x00;
 	if (m_bBigEndian)
 	{
-		uValue        = (unsigned char)m_cFileBufPtr[0];
+		uValue        = (unsigned char)(*cBuf)[0];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       += (unsigned char)(*cBuf)[1];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[2];
+		uValue       += (unsigned char)(*cBuf)[2];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[3];
+		uValue       += (unsigned char)(*cBuf)[3];
 	}
 	else 
 	{
-		uValue        = (unsigned char)m_cFileBufPtr[3];
+		uValue        = (unsigned char)(*cBuf)[3];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[2];
+		uValue       += (unsigned char)(*cBuf)[2];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[1];
+		uValue       += (unsigned char)(*cBuf)[1];
 		uValue       *= 0x100;
-		uValue       += (unsigned char)m_cFileBufPtr[0];
+		uValue       += (unsigned char)(*cBuf)[0];
 	}
-	m_cFileBufPtr += 4;
+	(*cBuf) += 4;
 	return uValue;
 }
 
-unsigned long  SCodeReader::calcAndSkipUnsignedLongValue()
+unsigned long  SCodeReader::calcAndSkipUnsignedLongValue(unsigned char ** cBuf)
 {
 	unsigned long uValue = 0x00;
 	unsigned int uValueOne = 0x00;
-	uValueOne = calcAndSkipUnsignedIntValue();
+	uValueOne = calcAndSkipUnsignedIntValue(cBuf);
 	unsigned int uValueTwo = 0x00;
-	uValueTwo = calcAndSkipUnsignedIntValue();
+	uValueTwo = calcAndSkipUnsignedIntValue(cBuf);
 	
 	if (m_bBigEndian)
 	{
@@ -154,12 +154,12 @@ void SCodeReader::setSCodeHeader()
 	m_head_refSize     =  m_cFileBufPtr[3];
 	m_cFileBufPtr += 4;
 	
-	m_head_imageSize        = calcAndSkipUnsignedIntValue();
-	m_head_dataSize         = calcAndSkipUnsignedIntValue();
+	m_head_imageSize        = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
+	m_head_dataSize         = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
 
-	m_head_mainMethodBlockIndex        = calcAndSkipUnsignedShortValue();
-	m_head_testBlockIndex              = calcAndSkipUnsignedShortValue();
-	m_head_kitsArrayBlockIndex         = calcAndSkipUnsignedShortValue();
+	m_head_mainMethodBlockIndex        = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+	m_head_testBlockIndex              = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+	m_head_kitsArrayBlockIndex         = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 
 	m_head_numberOfKits =  (unsigned char)m_cFileBufPtr[0];
 	m_head_scodeFlags   =  (unsigned char)m_cFileBufPtr[1];
@@ -255,12 +255,12 @@ void SCodeReader::printSCodeKits()
 				char cRtFlagsInfo[SCODE_NAME_LEN];
 				memset(cRtFlagsInfo, 0x00, SCODE_NAME_LEN);
 				generateRtFlagsInfo(cRtFlagsInfo, m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].rtFlags);
-				printf("\t\t SCode::kit[%d].type[%d].slot[%d].(id, rtFlags, nameBix, cName, fpBix, codeBix) "
+				printf("\t\t SCode::kit[%d].type[%d].slot[%d].(id, rtFlags, nameBix, cPropName, fpBix, codeBix) "
 					"  = (%02d, %02d(%s), %02d, %s, %02X, %02X) \r\n", i, j, k, 
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].id, 
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].rtFlags, cRtFlagsInfo,
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].nameBix,
-					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cName, 
+					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix,
 					m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].codeBix);
 			}
@@ -346,7 +346,7 @@ bool SCodeReader::readSCodeFile(char * cFileName)
 		{
 			unsigned int iPos = m_head_kitsArrayBlockIndex *  m_head_blockSize + i * 2;
 			m_cFileBufPtr = m_fileBuf + iPos;
-			iPos = calcAndSkipUnsignedShortValue();
+			iPos = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 			parseKit(m_scode_kit_list[i], iPos);
 		}
 		printSCodeKits();
@@ -420,8 +420,8 @@ void SCodeReader::parseLogs(unsigned int logTabBix)
 		memset(&objSCodeLog, 0x00, sizeof(objSCodeLog));
 		prev_id = id;
 
-		objSCodeLog.id           = calcAndSkipUnsignedShortValue();
-		objSCodeLog.nameBix      = calcAndSkipUnsignedShortValue();
+		objSCodeLog.id           = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+		objSCodeLog.nameBix      = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		parseStr(objSCodeLog.cName, objSCodeLog.nameBix);
 
 		if (id == prev_id+1)   // if consecutive, assume it's a valid log entry
@@ -575,7 +575,7 @@ int SCodeReader::getArgString(char *argStr, int op)
       // signed 2-byte arg 
       case g_scode_jmpfarArg : 
 		  // argStr = String.valueOf(buf.s2());
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
           break;
       // unsigned 2-byte arg 
       case g_scode_strArg    :
@@ -584,42 +584,42 @@ int SCodeReader::getArgString(char *argStr, int op)
       case g_scode_slotArg   :
       case g_scode_u2Arg     : 
 		  // argStr = "0x" + tHS(u2aligned(buf));
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
           break;
       // unsigned 2-byte arg, not necessarily aligned
       case g_scode_methodArg : 
 		  // argStr = "0x" + tHS(buf.u2());
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
           break;
       // signed 4-byte arg
       case g_scode_intArg    : 
 		  // argStr = String.valueOf(i4aligned(buf));
-		  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue());
+		  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
           break;
       case g_scode_floatArg  : 
 		  // argStr = String.valueOf(f4aligned(buf));
-		  sprintf(argStr, "%f", intBitsToFloat(calcAndSkipUnsignedIntValue()));
+		  sprintf(argStr, "%f", intBitsToFloat(calcAndSkipUnsignedIntValue(&m_cFileBufPtr)));
           break;
       // unsigned 4-byte arg
       case g_scode_s4Arg     : 
 		  // argStr = "0x" + tHS(i4aligned(buf));
-		  sprintf(argStr, "%04X", calcAndSkipUnsignedIntValue());
+		  sprintf(argStr, "%04X", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
           break;
       // unsigned 8-byte arg
       case g_scode_longArg   : 
 		  // argStr = "0x" + java.lang.Long.toHexString(i8aligned(buf));
-		  sprintf(argStr, "%08lX", calcAndSkipUnsignedLongValue());
+		  sprintf(argStr, "%08lX", calcAndSkipUnsignedLongValue(&m_cFileBufPtr));
           break;
       // signed 8-byte arg
       case g_scode_doubleArg : 
 		  // argStr = String.valueOf(f8aligned(buf)); 
-		  sprintf(argStr, "%f", longBitsToDouble(calcAndSkipUnsignedLongValue()));
+		  sprintf(argStr, "%f", longBitsToDouble(calcAndSkipUnsignedLongValue(&m_cFileBufPtr)));
           break;
 
       // switch has multiple args, first is #args to follow
       case g_scode_switchArg : 
 		  {
-			  int nArgs = calcAndSkipUnsignedShortValue();
+			  int nArgs = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 			  if(nArgs > 128)
 			  {
 				  printf("ERROR: g_scode_switchArg::nArgs = %d \r\n", nArgs);
@@ -631,7 +631,7 @@ int SCodeReader::getArgString(char *argStr, int op)
 				  if (k > 0) 
 					  sprintf(argStr + strlen(argStr), ", ");
 				  // argStr += "0x" + tHS(u2aligned(buf));
-				  sprintf(argStr + strlen(argStr), "0x%X", calcAndSkipUnsignedShortValue());
+				  sprintf(argStr + strlen(argStr), "0x%X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
 			  }
 		  }
 		  break;
@@ -649,17 +649,17 @@ int SCodeReader::getArgString(char *argStr, int op)
 			  else if (endChar == '2')
 			  {
 				  // argStr = "0x" + tHS(u2aligned(buf));
-				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
 			  }
 			  else if (endChar == '2')
 			  {
 				  // argStr = "0x" + tHS(i4aligned(buf));
-				  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue());
+				  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
 			  }
 			  else 
 			  {
 				  // argStr = "0x" + tHS(u2aligned(buf));  // width of "Const Static" arg?
-				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue());
+				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
 			  }
 			  break;
 		  }
@@ -708,7 +708,7 @@ void SCodeReader::parseMethods(unsigned int methodTabBix)
 void SCodeReader::parseTests()
 {
 	m_cFileBufPtr = m_fileBuf + m_head_testBlockIndex * m_head_blockSize;
-	m_numTests = calcAndSkipUnsignedShortValue();
+	m_numTests = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 
     if (m_numTests > 0)
 	{
@@ -718,8 +718,8 @@ void SCodeReader::parseTests()
 		// traverse the pointers for each test in table
 		for (int i=0; i<m_numTests; ++i) 
 		{
-			m_scode_test_table[i].slotBix = calcAndSkipUnsignedShortValue();
-			m_scode_test_table[i].codeBix = calcAndSkipUnsignedShortValue();
+			m_scode_test_table[i].slotBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+			m_scode_test_table[i].codeBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		//	System.out.print("\nTest " + i + ": qname bix = 0x" + tHS(slotBix));
 		//	System.out.println(", code bix = 0x" + tHS(codeBix));
 			parseQnameSlot(m_scode_test_table[i].qnameSlot, m_scode_test_table[i].slotBix);
@@ -736,12 +736,12 @@ void SCodeReader::parseQnameSlot(SCODE_TEST_QNAMESLOT& objQnameSlot, int bi)
     unsigned char * savePos = m_cFileBufPtr;
 
 	m_cFileBufPtr = m_fileBuf + bi * m_head_blockSize;
-    objQnameSlot.qnameBix  = calcAndSkipUnsignedShortValue();
-    objQnameSlot.methodBix = calcAndSkipUnsignedShortValue();
+    objQnameSlot.qnameBix  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+    objQnameSlot.methodBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 
 	m_cFileBufPtr = m_fileBuf + objQnameSlot.qnameBix * m_head_blockSize;
-    objQnameSlot.typeNameBix = calcAndSkipUnsignedShortValue();
-    objQnameSlot.slotNameBix = calcAndSkipUnsignedShortValue();
+    objQnameSlot.typeNameBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+    objQnameSlot.slotNameBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     parseStr(objQnameSlot.typeName, objQnameSlot.typeNameBix);
     parseStr(objQnameSlot.slotName, objQnameSlot.slotNameBix);
 	parseStr(objQnameSlot.methodName, objQnameSlot.methodBix);
@@ -775,7 +775,7 @@ void SCodeReader::parseBootstrap()
 			// printf("Found " + nextByte + " not MetaSlot at offset " + tHS(buf.pos));
 		}
 
-		callBix = calcAndSkipUnsignedShortValue();
+		callBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		// System.out.println("Main bix = 0x" + tHS(callBix));
 
 		nextByte = m_cFileBufPtr[0];
@@ -792,7 +792,7 @@ void SCodeReader::parseBootstrap()
     // 1-byte Call opcode followed by 2-byte bix
     while (nextByte== g_scode_Call)
     {
-		callBix = calcAndSkipUnsignedShortValue();
+		callBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		// System.out.println("Static init call to bix = 0x" + tHS(callBix));
 		nextByte = m_cFileBufPtr[0];
 		m_cFileBufPtr++;
@@ -823,7 +823,7 @@ void SCodeReader::parseBootstrap()
 //    if (nextByte!=SCode.Call)
 //      throw new IOException("Found " + nextByte + " not Call at offset " + tHS(buf.pos));
 
-    callBix = calcAndSkipUnsignedShortValue();
+    callBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     nextByte = m_cFileBufPtr[0];
 	m_cFileBufPtr++;
 //    if (nextByte!=SCode.ReturnPop)
@@ -838,12 +838,12 @@ void SCodeReader::parseKit(SCODE_KIT& objScodeKit, unsigned int bi)
     objScodeKit.id       = m_cFileBufPtr[0];
     objScodeKit.typesLen = m_cFileBufPtr[1];
 	m_cFileBufPtr += 2;
-	short sNameLen  = calcAndSkipUnsignedShortValue();
+	short sNameLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     parseStr(objScodeKit.cName, sNameLen);
-	short sVerLen  = calcAndSkipUnsignedShortValue();
+	short sVerLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     parseStr(objScodeKit.cVer, sVerLen);
-    objScodeKit.pad      = calcAndSkipUnsignedShortValue();
-    objScodeKit.checksum        = calcAndSkipUnsignedIntValue();
+    objScodeKit.pad      = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+    objScodeKit.checksum        = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
 	
 	if (strcmp(objScodeKit.cName, "sys") == 0)
 	{
@@ -860,7 +860,7 @@ void SCodeReader::parseKit(SCODE_KIT& objScodeKit, unsigned int bi)
 	
 		for (int j=0; j< objScodeKit.typesLen; j++)
 		{
-			int tbix = calcAndSkipUnsignedShortValue();
+			int tbix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 			parseType(objScodeKit.kit_type_list[j], tbix);
 		}
 	}
@@ -882,17 +882,17 @@ void SCodeReader::parseType(SCODE_KIT_TYPE& objScodeKitType, unsigned int typeBi
 	objScodeKitType.id       = (unsigned char)m_cFileBufPtr[0];
     objScodeKitType.slotsLen = (unsigned char)m_cFileBufPtr[1];
 	m_cFileBufPtr += 2;
-    objScodeKitType.nameBix  = calcAndSkipUnsignedShortValue();
-    objScodeKitType.kitBix   = calcAndSkipUnsignedShortValue();
+    objScodeKitType.nameBix  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+    objScodeKitType.kitBix   = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 	parseStr(objScodeKitType.cName, objScodeKitType.nameBix);
 	if(objScodeKitType.nameBix == m_sysKitBix && islower(objScodeKitType.cName[0]))
 	{
 		m_cFileBufPtr = savePos;
 		return;
 	}
-	objScodeKitType.baseBix  = calcAndSkipUnsignedShortValue(); // base class typebix, 0 if not comp
-    objScodeKitType.size     = calcAndSkipUnsignedShortValue();
-    objScodeKitType.initBix  = calcAndSkipUnsignedShortValue();     // bix for init code
+	objScodeKitType.baseBix  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr); // base class typebix, 0 if not comp
+    objScodeKitType.size     = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+    objScodeKitType.initBix  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);     // bix for init code
 
 	if (objScodeKitType.slotsLen > 0)
 	{
@@ -904,7 +904,7 @@ void SCodeReader::parseType(SCODE_KIT_TYPE& objScodeKitType, unsigned int typeBi
 		
 		for (int j = 0; j < objScodeKitType.slotsLen; j++)
 		{
-			int slotBix = calcAndSkipUnsignedShortValue();
+			int slotBix = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 			parseSlot(objScodeKitType.kit_type_slots_list[j], slotBix);
 		}
 	}
@@ -919,10 +919,10 @@ void SCodeReader::parseSlot(SCODE_KIT_TYPE_SLOT& objScodeKitTypeSlot, unsigned i
     objScodeKitTypeSlot.id         = (unsigned char)m_cFileBufPtr[0];
     objScodeKitTypeSlot.rtFlags    = (unsigned char)m_cFileBufPtr[1];
 	m_cFileBufPtr += 2;
-    objScodeKitTypeSlot.nameBix    =  calcAndSkipUnsignedShortValue();
-	parseStr(objScodeKitTypeSlot.cName, objScodeKitTypeSlot.nameBix);
-    objScodeKitTypeSlot.fpBix    = calcAndSkipUnsignedShortValue();   // bix for field type OR method param
-    objScodeKitTypeSlot.codeBix  = calcAndSkipUnsignedShortValue();  // bix for code ONLY if method!!
+    objScodeKitTypeSlot.nameBix    =  calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+	parseStr(objScodeKitTypeSlot.cPropName, objScodeKitTypeSlot.nameBix);
+    objScodeKitTypeSlot.fpBix    = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);   // bix for field type OR method param
+    objScodeKitTypeSlot.codeBix  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);  // bix for code ONLY if method!!
 
     if ((int)slotBix > m_endSlotBix)
 	{

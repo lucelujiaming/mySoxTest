@@ -56,11 +56,12 @@ void testSoxMsg()
 	objCSoxMsg.handShake();
 	objCSoxMsg.startRecvThread();
 
-	SOX_PROP objSoxProp[2];
+	SAB_PROP_VALUE objSoxProp[2];
 	objSoxProp[0].uRet    = 1;
 	objSoxProp[1].uBufLen = 1;
 	memset(objSoxProp[1].cBuf, 0x00, PROP_VALUE_LEN);
-	objCSoxMsg.sendAddRequest(7, 11, 0, "AliasVa", objSoxProp, 2);
+	// objCSoxMsg.sendAddRequest(7, 11, 0, "AliasVa", objSoxProp, 2);
+	objCSoxMsg.sendReadCompRequest(11, 'r');
 
 //	objCSoxMsg.sendFileOpenRequest('g', "./app.scode", 
 //								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 

@@ -18,7 +18,7 @@
 #define SAB_MISS_SCODE   2
 
 #define SAB_NAME_LEN		16 // (8 * 2)
-#define SAB_TYPE_NAME_LEN   64 // (8 * 2)
+#define SAB_TYPE_NAME_LEN   128 
 #define SAB_PROP_VALUE_LEN  1024
 
 // I got it by observation and I am not sure about it .
@@ -60,15 +60,16 @@ typedef struct _SAB_LINK
 
 typedef struct _SAB_COMP_INFO
 {
-	int      compID;
-	int      kitID;
-	int      typeID;
+	unsigned short     compID;
+	unsigned char      kitID;
+	unsigned char      typeID;
 	char     cName[SAB_NAME_LEN];
 } SAB_COMP_INFO, *PSAB_COMP_INFO;
 
-typedef struct _SOX_PROP
+typedef struct _SAB_PROP_VALUE
 {
-	unsigned int         uBufLen ;
+	int                 propType;
+	unsigned int        uBufLen ;
 	union {
 		bool            bRet ;
 		unsigned char   cByte ;
@@ -79,16 +80,20 @@ typedef struct _SOX_PROP
 		double          udRet ;
 		char            cBuf[SAB_PROP_VALUE_LEN] ;
 	};
-} SOX_PROP, *PSOX_PROP;
+} SAB_PROP_VALUE, *PSAB_PROP_VALUE;
+
+typedef struct _SAB_PROP_ELEMENT
+{
+	unsigned char    cPropName[SAB_TYPE_NAME_LEN];
+	SAB_PROP_VALUE   cValue;
+} SAB_PROP_ELEMENT, *PSAB_PROP_ELEMENT;
 
 typedef struct _SAB_PROP
 {
 	SAB_COMP_INFO        objSabCompInfo;
-	char                 cType[SAB_TYPE_NAME_LEN];
-	char                 cPropName[SAB_TYPE_NAME_LEN];
-	int                  propType;
-	// SOX_PROP
-	SOX_PROP             objSoxProp;
+	unsigned char        cTypeName[SAB_TYPE_NAME_LEN];
+	unsigned char        cPropName[SAB_TYPE_NAME_LEN];
+	SAB_PROP_VALUE       objSoxProp;
 } SAB_PROP, *PSAB_PROP;
 
 
@@ -99,18 +104,26 @@ public:
 	bool loadSCodeFile(char * cFileName);
 	void unloadSCodeFile();
 	
-	SCODE_KIT * getSCodeKits()    { return m_objSCodeReader.getSCodeKits(); }
-	int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
-	SCODE_KIT_TYPE * getScodeKitType(unsigned char   kitId, unsigned char   typeId);
-	int  serializePropsBuf(unsigned char * cPropsBuf, SCODE_KIT_TYPE * objSCodeKitType, 
-						                       SOX_PROP *       configProps, 
+	// SCODE_KIT * getSCodeKits()    { return m_objSCodeReader.getSCodeKits(); }
+	// int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
+	bool           isSCodeKitsGet()  { return (m_objSCodeReader.getSCodeKits() != NULL); }
+	SCODE_KIT_TYPE * getScodeKitTypeByKitIDAndTypeID(unsigned char   kitID, unsigned char   typeID);
+	SCODE_KIT_TYPE * getScodeKitTypeByCompID(unsigned short   compID);
+	//
+	bool             getSabNameAndTypeNameByCompID(unsigned short   compID, unsigned char * cName, unsigned char * cTypeName);
+	//
+	int  encodePropsToBuf(unsigned char * cPropsBuf, SCODE_KIT_TYPE * objSCodeKitType, 
+						                       SAB_PROP_VALUE *       configProps, 
 											   int configPropsLen);
+	int  decodeAndSkipPropsFromBuf(unsigned char ** cPropsBuf, SCODE_KIT_TYPE * objSCodeKitType, 
+						                       SAB_PROP_ELEMENT **       configProps);
 	
 	int  readSabFile(char * cFileName);
 	void releaseSabFileBuffer();
 	SabReader();
 	virtual ~SabReader();
 
+	void printSingleSabProp(SAB_PROP_VALUE& objSabPropValue, unsigned char * cPropName);
 
 private:
 	void loadSchema();
@@ -119,15 +132,17 @@ private:
 	void loadProps(SAB_COMP_INFO& objSabCompInfo, 
 	        SCODE_KIT_TYPE * objSCodeKitType, char* cTypeStr, char filter);
 	void loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr);
-	void printProps();
+	void printSabProps();
 	void printSchema();
 	int  createSchemaAssociationTable();
 	
 	void loadLinks();
 	void printLinks();
 
-	bool serializeProp(unsigned char ** cBuf, SOX_PROP configProps, 
+	bool encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configProps, 
 						 int         iFpBix,      bool isStr);
+	bool decodeAndSkipOnePropFromBuf(unsigned char ** cBuf, SAB_PROP_VALUE& configProps,
+						 int         iFpBix);// ,      bool isStr);
 public:
 	void           setBigEndian()    { m_bBigEndian = true; }
 	void           setLittleEndian() { m_bBigEndian = false; }
@@ -136,9 +151,9 @@ public:
 
 private:
 	bool           m_bBigEndian;
-	unsigned short calcAndSkipUnsignedShortValue();
-	unsigned int   calcAndSkipUnsignedIntValue();
-	unsigned long  calcAndSkipUnsignedLongValue();
+	unsigned short calcAndSkipUnsignedShortValue(unsigned char ** cBuf);
+	unsigned int   calcAndSkipUnsignedIntValue(unsigned char ** cBuf);
+	unsigned long  calcAndSkipUnsignedLongValue(unsigned char ** cBuf);
 	
 private:
 	FileReader         m_objFileReader;

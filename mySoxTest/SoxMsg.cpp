@@ -8,6 +8,8 @@ CSoxMsg::CSoxMsg()
 	setBigEndian();
 	m_bExitRecvThread = TRUE;
 	resetFileOpenInfo();
+	m_componentState = 0xFF;
+	memset(&m_objSabReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
 }
 
 CSoxMsg::~CSoxMsg()
@@ -21,7 +23,7 @@ void CSoxMsg::setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsign
 		(*cBuffer)[0] = (uValue >> 8) & 0xFF;
 		(*cBuffer)[1] =  uValue & 0xFF;
 	}
-	else 
+	else
 	{
 		(*cBuffer)[1] = (uValue >> 8) & 0xFF;
 		(*cBuffer)[0] =  uValue & 0xFF;
@@ -38,7 +40,7 @@ void CSoxMsg::setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer, unsigned
 		(*cBuffer)[2] = (uValue >> 8)  & 0xFF;
 		(*cBuffer)[3] =  uValue & 0xFF;
 	}
-	else 
+	else
 	{
 		(*cBuffer)[3] = (uValue >> 24) & 0xFF;
 		(*cBuffer)[2] = (uValue >> 16) & 0xFF;
@@ -61,7 +63,7 @@ void CSoxMsg::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigne
 		(*cBuffer)[6] = (uValue >> 8)  & 0xFF;
 		(*cBuffer)[7] =  uValue & 0xFF;
 	}
-	else 
+	else
 	{
 		(*cBuffer)[7] = (uValue >> 56) & 0xFF;
 		(*cBuffer)[6] = (uValue >> 48) & 0xFF;
@@ -73,6 +75,71 @@ void CSoxMsg::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigne
 		(*cBuffer)[0] =  uValue & 0xFF;
 	}
 	*cBuffer += 8;
+}
+
+unsigned short CSoxMsg::calcAndSkipUnsignedShortValue(unsigned char ** cBuffer)
+{
+	unsigned short uValue = 0x00;
+	if (m_bBigEndian)
+	{
+		uValue        = (unsigned char)(*cBuffer)[0];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[1];
+	}
+	else
+	{
+		uValue       += (unsigned char)(*cBuffer)[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[0];
+	}
+	(*cBuffer) += 2;
+	return uValue;
+}
+
+unsigned int CSoxMsg::calcAndSkipUnsignedIntValue(unsigned char ** cBuffer)
+{
+	unsigned int uValue = 0x00;
+	if (m_bBigEndian)
+	{
+		uValue        = (unsigned char)(*cBuffer)[0];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[2];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[3];
+	}
+	else
+	{
+		uValue        = (unsigned char)(*cBuffer)[3];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[2];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[1];
+		uValue       *= 0x100;
+		uValue       += (unsigned char)(*cBuffer)[0];
+	}
+	(*cBuffer) += 4;
+	return uValue;
+}
+
+unsigned long  CSoxMsg::calcAndSkipUnsignedLongValue(unsigned char ** cBuffer)
+{
+	unsigned long uValue = 0x00;
+	unsigned int uValueOne = 0x00;
+	uValueOne = calcAndSkipUnsignedIntValue(cBuffer);
+	unsigned int uValueTwo = 0x00;
+	uValueTwo = calcAndSkipUnsignedIntValue(cBuffer);
+
+	if (m_bBigEndian)
+	{
+		uValue = uValueOne * 0x100000000 + uValueTwo;
+	}
+	else
+	{
+		uValue = uValueTwo * 0x100000000 + uValueOne;
+	}
+	return uValue;
 }
 
 bool CSoxMsg::loadSabFile(char * cFileName)
@@ -144,9 +211,9 @@ void recv_thread_func(void * arg)
 		{
 			if(objSoxMsg->m_objDASPMsg.getReceiveLeftBufLen() > 0)
 			{
-				char * cLeftDataPtr = objSoxMsg->m_objDASPMsg.getReceiveLeftBuf();
+				unsigned char * cLeftDataPtr = objSoxMsg->m_objDASPMsg.getReceiveLeftBuf();
 
-				objSoxMsg->dealSoxPacket(cLeftDataPtr, 
+				objSoxMsg->dealSoxPacket(cLeftDataPtr,
 					objSoxMsg->m_objDASPMsg.getReceiveLeftBufLen());
 			}
 			printf("MESSAGE_TYPES_DATAGRAM \r\n");
@@ -160,7 +227,7 @@ void recv_thread_func(void * arg)
 	}
 }
 
-void CSoxMsg::dealSoxPacket(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 {
 	char cReplyNum = 0x00;
 	switch(cDataBuf[0]) {
@@ -183,14 +250,14 @@ void CSoxMsg::dealSoxPacket(char * cDataBuf, int iDataBufLen)
 		dealReadCompRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'C':
-		dealReadCompResponse(cDataBuf, iDataBufLen);
+		dealReadCompResponse(cDataBuf, iDataBufLen, m_objSabReadCompRsp);
 		break;
 	//	d	delete	Delete an component and its children from the application
 	case 'd':
-		dealReleteRequest(cDataBuf, iDataBufLen);
+		dealDeleteRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'D':
-		dealReleteResponse(cDataBuf, iDataBufLen);
+		dealDeleteResponse(cDataBuf, iDataBufLen);
 		break;
 	//	e	event	COV event for a subscribed component
 	case 'e':
@@ -318,27 +385,27 @@ void CSoxMsg::startRecvThread()
 }
 
 //	a	add	Add a new component to the application
-void CSoxMsg::dealAddRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealAddRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 	// Not implement
 }
 //	A	add	Add a new component to the application
-void CSoxMsg::dealAddResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealAddResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 	char replyNum  = cDataBuf[1];
 	char compID    = cDataBuf[2];
 	printf("replyNum = %d, compID = %d.\r\n", (int)replyNum, (int)compID);
 }
 //	a	add	Add a new component to the application
-bool CSoxMsg::sendAddRequest(unsigned short	parentID,
-							 unsigned char   kitId,
-							 unsigned char   typeId,
-							 char *          cName,
-							 SOX_PROP *      configProps, int configPropsLen)
+bool CSoxMsg::sendAddRequest(unsigned short	  parentID,
+							 unsigned char    kitId,
+							 unsigned char    typeId,
+							 char *           cName,
+							 SAB_PROP_VALUE * configProps, int configPropsLen)
 {
 	unsigned char cPropsBuf[PROP_VALUE_LEN];
 	SCODE_KIT_TYPE * objSCodeKitType = NULL;
-	if (m_objSabReader.getSCodeKits() == NULL)
+	if (m_objSabReader.isSCodeKitsGet() == false)
 	{
 		printf("We need the scode file.");
 		return false;
@@ -348,14 +415,14 @@ bool CSoxMsg::sendAddRequest(unsigned short	parentID,
 		printf(" Name should be less than eight characters.");
 		return false;
 	}
-	
-	objSCodeKitType = m_objSabReader.getScodeKitType(kitId, typeId);
+
+	objSCodeKitType = m_objSabReader.getScodeKitTypeByKitIDAndTypeID(kitId, typeId);
 	if (objSCodeKitType)
 	{
 		memset(cPropsBuf, 0x00, PROP_VALUE_LEN);
-		int iPropsLen = m_objSabReader.serializePropsBuf(cPropsBuf, 
+		int iPropsLen = m_objSabReader.encodePropsToBuf(cPropsBuf,
 			           objSCodeKitType, configProps, configPropsLen);
-		int iDataLen = sizeof(SOX_ADD_REQ) 
+		int iDataLen = sizeof(SOX_ADD_REQ)
 				 + strlen(cName) + iPropsLen + 1;
 		unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
 		memset(msg_buffer, 0x00, iDataLen);
@@ -379,68 +446,195 @@ bool CSoxMsg::sendAddRequest(unsigned short	parentID,
 		memcpy(sendBufPtr, cPropsBuf, iPropsLen);
 
 		m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+		free(msg_buffer);
 		return true;
 	}
-	// SOX_PROP
+	// SAB_PROP
 	return false;
 }
 
 //	b	fileRename	Rename or move a file
-void CSoxMsg::dealFileRenameRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileRenameRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-	
+	// Not implement
 }
 //	B	fileRename	Rename or move a file
-void CSoxMsg::dealFileRenameResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileRenameResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-	
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	b	fileRename	Rename or move a file
-bool CSoxMsg::sendFileRenameRequest()
+bool CSoxMsg::sendFileRenameRequest(unsigned char * cFromName, char * cToName)
 {
+	int iDataLen = strlen((char *)cFromName) + strlen((char *)cFromName) + 4;
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'b'
+	sendBufPtr[0] = 'b';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// str  cFromName
+	memcpy(sendBufPtr, cFromName, strlen((char *)cFromName));
+	sendBufPtr += strlen((char *)cFromName) + 1;
+	// str  cToName
+	memcpy(sendBufPtr, cToName, strlen((char *)cToName));
+	sendBufPtr += strlen((char *)cToName) + 1;
+
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
 	return true;
-	
 }
 //	c	readComp	Read a component in the application
-void CSoxMsg::dealReadCompRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReadCompRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	C	readComp	Read a component in the application
-void CSoxMsg::dealReadCompResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_READCOMP_RSP& objSabReadCompRsp)
 {
+	memset(&objSabReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
+	unsigned char * sendBufPtr = cDataBuf;
+	unsigned char replyNum  = sendBufPtr[1];
+	sendBufPtr += 2;
+	printf("replyNum = %d.\r\n", (unsigned int)replyNum);
 
+	objSabReadCompRsp.compID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+	objSabReadCompRsp.componentState  = sendBufPtr[0];
+	sendBufPtr ++;
+	if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	{
+		objSabReadCompRsp.objSabCompTree.kitID   = sendBufPtr[0];
+		objSabReadCompRsp.objSabCompTree.typeID  = sendBufPtr[1];
+		sendBufPtr += 2;
+		strcpy((char *)objSabReadCompRsp.objSabCompTree.cName, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSabReadCompRsp.objSabCompTree.cName) + 1;
+		objSabReadCompRsp.objSabCompTree.parentID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		objSabReadCompRsp.objSabCompTree.permissions   = sendBufPtr[0];
+		objSabReadCompRsp.objSabCompTree.numKids       = sendBufPtr[1];
+		sendBufPtr += 2;
+		objSabReadCompRsp.objSabCompTree.kidIds = (unsigned short *)malloc(
+			sizeof(unsigned short) * objSabReadCompRsp.objSabCompTree.numKids);
+		for (int i = 0; i < objSabReadCompRsp.objSabCompTree.numKids; i++)
+		{
+			objSabReadCompRsp.objSabCompTree.kidIds[i] = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		}
+	}
+	else if ((objSabReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	{
+		SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(objSabReadCompRsp.compID);
+		if (objSCodeKitType)
+		{
+			m_objSabReader.getSabNameAndTypeNameByCompID(objSabReadCompRsp.compID, 
+				objSabReadCompRsp.cName, objSabReadCompRsp.cTypeName);
+			objSabReadCompRsp.objSabCompProps.propValuesCount = 
+				m_objSabReader.decodeAndSkipPropsFromBuf(&sendBufPtr, objSCodeKitType, 
+					&objSabReadCompRsp.objSabCompProps.cValueList);
+		}
+		
+	}
+	else if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	{
+	}
+	printSoxReadcompRsp(objSabReadCompRsp);
 }
-//	c	readComp	Read a component in the application
-bool CSoxMsg::sendReadCompRequest()
+
+void CSoxMsg::printSoxReadcompRsp(SOX_READCOMP_RSP& objSabReadCompRsp)
 {
+	printf("objSabReadCompRsp(compID, cName, cTypeName, componentState) = (%02d, %s, %s, %c) and ",
+		objSabReadCompRsp.compID, objSabReadCompRsp.cName, 
+		objSabReadCompRsp.cTypeName,objSabReadCompRsp.componentState);
+	if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	{
+		printf(" objSabCompTree is:  \r\n");
+		
+	}
+	else if ((objSabReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	{
+		printf(" objSabCompProps is:  \r\n");
+		for (int j=0; j < objSabReadCompRsp.objSabCompProps.propValuesCount; j++)
+		{
+			printf("\t objSabCompProps.cValueList[%d](cPropName, cValue) "
+				"  = (%s, '", j, objSabReadCompRsp.objSabCompProps.cValueList[j].cPropName);
+			m_objSabReader.printSingleSabProp(
+				objSabReadCompRsp.objSabCompProps.cValueList[j].cValue,
+				objSabReadCompRsp.objSabCompProps.cValueList[j].cPropName);
+			printf("' ) \r\n");
+		}
+	}
+	else if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	{
+		printf(" objSabCompLinks is:  \r\n");
+	}
+}
+
+//	c	readComp	Read a component in the application
+bool CSoxMsg::sendReadCompRequest(unsigned short	componentID,
+							      unsigned char   componentState)
+{
+	if ((componentState != RTFLAGS_FILTER_TREE) &&
+		(componentState != RTFLAGS_FILTER_CONFIG) &&
+		(componentState != RTFLAGS_FILTER_RUNTIME) &&
+		(componentState != RTFLAGS_FILTER_LINKS))
+	{ 
+		return false;
+	}
+	// Clear recv object.
+	// memset(&m_objSabReadCompRsp, 0x00, sizeof(SAB_READCOMP_RSP))
+
+	int iDataLen = 4 + 1;
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'c'
+	sendBufPtr[0] = 'c';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	sendBufPtr[0] = componentState;
+	sendBufPtr ++;
+	m_componentState = componentState;
+
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
 	return true;
 
 }
 //	d	delete	Delete an component and its children from the application
-void CSoxMsg::dealReleteRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealDeleteRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	D	delete	Delete an component and its children from the application
-void CSoxMsg::dealReleteResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealDeleteResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	d	delete	Delete an component and its children from the application
-bool CSoxMsg::sendReleteRequest()
+bool CSoxMsg::sendDeleteRequest()
 {
 	return true;
 
 }
 
 //	e	event	COV event for a subscribed component
-void CSoxMsg::dealEventRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealEventRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	E	event	COV event for a subscribed component
-void CSoxMsg::dealEventResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealEventResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -452,15 +646,15 @@ bool CSoxMsg::sendEventRequest()
 }
 
 //	f	fileOpen	Begin a get or put file transfer operation
-void CSoxMsg::dealFileOpenRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileOpenRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 }
 
 //	F	fileOpen	Begin a get or put file transfer operation
-void CSoxMsg::dealFileOpenResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileOpenResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 	char replyNum  = cDataBuf[1];
-	// 
+	//
 	m_fileSize        = (unsigned char)cDataBuf[2];
 	m_fileSize       *= 0x100;
 	m_fileSize       += (unsigned char)cDataBuf[3];
@@ -468,7 +662,7 @@ void CSoxMsg::dealFileOpenResponse(char * cDataBuf, int iDataBufLen)
 	m_fileSize       += (unsigned char)cDataBuf[4];
 	m_fileSize       *= 0x100;
 	m_fileSize       += (unsigned char)cDataBuf[5];
-	// 
+	//
 	m_actualChunkSize  = (unsigned char)cDataBuf[6];
 	m_actualChunkSize *= 0x100;
 	m_actualChunkSize += (unsigned char)cDataBuf[7];
@@ -477,13 +671,13 @@ void CSoxMsg::dealFileOpenResponse(char * cDataBuf, int iDataBufLen)
 }
 
 //	f	fileOpen	Begin a get or put file transfer operation
-bool CSoxMsg::sendFileOpenRequest(char method, char * uri, 
-								  unsigned int fileSize, 
+bool CSoxMsg::sendFileOpenRequest(unsigned char method, char * uri,
+								  unsigned int fileSize,
 								  unsigned short suggestedChunkSize)
 							//	  , char * name, char * value)
 {
-	int iDataLen = sizeof(SOX_FILEOPEN_REQ) 
-		+ strlen(uri) + 16; // + strlen(name) + strlen(value) 
+	int iDataLen = sizeof(SOX_FILEOPEN_REQ)
+		+ strlen(uri) + 16; // + strlen(name) + strlen(value)
 	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
 	memset(msg_buffer, 0x00, iDataLen);
 
@@ -505,7 +699,7 @@ bool CSoxMsg::sendFileOpenRequest(char method, char * uri,
 	// u4   fileSize
 	setAndSkipUnsignedIntValueToBuf(&sendBufPtr, fileSize);
 	// u2   suggestedChunkSize  (suggested by client)
-	setAndSkipUnsignedIntValueToBuf(&sendBufPtr, suggestedChunkSize);
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, suggestedChunkSize);
 /*
 	memcpy(sendBufPtr, name, strlen(name));
 	sendBufPtr += strlen(name) + 1;
@@ -515,19 +709,20 @@ bool CSoxMsg::sendFileOpenRequest(char method, char * uri,
  */
 	// u1 end of headers '\0'
 	sendBufPtr++;
-	// 
+	//
 	resetFileOpenInfo();
 	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
 	return true;
 }
 
 //	i	invoke	Invoke a component action
-void CSoxMsg::dealInvokeRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealInvokeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	I	invoke	Invoke a component action
-void CSoxMsg::dealInvokeResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealInvokeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -538,16 +733,16 @@ bool CSoxMsg::sendInvokeRequest()
 
 }
 //	k	fileChunk	Receive or send a chunk during a file transfer
-void CSoxMsg::dealFileChunkRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileChunkRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 	char cFileChunkName[NAME_BUFFER_LEN];
-	
+
 	char replyNum  = cDataBuf[1];
 	unsigned short chunkNum  = (unsigned char)cDataBuf[2];
 	chunkNum                *= 0x100;
 	chunkNum                += (unsigned char)cDataBuf[3];
 	unsigned short chunkSize = (unsigned char)cDataBuf[4];
-	chunkSize               *= 0x100; 
+	chunkSize               *= 0x100;
 	chunkSize               += (unsigned char)cDataBuf[5];
 	// Create FileChunk Name
 	memset(cFileChunkName, 0x00, NAME_BUFFER_LEN);
@@ -564,11 +759,11 @@ void CSoxMsg::dealFileChunkRequest(char * cDataBuf, int iDataBufLen)
 	if(chunkNum == m_numChunks)
 	{
 		mergeFileChunkToFile();
-		// If we get new app.scode, we would read scode information from app.scode 
+		// If we get new app.scode, we would read scode information from app.scode
 		// and empty all information of app.sab. Otherwise, we would get reference error.
 		if(strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
 		{
-			if (m_objSabReader.getSCodeKits())
+			if (m_objSabReader.isSCodeKitsGet())
 			{
 				m_objSabReader.unloadSCodeFile();
 				// Empty all information of app.sab. Otherwise, we would get reference error.
@@ -596,7 +791,7 @@ void CSoxMsg::mergeFileChunkToFile()
 	char cFileName[NAME_BUFFER_LEN];
 	char cFileChunkName[NAME_BUFFER_LEN];
 	char * cFileContent = (char *)malloc(MAX_BUFFER_LEN);
-	
+
 	memset(cFileName, 0x00, NAME_BUFFER_LEN);
 	sprintf(cFileName, "%s", m_currentURI);
 
@@ -620,7 +815,7 @@ void CSoxMsg::mergeFileChunkToFile()
 }
 
 //	K	fileChunk	Receive or send a chunk during a file transfer
-void CSoxMsg::dealFileChunkResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileChunkResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 }
 //	k	fileChunk	Receive or send a chunk during a file transfer
@@ -631,12 +826,12 @@ bool CSoxMsg::sendFileChunkRequest()
 }
 
 //	l	link	Add or delete a link
-void CSoxMsg::dealLinkRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealLinkRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	L	link	Add or delete a link
-void CSoxMsg::dealLinkResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealLinkResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -647,12 +842,12 @@ bool CSoxMsg::sendLinkRequest()
 
 }
 //	n	rename	Rename a component
-void CSoxMsg::dealRenameRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealRenameRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	N	rename	Rename a component
-void CSoxMsg::dealRenameResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealRenameResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -664,12 +859,12 @@ bool CSoxMsg::sendRenameRequest()
 }
 
 //	o	reorder	Reorder a component's children
-void CSoxMsg::dealReorderRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReorderRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	O	reorder	Reorder a component's children
-void CSoxMsg::dealReorderResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReorderResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -680,12 +875,12 @@ bool CSoxMsg::sendReorderRequest()
 
 }
 //	q	query	Query installed services
-void CSoxMsg::dealQueryRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealQueryRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	Q	query	Query installed services
-void CSoxMsg::dealQueryResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -697,12 +892,12 @@ bool CSoxMsg::sendQueryRequest()
 }
 
 //	r	readProp	Read a single property from a component
-void CSoxMsg::dealReadPropRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReadPropRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	R	readProp	Read a single property from a component
-void CSoxMsg::dealReadPropResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -713,12 +908,12 @@ bool CSoxMsg::sendReadPropRequest()
 
 }
 //	s	subscribe	Subscribe to a component for COV events
-void CSoxMsg::dealSubscribeRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealSubscribeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	S	subscribe	Subscribe to a component for COV events
-void CSoxMsg::dealSubscribeResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealSubscribeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -729,12 +924,12 @@ bool CSoxMsg::sendSubscribeRequest()
 
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
-void CSoxMsg::dealUnsubscribeRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealUnsubscribeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
-void CSoxMsg::dealUnsubscribeResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealUnsubscribeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -745,12 +940,12 @@ bool CSoxMsg::sendUnsubscribeRequest()
 
 }
 //	v	version	Query for the kits installed
-void CSoxMsg::dealVersionRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealVersionRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	V	version	Query for the kits installed
-void CSoxMsg::dealVersionResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -761,12 +956,12 @@ bool CSoxMsg::sendVersionRequest()
 
 }
 //	w	write	Write the value of a single component property
-void CSoxMsg::dealWriteRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealWriteRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	w	write	Write the value of a single component property
-void CSoxMsg::dealWriteResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealWriteResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -777,12 +972,12 @@ bool CSoxMsg::sendWriteRequest()
 
 }
 //	y	versionMore	Query for additional version meta-data
-void CSoxMsg::dealVersionMoreRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealVersionMoreRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	y	versionMore	Query for additional version meta-data
-void CSoxMsg::dealVersionMoreResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealVersionMoreResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -793,12 +988,12 @@ bool CSoxMsg::sendVersionMoreRequest()
 
 }
 //	z	fileClose	Close a file transfer operation
-void CSoxMsg::dealFileCloseRequest(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileCloseRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
 //	z	fileClose	Close a file transfer operation
-void CSoxMsg::dealFileCloseResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealFileCloseResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 
 }
@@ -809,7 +1004,7 @@ bool CSoxMsg::sendFileCloseRequest()
 
 }
 //	!	error	Response id for a Response that could not be processed
-void CSoxMsg::dealErrorResponse(char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealErrorResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
 	char cReplyNum = cDataBuf[1];
 	printf("ERROR: %s\r\n", cDataBuf + 2);

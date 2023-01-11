@@ -37,13 +37,16 @@
 #define RTFLAGS_FILTER_RUNTIME                'r'
 #define RTFLAGS_FILTER_OPERATOR_CONFIG        'C'
 #define RTFLAGS_FILTER_OPERATOR_RUNTIME       'R'
+// compTree
+#define RTFLAGS_FILTER_TREE                   't'
+#define RTFLAGS_FILTER_LINKS                  'l'
 
 typedef struct _SCODE_KIT_TYPE_SLOT
 {
     int id;
     int rtFlags;
     int nameBix;
-    char cName[SCODE_NAME_LEN];
+    char cPropName[SCODE_NAME_LEN];
     int fpBix;
     int codeBix;
 } SCODE_KIT_TYPE_SLOT, *PSCODE_KIT_TYPE_SLOT;
@@ -163,9 +166,9 @@ public:
 
 private:
 	bool           m_bBigEndian;
-	unsigned short calcAndSkipUnsignedShortValue();
-	unsigned int   calcAndSkipUnsignedIntValue();
-	unsigned long  calcAndSkipUnsignedLongValue();
+	unsigned short calcAndSkipUnsignedShortValue(unsigned char ** cBuf);
+	unsigned int   calcAndSkipUnsignedIntValue(unsigned char ** cBuf);
+	unsigned long  calcAndSkipUnsignedLongValue(unsigned char ** cBuf);
 
 private:
 	unsigned char *    m_fileBuf;

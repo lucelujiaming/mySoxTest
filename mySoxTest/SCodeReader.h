@@ -43,43 +43,43 @@
 
 typedef struct _SCODE_KIT_TYPE_SLOT
 {
-    int id;
-    int rtFlags;
-    int nameBix;
-    char cPropName[SCODE_NAME_LEN];
-    int fpBix;
-    int codeBix;
+    unsigned int  id;
+    unsigned int  rtFlags;
+    unsigned int  nameBix;
+    unsigned char cPropName[SCODE_NAME_LEN];
+    unsigned int  fpBix;
+    unsigned int  codeBix;
 } SCODE_KIT_TYPE_SLOT, *PSCODE_KIT_TYPE_SLOT;
 
 typedef struct _SCODE_KIT_TYPE
 {
-    int id;
-    int slotsLen;
-    int nameBix;
-    char cName[SCODE_NAME_LEN];
-    int kitBix;
-    int baseBix;
-    int size;
-    int initBix;
+    unsigned int id;
+    unsigned int slotsLen;
+    unsigned int nameBix;
+    unsigned char cName[SCODE_NAME_LEN];
+    unsigned int kitBix;
+    unsigned int baseBix;
+    unsigned int size;
+    unsigned int initBix;
 	SCODE_KIT_TYPE_SLOT * kit_type_slots_list;
 } SCODE_KIT_TYPE, *PSCODE_KIT_TYPE;
 
 typedef struct _SCODE_KIT
 {
-    int id;
-    int typesLen;
-    char cName[SCODE_NAME_LEN];
-    char cVer[SCODE_NAME_LEN];
-    int pad;
+    unsigned int id;
+    unsigned int typesLen;
+    unsigned char cName[SCODE_NAME_LEN];
+    unsigned char cVer[SCODE_NAME_LEN];
+    unsigned int pad;
     unsigned int checksum;
 	SCODE_KIT_TYPE * kit_type_list;
 } SCODE_KIT, *PSCODE_KIT;
 
 typedef struct _SCODE_LOG
 {
-    int id;
-    int nameBix;
-    char cName[SCODE_LOGNAME_LEN];
+    unsigned int id;
+    unsigned int nameBix;
+    unsigned char cName[SCODE_LOGNAME_LEN];
 } SCODE_LOG, *PSCODE_LOG;
 
 
@@ -99,9 +99,9 @@ typedef struct _SCODE_TEST_QNAMESLOT
     unsigned short typeNameBix;
     unsigned short slotNameBix;
 
-    char typeName[SCODE_LOGNAME_LEN];
-    char slotName[SCODE_LOGNAME_LEN];
-    char methodName[SCODE_LOGNAME_LEN];
+    unsigned char typeName[SCODE_LOGNAME_LEN];
+    unsigned char slotName[SCODE_LOGNAME_LEN];
+    unsigned char methodName[SCODE_LOGNAME_LEN];
 } SCODE_TEST_QNAMESLOT, *PSCODE_TEST_QNAMESLOT;
 
 typedef struct _SCODE_TEST
@@ -125,15 +125,15 @@ public:
 	virtual ~SCodeReader();
 
 public:
-	bool matchRtFlagsProp(int filter, int rtFlags);
-	bool isRtFlagsProp(int rtFlags)     { return (rtFlags & RTFLAGS_ACTION) == 0; }
-	bool isRtFlagsAction(int rtFlags)   { return (rtFlags & RTFLAGS_ACTION) != 0; }
-	bool isRtFlagsConfig(int rtFlags)   { return (rtFlags & RTFLAGS_CONFIG) != 0; }
-	bool isRtFlagsAsStr(int rtFlags)    { return (rtFlags & RTFLAGS_AS_STR) != 0; }
-	bool isRtFlagsOperator(int rtFlags) { return (rtFlags & RTFLAGS_OPERATOR) != 0; }
+	bool matchRtFlagsProp(unsigned char filter, unsigned int rtFlags);
+	bool isRtFlagsProp(unsigned int rtFlags)     { return (rtFlags & RTFLAGS_ACTION) == 0; }
+	bool isRtFlagsAction(unsigned int rtFlags)   { return (rtFlags & RTFLAGS_ACTION) != 0; }
+	bool isRtFlagsConfig(unsigned int rtFlags)   { return (rtFlags & RTFLAGS_CONFIG) != 0; }
+	bool isRtFlagsAsStr(unsigned int rtFlags)    { return (rtFlags & RTFLAGS_AS_STR) != 0; }
+	bool isRtFlagsOperator(unsigned int rtFlags) { return (rtFlags & RTFLAGS_OPERATOR) != 0; }
 
 private:
-	void parseStr(char * strBuf, unsigned int iOffset);
+	void parseStr(unsigned char * strBuf, unsigned int iOffset);
 
 	void parseKit(SCODE_KIT& objScodeKit, unsigned int iOffset);
 	void parseType(SCODE_KIT_TYPE& objScodeKitType, unsigned int typeBix);

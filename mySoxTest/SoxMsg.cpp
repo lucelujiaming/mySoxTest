@@ -9,7 +9,7 @@ CSoxMsg::CSoxMsg()
 	m_bExitRecvThread = TRUE;
 	resetFileOpenInfo();
 	m_componentState = 0xFF;
-	memset(&m_objSabReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
+	memset(&m_objSoxReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
 }
 
 CSoxMsg::~CSoxMsg()
@@ -250,7 +250,8 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		dealReadCompRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'C':
-		dealReadCompResponse(cDataBuf, iDataBufLen, m_objSabReadCompRsp);
+		dealReadCompResponse(cDataBuf, iDataBufLen, m_objSoxReadCompRsp);
+		releaseSoxReadcompRsp(m_objSoxReadCompRsp);
 		break;
 	//	d	delete	Delete an component and its children from the application
 	case 'd':
@@ -261,10 +262,11 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		break;
 	//	e	event	COV event for a subscribed component
 	case 'e':
-		dealEventRequest(cDataBuf, iDataBufLen);
+		dealEventRequest(cDataBuf, iDataBufLen, m_objSoxReadCompRsp);
 		break;
 	case 'E':
-		dealEventResponse(cDataBuf, iDataBufLen);
+	//  Never happen in the SOX
+	//	dealEventResponse(cDataBuf, iDataBufLen);
 		break;
 	//	f	fileOpen	Begin a get or put file transfer operation
 	case 'f':
@@ -320,7 +322,7 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		dealReadPropRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'R':
-		dealReadPropResponse(cDataBuf, iDataBufLen);
+		dealReadPropResponse(cDataBuf, iDataBufLen, m_objSabProp);
 		break;
 	//	s	subscribe	Subscribe to a component for COV events
 	case 's':
@@ -421,7 +423,7 @@ bool CSoxMsg::sendAddRequest(unsigned short	  parentID,
 	{
 		memset(cPropsBuf, 0x00, PROP_VALUE_LEN);
 		int iPropsLen = m_objSabReader.encodePropsToBuf(cPropsBuf,
-			           objSCodeKitType, configProps, configPropsLen);
+			           objSCodeKitType, RTFLAGS_FILTER_CONFIG, configProps, configPropsLen);
 		int iDataLen = sizeof(SOX_ADD_REQ)
 				 + strlen(cName) + iPropsLen + 1;
 		unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
@@ -494,86 +496,160 @@ void CSoxMsg::dealReadCompRequest(unsigned char * cDataBuf, int iDataBufLen)
 	// Not implement
 }
 //	C	readComp	Read a component in the application
-void CSoxMsg::dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_READCOMP_RSP& objSabReadCompRsp)
+void CSoxMsg::dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_READCOMP_RSP& objSoxReadCompRsp)
 {
-	memset(&objSabReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
+	memset(&objSoxReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
 	unsigned char * sendBufPtr = cDataBuf;
 	unsigned char replyNum  = sendBufPtr[1];
 	sendBufPtr += 2;
 	printf("replyNum = %d.\r\n", (unsigned int)replyNum);
 
-	objSabReadCompRsp.compID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
-	objSabReadCompRsp.componentState  = sendBufPtr[0];
-	sendBufPtr ++;
-	if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	objSoxReadCompRsp.compID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+	objSoxReadCompRsp.componentState  = sendBufPtr[0];
+	sendBufPtr++;
+	if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
 	{
-		objSabReadCompRsp.objSabCompTree.kitID   = sendBufPtr[0];
-		objSabReadCompRsp.objSabCompTree.typeID  = sendBufPtr[1];
+		objSoxReadCompRsp.objSabCompTree.kitID   = sendBufPtr[0];
+		objSoxReadCompRsp.objSabCompTree.typeID  = sendBufPtr[1];
 		sendBufPtr += 2;
-		strcpy((char *)objSabReadCompRsp.objSabCompTree.cName, (char *)sendBufPtr);
-		sendBufPtr += strlen((char *)objSabReadCompRsp.objSabCompTree.cName) + 1;
-		objSabReadCompRsp.objSabCompTree.parentID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
-		objSabReadCompRsp.objSabCompTree.permissions   = sendBufPtr[0];
-		objSabReadCompRsp.objSabCompTree.numKids       = sendBufPtr[1];
+		strcpy((char *)objSoxReadCompRsp.objSabCompTree.cName, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSoxReadCompRsp.objSabCompTree.cName) + 1;
+		objSoxReadCompRsp.objSabCompTree.parentID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		objSoxReadCompRsp.objSabCompTree.permissions   = sendBufPtr[0];
+		objSoxReadCompRsp.objSabCompTree.numKids       = sendBufPtr[1];
 		sendBufPtr += 2;
-		objSabReadCompRsp.objSabCompTree.kidIds = (unsigned short *)malloc(
-			sizeof(unsigned short) * objSabReadCompRsp.objSabCompTree.numKids);
-		for (int i = 0; i < objSabReadCompRsp.objSabCompTree.numKids; i++)
+		objSoxReadCompRsp.objSabCompTree.kidIds = (unsigned short *)malloc(
+			sizeof(unsigned short) * objSoxReadCompRsp.objSabCompTree.numKids);
+		memset(objSoxReadCompRsp.objSabCompTree.kidIds, 0x00, 
+			sizeof(unsigned short) * objSoxReadCompRsp.objSabCompTree.numKids);
+		for (int i = 0; i < objSoxReadCompRsp.objSabCompTree.numKids; i++)
 		{
-			objSabReadCompRsp.objSabCompTree.kidIds[i] = calcAndSkipUnsignedShortValue(&sendBufPtr);
+			objSoxReadCompRsp.objSabCompTree.kidIds[i] = calcAndSkipUnsignedShortValue(&sendBufPtr);
 		}
 	}
-	else if ((objSabReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	else if ((objSoxReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
 	{
-		SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(objSabReadCompRsp.compID);
+		SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(objSoxReadCompRsp.compID);
 		if (objSCodeKitType)
 		{
-			m_objSabReader.getSabNameAndTypeNameByCompID(objSabReadCompRsp.compID, 
-				objSabReadCompRsp.cName, objSabReadCompRsp.cTypeName);
-			objSabReadCompRsp.objSabCompProps.propValuesCount = 
+			m_objSabReader.getComponentNameAndTypeNameByCompID(objSoxReadCompRsp.compID, 
+				objSoxReadCompRsp.cName, objSoxReadCompRsp.cTypeName);
+
+			objSoxReadCompRsp.objSabCompProps.cValueList = (SAB_PROP_ELEMENT *)malloc(
+				sizeof(SAB_PROP_ELEMENT) * objSCodeKitType->slotsLen);
+			memset(objSoxReadCompRsp.objSabCompProps.cValueList, 0x00, 
+				sizeof(SAB_PROP_ELEMENT) * objSCodeKitType->slotsLen);
+			
+			objSoxReadCompRsp.objSabCompProps.propValuesCount = 
 				m_objSabReader.decodeAndSkipPropsFromBuf(&sendBufPtr, objSCodeKitType, 
-					&objSabReadCompRsp.objSabCompProps.cValueList);
+					objSoxReadCompRsp.componentState, 
+					objSoxReadCompRsp.objSabCompProps.cValueList);
 		}
-		
 	}
-	else if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	else if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
 	{
+		std::vector<SAB_LINK>    objSabLinkList;
+		SAB_LINK objSabLinkInfo;
+		while (1)
+		{
+			memset(&objSabLinkInfo, 0x00, sizeof(SAB_LINK));
+			objSabLinkInfo.fromComp  = calcAndSkipUnsignedShortValue(&sendBufPtr);
+			if ((objSabLinkInfo.fromComp == 0xFFFF) || (objSabLinkInfo.fromComp < 0))
+				break;
+			objSabLinkInfo.fromSlot  = sendBufPtr[0];
+			sendBufPtr++;
+			m_objSabReader.getLinkNameByCompIDAndSlotID(
+				objSabLinkInfo.fromComp, objSabLinkInfo.fromSlot, objSabLinkInfo.cFromLinkName);
+			objSabLinkInfo.toComp    = calcAndSkipUnsignedShortValue(&sendBufPtr);
+			objSabLinkInfo.toSlot    = sendBufPtr[0];
+			sendBufPtr++;
+			m_objSabReader.getLinkNameByCompIDAndSlotID(
+				objSabLinkInfo.toComp, objSabLinkInfo.toSlot, objSabLinkInfo.cToLinkName);
+			objSabLinkList.push_back(objSabLinkInfo);
+		}
+		objSoxReadCompRsp.objSabCompLinks.compLinksCount = objSabLinkList.size();
+		objSoxReadCompRsp.objSabCompLinks.cLinksList = (SAB_LINK *)malloc(sizeof(SAB_LINK)
+										* objSoxReadCompRsp.objSabCompLinks.compLinksCount);
+		memset(objSoxReadCompRsp.objSabCompLinks.cLinksList, 0x00, 
+			sizeof(SAB_LINK) * objSoxReadCompRsp.objSabCompLinks.compLinksCount);
+		int iLinkSeq = 0;
+		std::vector<SAB_LINK>::iterator iter;
+		for (iter = objSabLinkList.begin(); iter != objSabLinkList.end(); iter++)
+		{
+			objSoxReadCompRsp.objSabCompLinks.cLinksList[iLinkSeq] = *iter;
+			iLinkSeq++;
+		}
 	}
-	printSoxReadcompRsp(objSabReadCompRsp);
+	printSoxReadcompRsp(objSoxReadCompRsp);
 }
 
-void CSoxMsg::printSoxReadcompRsp(SOX_READCOMP_RSP& objSabReadCompRsp)
+void CSoxMsg::printSoxReadcompRsp(SOX_READCOMP_RSP& objSoxReadCompRsp)
 {
-	printf("objSabReadCompRsp(compID, cName, cTypeName, componentState) = (%02d, %s, %s, %c) and ",
-		objSabReadCompRsp.compID, objSabReadCompRsp.cName, 
-		objSabReadCompRsp.cTypeName,objSabReadCompRsp.componentState);
-	if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	printf("objSoxReadCompRsp(compID, cName, cTypeName, componentState) = (%02d, %s, %s, %c) and ",
+		objSoxReadCompRsp.compID, objSoxReadCompRsp.cName, 
+		objSoxReadCompRsp.cTypeName, objSoxReadCompRsp.componentState);
+	if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
 	{
 		printf(" objSabCompTree is:  \r\n");
-		
+		printf("\t objSabCompTree(kitID, typeID, cName, parentID, permissions) = "
+			       "(%02d, %02d, %s, %02d, %02d) and kids =",
+				objSoxReadCompRsp.objSabCompTree.kitID, objSoxReadCompRsp.objSabCompTree.typeID, 
+				objSoxReadCompRsp.objSabCompTree.cName, objSoxReadCompRsp.objSabCompTree.parentID, 
+				objSoxReadCompRsp.objSabCompTree.permissions);
+		for (int j=0; j < objSoxReadCompRsp.objSabCompTree.numKids; j++)
+		{
+			printf(" (%d)", objSoxReadCompRsp.objSabCompTree.kidIds[j]);
+			
+		}
+		printf(". \r\n");
 	}
-	else if ((objSabReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
-		     (objSabReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	else if ((objSoxReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
 	{
 		printf(" objSabCompProps is:  \r\n");
-		for (int j=0; j < objSabReadCompRsp.objSabCompProps.propValuesCount; j++)
+		for (int j=0; j < objSoxReadCompRsp.objSabCompProps.propValuesCount; j++)
 		{
 			printf("\t objSabCompProps.cValueList[%d](cPropName, cValue) "
-				"  = (%s, '", j, objSabReadCompRsp.objSabCompProps.cValueList[j].cPropName);
+				"  = (%s, '", j, objSoxReadCompRsp.objSabCompProps.cValueList[j].cPropName);
 			m_objSabReader.printSingleSabProp(
-				objSabReadCompRsp.objSabCompProps.cValueList[j].cValue,
-				objSabReadCompRsp.objSabCompProps.cValueList[j].cPropName);
+				objSoxReadCompRsp.objSabCompProps.cValueList[j].cValue,
+				objSoxReadCompRsp.objSabCompProps.cValueList[j].cPropName);
 			printf("' ) \r\n");
 		}
 	}
-	else if (objSabReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	else if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
 	{
 		printf(" objSabCompLinks is:  \r\n");
+		for (int j=0; j < objSoxReadCompRsp.objSabCompLinks.compLinksCount; j++)
+		{
+			printf("\t ");
+			m_objSabReader.printSingleSabLink(objSoxReadCompRsp.objSabCompLinks.cLinksList[j]);
+			printf(". \r\n");
+		}
+	}
+}
+
+void CSoxMsg::releaseSoxReadcompRsp(SOX_READCOMP_RSP& objSoxReadCompRsp)
+{
+	if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	{
+		free(objSoxReadCompRsp.objSabCompTree.kidIds);
+	}
+	else if ((objSoxReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	{
+		free(objSoxReadCompRsp.objSabCompProps.cValueList);
+	}
+	else if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	{
+		free(objSoxReadCompRsp.objSabCompLinks.cLinksList);
 	}
 }
 
@@ -589,7 +665,7 @@ bool CSoxMsg::sendReadCompRequest(unsigned short	componentID,
 		return false;
 	}
 	// Clear recv object.
-	// memset(&m_objSabReadCompRsp, 0x00, sizeof(SAB_READCOMP_RSP))
+	// memset(&m_objSoxReadCompRsp, 0x00, sizeof(SAB_READCOMP_RSP))
 
 	int iDataLen = 4 + 1;
 	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
@@ -614,40 +690,139 @@ bool CSoxMsg::sendReadCompRequest(unsigned short	componentID,
 //	d	delete	Delete an component and its children from the application
 void CSoxMsg::dealDeleteRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	D	delete	Delete an component and its children from the application
 void CSoxMsg::dealDeleteResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	d	delete	Delete an component and its children from the application
-bool CSoxMsg::sendDeleteRequest()
+bool CSoxMsg::sendDeleteRequest(unsigned short	componentID)
 {
-	return true;
+	int iDataLen = 4 + 1;
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'd'
+	sendBufPtr[0] = 'd';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 
 //	e	event	COV event for a subscribed component
-void CSoxMsg::dealEventRequest(unsigned char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealEventRequest(unsigned char * cDataBuf, int iDataBufLen
+							   , SOX_READCOMP_RSP& objSoxReadCompRsp)
 {
+	unsigned char * sendBufPtr = cDataBuf;
+	unsigned char replyNum  = sendBufPtr[1];
+	sendBufPtr += 2;
+	printf("replyNum = %d.\r\n", (unsigned int)replyNum);
+	
+	objSoxReadCompRsp.compID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+	objSoxReadCompRsp.componentState  = sendBufPtr[0];
+	sendBufPtr++;
+	if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_TREE)
+	{
+		objSoxReadCompRsp.objSabCompTree.kitID   = sendBufPtr[0];
+		objSoxReadCompRsp.objSabCompTree.typeID  = sendBufPtr[1];
+		sendBufPtr += 2;
+		strcpy((char *)objSoxReadCompRsp.objSabCompTree.cName, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSoxReadCompRsp.objSabCompTree.cName) + 1;
+		objSoxReadCompRsp.objSabCompTree.parentID      = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		objSoxReadCompRsp.objSabCompTree.permissions   = sendBufPtr[0];
+		objSoxReadCompRsp.objSabCompTree.numKids       = sendBufPtr[1];
+		sendBufPtr += 2;
+		objSoxReadCompRsp.objSabCompTree.kidIds = (unsigned short *)malloc(
+			sizeof(unsigned short) * objSoxReadCompRsp.objSabCompTree.numKids);
+		memset(objSoxReadCompRsp.objSabCompTree.kidIds, 0x00, 
+			sizeof(unsigned short) * objSoxReadCompRsp.objSabCompTree.numKids);
+		for (int i = 0; i < objSoxReadCompRsp.objSabCompTree.numKids; i++)
+		{
+			objSoxReadCompRsp.objSabCompTree.kidIds[i] = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		}
+	}
+	else if ((objSoxReadCompRsp.componentState == RTFLAGS_FILTER_CONFIG) ||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_CONFIG)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_RUNTIME)||
+		     (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_OPERATOR_RUNTIME))
+	{
+		SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(objSoxReadCompRsp.compID);
+		if (objSCodeKitType)
+		{
+			m_objSabReader.getComponentNameAndTypeNameByCompID(objSoxReadCompRsp.compID, 
+				objSoxReadCompRsp.cName, objSoxReadCompRsp.cTypeName);
 
+			objSoxReadCompRsp.objSabCompProps.cValueList = (SAB_PROP_ELEMENT *)malloc(
+				sizeof(SAB_PROP_ELEMENT) * objSCodeKitType->slotsLen);
+			memset(objSoxReadCompRsp.objSabCompProps.cValueList, 0x00, 
+				sizeof(SAB_PROP_ELEMENT) * objSCodeKitType->slotsLen);
+			
+			objSoxReadCompRsp.objSabCompProps.propValuesCount = 
+				m_objSabReader.decodeAndSkipPropsFromBuf(&sendBufPtr, objSCodeKitType, 
+					objSoxReadCompRsp.componentState, 
+					objSoxReadCompRsp.objSabCompProps.cValueList);
+		}
+	}
+	else if (objSoxReadCompRsp.componentState == RTFLAGS_FILTER_LINKS)
+	{
+		std::vector<SAB_LINK>    objSabLinkList;
+		SAB_LINK objSabLinkInfo;
+		while (1)
+		{
+			memset(&objSabLinkInfo, 0x00, sizeof(SAB_LINK));
+			objSabLinkInfo.fromComp  = calcAndSkipUnsignedShortValue(&sendBufPtr);
+			if ((objSabLinkInfo.fromComp == 0xFFFF) || (objSabLinkInfo.fromComp < 0))
+				break;
+			objSabLinkInfo.fromSlot  = sendBufPtr[0];
+			sendBufPtr++;
+			m_objSabReader.getLinkNameByCompIDAndSlotID(
+				objSabLinkInfo.fromComp, objSabLinkInfo.fromSlot, objSabLinkInfo.cFromLinkName);
+			objSabLinkInfo.toComp    = calcAndSkipUnsignedShortValue(&sendBufPtr);
+			objSabLinkInfo.toSlot    = sendBufPtr[0];
+			sendBufPtr++;
+			m_objSabReader.getLinkNameByCompIDAndSlotID(
+				objSabLinkInfo.toComp, objSabLinkInfo.toSlot, objSabLinkInfo.cToLinkName);
+			objSabLinkList.push_back(objSabLinkInfo);
+		}
+		objSoxReadCompRsp.objSabCompLinks.compLinksCount = objSabLinkList.size();
+		objSoxReadCompRsp.objSabCompLinks.cLinksList = (SAB_LINK *)malloc(sizeof(SAB_LINK)
+										* objSoxReadCompRsp.objSabCompLinks.compLinksCount);
+		memset(objSoxReadCompRsp.objSabCompLinks.cLinksList, 0x00, 
+			sizeof(SAB_LINK) * objSoxReadCompRsp.objSabCompLinks.compLinksCount);
+		int iLinkSeq = 0;
+		std::vector<SAB_LINK>::iterator iter;
+		for (iter = objSabLinkList.begin(); iter != objSabLinkList.end(); iter++)
+		{
+			objSoxReadCompRsp.objSabCompLinks.cLinksList[iLinkSeq] = *iter;
+			iLinkSeq++;
+		}
+	}
+	printSoxReadcompRsp(objSoxReadCompRsp);
 }
 //	E	event	COV event for a subscribed component
-void CSoxMsg::dealEventResponse(unsigned char * cDataBuf, int iDataBufLen)
-{
-
-}
+// void CSoxMsg::dealEventResponse(unsigned char * cDataBuf, int iDataBufLen)
+// {
+//
+// }
 //	e	event	COV event for a subscribed component
 bool CSoxMsg::sendEventRequest()
 {
-
+	// Not implement
 	return true;
 }
 
 //	f	fileOpen	Begin a get or put file transfer operation
 void CSoxMsg::dealFileOpenRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
+	// Not implement
 }
 
 //	F	fileOpen	Begin a get or put file transfer operation
@@ -719,18 +894,49 @@ bool CSoxMsg::sendFileOpenRequest(unsigned char method, char * uri,
 //	i	invoke	Invoke a component action
 void CSoxMsg::dealInvokeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	I	invoke	Invoke a component action
 void CSoxMsg::dealInvokeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	i	invoke	Invoke a component action
-bool CSoxMsg::sendInvokeRequest()
+bool CSoxMsg::sendInvokeRequest(unsigned short	componentID,
+								unsigned char 	slotID,
+								SAB_PROP_VALUE& objArgument)
 {
-	return true;
+	SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(componentID);
+	if ((!objSCodeKitType) ||(slotID >= objSCodeKitType->slotsLen))
+	{
+		return false;
+	}
+	int iArgumentLen = m_objSabReader.calcPropSize(objSCodeKitType->kit_type_slots_list[slotID].fpBix, objArgument);
+	int iDataLen = 5 + iArgumentLen + 1;
 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'i'
+	sendBufPtr[0] = 'i';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	sendBufPtr[0] = slotID;
+	sendBufPtr ++;
+	if (iArgumentLen > 0)
+	{
+		m_objSabReader.encodeOnePropToBuf(&sendBufPtr, objArgument, 
+				// objArgument.propType, 
+				objSCodeKitType->kit_type_slots_list[slotID].fpBix, 
+				m_objSabReader.isRtFlagsAsStr(objSCodeKitType->kit_type_slots_list[slotID].rtFlags));
+	}
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	k	fileChunk	Receive or send a chunk during a file transfer
 void CSoxMsg::dealFileChunkRequest(unsigned char * cDataBuf, int iDataBufLen)
@@ -821,139 +1027,330 @@ void CSoxMsg::dealFileChunkResponse(unsigned char * cDataBuf, int iDataBufLen)
 //	k	fileChunk	Receive or send a chunk during a file transfer
 bool CSoxMsg::sendFileChunkRequest()
 {
+	// Not implement
 	return true;
-
 }
 
 //	l	link	Add or delete a link
 void CSoxMsg::dealLinkRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	L	link	Add or delete a link
 void CSoxMsg::dealLinkResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	l	link	Add or delete a link
-bool CSoxMsg::sendLinkRequest()
+bool CSoxMsg::sendLinkRequest(unsigned char opcode, SAB_LINK& objSabLink)
 {
-	return true;
+	int iDataLen = 3 + 6 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'f'
+	sendBufPtr[0] = 'l';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	// u1   'a' | 'd' (add/delete)
+	sendBufPtr[2] =  opcode;
+	sendBufPtr += 3;
+	//   u2   fromCompId
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, objSabLink.fromComp);
+	//  u1   fromSlotId
+	sendBufPtr[0] = objSabLink.fromSlot;
+	sendBufPtr++;
+	//  u2   toCompId
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, objSabLink.toComp);
+	//  u1   toSlotId
+	sendBufPtr[0] = objSabLink.toSlot;
+	sendBufPtr++;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	n	rename	Rename a component
 void CSoxMsg::dealRenameRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	N	rename	Rename a component
 void CSoxMsg::dealRenameResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	n	rename	Rename a component
-bool CSoxMsg::sendRenameRequest()
+bool CSoxMsg::sendRenameRequest(unsigned short	componentID,
+								unsigned char* 	newName)
 {
-	return true;
+	int iDataLen = 4 + strlen((char *)newName) + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'f'
+	sendBufPtr[0] = 'n';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	// u2   CompId
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	// str   newName
+	memcpy(sendBufPtr, newName, strlen((char *)newName));
+	sendBufPtr += strlen((char *)newName) + 1;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 
 //	o	reorder	Reorder a component's children
 void CSoxMsg::dealReorderRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	O	reorder	Reorder a component's children
 void CSoxMsg::dealReorderResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	o	reorder	Reorder a component's children
-bool CSoxMsg::sendReorderRequest()
+bool CSoxMsg::sendReorderRequest(unsigned short	    componentID,
+								unsigned short* 	childrenIds, 
+								unsigned char       numChildren)
 {
-	return true;
+	int iDataLen = 5 + numChildren * sizeof(unsigned short) + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'o'
+	sendBufPtr[0] = 'o';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// u2   CompId
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	// u1   numChildren
+	sendBufPtr[0] = numChildren;
+	sendBufPtr++;
+	// u2[]  childrenIds
+	for (int i = 0; i < numChildren; i++)
+	{
+		setAndSkipUnsignedShortValueToBuf(&sendBufPtr, childrenIds[i]);
+	}
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	q	query	Query installed services
 void CSoxMsg::dealQueryRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	Q	query	Query installed services
 void CSoxMsg::dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	q	query	Query installed services
 bool CSoxMsg::sendQueryRequest()
 {
 	return true;
-
 }
 
 //	r	readProp	Read a single property from a component
 void CSoxMsg::dealReadPropRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	R	readProp	Read a single property from a component
-void CSoxMsg::dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen, SAB_PROP& objSabProp)
 {
-
+	unsigned char * sendBufPtr = cDataBuf;
+	char replyNum  = cDataBuf[1];
+	sendBufPtr += 2;
+	printf("replyNum = %d.\r\n", (int)replyNum);
+	
+	unsigned short    componentID = calcAndSkipUnsignedShortValue(&sendBufPtr);
+	unsigned char     propID      = sendBufPtr[0];
+	unsigned char     typeID      = sendBufPtr[1];
+	sendBufPtr += 2;
+     
+	SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(componentID);
+	if ((!objSCodeKitType) ||(propID >= objSCodeKitType->slotsLen))
+	{
+		return ;
+	}
+	printf("cPropName = %s.\r\n", objSCodeKitType->kit_type_slots_list[propID].cPropName);
+	if (m_objSabReader.getMagicSlotTypebySlotTypeID(typeID) != objSCodeKitType->kit_type_slots_list[propID].fpBix)
+	{
+		return ;
+	}
+	m_objSabReader.getSabPropByCompIDAndSlotID(componentID, propID, objSabProp);
+	m_objSabReader.decodeAndSkipOnePropFromBuf(&sendBufPtr, objSabProp.objSoxProp,
+				objSCodeKitType->kit_type_slots_list[propID].fpBix);
 }
 //	r	readProp	Read a single property from a component
-bool CSoxMsg::sendReadPropRequest()
+bool CSoxMsg::sendReadPropRequest(unsigned short	componentID,
+								unsigned char 	propID)
 {
+	int iDataLen = 4 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'r'
+	sendBufPtr[0] = 'r';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// u2   CompId
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	// m_componentID = componentID;
+	// u1   numChildren
+	sendBufPtr[0] = propID;
+	sendBufPtr++;
+	// m_propID = propID;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
 	return true;
 
 }
 //	s	subscribe	Subscribe to a component for COV events
 void CSoxMsg::dealSubscribeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	S	subscribe	Subscribe to a component for COV events
 void CSoxMsg::dealSubscribeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
+	printf("numSubscribed = %d.\r\n", (int)cDataBuf[2]);
 
 }
 //	s	subscribe	Subscribe to a component for COV events
-bool CSoxMsg::sendSubscribeRequest()
+bool CSoxMsg::sendSubscribeRequest(unsigned char	cMask,
+								unsigned short* 	compIds, 
+								unsigned char       numComIds)
 {
-	return true;
+	int iDataLen = 5 + numComIds * sizeof(unsigned short) + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   's'
+	sendBufPtr[0] = 's';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// u1   whatMask: tree=0x1 config=0x2 rt=0x4 links=0x8 0xff all tree
+	sendBufPtr[0] = cMask;
+	sendBufPtr++;
+	// u1   numComIds
+	sendBufPtr[0] = numComIds;
+	sendBufPtr++;
+	// u2[]  childrenIds
+	for (int i = 0; i < numComIds; i++)
+	{
+		setAndSkipUnsignedShortValueToBuf(&sendBufPtr, compIds[i]);
+	}
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
 void CSoxMsg::dealUnsubscribeRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
 void CSoxMsg::dealUnsubscribeResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	u	unsubscribe	Unsubscribe from a component for COV events
-bool CSoxMsg::sendUnsubscribeRequest()
+bool CSoxMsg::sendUnsubscribeRequest(unsigned char	cMask,
+								unsigned short* 	compIds, 
+								unsigned char       numComIds)
 {
-	return true;
+	int iDataLen = 5 + numComIds * sizeof(unsigned short) + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'u'
+	sendBufPtr[0] = 'u';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// u1   whatMask: tree=0x1 config=0x2 rt=0x4 links=0x8 0xff all tree
+	sendBufPtr[0] = cMask;
+	sendBufPtr++;
+	// u1   numComIds
+	sendBufPtr[0] = numComIds;
+	sendBufPtr++;
+	// u2[]  childrenIds
+	for (int i = 0; i < numComIds; i++)
+	{
+		setAndSkipUnsignedShortValueToBuf(&sendBufPtr, compIds[i]);
+	}
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	v	version	Query for the kits installed
 void CSoxMsg::dealVersionRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	V	version	Query for the kits installed
 void CSoxMsg::dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
+	SCHEMA_KIT objSchemaKit ;
+	unsigned char * sendBufPtr = cDataBuf;
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
+	char kitCount  = cDataBuf[2];
+	sendBufPtr += 3;
 
+	for (int i = 0; i < kitCount; i++)
+	{
+		memset(&objSchemaKit, 0x00, sizeof(SCHEMA_KIT));
+		strcpy((char *)objSchemaKit.cName, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSchemaKit.cName) + 1;
+		objSchemaKit.checksum = calcAndSkipUnsignedShortValue(&sendBufPtr);
+	}
+	
 }
 //	v	version	Query for the kits installed
 bool CSoxMsg::sendVersionRequest()
 {
-	return true;
+	int iDataLen = 2 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'u'
+	sendBufPtr[0] = 'v';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	w	write	Write the value of a single component property
 void CSoxMsg::dealWriteRequest(unsigned char * cDataBuf, int iDataBufLen)

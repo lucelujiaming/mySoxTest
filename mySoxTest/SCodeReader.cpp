@@ -178,7 +178,7 @@ void SCodeReader::setSCodeHeader()
 //	**    'C' = only operator level config properties
 //	**    'R' = only operator level runtime properties
 //	**
-bool SCodeReader::matchRtFlagsProp(int filter, int rtFlags)
+bool SCodeReader::matchRtFlagsProp(unsigned char filter, unsigned int rtFlags)
 {
 	if (isRtFlagsProp(rtFlags))
 	{
@@ -845,7 +845,7 @@ void SCodeReader::parseKit(SCODE_KIT& objScodeKit, unsigned int bi)
     objScodeKit.pad      = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     objScodeKit.checksum        = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
 	
-	if (strcmp(objScodeKit.cName, "sys") == 0)
+	if (strcmp((char *)objScodeKit.cName, "sys") == 0)
 	{
 		m_sysKitBix = bi;
 	}
@@ -932,7 +932,7 @@ void SCodeReader::parseSlot(SCODE_KIT_TYPE_SLOT& objScodeKitTypeSlot, unsigned i
 	m_cFileBufPtr = savePos;
 }
 
-void SCodeReader::parseStr(char * strBuf, unsigned int bi)
+void SCodeReader::parseStr(unsigned char * strBuf, unsigned int bi)
 {
     int off = bi * m_head_blockSize;
     for (int i=0; m_fileBuf[off+i] != 0; ++i)

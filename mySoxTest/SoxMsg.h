@@ -113,7 +113,7 @@ public:
 	bool sendReadCompRequest(unsigned short	componentID,
 							 unsigned char   componentState);
 	//	d	delete	Delete an component and its children from the application
-	bool sendDeleteRequest();
+	bool sendDeleteRequest(unsigned short	componentID);
 	//	e	event	COV event for a subscribed component
 	bool sendEventRequest();
 	//	f	fileOpen	Begin a get or put file transfer operation
@@ -122,23 +122,33 @@ public:
 								  unsigned short suggestedChunkSize);
 							//	  ,char * name, char * value);
 	//	i	invoke	Invoke a component action
-	bool sendInvokeRequest();
+	bool sendInvokeRequest(unsigned short	componentID,
+							unsigned char	slotID,
+							SAB_PROP_VALUE& objArgument);
 	//	k	fileChunk	Receive or send a chunk during a file transfer
 	bool sendFileChunkRequest();
 	//	l	link	Add or delete a link
-	bool sendLinkRequest();
+	bool sendLinkRequest(unsigned char opcode, SAB_LINK& objSabLink);
 	//	n	rename	Rename a component
-	bool sendRenameRequest();
+	bool sendRenameRequest(unsigned short	componentID,
+								unsigned char* 	newName);
 	//	o	reorder	Reorder a component's children
-	bool sendReorderRequest();
+	bool sendReorderRequest(unsigned short	    componentID,
+								unsigned short* 	childrenIds, 
+								unsigned char       numChildren);
 	//	q	query	Query installed services
 	bool sendQueryRequest();
 	//	r	readProp	Read a single property from a component
-	bool sendReadPropRequest();
+	bool sendReadPropRequest(unsigned short	componentID,
+								unsigned char 	propID);
 	//	s	subscribe	Subscribe to a component for COV events
-	bool sendSubscribeRequest();
+	bool sendSubscribeRequest(unsigned char	cMask,
+								unsigned short* 	compIds, 
+								unsigned char       numComIds);
 	//	u	unsubscribe	Unsubscribe from a component for COV events
-	bool sendUnsubscribeRequest();
+	bool sendUnsubscribeRequest(unsigned char	cMask,
+								unsigned short* 	compIds, 
+								unsigned char       numComIds);
 	//	v	version	Query for the kits installed
 	bool sendVersionRequest();
 	//	w	write	Write the value of a single component property
@@ -157,12 +167,13 @@ public:
 	//	b	fileRename	Rename or move a file
 	void dealFileRenameResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	c	readComp	Read a component in the application
-	void dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_READCOMP_RSP& objSabReadCompRsp);
-	void printSoxReadcompRsp(SOX_READCOMP_RSP& objSabReadCompRsp);
+	void dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_READCOMP_RSP& objSoxReadCompRsp);
+	void printSoxReadcompRsp(SOX_READCOMP_RSP& objSoxReadCompRsp);
+	void releaseSoxReadcompRsp(SOX_READCOMP_RSP& objSoxReadCompRsp);
 	//	d	delete	Delete an component and its children from the application
 	void dealDeleteResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	e	event	COV event for a subscribed component
-	void dealEventResponse(unsigned char * cDataBuf, int iDataBufLen);
+	//  void dealEventResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	f	fileOpen	Begin a get or put file transfer operation
 	void dealFileOpenResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	i	invoke	Invoke a component action
@@ -178,7 +189,7 @@ public:
 	//	q	query	Query installed services
 	void dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	r	readProp	Read a single property from a component
-	void dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen);
+	void dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen, SAB_PROP& objSabProp);
 	//	s	subscribe	Subscribe to a component for COV events
 	void dealSubscribeResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	u	unsubscribe	Unsubscribe from a component for COV events
@@ -204,7 +215,8 @@ public:
 	//	d	delete	Delete an component and its children from the application
 	void dealDeleteRequest(unsigned char * cDataBuf, int iDataBufLen);
 	//	e	event	COV event for a subscribed component
-	void dealEventRequest(unsigned char * cDataBuf, int iDataBufLen);
+	void dealEventRequest(unsigned char * cDataBuf, int iDataBufLen
+				, SOX_READCOMP_RSP& objSoxReadCompRsp);
 	//	f	fileOpen	Begin a get or put file transfer operation
 	void dealFileOpenRequest(unsigned char * cDataBuf, int iDataBufLen);
 	//	i	invoke	Invoke a component action
@@ -271,7 +283,11 @@ private:
 	int  m_numChunks;
 	// readComp:	Read a component in the application
 	unsigned char     m_componentState;
-	SOX_READCOMP_RSP  m_objSabReadCompRsp;
+	SOX_READCOMP_RSP  m_objSoxReadCompRsp;
+	// readProp:	Read a single property value from a component.
+	// unsigned short    m_componentID;
+	// unsigned char     m_propID;
+	SAB_PROP          m_objSabProp;
 
 };
 

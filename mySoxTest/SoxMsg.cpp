@@ -10,6 +10,7 @@ CSoxMsg::CSoxMsg()
 	resetFileOpenInfo();
 	m_componentState = 0xFF;
 	memset(&m_objSoxReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
+	m_objSchemaKitList = NULL;
 }
 
 CSoxMsg::~CSoxMsg()
@@ -251,7 +252,6 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		break;
 	case 'C':
 		dealReadCompResponse(cDataBuf, iDataBufLen, m_objSoxReadCompRsp);
-		releaseSoxReadcompRsp(m_objSoxReadCompRsp);
 		break;
 	//	d	delete	Delete an component and its children from the application
 	case 'd':
@@ -315,7 +315,7 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		dealQueryRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'Q':
-		dealQueryResponse(cDataBuf, iDataBufLen);
+		dealQueryResponse(cDataBuf, iDataBufLen, m_queryRes);
 		break;
 	//	r	readProp	Read a single property from a component
 	case 'r':
@@ -343,7 +343,7 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		dealVersionRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'V':
-		dealVersionResponse(cDataBuf, iDataBufLen);
+		dealVersionResponse(cDataBuf, iDataBufLen, &m_objSchemaKitList);
 		break;
 	//	w	write	Write the value of a single component property
 	case 'w':
@@ -357,7 +357,7 @@ void CSoxMsg::dealSoxPacket(unsigned char * cDataBuf, int iDataBufLen)
 		dealVersionMoreRequest(cDataBuf, iDataBufLen);
 		break;
 	case 'Y':
-		dealVersionMoreResponse(cDataBuf, iDataBufLen);
+		dealVersionMoreResponse(cDataBuf, iDataBufLen, m_objSoxVersionMore);
 		break;
 	//	z	fileClose	Close a file transfer operation
 	case 'z':
@@ -467,7 +467,7 @@ void CSoxMsg::dealFileRenameResponse(unsigned char * cDataBuf, int iDataBufLen)
 	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	b	fileRename	Rename or move a file
-bool CSoxMsg::sendFileRenameRequest(unsigned char * cFromName, char * cToName)
+bool CSoxMsg::sendFileRenameRequest(unsigned char * cFromName, unsigned char * cToName)
 {
 	int iDataLen = strlen((char *)cFromName) + strlen((char *)cFromName) + 4;
 	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
@@ -584,6 +584,7 @@ void CSoxMsg::dealReadCompResponse(unsigned char * cDataBuf, int iDataBufLen, SO
 		}
 	}
 	printSoxReadcompRsp(objSoxReadCompRsp);
+	releaseSoxReadcompRsp(m_objSoxReadCompRsp);
 }
 
 void CSoxMsg::printSoxReadcompRsp(SOX_READCOMP_RSP& objSoxReadCompRsp)
@@ -1154,14 +1155,93 @@ void CSoxMsg::dealQueryRequest(unsigned char * cDataBuf, int iDataBufLen)
 	// Not implement
 }
 //	Q	query	Query installed services
-void CSoxMsg::dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_QUERYRES& queryRes)
 {
+	unsigned char * sendBufPtr = cDataBuf;
 	char replyNum  = cDataBuf[1];
 	printf("replyNum = %d.\r\n", (int)replyNum);
+	sendBufPtr += 2;
+	memset(&queryRes, 0x00, sizeof(SOX_QUERYRES));
+	std::vector<unsigned short>    objQueryResList;
+	while (1)
+	{
+		unsigned short uQueryRes = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		if (uQueryRes == 0xFFFF) 
+			break;
+		objQueryResList.push_back(uQueryRes);
+	}
+	if (objQueryResList.size() > 0)
+	{
+		int iLinkSeq = 0;
+		queryRes.numberOfQueryRes = objQueryResList.size();
+		queryRes.queryResults = (unsigned short *)malloc(
+			sizeof(unsigned short) * queryRes.numberOfQueryRes);
+		std::vector<unsigned short>::iterator iter;
+		for (iter = objQueryResList.begin(); iter != objQueryResList.end(); iter++)
+		{
+			queryRes.queryResults[iLinkSeq] = *iter;
+			iLinkSeq++;
+		}
+	}
+	printQueryResult(queryRes);
+	releaseQueryResult(queryRes);
 }
-//	q	query	Query installed services
-bool CSoxMsg::sendQueryRequest()
+
+void CSoxMsg::printQueryResult(SOX_QUERYRES& objQueryRes)
 {
+	if (objQueryRes.numberOfQueryRes > 0)
+	{
+		int i = 0;
+		printf("objQueryRes(numberOfQueryRes) = (%02d) and queryResults is: \r\n", 
+			objQueryRes.numberOfQueryRes);
+		for (i = 0; i< objQueryRes.numberOfQueryRes; i++)
+		{
+			printf("\t queryResults[%d] = (%d). \r\n", i, objQueryRes.queryResults[i]);
+		}
+	}
+	else 
+	{
+		printf("objQueryRes(numberOfQueryRes) = (%02d) \r\n", 
+			objQueryRes.numberOfQueryRes);
+	}
+}
+void CSoxMsg::releaseQueryResult(SOX_QUERYRES& objQueryRes)
+{
+	if (objQueryRes.queryResults)
+	{
+		free(objQueryRes.queryResults);
+	}
+}
+
+//	q	query	Query installed services
+bool CSoxMsg::sendQueryRequest(unsigned char	queryType,
+							   unsigned char 	kitID,
+							   unsigned char 	typeID)
+{
+	if (queryType != 's')
+	{
+		return false;
+	}
+	int iDataLen = 5 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'r'
+	sendBufPtr[0] = 'q';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// u1   queryType
+	sendBufPtr[0] = queryType;
+	sendBufPtr++;
+	// u1   queryType
+	sendBufPtr[0] = kitID;
+	sendBufPtr[1] = typeID;
+	sendBufPtr += 2;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
 	return true;
 }
 
@@ -1222,7 +1302,6 @@ bool CSoxMsg::sendReadPropRequest(unsigned short	componentID,
 	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
 	free(msg_buffer);
 	return true;
-
 }
 //	s	subscribe	Subscribe to a component for COV events
 void CSoxMsg::dealSubscribeRequest(unsigned char * cDataBuf, int iDataBufLen)
@@ -1316,23 +1395,23 @@ void CSoxMsg::dealVersionRequest(unsigned char * cDataBuf, int iDataBufLen)
 	// Not implement
 }
 //	V	version	Query for the kits installed
-void CSoxMsg::dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen)
+void CSoxMsg::dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen,
+								  SCHEMA_KIT ** objSchemaKitList)
 {
-	SCHEMA_KIT objSchemaKit ;
 	unsigned char * sendBufPtr = cDataBuf;
 	char replyNum  = cDataBuf[1];
 	printf("replyNum = %d.\r\n", (int)replyNum);
-	char kitCount  = cDataBuf[2];
+	unsigned char kitCount  = cDataBuf[2];
 	sendBufPtr += 3;
 
+	(*objSchemaKitList) = (SCHEMA_KIT *)malloc(sizeof(SCHEMA_KIT) * kitCount);
 	for (int i = 0; i < kitCount; i++)
 	{
-		memset(&objSchemaKit, 0x00, sizeof(SCHEMA_KIT));
-		strcpy((char *)objSchemaKit.cName, (char *)sendBufPtr);
-		sendBufPtr += strlen((char *)objSchemaKit.cName) + 1;
-		objSchemaKit.checksum = calcAndSkipUnsignedShortValue(&sendBufPtr);
+		memset(&((*objSchemaKitList)[i]), 0x00, sizeof(SCHEMA_KIT));
+		strcpy((char *)(*objSchemaKitList)[i].cName, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)(*objSchemaKitList)[i].cName) + 1;
+		(*objSchemaKitList)[i].checksum = calcAndSkipUnsignedIntValue(&sendBufPtr);
 	}
-	
 }
 //	v	version	Query for the kits installed
 bool CSoxMsg::sendVersionRequest()
@@ -1355,61 +1434,206 @@ bool CSoxMsg::sendVersionRequest()
 //	w	write	Write the value of a single component property
 void CSoxMsg::dealWriteRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	w	write	Write the value of a single component property
 void CSoxMsg::dealWriteResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	w	write	Write the value of a single component property
-bool CSoxMsg::sendWriteRequest()
+bool CSoxMsg::sendWriteRequest(unsigned short	componentID,
+								unsigned char 	slotID,
+								SAB_PROP_VALUE& objValue)
 {
-	return true;
+	SCODE_KIT_TYPE * objSCodeKitType = m_objSabReader.getScodeKitTypeByCompID(componentID);
+	if ((!objSCodeKitType) ||(slotID >= objSCodeKitType->slotsLen))
+	{
+		return false;
+	}
+	int iValueLen = m_objSabReader.calcPropSize(objSCodeKitType->kit_type_slots_list[slotID].fpBix, objValue);
+	int iDataLen = 5 + iValueLen + 1;
 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
+
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'w'
+	sendBufPtr[0] = 'w';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	setAndSkipUnsignedShortValueToBuf(&sendBufPtr, componentID);
+	sendBufPtr[0] = slotID;
+	sendBufPtr ++;
+	if (iValueLen > 0)
+	{
+		m_objSabReader.encodeOnePropToBuf(&sendBufPtr, objValue, 
+				// objArgument.propType, 
+				objSCodeKitType->kit_type_slots_list[slotID].fpBix, 
+				m_objSabReader.isRtFlagsAsStr(objSCodeKitType->kit_type_slots_list[slotID].rtFlags));
+	}
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	y	versionMore	Query for additional version meta-data
 void CSoxMsg::dealVersionMoreRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
-//	y	versionMore	Query for additional version meta-data
-void CSoxMsg::dealVersionMoreResponse(unsigned char * cDataBuf, int iDataBufLen)
-{
 
+//	y	versionMore	Query for additional version meta-data
+void CSoxMsg::dealVersionMoreResponse(unsigned char * cDataBuf, int iDataBufLen, SOX_VERSIONMORE& objSoxVersionMore)
+{
+	int i = 0;
+	memset(&objSoxVersionMore, 0x00, sizeof(SOX_VERSIONMORE));
+	unsigned char * sendBufPtr = cDataBuf;
+	char replyNum  = cDataBuf[1];
+	sendBufPtr += 2;
+	printf("replyNum = %d.\r\n", (int)replyNum);
+	strcpy((char *)objSoxVersionMore.strPlatformID, (char *)sendBufPtr);
+	sendBufPtr += strlen((char *)objSoxVersionMore.strPlatformID) + 1;
+	objSoxVersionMore.scodeFlags = sendBufPtr[0];
+	sendBufPtr ++;
+
+	objSoxVersionMore.numberOfKits = m_objSabReader.getNumberOfKits();
+	objSoxVersionMore.kitVersions = (SOX_VERSIONMORE_KITVERSION *)malloc(
+		sizeof(SOX_VERSIONMORE_KITVERSION) * objSoxVersionMore.numberOfKits);
+	memset(objSoxVersionMore.kitVersions, 0x00, 
+		sizeof(SOX_VERSIONMORE_KITVERSION) * objSoxVersionMore.numberOfKits);
+	for (i = 0; i< objSoxVersionMore.numberOfKits; i++)
+	{
+		strcpy((char *)objSoxVersionMore.kitVersions[i].strkitName, 
+			(char *)m_objSabReader.getSCodeKitName(i));
+		strcpy((char *)objSoxVersionMore.kitVersions[i].strkitVersion, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSoxVersionMore.kitVersions[i].strkitVersion) + 1;
+	}
+	objSoxVersionMore.uPairs = sendBufPtr[0];
+	sendBufPtr ++;
+	objSoxVersionMore.structPairKeyValList = (SOX_VERSIONMORE_PAIR *)malloc(
+		sizeof(SOX_VERSIONMORE_PAIR) * objSoxVersionMore.uPairs);
+	memset(objSoxVersionMore.structPairKeyValList, 
+		0x00, sizeof(SOX_VERSIONMORE_PAIR) * objSoxVersionMore.uPairs);
+	for (i = 0; i< objSoxVersionMore.uPairs; i++)
+	{
+		strcpy((char *)objSoxVersionMore.structPairKeyValList[i].strPairKey, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSoxVersionMore.structPairKeyValList[i].strPairKey) + 1;
+		strcpy((char *)objSoxVersionMore.structPairKeyValList[i].strPairVal, (char *)sendBufPtr);
+		sendBufPtr += strlen((char *)objSoxVersionMore.structPairKeyValList[i].strPairVal) + 1;
+	}
+	printVersionMore(objSoxVersionMore);
+	releaseVersionMore(m_objSoxVersionMore);
+}
+
+void CSoxMsg::printVersionMore(SOX_VERSIONMORE& objSoxVersionMore)
+{
+	int i = 0;
+	printf("objSoxReadCompRsp(strPlatformID, scodeFlags, numberOfKits) = "
+		   "(%s, %02d, %02d) and kitVersions is: \r\n",
+		objSoxVersionMore.strPlatformID, objSoxVersionMore.scodeFlags, objSoxVersionMore.numberOfKits);
+	for (i = 0; i< objSoxVersionMore.numberOfKits; i++)
+	{
+		printf("\t (strkitName, strkitVersion) = (%s, %s). \r\n", 
+			objSoxVersionMore.kitVersions[i].strkitName, objSoxVersionMore.kitVersions[i].strkitVersion);
+	}
+	printf("objSoxReadCompRsp(uPairs) = (%02d) and structPairKeyValList is: \r\n", objSoxVersionMore.uPairs);
+	for (i = 0; i< objSoxVersionMore.uPairs; i++)
+	{
+		printf("\t (strPairKey, strPairVal) = (%s, %s). \r\n", 
+			objSoxVersionMore.structPairKeyValList[i].strPairKey, 
+			objSoxVersionMore.structPairKeyValList[i].strPairVal);
+	}
+}
+
+void CSoxMsg::releaseVersionMore(SOX_VERSIONMORE& objSoxVersionMore)
+{
+	free(objSoxVersionMore.kitVersions);
+	free(objSoxVersionMore.structPairKeyValList);
+	memset(&objSoxVersionMore, 0x00, sizeof(SOX_VERSIONMORE));
 }
 //	y	versionMore	Query for additional version meta-data
 bool CSoxMsg::sendVersionMoreRequest()
 {
-	return true;
+	int iDataLen = 2 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'y'
+	sendBufPtr[0] = 'y';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	z	fileClose	Close a file transfer operation
 void CSoxMsg::dealFileCloseRequest(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	// Not implement
 }
 //	z	fileClose	Close a file transfer operation
 void CSoxMsg::dealFileCloseResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-
+	char replyNum  = cDataBuf[1];
+	printf("replyNum = %d.\r\n", (int)replyNum);
 }
 //	z	fileClose	Close a file transfer operation
 bool CSoxMsg::sendFileCloseRequest()
 {
-	return true;
+	int iDataLen = 2 + 1; 
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   'z'
+	sendBufPtr[0] = 'z';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }
 //	!	error	Response id for a Response that could not be processed
 void CSoxMsg::dealErrorResponse(unsigned char * cDataBuf, int iDataBufLen)
 {
-	char cReplyNum = cDataBuf[1];
-	printf("ERROR: %s\r\n", cDataBuf + 2);
+	unsigned char cCause[100];
+	int i = 0;
+	unsigned char * sendBufPtr = cDataBuf;
+	char replyNum  = cDataBuf[1];
+	sendBufPtr += 2;
+	printf("replyNum = %d.\r\n", (int)replyNum);
+
+	memset(cCause, 0x00, 100);
+	strcpy((char *)cCause, (char *)sendBufPtr);
+	sendBufPtr += strlen((char *)cCause) + 1;
+	printf("ERROR: ErrorCause = %s.\r\n", cCause);
 }
 
 //	!	error	Response id for a command that could not be processed
-bool CSoxMsg::sendErrorRequest()
+bool CSoxMsg::sendErrorRequest(unsigned char * cCause)
 {
-	return true;
+	int iDataLen = 2 + strlen((char *)cCause) + 1;
+	unsigned char* msg_buffer = (unsigned char *)malloc(iDataLen);
+	memset(msg_buffer, 0x00, iDataLen);
 
+	unsigned char * sendBufPtr = msg_buffer;
+	// u1   '!'
+	sendBufPtr[0] = '!';
+	// u1   replyNum
+	sendBufPtr[1] = rand() % 0xFF;
+	sendBufPtr += 2;
+	// str  cFromName
+	memcpy(sendBufPtr, cCause, strlen((char *)cCause));
+	sendBufPtr += strlen((char *)cCause) + 1;
+
+	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
+	free(msg_buffer);
+	return true;
 }

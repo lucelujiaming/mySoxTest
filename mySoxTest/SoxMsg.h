@@ -76,6 +76,34 @@ typedef struct _SOX_READCOMP_RSP
 	};
 } SOX_READCOMP_RSP, *PSOX_READCOMP_RSP;
 
+typedef struct _SOX_VERSIONMORE_KITVERSION
+{
+	unsigned char        strkitName[SAB_TYPE_NAME_LEN];
+	unsigned char        strkitVersion[SAB_TYPE_NAME_LEN];
+} SOX_VERSIONMORE_KITVERSION, *PSOX_VERSIONMORE_KITVERSION;
+
+typedef struct _SOX_VERSIONMORE_PAIR
+{
+	unsigned char        strPairKey[SAB_TYPE_NAME_LEN];
+	unsigned char        strPairVal[SAB_TYPE_NAME_LEN];
+} SOX_VERSIONMORE_PAIR, *PSOX_VERSIONMORE_PAIR;
+
+typedef struct _SOX_VERSIONMORE
+{
+	unsigned char strPlatformID[SAB_TYPE_NAME_LEN];
+	unsigned char scodeFlags;
+	unsigned char numberOfKits;
+	SOX_VERSIONMORE_KITVERSION* kitVersions ;
+	unsigned char uPairs;
+	SOX_VERSIONMORE_PAIR * structPairKeyValList ;
+} SOX_VERSIONMORE, *PSOX_VERSIONMORE;
+
+
+typedef struct _SOX_QUERYRES
+{
+	unsigned char numberOfQueryRes;
+	unsigned short * queryResults ;
+} SOX_QUERYRES, *PSOX_QUERYRES;
 
 #pragma pack()
 
@@ -108,7 +136,7 @@ public:
 							 char *             cName,
 							 SAB_PROP_VALUE *   configProps, int configPropsLen);
 	//	b	fileRename	Rename or move a file
-	bool sendFileRenameRequest(unsigned char * cFromName, char * cToName);
+	bool sendFileRenameRequest(unsigned char * cFromName,unsigned char * cToName);
 	//	c	readComp	Read a component in the application
 	bool sendReadCompRequest(unsigned short	componentID,
 							 unsigned char   componentState);
@@ -137,7 +165,9 @@ public:
 								unsigned short* 	childrenIds, 
 								unsigned char       numChildren);
 	//	q	query	Query installed services
-	bool sendQueryRequest();
+	bool sendQueryRequest(unsigned char	queryType,
+							   unsigned char 	kitID,
+							   unsigned char 	typeID);
 	//	r	readProp	Read a single property from a component
 	bool sendReadPropRequest(unsigned short	componentID,
 								unsigned char 	propID);
@@ -152,14 +182,15 @@ public:
 	//	v	version	Query for the kits installed
 	bool sendVersionRequest();
 	//	w	write	Write the value of a single component property
-	bool sendWriteRequest();
+	bool sendWriteRequest(unsigned short	componentID,
+								unsigned char 	slotID,
+								SAB_PROP_VALUE& objValue);
 	//	y	versionMore	Query for additional version meta-data
 	bool sendVersionMoreRequest();
 	//	z	fileClose	Close a file transfer operation
 	bool sendFileCloseRequest();
 	//	!	error	Response id for a command that could not be processed
-	bool sendErrorRequest();
-	//
+	bool sendErrorRequest(unsigned char * cCause);
 
 public:
 	//	a	add	Add a new component to the application
@@ -187,19 +218,27 @@ public:
 	//	o	reorder	Reorder a component's children
 	void dealReorderResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	q	query	Query installed services
-	void dealQueryResponse(unsigned char * cDataBuf, int iDataBufLen);
+	void dealQueryResponse(
+		unsigned char * cDataBuf, int iDataBufLen, SOX_QUERYRES& objQueryRes);
+	void printQueryResult(SOX_QUERYRES& objQueryRes);
+	void releaseQueryResult(SOX_QUERYRES& objQueryRes);
 	//	r	readProp	Read a single property from a component
-	void dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen, SAB_PROP& objSabProp);
+	void dealReadPropResponse(
+		unsigned char * cDataBuf, int iDataBufLen, SAB_PROP& objSabProp);
 	//	s	subscribe	Subscribe to a component for COV events
 	void dealSubscribeResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	u	unsubscribe	Unsubscribe from a component for COV events
 	void dealUnsubscribeResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	v	version	Query for the kits installed
-	void dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen);
+	void dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen,
+								  SCHEMA_KIT ** objSchemaKitList);
 	//	w	write	Write the value of a single component property
 	void dealWriteResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	y	versionMore	Query for additional version meta-data
-	void dealVersionMoreResponse(unsigned char * cDataBuf, int iDataBufLen);
+	void dealVersionMoreResponse(
+		unsigned char * cDataBuf, int iDataBufLen, SOX_VERSIONMORE& objSoxVersionMore);
+	void printVersionMore(SOX_VERSIONMORE& objSoxVersionMore);
+	void releaseVersionMore(SOX_VERSIONMORE& objSoxVersionMore);
 	//	z	fileClose	Close a file transfer operation
 	void dealFileCloseResponse(unsigned char * cDataBuf, int iDataBufLen);
 	//	!	error	Response id for a Response that could not be processed
@@ -289,5 +328,9 @@ private:
 	// unsigned char     m_propID;
 	SAB_PROP          m_objSabProp;
 
+	SCHEMA_KIT * m_objSchemaKitList;
+
+	SOX_VERSIONMORE m_objSoxVersionMore;
+	SOX_QUERYRES    m_queryRes;
 };
 

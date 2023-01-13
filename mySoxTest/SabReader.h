@@ -18,9 +18,10 @@
 #define SAB_MISS_SCODE   2
 #define SAB_MISS_SAB     3
 
-#define SAB_NAME_LEN		16 // (8 * 2)
-#define SAB_TYPE_NAME_LEN   128 
-#define SAB_PROP_VALUE_LEN  1024
+#define SAB_NAME_LEN          16 // (8 * 2)
+#define SAB_TYPE_NAME_LEN     128 
+#define SAB_PROP_VALUE_LEN    1024
+#define SAB_KIT_VERSION_LEN   128 
 
 // I got it by observation and I am not sure about it .
 #define MAGIC_SLOT_TYPE_VOID			0x02DB
@@ -115,7 +116,8 @@ public:
 	
 	int    getMagicSlotTypebySlotTypeID(unsigned int  slotTypeID);
 	// SCODE_KIT * getSCodeKits()    { return m_objSCodeReader.getSCodeKits(); }
-	// int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
+	unsigned char * getSCodeKitName(unsigned int iCompID) { return m_objSCodeReader.getSCodeKitName(iCompID); }
+	int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
 	bool           isSCodeKitsGet()  { return (m_objSCodeReader.getSCodeKits() != NULL); }
 	SCODE_KIT_TYPE * getScodeKitTypeByKitIDAndTypeID(unsigned char   kitID, unsigned char   typeID);
 	SCODE_KIT_TYPE * getScodeKitTypeByCompID(unsigned short   compID);

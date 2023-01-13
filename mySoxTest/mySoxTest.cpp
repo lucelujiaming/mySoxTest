@@ -64,7 +64,11 @@ void testSoxMsg()
 	// objCSoxMsg.sendReadCompRequest(7, 't');
 	// objCSoxMsg.sendReadCompRequest(11, 'r');
 	// objCSoxMsg.sendReadCompRequest(11, 'l');
-	objCSoxMsg.sendReadPropRequest(11, 2);
+	// objCSoxMsg.sendReadPropRequest(11, 2);
+	// objCSoxMsg.sendVersionRequest();
+	// objCSoxMsg.sendVersionMoreRequest();
+	objCSoxMsg.sendQueryRequest('s', 0, 15);  // sys::User
+	
 
 //	objCSoxMsg.sendFileOpenRequest('g', "./app.scode", 
 //								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 

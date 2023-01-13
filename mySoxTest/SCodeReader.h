@@ -119,6 +119,7 @@ public:
 	bool readSCodeFile(char * cFileName);
 	void releaseSCodeFileBuffer();
 	SCODE_KIT * getSCodeKits() { return m_scode_kit_list; }
+	unsigned char * getSCodeKitName(unsigned int iCompID) { return m_scode_kit_list[iCompID].cName; }
 	int         getNumberOfKits() { return (int)m_head_numberOfKits; }
 	
 	SCodeReader();

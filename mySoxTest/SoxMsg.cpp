@@ -143,6 +143,17 @@ unsigned long  CSoxMsg::calcAndSkipUnsignedLongValue(unsigned char ** cBuffer)
 	return uValue;
 }
 
+bool CSoxMsg::loadSabFileAndSCodeFile(char * cSabFileName, char * cSCodeFileName)
+{
+	bool bRet = m_objSabReader.loadSCodeFile(cSCodeFileName);
+	if (bRet)
+	{
+		int iRet = m_objSabReader.readSabFile(cSabFileName);
+		return (iRet == SAB_OK);
+	}
+	return bRet;
+}
+
 bool CSoxMsg::loadSabFile(char * cFileName)
 {
 	char * cReplacePtr;

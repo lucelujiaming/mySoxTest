@@ -355,7 +355,7 @@ bool SCodeReader::readSCodeFile(char * cFileName)
 	parseLogs(m_endSlotBix);
 	printSCodeLogs();
 	parseMethods(m_endLogBix);
-	// printMethods();
+	printMethods();
 		
     if (m_head_testBlockIndex > 0)
     {
@@ -441,7 +441,8 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 {
     int       opCode;
     char      opCodeInfo[SCODE_ARG_LEN];
-    char      argStr[SCODE_ARG_LEN];
+	// char      argStr[SCODE_ARG_LEN];
+	SCODE_CODE_ARG objSCodeCodeArg ;
     unsigned char * savePos = m_cFileBufPtr;
 	// If codeBix<0 then buf.pos already at correct position
     if (codeBix > 0) 
@@ -477,7 +478,7 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
     {
 		int opPos = m_cFileBufPtr - m_fileBuf;
 		memset(opCodeInfo, 0x00, SCODE_ARG_LEN);
-		memset(argStr, 0x00, SCODE_ARG_LEN);
+		memset(&objSCodeCodeArg, 0x00, sizeof(SCODE_CODE_ARG));
 		// Get next opcode
 		opCode = m_cFileBufPtr[0];
 		m_cFileBufPtr ++;
@@ -486,12 +487,14 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 		// Print opcode & name
 		// System.out.print( opFormat(opPos, opCode, SCode.name(opCode)) );
 
-		int iRet = getArgString(argStr, opCode);
+		int iRet = getArgString(objSCodeCodeArg, opCode);
 		if (iRet == -1)
 		{
+			strcat(opCodeInfo, objSCodeCodeArg.argPrintStr);
+			objMethod.opcodeInfo.push_back(std::string(opCodeInfo));
 			return -1;
 		}
-		strcat(opCodeInfo, argStr);
+		strcat(opCodeInfo, objSCodeCodeArg.argPrintStr);
 
 		objMethod.opcodeInfo.push_back(std::string(opCodeInfo));
 		// printf("\tobjMethod.opcodeInfo.size() = %d and add %s . \r\n", 
@@ -529,8 +532,15 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 			case g_scode_JumpFarIntGtEq:
 			case g_scode_JumpFarIntLt:
 			case g_scode_JumpFarIntLtEq:  // update maxjmp as needed
-				if (opPos + atoi(argStr) > maxjmp)
-					maxjmp = opPos + atoi(argStr);
+				if (atoi(objSCodeCodeArg.argIntStr) > 500)
+				{
+					if(strstr(opCodeInfo, "JumpFar") == NULL)
+					{
+					    printf("We add maxjmp with %d .", atoi(objSCodeCodeArg.argIntStr));
+					}
+				}
+				if (opPos + atoi(objSCodeCodeArg.argIntStr) > maxjmp)
+					maxjmp = opPos + atoi(objSCodeCodeArg.argIntStr);
 				break;
 
 			case g_scode_ReturnVoid:
@@ -552,8 +562,11 @@ int SCodeReader::parseMethod(SCODE_METHOD& objMethod, int codeBix, bool bRestore
 	return 0;
 }
 
-int SCodeReader::getArgString(char *argStr, int op)
+int SCodeReader::getArgString(SCODE_CODE_ARG& objSCodeCodeArg, int op)
 {     
+	unsigned short uShortVal = 0;
+	unsigned int   uIntVal   = 0;
+	unsigned long  uLongVal  = 0;
     // Find width of opcode's arg and read it in.
     // Return string showing arg value (incl 0x prefix for hex),
     // or null if no arg.
@@ -564,18 +577,22 @@ int SCodeReader::getArgString(char *argStr, int op)
       // signed 1-byte arg
       case g_scode_jmpArg    : 
 		  // argStr = String.valueOf(buf.s1());
-		  sprintf(argStr, "%c", m_cFileBufPtr[0]);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", m_cFileBufPtr[0]);
+		  sprintf(objSCodeCodeArg.argPrintStr, "%d", m_cFileBufPtr[0]);
 		  m_cFileBufPtr++;
           break;
       // unsigned 1-byte arg
       case g_scode_u1Arg     : 
 		  // argStr = "0x" + tHS(buf.u1());
-		  sprintf(argStr, "0x%02X", m_cFileBufPtr[0]);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", m_cFileBufPtr[0]);
+		  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", m_cFileBufPtr[0]);
           break;
       // signed 2-byte arg 
       case g_scode_jmpfarArg : 
 		  // argStr = String.valueOf(buf.s2());
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+		  uShortVal = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", uShortVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", uShortVal);
           break;
       // unsigned 2-byte arg 
       case g_scode_strArg    :
@@ -584,36 +601,51 @@ int SCodeReader::getArgString(char *argStr, int op)
       case g_scode_slotArg   :
       case g_scode_u2Arg     : 
 		  // argStr = "0x" + tHS(u2aligned(buf));
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+		  uShortVal = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", uShortVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", uShortVal);
           break;
       // unsigned 2-byte arg, not necessarily aligned
       case g_scode_methodArg : 
 		  // argStr = "0x" + tHS(buf.u2());
-		  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+		  uShortVal = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", uShortVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", uShortVal);
           break;
       // signed 4-byte arg
       case g_scode_intArg    : 
 		  // argStr = String.valueOf(i4aligned(buf));
-		  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
+		  uIntVal = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", uIntVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "%04d", uIntVal);
           break;
       case g_scode_floatArg  : 
 		  // argStr = String.valueOf(f4aligned(buf));
-		  sprintf(argStr, "%f", intBitsToFloat(calcAndSkipUnsignedIntValue(&m_cFileBufPtr)));
+		  uIntVal = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
+		  // ??????
+		  sprintf(objSCodeCodeArg.argIntStr, "%f", intBitsToFloat(uIntVal));
+		  sprintf(objSCodeCodeArg.argPrintStr, "%f", intBitsToFloat(uIntVal));
           break;
       // unsigned 4-byte arg
       case g_scode_s4Arg     : 
 		  // argStr = "0x" + tHS(i4aligned(buf));
-		  sprintf(argStr, "%04X", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
+		  uIntVal = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%d", uIntVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "%04X", uIntVal);
           break;
       // unsigned 8-byte arg
       case g_scode_longArg   : 
 		  // argStr = "0x" + java.lang.Long.toHexString(i8aligned(buf));
-		  sprintf(argStr, "%08lX", calcAndSkipUnsignedLongValue(&m_cFileBufPtr));
+		  uLongVal = calcAndSkipUnsignedLongValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%lld", uLongVal);
+		  sprintf(objSCodeCodeArg.argPrintStr, "%08lX", uLongVal);
           break;
       // signed 8-byte arg
       case g_scode_doubleArg : 
 		  // argStr = String.valueOf(f8aligned(buf)); 
-		  sprintf(argStr, "%f", longBitsToDouble(calcAndSkipUnsignedLongValue(&m_cFileBufPtr)));
+		  uLongVal = calcAndSkipUnsignedLongValue(&m_cFileBufPtr);
+		  sprintf(objSCodeCodeArg.argIntStr, "%f", longBitsToDouble(uLongVal));
+		  sprintf(objSCodeCodeArg.argPrintStr, "%f", longBitsToDouble(uLongVal));
           break;
 
       // switch has multiple args, first is #args to follow
@@ -625,13 +657,15 @@ int SCodeReader::getArgString(char *argStr, int op)
 				  printf("ERROR: g_scode_switchArg::nArgs = %d \r\n", nArgs);
 				  return -1;
 			  }
-			  sprintf(argStr, "(%d) ", nArgs);
-			  for (int k = 0; k < nArgs; k++)
+			  sprintf(objSCodeCodeArg.argIntStr, "%d", nArgs);
+			  sprintf(objSCodeCodeArg.argPrintStr, "(%d) ", nArgs);
+			  for (int k = 0; k < nArgs; k++) 
 			  {
 				  if (k > 0) 
-					  sprintf(argStr + strlen(argStr), ", ");
+					  sprintf(objSCodeCodeArg.argPrintStr + strlen(objSCodeCodeArg.argPrintStr), ", ");
 				  // argStr += "0x" + tHS(u2aligned(buf));
-				  sprintf(argStr + strlen(argStr), "0x%X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+				  sprintf(objSCodeCodeArg.argPrintStr + strlen(objSCodeCodeArg.argPrintStr), 
+					  "0x%X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
 			  }
 		  }
 		  break;
@@ -639,27 +673,34 @@ int SCodeReader::getArgString(char *argStr, int op)
       case g_scode_fieldArg  : 
 		  {
 			  const char * retName = get_scode_name(op);
-			  char endChar = retName[strlen(retName) - 1];
+			  unsigned char endChar = retName[strlen(retName) - 1];
 			  if (endChar == '1')
 			  {
 				  // argStr = "0x" + tHS(buf.u1());
-				  sprintf(argStr, "0x%X", m_cFileBufPtr[0]);
+				  sprintf(objSCodeCodeArg.argIntStr, "%d", m_cFileBufPtr[0]);
+				  sprintf(objSCodeCodeArg.argPrintStr, "0x%X", m_cFileBufPtr[0]);
 				  m_cFileBufPtr++;
 			  }
 			  else if (endChar == '2')
 			  {
 				  // argStr = "0x" + tHS(u2aligned(buf));
-				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+				  uShortVal = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+				  sprintf(objSCodeCodeArg.argIntStr, "%d", uShortVal);
+				  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", uShortVal);
 			  }
-			  else if (endChar == '2')
+			  else if (endChar == '4')
 			  {
 				  // argStr = "0x" + tHS(i4aligned(buf));
-				  sprintf(argStr, "%04d", calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
+				  uIntVal = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
+				  sprintf(objSCodeCodeArg.argIntStr, "%d", uIntVal);
+				  sprintf(objSCodeCodeArg.argPrintStr, "%04d", uIntVal);
 			  }
 			  else 
 			  {
 				  // argStr = "0x" + tHS(u2aligned(buf));  // width of "Const Static" arg?
-				  sprintf(argStr, "0x%02X", calcAndSkipUnsignedShortValue(&m_cFileBufPtr));
+				  uShortVal = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+				  sprintf(objSCodeCodeArg.argIntStr, "%d", uShortVal);
+				  sprintf(objSCodeCodeArg.argPrintStr, "0x%02X", uShortVal);
 			  }
 			  break;
 		  }

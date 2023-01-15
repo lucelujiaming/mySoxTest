@@ -112,6 +112,13 @@ typedef struct _SCODE_TEST
 	SCODE_METHOD   method; 
 } SCODE_TEST, *PSCODE_TEST;
 
+typedef struct _SCODE_CODE_ARG
+{
+    char      argIntStr[SCODE_ARG_LEN];
+    char      argPrintStr[SCODE_ARG_LEN];
+} SCODE_CODE_ARG, *PSCODE_CODE_ARG;
+
+
 // Based on SCodeValidator.java
 class SCodeReader  
 {
@@ -155,7 +162,7 @@ private:
 	
 	void printMethods();
 	void printMethod(SCODE_METHOD objMethod, bool bPrintOpCodeInfo);
-	int getArgString(char *argStr, int op);
+	int getArgString(SCODE_CODE_ARG& objSCodeCodeArg, int op);
 
 	FileReader         m_objFileReader;
 	

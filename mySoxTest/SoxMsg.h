@@ -110,6 +110,7 @@ typedef struct _SOX_QUERYRES
 class CSoxMsg
 {
 public:
+	bool loadSabFileAndSCodeFile(char * cSabFileName, char * cSCodeFileName);
 	bool loadSabFile(char * cFileName);
 	void unloadSabFile();
 	CSoxMsg();

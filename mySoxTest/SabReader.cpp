@@ -169,7 +169,7 @@ int SabReader::readSabFile(char * cFileName)
 	iRet = createSchemaAssociationTable();
 	if (iRet != SAB_OK)
 	{
-		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+		m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 		return iRet;
 	}
 	printSchema();
@@ -178,14 +178,14 @@ int SabReader::readSabFile(char * cFileName)
 	iRet = loadComponents();
 	if (iRet != SAB_OK)
 	{
-		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+		m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 		return iRet;
 	}
 	if ((m_fileBuf + iFileLen - m_cFileBufPtr) < 4)
 	{
 		printf("Left space is %d and stop analyze \r\n",
 			(m_fileBuf + iFileLen - m_cFileBufPtr));
-		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+		m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 		return SAB_OK;
 	}
 	// links
@@ -195,10 +195,10 @@ int SabReader::readSabFile(char * cFileName)
 	{
 		printf("Left space is %d and stop analyze \r\n",
 			(m_fileBuf + iFileLen - m_cFileBufPtr));
-		m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+		m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 		return SAB_OK;
 	}
-	m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+	m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 	return SAB_OK;
 }
 

@@ -359,10 +359,10 @@ bool SCodeReader::readSCodeFile(char * cFileName)
 		
     if (m_head_testBlockIndex > 0)
     {
-		parseTests();
+		// parseTests();
 		// printTests();
 	}
-	m_objFileReader.freeSCodeFileBuffer(m_fileBuf);
+	m_objFileReader.freeSCodeFileBuffer(&m_fileBuf);
 	return true;
 }
 

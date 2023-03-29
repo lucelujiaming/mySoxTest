@@ -67,8 +67,12 @@ void testSoxMsg()
 	// objCSoxMsg.sendReadPropRequest(11, 2);
 	// objCSoxMsg.sendVersionRequest();
 	// objCSoxMsg.sendVersionMoreRequest();
-	objCSoxMsg.sendQueryRequest('s', 0, 15);  // sys::User
+
+	// objCSoxMsg.sendQueryRequest('s', 0, 15);  // sys::User
 	
+	SAB_PROP_VALUE objInvokeArgument;
+	objInvokeArgument.uBufLen = 0;
+	objCSoxMsg.sendInvokeRequest(0, 2, objInvokeArgument);
 
 //	objCSoxMsg.sendFileOpenRequest('g', "./app.scode", 
 //								  SCODE_FILE_SUGGESTED_CHUNKSIZE, 
@@ -112,9 +116,9 @@ int main(int argc, char* argv[])
 {
 	// test_buf();
 
-	// // testSCodeReader();
- 	// testSabReader();
-	testSoxMsg();
+	testSCodeReader();
+ 	// //  testSabReader();
+	// testSoxMsg();
 	printf("Hello World!\n");
 	return 0;
 }

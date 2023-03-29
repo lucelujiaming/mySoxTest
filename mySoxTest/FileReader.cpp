@@ -78,11 +78,11 @@ int FileReader::readSCodeFileBuffer(unsigned char ** cFileBuf, char * cFileName)
 	return iLen;
 }
 
-void FileReader::freeSCodeFileBuffer(unsigned char * cFileBuf)
+void FileReader::freeSCodeFileBuffer(unsigned char ** cFileBuf)
 {
-	if (cFileBuf)
+	if (*cFileBuf)
 	{
-		free(cFileBuf);
-		cFileBuf = NULL;
+		free(*cFileBuf);
+		*cFileBuf = NULL;
 	}
 }

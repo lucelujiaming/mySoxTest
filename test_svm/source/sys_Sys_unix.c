@@ -8,11 +8,11 @@
 
 #include <fcntl.h>
 #ifdef WIN32
-# include <windows.h>
+#include <windows.h>
 #else
 #include <sys/ioctl.h>
-# include <sys/time.h>
-# include <sys/times.h>
+#include <sys/time.h>
+#include <sys/times.h>
 #include <pthread.h>
 #endif
 
@@ -36,6 +36,17 @@ Cell sys_Sys_platformType(SedonaVM* vm, Cell* params)
 Cell sys_Sys_sleep(SedonaVM* vm, Cell* params)
 {
   int64_t ns = *(int64_t*)params;
+#ifdef WIN32
+  if(ns <= 1000)
+  {
+	  Sleep(1);
+  }
+  else
+  {
+	  int64_t ms = ns/1000;
+	  Sleep((int)ms);
+  }
+#else
   struct timespec ts;
 
   if (ns <= 0) return nullCell;
@@ -52,10 +63,15 @@ Cell sys_Sys_sleep(SedonaVM* vm, Cell* params)
   }
 
   nanosleep(&ts, NULL);
+#endif
   return nullCell;
 }
 
+#ifdef WIN32
+#else
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
 uint64_t last_cycles    = 0;
 uint64_t cycles_total   = -1;
 uint64_t cycles_per_sec = 0;
@@ -71,6 +87,9 @@ int64_t sys_Sys_ticks(SedonaVM* vm, Cell* params)
   int64_t ticks;
   uint64_t cycles = 0;
   uint64_t cycles_delta = 0;
+#ifdef WIN32
+  ticks = 0;
+#else
   struct tms tmsbuf;
 
   pthread_mutex_lock(&mutex);
@@ -117,7 +136,7 @@ int64_t sys_Sys_ticks(SedonaVM* vm, Cell* params)
   last_cycles = cycles;
 
   pthread_mutex_unlock(&mutex);
-  
+#endif
   return ticks;
 }
 

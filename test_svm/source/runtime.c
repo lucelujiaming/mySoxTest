@@ -747,7 +747,19 @@ Cell sys_Runtime_mathExpt(SedonaVM* vm, Cell* params)
 }
 
 #include <fcntl.h>
-#ifndef _WIN32
+#ifdef WIN32
+struct rtc_time {
+    int tm_sec;
+    int tm_min;
+    int tm_hour;
+    int tm_mday;
+    int tm_mon;
+    int tm_year;
+    int tm_wday;
+    int tm_yday;
+    int tm_isdst;
+};
+#else
 #include <linux/rtc.h>
 #include <sys/ioctl.h>
 #endif
@@ -758,8 +770,6 @@ Cell sys_Runtime_mathExpt(SedonaVM* vm, Cell* params)
 #define days_in_year(a) (leapyear(a) ? 366 : 365)
 #define days_in_month(a) (month_days[(a) - 1])
 
-#ifdef WIN32
-#else
 // begin with 0
 static int getyday(int y, int m, int d)
 {
@@ -834,7 +844,11 @@ static void set_rtc(unsigned int date, unsigned int time)
     if (rtc_tm.tm_hour > 23) return;
     if (rtc_tm.tm_min > 59) return;
     if (rtc_tm.tm_sec > 59) return;
+#ifdef WIN32
+	;
+#else
     ioctl(rtc_fd, RTC_SET_TIME, &rtc_tm);
+#endif
 }
 
 int64_t sys_Runtime_now(SedonaVM* vm, Cell* params)
@@ -846,7 +860,11 @@ int64_t sys_Runtime_now(SedonaVM* vm, Cell* params)
   }
   if (rtc_fd != -1) {
       struct rtc_time rtc_tm;
+#ifdef WIN32
+	  if(1){
+#else
       if (ioctl(rtc_fd, RTC_RD_TIME, &rtc_tm) != -1) {
+#endif
           if (currecttime(&rtc_tm) == 1) {
           }
           time = ((rtc_tm.tm_year + 1900) << 8) + (rtc_tm.tm_mon + 1);
@@ -854,10 +872,17 @@ int64_t sys_Runtime_now(SedonaVM* vm, Cell* params)
           time = time + (rtc_tm.tm_mday << 24) +
                   (rtc_tm.tm_hour << 16) + (rtc_tm.tm_min << 8) + (rtc_tm.tm_sec);
           {
+#ifdef WIN32
+			  unsigned int curr_date = 0; 
+			  unsigned int curr_time = 0; 
+              unsigned int *mstp_datetimeptr = &curr_date;
+              unsigned int *bip_datetimeptr = &curr_time;
+#else
               extern unsigned int *get_mstp_datetimeptr(void);
               extern unsigned int *get_bip_datetimeptr(void);
               unsigned int *mstp_datetimeptr = get_mstp_datetimeptr();
               unsigned int *bip_datetimeptr = get_bip_datetimeptr();
+#endif
               if (mstp_datetimeptr != NULL && mstp_datetimeptr[2] != 0 && mstp_datetimeptr[3] != 0) {
                   set_rtc(mstp_datetimeptr[2], mstp_datetimeptr[3]);
                   if (bip_datetimeptr != NULL) {
@@ -910,9 +935,13 @@ Cell sys_Runtime_setTime(SedonaVM* vm, Cell* params)
       rtc_tm.tm_sec = d;
       rtc_tm.tm_wday = getwday(rtc_tm.tm_year + 1900, rtc_tm.tm_mon + 1, rtc_tm.tm_mday);
       rtc_tm.tm_yday = getyday(rtc_tm.tm_year + 1900, rtc_tm.tm_mon + 1, rtc_tm.tm_mday);
+#ifdef WIN32
+      ;
+#else
       ioctl(rtc_fd, RTC_SET_TIME, &rtc_tm);
+#endif
   }
 
   return nullCell;
 }
-#endif
+

@@ -670,7 +670,7 @@ int isNativeIdValid(int kitId, int methodId)
 
 
 #ifdef WIN32
-Cell sys_Sys_platformType(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_Sys_platformType(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_copy(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_malloc(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_free(SedonaVM* vm, Cell* params){   return nullCell; }
@@ -684,8 +684,8 @@ Cell sys_Sys_platformType(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_doubleToBits(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_bitsToFloat(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_bitsToDouble(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_Sys_ticks(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_Sys_sleep(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_Sys_ticks(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_Sys_sleep(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_compareBytes(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_setBytes(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Sys_andBytes(SedonaVM* vm, Cell* params){   return nullCell; }
@@ -727,10 +727,10 @@ Cell sys_Sys_sleep(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_FileStore_rename(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Test_doMain(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Str_fromBytes(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_PlatformService_doPlatformId(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_PlatformService_getPlatVersion(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_PlatformService_getNativeMemAvailable(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_PlatformService_doReboot(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_PlatformService_doPlatformId(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_PlatformService_getPlatVersion(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_PlatformService_getNativeMemAvailable(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  sCell sys_PlatformService_doReboot(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Runtime_load(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Runtime_save(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Runtime_timeOpen(SedonaVM* vm, Cell* params){   return nullCell; }
@@ -750,8 +750,8 @@ Cell sys_PlatformService_doReboot(SedonaVM* vm, Cell* params){   return nullCell
 //	Cell sys_Runtime_mathLn(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Runtime_mathExp(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell sys_Runtime_mathExpt(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_Runtime_now(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell sys_Runtime_setTime(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_Runtime_now(SedonaVM* vm, Cell* params){   return nullCell; }
+//  //  Cell sys_Runtime_setTime(SedonaVM* vm, Cell* params){   return nullCell; }
 
 Cell inet_TcpSocket_connect(SedonaVM* vm, Cell* params){   return nullCell; }
 Cell inet_TcpSocket_finishConnect(SedonaVM* vm, Cell* params){   return nullCell; }

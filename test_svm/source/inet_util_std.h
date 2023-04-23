@@ -36,19 +36,30 @@
 ////////////////////////////////////////////////////////////////
 
 // Windows
-#ifdef _WIN32
+#ifdef WIN32
 
-#include <Winsock2.h>
-#include <Ws2tcpip.h>
+#include "fstream.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#pragma comment (lib,"ws2_32.lib")
 
+typedef int socklen_t;
 typedef SOCKET socket_t;
+
+struct sockaddr_storage {
+     u_char sa_len;
+     u_char sa_family;
+     u_char padding[128];
+};
+
 
 #define SOCKADDR_PARAM struct sockaddr
 
 LPSTR PrintError(int ErrorCode);
 
 #define ERRNO_MSG() (PrintError(WSAGetLastError()))
-
+#else
+typedef SOCKET socket_t;
 #endif
 
 ////////////////////////////////////////////////////////////////

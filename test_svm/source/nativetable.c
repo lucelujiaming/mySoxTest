@@ -753,24 +753,24 @@ int isNativeIdValid(int kitId, int methodId)
 //  //  Cell sys_Runtime_now(SedonaVM* vm, Cell* params){   return nullCell; }
 //  //  Cell sys_Runtime_setTime(SedonaVM* vm, Cell* params){   return nullCell; }
 
-Cell inet_TcpSocket_connect(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpSocket_finishConnect(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpSocket_write(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpSocket_read(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpServerSocket_bind(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpServerSocket_accept(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_TcpServerSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_open(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_bind(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_send(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_receive(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_maxPacketSize(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_idealPacketSize(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_Crypto_sha1(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_join(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell inet_UdpSocket_getBacnetDeviceList(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpSocket_connect(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpSocket_finishConnect(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpSocket_write(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpSocket_read(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpServerSocket_bind(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpServerSocket_accept(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_TcpServerSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_open(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_bind(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_send(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_receive(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_close(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_maxPacketSize(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_idealPacketSize(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_Crypto_sha1(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_join(SedonaVM* vm, Cell* params){   return nullCell; }
+//	Cell inet_UdpSocket_getBacnetDeviceList(SedonaVM* vm, Cell* params){   return nullCell; }
 Cell ModBus_rtuMaster_dO(SedonaVM* vm, Cell* params){   return nullCell; }
 Cell ModBus_rtuMaster_dC(SedonaVM* vm, Cell* params){   return nullCell; }
 Cell ModBus_rtuMaster_dA(SedonaVM* vm, Cell* params){   return nullCell; }

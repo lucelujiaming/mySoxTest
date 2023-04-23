@@ -9,7 +9,6 @@
 //   09 Aug 12  Clif Turman  Add QNX Specific variant
 //
 #ifdef WIN32
-#include <Winsock2.h>
 #else
 #include <arpa/inet.h>
 #endif
@@ -516,19 +515,19 @@ socket_t initializeSocket(char * networkIP,
 	return clientSocket;
 }
 
-#ifdef _WIN32
-void revertShort(unsigned short &sValue)
+#ifdef WIN32
+void revertShort(unsigned short *sValue)
 {
-	unsigned char * ptrValue = (unsigned char *)(&sValue);
+	unsigned char * ptrValue = (unsigned char *)(sValue);
 	unsigned char cTmp;
 	cTmp = ptrValue[0];
 	ptrValue[0] = ptrValue[1];
 	ptrValue[1] = cTmp;
 }
 
-void revertInt(unsigned int &uValue)
+void revertInt(unsigned int *uValue)
 {
-	unsigned char * ptrValue = (unsigned char *)(&uValue);
+	unsigned char * ptrValue = (unsigned char *)(uValue);
 	unsigned char cTmp;
 
 	cTmp = ptrValue[0];
@@ -545,12 +544,12 @@ void copyBacnetIamDstSpec(bacnet_iam_dstSpec * objIAMDstPtr, unsigned char * buf
 {
 	memcpy(objIAMDstPtr, buffer, iLen);
 #ifdef _WIN32
-	revertShort(objIAMDstPtr->headObject.bvlcLength);
-	revertShort(objIAMDstPtr->npduDstObject.dstAddr);
-	revertInt(objIAMDstPtr->apnuObject.objectIdentifierAndType);
-	revertShort(objIAMDstPtr->apnuObject.apnuLen);
-	revertShort(objIAMDstPtr->apnuObject.segment);
-	revertShort(objIAMDstPtr->apnuObject.vendorID);
+	revertShort(&objIAMDstPtr->headObject.bvlcLength);
+	revertShort(&objIAMDstPtr->npduDstObject.dstAddr);
+	revertInt(&objIAMDstPtr->apnuObject.objectIdentifierAndType);
+	revertShort(&objIAMDstPtr->apnuObject.apnuLen);
+	revertShort(&objIAMDstPtr->apnuObject.segment);
+	revertShort(&objIAMDstPtr->apnuObject.vendorID);
 #endif
 }
 
@@ -559,13 +558,13 @@ void copyBacnetIamSrcSpec(bacnet_iam_srcSpec * objIAMSrcPtr, unsigned char * buf
 {
 	memcpy(objIAMSrcPtr, buffer, iLen);
 #ifdef _WIN32
-	revertShort(objIAMSrcPtr->headObject.bvlcLength);
-	revertShort(objIAMSrcPtr->npduSrcObject.dstAddr);
-	revertShort(objIAMSrcPtr->npduSrcObject.srcAddr);
-	revertInt(objIAMSrcPtr->apnuObject.objectIdentifierAndType);
-	revertShort(objIAMSrcPtr->apnuObject.apnuLen);
-	revertShort(objIAMSrcPtr->apnuObject.segment);
-	revertShort(objIAMSrcPtr->apnuObject.vendorID);
+	revertShort(&objIAMSrcPtr->headObject.bvlcLength);
+	revertShort(&objIAMSrcPtr->npduSrcObject.dstAddr);
+	revertShort(&objIAMSrcPtr->npduSrcObject.srcAddr);
+	revertInt(&objIAMSrcPtr->apnuObject.objectIdentifierAndType);
+	revertShort(&objIAMSrcPtr->apnuObject.apnuLen);
+	revertShort(&objIAMSrcPtr->apnuObject.segment);
+	revertShort(&objIAMSrcPtr->apnuObject.vendorID);
 #endif
 }
 
@@ -614,7 +613,7 @@ void recvSleep(float fMilliSeconds)
 		if(fMilliSeconds < 1)
 			Sleep(1);
 		else
-			Sleep(1 * fMilliSeconds);
+			Sleep(1 * (int)fMilliSeconds);
 #else
 		if(fMilliSeconds >= 1)
 			usleep(1000 * fMilliSeconds);
@@ -680,6 +679,9 @@ int sendBroadcast(int iRetryCount, socket_t clientSocket,
 #define  SEND_BROADCAST_TIMES    1
 Cell inet_UdpSocket_getBacnetDeviceList(SedonaVM* vm, Cell* params)
 {
+	socket_t clientSocket;
+	struct sockaddr_in  my_addr;
+	struct sockaddr_in  user_addr;
   // void* self              = params[0].aval;
   char*     ipAddress      = params[1].aval;
   uint32_t* ipArrayList    = params[2].aval;
@@ -696,9 +698,6 @@ Cell inet_UdpSocket_getBacnetDeviceList(SedonaVM* vm, Cell* params)
 	memset(iListLenPtr, 0x00, sizeof(int) * 1);
 
 
-	socket_t clientSocket;
-	struct sockaddr_in  my_addr;
-	struct sockaddr_in  user_addr;
 	clientSocket = initializeSocket(ipAddress, &my_addr, &user_addr);
 	if (clientSocket > 0)
 	{

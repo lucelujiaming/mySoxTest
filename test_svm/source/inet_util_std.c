@@ -11,9 +11,9 @@
 
 // this value is the third 32-bit in a masked IPv4 address
 #ifdef IS_BIG_ENDIAN
- #define MASKED_IPV4_3RD 0xffff
+#define MASKED_IPV4_3RD 0xffff
 #else
- #define MASKED_IPV4_3RD 0xffff0000
+#define MASKED_IPV4_3RD 0xffff0000
 #endif
 
 

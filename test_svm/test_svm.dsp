@@ -124,6 +124,84 @@ SOURCE=.\source\board.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\inet_Crypto_sha1.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_sha1.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_TcpServerSocket_std.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_TcpSocket_std.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_UdpSocket_std.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_util_std.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\main.c
 
 !IF  "$(CFG)" == "test_svm - Win32 Release"
@@ -233,6 +311,19 @@ SOURCE=.\source\sys_FileStore_std.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\sys_PlatformService_unix.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\sys_StdOutStream_std.c
 
 !IF  "$(CFG)" == "test_svm - Win32 Release"
@@ -273,6 +364,19 @@ SOURCE=.\source\sys_Sys.c
 # Begin Source File
 
 SOURCE=.\source\sys_Sys_std.c
+
+!IF  "$(CFG)" == "test_svm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "test_svm - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\sys_Sys_unix.c
 
 !IF  "$(CFG)" == "test_svm - Win32 Release"
 
@@ -346,6 +450,18 @@ SOURCE=.\source\board.h
 # Begin Source File
 
 SOURCE=.\source\errorcodes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_sha1.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_util.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\inet_util_std.h
 # End Source File
 # Begin Source File
 

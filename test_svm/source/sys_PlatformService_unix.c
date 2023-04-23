@@ -36,7 +36,7 @@ Cell sys_PlatformService_getPlatVersion(SedonaVM* vm, Cell* params)
 int64_t sys_PlatformService_getNativeMemAvailable(SedonaVM* vm, Cell* params)
 {
 #ifdef WIN32
-	;
+	return 1024 * 1024 ;
 #else
 	struct sysinfo info;
 	sysinfo(&info);

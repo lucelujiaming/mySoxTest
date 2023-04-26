@@ -22,15 +22,16 @@ SabReader::SabReader()
 	m_objSabPropList.reserve(10);
 
 	// Set m_magic_slot_type_table
-	m_magic_slot_type_table[SLOT_TYPEID_VOIDID]   = MAGIC_SLOT_TYPE_VOID  ;
-	m_magic_slot_type_table[SLOT_TYPEID_BOOLID]   = MAGIC_SLOT_TYPE_BOOL  ;
-    m_magic_slot_type_table[SLOT_TYPEID_BYTEID]   = MAGIC_SLOT_TYPE_BYTE  ;
-    m_magic_slot_type_table[SLOT_TYPEID_SHORTID]  = MAGIC_SLOT_TYPE_SHORT ;
-    m_magic_slot_type_table[SLOT_TYPEID_INTID]    = MAGIC_SLOT_TYPE_INT   ;
-    m_magic_slot_type_table[SLOT_TYPEID_LONGID]   = MAGIC_SLOT_TYPE_LONG  ;
-    m_magic_slot_type_table[SLOT_TYPEID_FLOATID]  = MAGIC_SLOT_TYPE_FLOAT ;
-    m_magic_slot_type_table[SLOT_TYPEID_DOUBLEID] = MAGIC_SLOT_TYPE_DOUBLE;
-    m_magic_slot_type_table[SLOT_TYPEID_BUFID]    = MAGIC_SLOT_TYPE_BUF   ;
+//	m_magic_slot_type_table[SLOT_TYPEID_VOIDID]   = MAGIC_SLOT_TYPE_VOID  ;
+//	m_magic_slot_type_table[SLOT_TYPEID_BOOLID]   = MAGIC_SLOT_TYPE_BOOL  ;
+//    m_magic_slot_type_table[SLOT_TYPEID_BYTEID]   = MAGIC_SLOT_TYPE_BYTE  ;
+//    m_magic_slot_type_table[SLOT_TYPEID_SHORTID]  = MAGIC_SLOT_TYPE_SHORT ;
+//    m_magic_slot_type_table[SLOT_TYPEID_INTID]    = MAGIC_SLOT_TYPE_INT   ;
+//    m_magic_slot_type_table[SLOT_TYPEID_LONGID]   = MAGIC_SLOT_TYPE_LONG  ;
+//    m_magic_slot_type_table[SLOT_TYPEID_FLOATID]  = MAGIC_SLOT_TYPE_FLOAT ;
+//    m_magic_slot_type_table[SLOT_TYPEID_DOUBLEID] = MAGIC_SLOT_TYPE_DOUBLE;
+//    m_magic_slot_type_table[SLOT_TYPEID_BUFID]    = MAGIC_SLOT_TYPE_BUF   ;
+//	memset(&m_magic_slot_type_table, 0x00, sizeof(unsigned int) * (SLOT_TYPEID_MAXID + 1));
 }
 
 SabReader::~SabReader()
@@ -40,11 +41,13 @@ SabReader::~SabReader()
 
 int  SabReader::getMagicSlotTypebySlotTypeID(unsigned int  slotTypeID)
 {
-	if (slotTypeID <= SLOT_TYPEID_MAXID)
-	{
-		return m_magic_slot_type_table[slotTypeID];
-	}
-	return 0;
+	return m_objSCodeReader.getMagicSlotTypebySlotTypeID(slotTypeID);
+}
+
+
+int  SabReader::getSlotTypeIDbyMagicSlotType(unsigned int  magicSlotType)
+{
+	return m_objSCodeReader.getSlotTypeIDbyMagicSlotType(magicSlotType);
 }
 
 bool SabReader::loadSCodeFile(char * cFileName)
@@ -56,6 +59,67 @@ bool SabReader::loadSCodeFile(char * cFileName)
 void SabReader::unloadSCodeFile()
 {
 	m_objSCodeReader.releaseSCodeFileBuffer();
+}
+
+void SabReader::setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 8) & 0xFF;
+		(*cBuffer)[1] =  uValue & 0xFF;
+	}
+	else
+	{
+		(*cBuffer)[1] = (uValue >> 8) & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 2;
+}
+
+void SabReader::setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer, unsigned int uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[3] =  uValue & 0xFF;
+	}
+	else
+	{
+		(*cBuffer)[3] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 4;
+}
+
+void SabReader::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned long uValue)
+{
+	if (m_bBigEndian)
+	{
+		(*cBuffer)[0] = (uValue >> 56) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 48) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 40) & 0xFF;
+		(*cBuffer)[3] = (uValue >> 32) & 0xFF;
+		(*cBuffer)[4] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[5] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[6] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[7] =  uValue & 0xFF;
+	}
+	else
+	{
+		(*cBuffer)[7] = (uValue >> 56) & 0xFF;
+		(*cBuffer)[6] = (uValue >> 48) & 0xFF;
+		(*cBuffer)[5] = (uValue >> 40) & 0xFF;
+		(*cBuffer)[4] = (uValue >> 32) & 0xFF;
+		(*cBuffer)[3] = (uValue >> 24) & 0xFF;
+		(*cBuffer)[2] = (uValue >> 16) & 0xFF;
+		(*cBuffer)[1] = (uValue >> 8)  & 0xFF;
+		(*cBuffer)[0] =  uValue & 0xFF;
+	}
+	*cBuffer += 8;
 }
 
 unsigned short SabReader::calcAndSkipUnsignedShortValue(unsigned char ** cBuf)
@@ -289,14 +353,21 @@ int SabReader::encodePropsToBuf(unsigned char * cPropsBuf, SCODE_KIT_TYPE * objS
 						                SAB_PROP_VALUE *       configProps, int configPropsLen)
 {
 	unsigned char * cBuf = cPropsBuf;
+	int iConfigPropsIdx = 0;
 	for (int k=0; k < objSCodeKitType->slotsLen; k++)
 	{
 		// if (m_objSCodeReader.matchRtFlagsProp(RTFLAGS_FILTER_CONFIG, objSCodeKitType->kit_type_slots_list[k].rtFlags))
 		if (m_objSCodeReader.matchRtFlagsProp(filter, objSCodeKitType->kit_type_slots_list[k].rtFlags))
 		{
-			encodeOnePropToBuf(&cBuf, configProps[k],
-				objSCodeKitType->kit_type_slots_list[k].fpBix,
-				m_objSCodeReader.isRtFlagsAsStr(objSCodeKitType->kit_type_slots_list[k].rtFlags));
+			if(iConfigPropsIdx > configPropsLen - 1)
+				return cBuf - cPropsBuf;
+			else
+			{
+				encodeOnePropToBuf(&cBuf, configProps[iConfigPropsIdx],
+					objSCodeKitType->kit_type_slots_list[k].fpBix,
+					m_objSCodeReader.isRtFlagsAsStr(objSCodeKitType->kit_type_slots_list[k].rtFlags));
+				iConfigPropsIdx++;
+			}
 		}
 	}
 
@@ -328,11 +399,15 @@ int SabReader::decodeAndSkipPropsFromBuf(unsigned char ** cPropsBuf, SCODE_KIT_T
 bool SabReader::decodeAndSkipOnePropFromBuf(unsigned char ** cBuf, SAB_PROP_VALUE& configProps,
 						 int         iFpBix)// ,      bool isStr)
 {
-    switch (iFpBix)
+	int slotTypeID = getSlotTypeIDbyMagicSlotType(iFpBix);
+    // switch (iFpBix)
+	switch (slotTypeID)
     {
-	case MAGIC_SLOT_TYPE_VOID	:
+	// case MAGIC_SLOT_TYPE_VOID	:
+	case SLOT_TYPEID_VOIDID	:
 		break;
-	case MAGIC_SLOT_TYPE_BOOL	:
+	// case MAGIC_SLOT_TYPE_BOOL	:
+	case SLOT_TYPEID_BOOLID	:
 		if ((*cBuf)[0] == '\0')
 		{
 			configProps.bRet = true;
@@ -343,28 +418,35 @@ bool SabReader::decodeAndSkipOnePropFromBuf(unsigned char ** cBuf, SAB_PROP_VALU
 		}
 		(*cBuf)++;
 		break;
-	case MAGIC_SLOT_TYPE_INT	:
+	// case MAGIC_SLOT_TYPE_INT	:
+	case SLOT_TYPEID_INTID	:
 		configProps.uRet = calcAndSkipUnsignedIntValue(cBuf);
 		break;
-	case MAGIC_SLOT_TYPE_LONG	:
+	// case MAGIC_SLOT_TYPE_LONG	:
+	case SLOT_TYPEID_LONGID	:
 		configProps.ulRet = calcAndSkipUnsignedLongValue(cBuf);
 		break;
-	case MAGIC_SLOT_TYPE_FLOAT	:
+	// case MAGIC_SLOT_TYPE_FLOAT	:
+	case SLOT_TYPEID_FLOATID	:
 		configProps.ufRet = intBitsToFloat(calcAndSkipUnsignedIntValue(cBuf));
 		break;
-	case MAGIC_SLOT_TYPE_DOUBLE	:
+	// case MAGIC_SLOT_TYPE_DOUBLE	:
+	case SLOT_TYPEID_DOUBLEID	:
 		configProps.udRet = longBitsToDouble(calcAndSkipUnsignedLongValue(cBuf));
 		break;
-	case MAGIC_SLOT_TYPE_BUF	:
+	// case MAGIC_SLOT_TYPE_BUF	:
+	case SLOT_TYPEID_BUFID	:
 		configProps.uBufLen = calcAndSkipUnsignedShortValue(cBuf);
 		memcpy(configProps.cBuf, *cBuf, configProps.uBufLen);
 		*cBuf += configProps.uBufLen;
 		break;
-	case MAGIC_SLOT_TYPE_BYTE	:
+	// case MAGIC_SLOT_TYPE_BYTE	:
+	case SLOT_TYPEID_BYTEID	:
 		configProps.cByte = (*cBuf)[0];
 		(*cBuf)++;
 		break;
-	case MAGIC_SLOT_TYPE_SHORT	:
+	// case MAGIC_SLOT_TYPE_SHORT	:
+	case SLOT_TYPEID_SHORTID	:
 		configProps.shortRet = calcAndSkipUnsignedShortValue(cBuf);
 		break;
     }	
@@ -374,11 +456,15 @@ bool SabReader::decodeAndSkipOnePropFromBuf(unsigned char ** cBuf, SAB_PROP_VALU
 bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configProps,
 						 int         iFpBix,      bool isStr)
 {
-    switch (iFpBix)
+	int slotTypeID = getSlotTypeIDbyMagicSlotType(iFpBix);
+    // switch (iFpBix)
+	switch (slotTypeID)
     {
-	case MAGIC_SLOT_TYPE_VOID	:
+	// case MAGIC_SLOT_TYPE_VOID	:
+	case SLOT_TYPEID_VOIDID	:
 		break;
-	case MAGIC_SLOT_TYPE_BOOL	:
+	// case MAGIC_SLOT_TYPE_BOOL	:
+	case SLOT_TYPEID_BOOLID	:
 		if (configProps.bRet)
 		{
 			memcpy(*cBuf, "\0", 1);
@@ -389,33 +475,39 @@ bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configP
 		}
 		*cBuf++;
 		break;
-	case MAGIC_SLOT_TYPE_INT	:
+	// case MAGIC_SLOT_TYPE_INT	:
+	case SLOT_TYPEID_INTID	:
 		memcpy(*cBuf, (char *)(&configProps.uRet), sizeof(int));
 		*cBuf += sizeof(int);
 		break;
-	case MAGIC_SLOT_TYPE_LONG	:
+	// case MAGIC_SLOT_TYPE_LONG	:
+	case SLOT_TYPEID_LONGID	:
 		memcpy(*cBuf, (char *)(&configProps.ulRet), sizeof(long));
 		*cBuf += sizeof(long);
 		break;
-	case MAGIC_SLOT_TYPE_FLOAT	:
+	// case MAGIC_SLOT_TYPE_FLOAT	:
+	case SLOT_TYPEID_FLOATID	:
 		memcpy(*cBuf, (char *)(&configProps.ufRet), sizeof(int));
 		*cBuf += sizeof(int);
 		break;
-	case MAGIC_SLOT_TYPE_DOUBLE	:
+	// case MAGIC_SLOT_TYPE_DOUBLE	:
+	case SLOT_TYPEID_DOUBLEID	:
 		memcpy(*cBuf, (char *)(&configProps.udRet), sizeof(long));
 		*cBuf += sizeof(long);
 		break;
-	case MAGIC_SLOT_TYPE_BUF	:
-		memcpy(*cBuf, (char *)(&configProps.uBufLen), sizeof(short));
-		*cBuf += sizeof(short);
+	// case MAGIC_SLOT_TYPE_BUF	:
+	case SLOT_TYPEID_BUFID	:
+		setAndSkipUnsignedShortValueToBuf(cBuf, (unsigned short)configProps.uBufLen);
 		memcpy(*cBuf, configProps.cBuf, configProps.uBufLen);
 		*cBuf += configProps.uBufLen;
 		break;
-	case MAGIC_SLOT_TYPE_BYTE	:
+	// case MAGIC_SLOT_TYPE_BYTE	:
+	case SLOT_TYPEID_BYTEID	:
 		memcpy(*cBuf, (char *)(&configProps.cByte), 1);
 		*cBuf ++;
 		break;
-	case MAGIC_SLOT_TYPE_SHORT	:
+	// case MAGIC_SLOT_TYPE_SHORT	:
+	case SLOT_TYPEID_SHORTID	:
 		memcpy(*cBuf, (char *)(&configProps.shortRet), sizeof(short));
 		*cBuf += sizeof(short);
 		break;
@@ -427,25 +519,36 @@ bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configP
 typedef unsigned char       BYTE;
 int  SabReader::calcPropSize(int iFpBix, SAB_PROP_VALUE& configProps)
 {
-    switch (iFpBix)
+	int slotTypeID = getSlotTypeIDbyMagicSlotType(iFpBix);
+    // switch (iFpBix)
+	switch (slotTypeID)
     {
-	case MAGIC_SLOT_TYPE_VOID	:
+	// case MAGIC_SLOT_TYPE_VOID	:
+	case SLOT_TYPEID_VOIDID	:
 		return 0;
-	case MAGIC_SLOT_TYPE_BOOL	:
+	// case MAGIC_SLOT_TYPE_BOOL	:
+	case SLOT_TYPEID_BOOLID	:
 		return 1;  // bool is a char in sedona
-	case MAGIC_SLOT_TYPE_INT	:
+	// case MAGIC_SLOT_TYPE_INT	:
+	case SLOT_TYPEID_INTID	:
 		return sizeof(int);
-	case MAGIC_SLOT_TYPE_LONG	:
+	// case MAGIC_SLOT_TYPE_LONG	:
+	case SLOT_TYPEID_LONGID	:
 		return sizeof(long);
-	case MAGIC_SLOT_TYPE_FLOAT	:
+	// case MAGIC_SLOT_TYPE_FLOAT	:
+	case SLOT_TYPEID_FLOATID	:
 		return sizeof(int);
-	case MAGIC_SLOT_TYPE_DOUBLE	:
+	// case MAGIC_SLOT_TYPE_DOUBLE	:
+	case SLOT_TYPEID_DOUBLEID	:
 		return sizeof(long);
-	case MAGIC_SLOT_TYPE_BUF	:
+	// case MAGIC_SLOT_TYPE_BUF	:
+	case SLOT_TYPEID_BUFID	:
 		return  configProps.uBufLen + sizeof(short);
-	case MAGIC_SLOT_TYPE_BYTE	:
+	// case MAGIC_SLOT_TYPE_BYTE	:
+	case SLOT_TYPEID_BYTEID	:
 		return sizeof(BYTE);
-	case MAGIC_SLOT_TYPE_SHORT	:
+	// case MAGIC_SLOT_TYPE_SHORT	:
+	case SLOT_TYPEID_SHORTID	:
 		return sizeof(short);
     }
 	return 0;
@@ -659,26 +762,35 @@ int SabReader::loadAppComp(SAB_COMP_INFO& objSabCompInfo)
 void SabReader::printSingleSabProp(SAB_PROP_VALUE& objSabPropValue, unsigned char * cPropName)
 {
 	char base64[1024];
-	switch (objSabPropValue.propType)
+	int slotTypeID = getSlotTypeIDbyMagicSlotType(objSabPropValue.propType);
+    // switch (objSabPropValue.propType)
+	switch (slotTypeID)
 	{
-	case MAGIC_SLOT_TYPE_VOID	:
+	// case MAGIC_SLOT_TYPE_VOID	:
+	case SLOT_TYPEID_VOIDID	:
 		break;
-	case MAGIC_SLOT_TYPE_BOOL	:
+	// case MAGIC_SLOT_TYPE_BOOL	:
+	case SLOT_TYPEID_BOOLID	:
 		printf("%s", objSabPropValue.bRet?"true":"false");
 		break;
-	case MAGIC_SLOT_TYPE_INT	:
+	// case MAGIC_SLOT_TYPE_INT	:
+	case SLOT_TYPEID_INTID	:
 		printf("%d", objSabPropValue.uRet);
 		break;
-	case MAGIC_SLOT_TYPE_LONG	:
+	// case MAGIC_SLOT_TYPE_LONG	:
+	case SLOT_TYPEID_LONGID	:
 		printf("%l", objSabPropValue.ulRet);
 		break;
-	case MAGIC_SLOT_TYPE_FLOAT	:
+	// case MAGIC_SLOT_TYPE_FLOAT	:
+	case SLOT_TYPEID_FLOATID	:
 		printf("%f", objSabPropValue.ufRet);
 		break;
-	case MAGIC_SLOT_TYPE_DOUBLE	:
+	// case MAGIC_SLOT_TYPE_DOUBLE	:
+	case SLOT_TYPEID_DOUBLEID	:
 		printf("%f", objSabPropValue.udRet);
 		break;
-	case MAGIC_SLOT_TYPE_BUF	:
+	// case MAGIC_SLOT_TYPE_BUF	:
+	case SLOT_TYPEID_BUFID	:
 		memset(base64, 0x00, 1024);
 		if (stricmp((char *)cPropName, "cred") == 0)
 		{
@@ -691,10 +803,12 @@ void SabReader::printSingleSabProp(SAB_PROP_VALUE& objSabPropValue, unsigned cha
 			printf("%d : '%s'", objSabPropValue.uBufLen, objSabPropValue.cBuf);
 		}
 		break;
-	case MAGIC_SLOT_TYPE_BYTE	:
+	// case MAGIC_SLOT_TYPE_BYTE	:
+	case SLOT_TYPEID_BYTEID	:
 		printf("%02X",objSabPropValue.cByte);
 		break;
-	case MAGIC_SLOT_TYPE_SHORT	:
+	// case MAGIC_SLOT_TYPE_SHORT	:
+	case SLOT_TYPEID_SHORTID	:
 		printf("%0d", objSabPropValue.shortRet);
 		break;
 	}	
@@ -751,28 +865,37 @@ void SabReader::loadProps(SAB_COMP_INFO& objSabCompInfo,
 
 void SabReader::loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr)
 {
+	int slotTypeID = getSlotTypeIDbyMagicSlotType(iFpBix);
 	objSabProp.objSoxProp.propType = iFpBix;
-    switch (iFpBix)
+    // switch (iFpBix)
+	switch (slotTypeID)
     {
-	case MAGIC_SLOT_TYPE_VOID	:
+	// case MAGIC_SLOT_TYPE_VOID	:
+	case SLOT_TYPEID_VOIDID	:
 		break;
-	case MAGIC_SLOT_TYPE_BOOL	:
+	// case MAGIC_SLOT_TYPE_BOOL	:
+	case SLOT_TYPEID_BOOLID	:
 		objSabProp.objSoxProp.bRet = (m_cFileBufPtr[0]!= 0);
 		m_cFileBufPtr ++;
 		break;
-	case MAGIC_SLOT_TYPE_INT	:
+	// case MAGIC_SLOT_TYPE_INT	:
+	case SLOT_TYPEID_INTID	:
 		objSabProp.objSoxProp.uRet = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);
 		break;
-	case MAGIC_SLOT_TYPE_LONG	:
+	// case MAGIC_SLOT_TYPE_LONG	:
+	case SLOT_TYPEID_LONGID	:
 		objSabProp.objSoxProp.ulRet = calcAndSkipUnsignedLongValue(&m_cFileBufPtr);
 		break;
-	case MAGIC_SLOT_TYPE_FLOAT	:
+	// case MAGIC_SLOT_TYPE_FLOAT	:
+	case SLOT_TYPEID_FLOATID	:
 		objSabProp.objSoxProp.ufRet = intBitsToFloat(calcAndSkipUnsignedIntValue(&m_cFileBufPtr));
 		break;
-	case MAGIC_SLOT_TYPE_DOUBLE	:
+	// case MAGIC_SLOT_TYPE_DOUBLE	:
+	case SLOT_TYPEID_DOUBLEID	:
 		objSabProp.objSoxProp.udRet = longBitsToDouble(calcAndSkipUnsignedLongValue(&m_cFileBufPtr));
 		break;
-	case MAGIC_SLOT_TYPE_BUF	:
+	// case MAGIC_SLOT_TYPE_BUF	:
+	case SLOT_TYPEID_BUFID	:
 		objSabProp.objSoxProp.uBufLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		if (objSabProp.objSoxProp.uBufLen > (m_cFileBufPtr - m_fileBuf))
 		{
@@ -786,11 +909,13 @@ void SabReader::loadProp(SAB_PROP& objSabProp, int iFpBix, bool isStr)
 			objSabProp.objSoxProp.cBuf[objSabProp.objSoxProp.uBufLen - 1] = '\0';
 		}
 		break;
-	case MAGIC_SLOT_TYPE_BYTE	:
+	// case MAGIC_SLOT_TYPE_BYTE	:
+	case SLOT_TYPEID_BYTEID	:
 		objSabProp.objSoxProp.cByte = m_cFileBufPtr[0];
 		m_cFileBufPtr ++;
 		break;
-	case MAGIC_SLOT_TYPE_SHORT	:
+	// case MAGIC_SLOT_TYPE_SHORT	:
+	case SLOT_TYPEID_SHORTID	:
 		objSabProp.objSoxProp.shortRet = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 		break;
     }

@@ -11,6 +11,7 @@ CSoxMsg::CSoxMsg()
 	m_componentState = 0xFF;
 	memset(&m_objSoxReadCompRsp, 0x00, sizeof(SOX_READCOMP_RSP));
 	m_objSchemaKitList = NULL;
+	m_kitCount = -1;
 }
 
 CSoxMsg::~CSoxMsg()
@@ -457,6 +458,7 @@ bool CSoxMsg::sendAddRequest(unsigned short	  parentID,
 		sendBufPtr += strlen(cName) + 1;
 		// val[] configProps
 		memcpy(sendBufPtr, cPropsBuf, iPropsLen);
+		sendBufPtr += iPropsLen;
 
 		m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
 		free(msg_buffer);
@@ -897,7 +899,7 @@ bool CSoxMsg::sendFileOpenRequest(unsigned char method, char * uri,
 	// u1 end of headers '\0'
 	sendBufPtr++;
 	//
-	resetFileOpenInfo();
+	// resetFileOpenInfo();
 	m_objDASPMsg.sendDatagramRequest(msg_buffer, sendBufPtr - msg_buffer);
 	free(msg_buffer);
 	return true;
@@ -979,7 +981,7 @@ void CSoxMsg::dealFileChunkRequest(unsigned char * cDataBuf, int iDataBufLen)
 		mergeFileChunkToFile();
 		// If we get new app.scode, we would read scode information from app.scode
 		// and empty all information of app.sab. Otherwise, we would get reference error.
-		if(strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
+		if(strstr(m_currentURI, "app.scode") && strcmp(strstr(m_currentURI, "app.scode"), "app.scode") == 0)
 		{
 			if (m_objSabReader.isSCodeKitsGet())
 			{
@@ -991,10 +993,11 @@ void CSoxMsg::dealFileChunkRequest(unsigned char * cDataBuf, int iDataBufLen)
 			}
 		}
 		// If we get new app.sab, we would update app.scode and app.sab at the same time.
-		else if(strcmp(strstr(m_currentURI, "app.sab"), "app.sab") == 0)
+		else if(strstr(m_currentURI, "app.sab") && strcmp(strstr(m_currentURI, "app.sab"), "app.sab") == 0)
 		{
 		}
-		resetFileOpenInfo();
+		// resetFileOpenInfo();
+		sendFileCloseRequest();
 	}
 }
 
@@ -1280,6 +1283,7 @@ void CSoxMsg::dealReadPropResponse(unsigned char * cDataBuf, int iDataBufLen, SA
 		return ;
 	}
 	printf("cPropName = %s.\r\n", objSCodeKitType->kit_type_slots_list[propID].cPropName);
+	// This check is obsolated but we cannot remove it.
 	if (m_objSabReader.getMagicSlotTypebySlotTypeID(typeID) != objSCodeKitType->kit_type_slots_list[propID].fpBix)
 	{
 		return ;
@@ -1412,11 +1416,11 @@ void CSoxMsg::dealVersionResponse(unsigned char * cDataBuf, int iDataBufLen,
 	unsigned char * sendBufPtr = cDataBuf;
 	char replyNum  = cDataBuf[1];
 	printf("replyNum = %d.\r\n", (int)replyNum);
-	unsigned char kitCount  = cDataBuf[2];
+	m_kitCount  = (int)cDataBuf[2];
 	sendBufPtr += 3;
 
-	(*objSchemaKitList) = (SCHEMA_KIT *)malloc(sizeof(SCHEMA_KIT) * kitCount);
-	for (int i = 0; i < kitCount; i++)
+	(*objSchemaKitList) = (SCHEMA_KIT *)malloc(sizeof(SCHEMA_KIT) * m_kitCount);
+	for (int i = 0; i < m_kitCount; i++)
 	{
 		memset(&((*objSchemaKitList)[i]), 0x00, sizeof(SCHEMA_KIT));
 		strcpy((char *)(*objSchemaKitList)[i].cName, (char *)sendBufPtr);
@@ -1509,15 +1513,17 @@ void CSoxMsg::dealVersionMoreResponse(unsigned char * cDataBuf, int iDataBufLen,
 	objSoxVersionMore.scodeFlags = sendBufPtr[0];
 	sendBufPtr ++;
 
-	objSoxVersionMore.numberOfKits = m_objSabReader.getNumberOfKits();
+	objSoxVersionMore.numberOfKits = m_kitCount; // m_objSabReader.getNumberOfKits();
+	if(m_kitCount < 0)
+		return;
 	objSoxVersionMore.kitVersions = (SOX_VERSIONMORE_KITVERSION *)malloc(
 		sizeof(SOX_VERSIONMORE_KITVERSION) * objSoxVersionMore.numberOfKits);
 	memset(objSoxVersionMore.kitVersions, 0x00, 
 		sizeof(SOX_VERSIONMORE_KITVERSION) * objSoxVersionMore.numberOfKits);
 	for (i = 0; i< objSoxVersionMore.numberOfKits; i++)
 	{
-		strcpy((char *)objSoxVersionMore.kitVersions[i].strkitName, 
-			(char *)m_objSabReader.getSCodeKitName(i));
+	//	strcpy((char *)objSoxVersionMore.kitVersions[i].strkitName, 
+	//		(char *)m_objSabReader.getSCodeKitName(i));
 		strcpy((char *)objSoxVersionMore.kitVersions[i].strkitVersion, (char *)sendBufPtr);
 		sendBufPtr += strlen((char *)objSoxVersionMore.kitVersions[i].strkitVersion) + 1;
 	}

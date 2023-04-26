@@ -333,5 +333,7 @@ private:
 
 	SOX_VERSIONMORE m_objSoxVersionMore;
 	SOX_QUERYRES    m_queryRes;
+
+	int             m_kitCount;
 };
 

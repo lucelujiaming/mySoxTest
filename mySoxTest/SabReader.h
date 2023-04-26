@@ -23,31 +23,6 @@
 #define SAB_PROP_VALUE_LEN    1024
 #define SAB_KIT_VERSION_LEN   128 
 
-// I got it by observation and I am not sure about it .
-#define MAGIC_SLOT_TYPE_VOID			0x02DB
-#define MAGIC_SLOT_TYPE_BOOL			0x02DD
-#define MAGIC_SLOT_TYPE_BYTE			0x02DF
-#define MAGIC_SLOT_TYPE_SHORT			0x02E1
-#define MAGIC_SLOT_TYPE_INT			    0x02E3
-#define MAGIC_SLOT_TYPE_LONG			0x02E5
-#define MAGIC_SLOT_TYPE_FLOAT			0x02E7
-#define MAGIC_SLOT_TYPE_DOUBLE			0x02E9
-#define MAGIC_SLOT_TYPE_BUF			    0x055F
-
-#define SLOT_TYPEID_VOIDID            0 
-#define SLOT_TYPEID_BOOLID            1 
-#define SLOT_TYPEID_BYTEID            2 
-#define SLOT_TYPEID_SHORTID           3 
-#define SLOT_TYPEID_INTID             4 
-#define SLOT_TYPEID_LONGID            5 
-#define SLOT_TYPEID_FLOATID           6 
-#define SLOT_TYPEID_DOUBLEID          7 
-#define SLOT_TYPEID_MAXPRIMITIVEID    7 
-#define SLOT_TYPEID_BUFID             8 
-// Add at 01/12/2023
-#define SLOT_TYPEID_MAXID             8 
-#define SLOT_TYPEID_ERRORID           0xff 
-
 typedef struct _SCHEMA_KIT
 {
 	unsigned char       cName[SAB_NAME_LEN];
@@ -115,6 +90,7 @@ public:
 	void unloadSCodeFile();
 	
 	int    getMagicSlotTypebySlotTypeID(unsigned int  slotTypeID);
+	int    getSlotTypeIDbyMagicSlotType(unsigned int  magicSlotType);
 	// SCODE_KIT * getSCodeKits()    { return m_objSCodeReader.getSCodeKits(); }
 	unsigned char * getSCodeKitName(unsigned int iCompID) { return m_objSCodeReader.getSCodeKitName(iCompID); }
 	int         getNumberOfKits() { return m_objSCodeReader.getNumberOfKits(); }
@@ -184,6 +160,10 @@ private:
 	unsigned int   calcAndSkipUnsignedIntValue(unsigned char ** cBuf);
 	unsigned long  calcAndSkipUnsignedLongValue(unsigned char ** cBuf);
 	
+	void setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue);
+	void setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer,   unsigned int uValue);
+	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned long uValue);
+	
 private:
 	FileReader         m_objFileReader;
 	SCodeReader        m_objSCodeReader;
@@ -203,7 +183,7 @@ private:
 	std::vector<SAB_PROP>    m_objSabPropList;
 	std::vector<SAB_LINK>    m_objSabLinkList;
 
-	unsigned int             m_magic_slot_type_table[SLOT_TYPEID_MAXID + 1];
+	// unsigned int             m_magic_slot_type_table[SLOT_TYPEID_MAXID + 1];
 };
 
 #endif // !defined(AFX_SABREADER_H__B4EE535F_3490_4897_A9A6_2888CD958741__INCLUDED_)

@@ -41,6 +41,31 @@
 #define RTFLAGS_FILTER_TREE                   't'
 #define RTFLAGS_FILTER_LINKS                  'l'
 
+// I got it by observation and I am not sure about it .
+//	#define MAGIC_SLOT_TYPE_VOID			0x02DB   // From AbstractBase::doAbstract
+//	#define MAGIC_SLOT_TYPE_BOOL			0x02DD   // From AbstractBase::doBool
+//	#define MAGIC_SLOT_TYPE_BYTE			0x02DF   // From SoxService::receiveMax
+//	#define MAGIC_SLOT_TYPE_SHORT			0x02E1   // From SoxService::eventsPerSec
+//	#define MAGIC_SLOT_TYPE_INT			    0x02E3   // From AbstractBase::doInt
+//	#define MAGIC_SLOT_TYPE_LONG			0x02E5   // From AbstractBase::doLong
+//	#define MAGIC_SLOT_TYPE_FLOAT			0x02E7   // From AbstractBase::doFloat
+//	#define MAGIC_SLOT_TYPE_DOUBLE			0x02E9   // From AbstractBase::doDouble
+//	#define MAGIC_SLOT_TYPE_BUF			    0x055F   // From AbstractBase::doBuf
+
+#define SLOT_TYPEID_VOIDID            0 
+#define SLOT_TYPEID_BOOLID            1 
+#define SLOT_TYPEID_BYTEID            2 
+#define SLOT_TYPEID_SHORTID           3 
+#define SLOT_TYPEID_INTID             4 
+#define SLOT_TYPEID_LONGID            5 
+#define SLOT_TYPEID_FLOATID           6 
+#define SLOT_TYPEID_DOUBLEID          7 
+#define SLOT_TYPEID_MAXPRIMITIVEID    7 
+#define SLOT_TYPEID_BUFID             8 
+// Add at 01/12/2023
+#define SLOT_TYPEID_MAXID             9 
+#define SLOT_TYPEID_ERRORID           0xff 
+
 typedef struct _SCODE_KIT_TYPE_SLOT
 {
     unsigned int  id;
@@ -132,6 +157,9 @@ public:
 	SCodeReader();
 	virtual ~SCodeReader();
 
+	int    getMagicSlotTypebySlotTypeID(unsigned int  slotTypeID);
+	int    getSlotTypeIDbyMagicSlotType(unsigned int  magicSlotType);
+
 public:
 	bool matchRtFlagsProp(unsigned char filter, unsigned int rtFlags);
 	bool isRtFlagsProp(unsigned int rtFlags)     { return (rtFlags & RTFLAGS_ACTION) == 0; }
@@ -154,6 +182,7 @@ private:
 	void parseBootstrap();
 
 	void setSCodeHeader();
+	void setMagicSlotTypeTable();
 	void printSCodeHeader();
 	void printSCodeKits();
 	void generateRtFlagsInfo(char * cInfo, int rtFlags);
@@ -210,6 +239,8 @@ private:
 	
 	int                 m_numTests;
 	SCODE_TEST *        m_scode_test_table;
+	
+	unsigned int             m_magic_slot_type_table[SLOT_TYPEID_MAXID + 1];
 };
 
 #endif // !defined(AFX_SCODEREADER_H)

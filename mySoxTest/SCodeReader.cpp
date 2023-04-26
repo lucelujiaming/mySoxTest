@@ -32,6 +32,7 @@ SCodeReader::SCodeReader()
 	m_scode_log_veclist.reserve(8);
 	m_scode_kit_list = NULL;
 	m_scode_test_table = NULL;
+	memset(&m_magic_slot_type_table, 0x00, sizeof(unsigned int) * (SLOT_TYPEID_MAXID + 1));
 }
 
 SCodeReader::~SCodeReader()
@@ -227,6 +228,100 @@ void SCodeReader::generateRtFlagsInfo(char * cRtFlagsInfo, int rtFlags)
 
 }
 
+
+int  SCodeReader::getMagicSlotTypebySlotTypeID(unsigned int slotTypeID)
+{
+	if (slotTypeID <= SLOT_TYPEID_MAXID)
+	{
+		return m_magic_slot_type_table[slotTypeID];
+	}
+	return 0;
+}
+
+int  SCodeReader::getSlotTypeIDbyMagicSlotType(unsigned int  magicSlotType)
+{
+	for(int i = 0; i < SLOT_TYPEID_MAXID; i++)
+	{
+		if(m_magic_slot_type_table[i] == magicSlotType)
+			return i;
+	}
+	return -1;
+}
+
+void SCodeReader::setMagicSlotTypeTable()
+{
+	for (int i=0; i< m_head_numberOfKits; ++i) 
+    {
+		for (int j=0; j < m_scode_kit_list[i].typesLen; j++)
+		{
+			for (int k=0; k < m_scode_kit_list[i].kit_type_list[j].slotsLen; k++)
+			{
+				if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].cName,
+					"AbstractBase") == 0)
+				{
+					if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doAbstract") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_VOIDID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doBool") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_BOOLID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doInt") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_INTID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doLong") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_LONGID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doFloat") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_FLOATID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doDouble") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_DOUBLEID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"doBuf") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_BUFID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+				}
+				else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].cName, "SoxService") == 0)
+				{
+					if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"receiveMax") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_BYTEID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+					else if(strcmp((char *)m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].cPropName, 
+						"eventsPerSec") == 0)
+					{
+						m_magic_slot_type_table[SLOT_TYPEID_SHORTID] = 
+							m_scode_kit_list[i].kit_type_list[j].kit_type_slots_list[k].fpBix;
+					}
+				}
+			}
+		}
+    }
+}
+
 void SCodeReader::printSCodeKits()
 {
 	for (int i=0; i< m_head_numberOfKits; ++i) 
@@ -349,6 +444,7 @@ bool SCodeReader::readSCodeFile(char * cFileName)
 			iPos = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
 			parseKit(m_scode_kit_list[i], iPos);
 		}
+		setMagicSlotTypeTable();
 		printSCodeKits();
 	}
 

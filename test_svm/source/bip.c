@@ -6,6 +6,7 @@
 
 #ifdef WIN32
 # include <windows.h>
+#include <memory.h>
 #else
 #include <sys/ipc.h>
 #include <sys/shm.h>

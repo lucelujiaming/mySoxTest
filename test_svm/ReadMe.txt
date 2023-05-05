@@ -2,28 +2,9 @@
        CONSOLE APPLICATION : test_svm
 ========================================================================
 
-
-AppWizard has created this test_svm application for you.  
-
-This file contains a summary of what you will find in each of the files that
-make up your test_svm application.
-
-test_svm.dsp
-    This file (the project file) contains information at the project level and
-    is used to build a single project or subproject. Other users can share the
-    project (.dsp) file, but they should export the makefiles locally.
-
-test_svm.cpp
-    This is the main application source file.
-
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named test_svm.pch and a precompiled types file named StdAfx.obj.
-
+为了让这个代码能够编译，需要把test_libmodbus.lib复制到lib目录下：
+这里是：
+D:\Program Files (x86)\Microsoft Visual Studio\VC98\LIB
 
 /////////////////////////////////////////////////////////////////////////////
 Other notes:

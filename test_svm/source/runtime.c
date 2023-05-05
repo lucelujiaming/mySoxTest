@@ -478,7 +478,7 @@ Cell sys_Runtime_timeWrite(SedonaVM* vm, Cell* params)
 Cell sys_Runtime_dataOpen(SedonaVM* vm, Cell* params)
 {
     const char *name = params[0].aval;
-
+	T_SETPOINT *point = NULL;
     Cell ret;
     ret.ival = -1;
 
@@ -486,9 +486,9 @@ Cell sys_Runtime_dataOpen(SedonaVM* vm, Cell* params)
         list_node_t *_node = ctx.setpoints.first;
         while (_node != NULL) {
 #ifdef WIN32
-			T_SETPOINT *point = (T_SETPOINT*)(_node) ; 
+			point = (T_SETPOINT*)(_node) ; 
 #else
-            T_SETPOINT *point = list_entry_safe(_node, T_SETPOINT);
+            point = list_entry_safe(_node, T_SETPOINT);
 #endif
             if (strcmp(point->name, name) == 0) {
                 point->refcnt++;

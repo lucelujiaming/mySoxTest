@@ -16,7 +16,7 @@
 #include <assert.h>
 
 #if defined(_WIN32)
-#  include <winsock2.h>
+#include <winsock2.h>
 #else
 #  include <arpa/inet.h>
 #endif

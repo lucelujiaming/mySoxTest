@@ -771,26 +771,26 @@ int isNativeIdValid(int kitId, int methodId)
 //	Cell inet_Crypto_sha1(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell inet_UdpSocket_join(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell inet_UdpSocket_getBacnetDeviceList(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuMaster_dO(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuMaster_dC(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuMaster_dA(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuMaster_dR(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuMaster_dW(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuSlave_dO(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuSlave_dC(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuSlave_dA(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuSlave_dR(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_rtuSlave_dW(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpClient_dO(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpClient_dC(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpClient_dA(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpClient_dR(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpClient_dW(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpServer_dO(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpServer_dC(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpServer_dA(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpServer_dR(SedonaVM* vm, Cell* params){   return nullCell; }
-Cell ModBus_tcpServer_dW(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuMaster_dO(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuMaster_dC(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuMaster_dA(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuMaster_dR(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuMaster_dW(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuSlave_dO(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuSlave_dC(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuSlave_dA(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuSlave_dR(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_rtuSlave_dW(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpClient_dO(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpClient_dC(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpClient_dA(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpClient_dR(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpClient_dW(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpServer_dO(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpServer_dC(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpServer_dA(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpServer_dR(SedonaVM* vm, Cell* params){   return nullCell; }
+//		Cell ModBus_tcpServer_dW(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell BacNet_BIP_dO(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell BacNet_BIP_dC(SedonaVM* vm, Cell* params){   return nullCell; }
 //	Cell BacNet_BIP_dA(SedonaVM* vm, Cell* params){   return nullCell; }

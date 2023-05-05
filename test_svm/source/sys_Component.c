@@ -151,7 +151,7 @@ Cell sys_Component_doSetBool(SedonaVM* vm, Cell* params)
 {
   uint8_t* self   = params[0].aval;
   void* slot      = params[1].aval;
-  uint8_t val     = params[2].ival;
+  uint8_t val     = (uint8_t)params[2].ival;
   uint16_t typeId = getTypeId(vm, getSlotType(vm, slot));
   uint16_t offset = getSlotHandle(vm, slot);
 
@@ -181,11 +181,11 @@ Cell sys_Component_doSetInt(SedonaVM* vm, Cell* params)
   {
     case ByteTypeId:          
       if (getByte(self, offset) == val) return falseCell;
-      setByte(self, offset, val);
+      setByte(self, (int)offset, (uint8_t)val);
       break;
     case ShortTypeId:
       if (getShort(self, offset) == val) return falseCell;
-      setShort(self, offset, val);
+      setShort(self, (int)offset, (uint16_t)val);
       break;
     case IntTypeId:
       if (getInt(self, offset) == val) return falseCell;
@@ -316,7 +316,7 @@ Cell sys_Component_invokeBool(SedonaVM* vm, Cell* params)
 {
   uint8_t* self   = params[0].aval;
   void* slot      = params[1].aval;
-  uint8_t val     = params[2].ival;
+  uint8_t val     = (uint8_t)params[2].ival;
   int typeId      = getTypeId(vm, getSlotType(vm, slot));
   uint16_t vidx   = getSlotHandle(vm, slot);
   Cell args[2];

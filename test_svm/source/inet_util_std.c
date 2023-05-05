@@ -83,7 +83,7 @@ int inet_bind(socket_t sock, int port)
 #endif
     paddr->sin_family      = AF_INET;
     paddr->sin_addr.s_addr = INADDR_ANY;
-    paddr->sin_port        = htons(port);
+    paddr->sin_port        = htons((u_short)port);
   }
 
 #elif defined( SOCKET_FAMILY_INET6 )
@@ -122,7 +122,7 @@ int inet_toSockaddr(struct sockaddr_storage* addr, uint32_t* ipAddr, int port, i
 #ifdef __QNX__
   paddr->sin_len    = sizeof(struct sockaddr_in);
 #endif
-  paddr->sin_port   = htons(port);
+  paddr->sin_port   = htons((u_short)port);
   paddr->sin_family = AF_INET;
 
   if (ipAddr == NULL)

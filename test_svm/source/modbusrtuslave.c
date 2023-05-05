@@ -344,9 +344,11 @@ static inline void exec_mutli_element_write(context_t *c, device_t *device, elem
                     modbus_set_slave(c->ctx_modbus, devid);
                     led_on(ctx_idx);
                     if (write_size == 1) {
-                        modbus_write_register(c->ctx_modbus, write_addr + start_addr - 40001, v[write_addr]);
+                        modbus_write_register(c->ctx_modbus, 
+								write_addr + start_addr - 40001, v[write_addr]);
                     } else {
-                        modbus_write_registers(c->ctx_modbus, write_addr + start_addr - 40001, write_size, &v[write_addr]);
+                        modbus_write_registers(c->ctx_modbus, 
+								write_addr + start_addr - 40001, write_size, (const uint16_t *)&v[write_addr]);
                     }
                     device->packet_cnt_total ++;
                     led_off(ctx_idx);
@@ -366,7 +368,7 @@ static inline void exec_mutli_element_write(context_t *c, device_t *device, elem
                     if (write_size == 1) {
                         modbus_write_register(c->ctx_modbus, write_addr + start_addr - 40001, v[write_addr]);
                     } else {
-                        modbus_write_registers(c->ctx_modbus, write_addr + start_addr - 40001, write_size, &v[write_addr]);
+                        modbus_write_registers(c->ctx_modbus, write_addr + start_addr - 40001, write_size, (const uint16_t *)&v[write_addr]);
                     }
                     device->packet_cnt_total ++;
                     led_off(ctx_idx);
@@ -388,7 +390,7 @@ static inline void exec_mutli_element_write(context_t *c, device_t *device, elem
             if (write_size == 1) {
                 modbus_write_register(c->ctx_modbus, write_addr + start_addr - 40001, v[write_addr]);
             } else {
-                modbus_write_registers(c->ctx_modbus, write_addr + start_addr - 40001, write_size, &v[write_addr]);
+                modbus_write_registers(c->ctx_modbus, write_addr + start_addr - 40001, write_size, (const uint16_t *)&v[write_addr]);
             }
             device->packet_cnt_total ++;
             led_off(ctx_idx);
@@ -1143,7 +1145,11 @@ static inline void exec_one_device_read(context_t *c, device_t *device)
     }
 }
 
+#ifdef WIN32
+static unsigned int __stdcall thread_modbus_rtu_update(void *arg)
+#else
 static void* thread_modbus_rtu_update(void *arg)
+#endif
 {
 	device_t *device = NULL;
 	element_t *element = NULL;
@@ -1338,9 +1344,10 @@ static void* thread_modbus_rtu_update(void *arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
-
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
 int rtu_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
@@ -1897,7 +1904,7 @@ int rtu_open(int ctx_idx, int band, int parity, int data_bit, int stop_bit, int 
         c->ctx_added = 0;
 #ifdef WIN32
 		c->ctx_thread =
-			(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_rtu_update, 0, NULL);
+			(HANDLE)_beginthreadex(NULL, 0, thread_modbus_rtu_update, c, 0, NULL);
 #else
         pthread_create(&c->ctx_thread, NULL, thread_modbus_rtu_update, c);
         led_blink(ctx_idx);

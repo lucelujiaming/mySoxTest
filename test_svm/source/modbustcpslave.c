@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "modbus.h"
+#include "modbus-tcp.h"
 #ifdef WIN32
 # include <windows.h>
 #include <time.h>
@@ -12,7 +14,6 @@
 #include <sys/time.h>
 #include <pthread.h>
 #endif
-#include "modbus.h"
 #include "board.h"
 #include "list.h"
 
@@ -417,7 +418,11 @@ static inline void exec_one_device_read(context_t *c, device_t *device)
     }
 }
 
+#ifdef WIN32
+static unsigned int __stdcall thread_modbus_tcp_update(void *arg)
+#else
 static void* thread_modbus_tcp_update(void* arg)
+#endif
 {
 	element_t *element = NULL;
 	device_t* next_read_device = NULL;
@@ -612,9 +617,10 @@ static void* thread_modbus_tcp_update(void* arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
-
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
 int tcp_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
@@ -1153,7 +1159,7 @@ int tcp_open(char *ip, int port)
     c->ctx_thread_running = 1;
 #ifdef WIN32
 	c->ctx_thread =
-			(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_tcp_update, 0, NULL);
+			(HANDLE)_beginthreadex(NULL, 0, thread_modbus_tcp_update, c, 0, NULL);
 #else
     pthread_create(&(c->ctx_thread), NULL, thread_modbus_tcp_update, c);
 #endif // WIN32

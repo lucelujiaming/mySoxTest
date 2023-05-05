@@ -115,7 +115,11 @@ static inline element_t* get_element(context_t *c, unsigned char devid, unsigned
     return NULL;
 }
 
+#ifdef WIN32
+static unsigned int __stdcall thread_modbus_rtu_master(void *arg)
+#else
 static void* thread_modbus_rtu_master(void *arg)
+#endif
 {
 	int ctx_idx             = 0;
     unsigned char devid     = 0;
@@ -160,7 +164,7 @@ static void* thread_modbus_rtu_master(void *arg)
                 fd_set rset;
                 struct timeval tv;
                 FD_ZERO(&rset);
-                FD_SET(modbus_get_socket(c->ctx_modbus), &rset);
+                FD_SET((u_int)modbus_get_socket(c->ctx_modbus), &rset);
                 tv.tv_sec = 1;
                 tv.tv_usec = 0;
                 s_rc = select(modbus_get_socket(c->ctx_modbus)+1, &rset, NULL, NULL, &tv);
@@ -193,7 +197,7 @@ static void* thread_modbus_rtu_master(void *arg)
                     case MODBUS_FC_READ_COILS:
                     case MODBUS_FC_WRITE_MULTIPLE_COILS:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 1), nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -215,7 +219,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_COIL:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, 1);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 1), 1);
                             if (element != NULL) {
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 _modbus_data[0] = (unsigned char)element->val;
@@ -227,7 +231,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_READ_DISCRETE_INPUTS:
                         {
-                            element_t *element = get_element(c, devid, addr + 10001, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 10001), nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -249,7 +253,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_READ_INPUT_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 30001, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 30001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -271,7 +275,7 @@ static void* thread_modbus_rtu_master(void *arg)
                     case MODBUS_FC_READ_HOLDING_REGISTERS:
                     case MODBUS_FC_WRITE_MULTIPLE_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 40001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -292,7 +296,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_REGISTER:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, 1);
+                            element_t *element = get_element(c,  devid, (unsigned short)(addr + 40001), 1);
                             if (element != NULL) {
                                 modbus_data[0] = element->val;
                                 modbus_mapping.nb_registers = 1;
@@ -322,7 +326,7 @@ static void* thread_modbus_rtu_master(void *arg)
                 switch (function) {
                     case MODBUS_FC_WRITE_MULTIPLE_COILS:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 1), nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -341,7 +345,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_COIL:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, 1);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 1), 1);
                             if (element != NULL) {
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 element->val = (unsigned short)_modbus_data[0];
@@ -350,7 +354,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_WRITE_MULTIPLE_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, nb);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 40001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -368,7 +372,7 @@ static void* thread_modbus_rtu_master(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_REGISTER:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, 1);
+                            element_t *element = get_element(c, devid,  (unsigned short)(addr + 40001), 1);
                             if (element != NULL) {
                                 element->val = modbus_data[0];
                             }
@@ -524,9 +528,10 @@ static void* thread_modbus_rtu_master(void *arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
-
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
 int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
@@ -916,7 +921,7 @@ int rtu_master_open(int ctx_idx, int band, int parity, int data_bit, int stop_bi
         c->ctx_thread_running = 1;
 #ifdef WIN32
 		c->ctx_thread =
-			(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_rtu_master, 0, NULL);
+			(HANDLE)_beginthreadex(NULL, 0, thread_modbus_rtu_master, c, 0, NULL);
 #else
         pthread_create(&c->ctx_thread, NULL, thread_modbus_rtu_master, c);
         led_blink(ctx_idx);

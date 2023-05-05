@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #ifdef WIN32
-# include <windows.h>
+#include <windows.h>
 #include <time.h>
 #include <process.h>
 #else
@@ -78,7 +78,8 @@ static void led_init(void)
         localArg.port = table[i].port;
         localArg.pin = table[i].pin;
 #ifdef WIN32
-		;
+		ret = 0;
+		memset(&localArg, 0x00, sizeof(localArg));
 #else
         ret = ioctl(fd, IOCTL_GPIO_SETPINMUX, &localArg);
 #endif
@@ -102,7 +103,11 @@ static void led_init(void)
     is_thread_init = 1;
 }
 
+#ifdef WIN32
+static unsigned int __stdcall thread_led(void *arg)
+#else
 static void* thread_led(void* arg)
+#endif
 {
 #ifdef WIN32
 	unsigned __int64 tn = 0;
@@ -143,8 +148,10 @@ static void* thread_led(void* arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
 void led_blink(int led_idx)
@@ -153,7 +160,7 @@ void led_blink(int led_idx)
         led_init();
 #ifdef WIN32
 		ctx_thread =
-			(HANDLE)_beginthreadex(NULL, 0, 0, thread_led, 0, NULL);
+			(HANDLE)_beginthreadex(NULL, 0, thread_led, 0, 0, NULL);
 #else
         pthread_create(&ctx_thread, NULL, thread_led, 0);
 #endif // WIN32

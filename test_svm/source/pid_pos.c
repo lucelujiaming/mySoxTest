@@ -3,6 +3,7 @@
 #include <unistd.h>
 #ifdef WIN32
 # include <windows.h>
+#include <math.h>
 #else
 #include <sys/time.h>
 #endif

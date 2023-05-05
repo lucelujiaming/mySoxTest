@@ -375,6 +375,7 @@ int handleStackOverflow(SedonaVM* vm, int opcode, Cell* fp, Cell* sp)
 // Loop
 //////////////////////////////////////////////////////////////////////////
 
+#pragma warning(disable:4244)
 /**
  * This is the main loop of the VM.
  *

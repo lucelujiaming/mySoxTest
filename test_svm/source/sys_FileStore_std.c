@@ -151,6 +151,7 @@ Cell sys_FileStore_doSize(SedonaVM* vm, Cell* params)
   return result;
 }
 
+#pragma warning(disable:4013)
 // Obj FileStore.doOpen(Str name, Str mode)
 Cell sys_FileStore_doOpen(SedonaVM* vm, Cell* params)
 {

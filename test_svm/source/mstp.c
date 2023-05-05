@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#ifdef WIN32
+#include <windows.h>
+#include <time.h>
+#else
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#endif
 
 #include "board.h"
 
@@ -74,14 +79,26 @@ int mstp_open(int port, int band, int device_instance, int mac_address, int retr
     if (context == NULL) {
         shmsize = SHM_SIZE;
         shmbuf = NULL;
+#ifdef WIN32
+		printf("shmid = shmget(KEY_ID, shmsize, IPC_CREAT | IPC_EXCL | 0644) \r\n");
+#else
         shmid = shmget(KEY_ID, shmsize, IPC_CREAT | IPC_EXCL | 0644);
+#endif
         if (shmid == -1) {
             if (errno == EEXIST) {
+#ifdef WIN32
+		printf("shmid = shmget(KEY_ID, 0, 0) \r\n");
+#else
                 shmid = shmget(KEY_ID, 0, 0);
+#endif
             }
         }
         if (shmid != -1) {
+#ifdef WIN32
+			printf("shmbuf = shmat(shmid, NULL, 0) \r\n");
+#else
             shmbuf = shmat(shmid, NULL, 0);
+#endif
             if (shmbuf == (void*) -1L) {
                 shmbuf = NULL;
             }
@@ -102,7 +119,11 @@ int mstp_open(int port, int band, int device_instance, int mac_address, int retr
     context->opend = 0;
     if (context->used == 1) {
         while (context->used == 1) {
-            usleep(10*1000);
+#ifdef WIN32
+			Sleep(10); 
+#else
+			usleep(10*1000);
+#endif
         }
     }
     context->device_size = 0;
@@ -123,7 +144,11 @@ int mstp_close(int ctx_idx)
     context->opend = 0;
     if (context->used == 1) {
         while (context->used == 1) {
-            usleep(10*1000);
+#ifdef WIN32
+			Sleep(10); 
+#else
+			usleep(10*1000);
+#endif
         }
     }
     release_uart(ctx_idx);

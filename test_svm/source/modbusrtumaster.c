@@ -4,8 +4,15 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#ifdef WIN32
+#include <winsock2.h>
+# include <windows.h>
+#include <process.h>
+#else
 #include <sys/time.h>
 #include <pthread.h>
+#endif
+
 #include "modbus.h"
 #include "board.h"
 #include "list.h"
@@ -37,7 +44,11 @@ typedef struct {
 typedef struct
 {
     modbus_t *ctx_modbus;
+#ifdef WIN32
+    HANDLE ctx_thread;
+#else
     pthread_t ctx_thread;
+#endif
     unsigned char ctx_thread_running;
     unsigned char ctx_added;
 
@@ -50,7 +61,11 @@ static inline element_t* get_element(context_t *c, unsigned char devid, unsigned
     device_t *device = NULL;
     list_node_t *dev_node = c->devices.first;
     while (dev_node != NULL) {
+#ifdef WIN32
+        device_t *_device = (device_t*)(dev_node) ; 
+#else
         device_t *_device = list_entry_safe(dev_node, device_t);
+#endif
         if (_device->addr == devid) {
             device = _device;
             break;
@@ -74,7 +89,11 @@ static inline element_t* get_element(context_t *c, unsigned char devid, unsigned
             int element_len = 0;
             list_node_t *reg_node = reg_head->first;
             while (reg_node != NULL) {
+#ifdef WIN32
+				element_t *element = (element_t*)(dev_node) ; 
+#else
                 element_t *element = list_entry_safe(reg_node, element_t);
+#endif
                 if (element->addr == addr) {
                     start_element = element;
                     element_len = 1;
@@ -98,6 +117,21 @@ static inline element_t* get_element(context_t *c, unsigned char devid, unsigned
 
 static void* thread_modbus_rtu_master(void *arg)
 {
+	int ctx_idx             = 0;
+    unsigned char devid     = 0;
+    unsigned char function  = 0;
+    unsigned short addr     = 0;
+    unsigned short nb       = 0;
+
+    modbus_mapping_t modbus_mapping;
+	unsigned short modbus_data[MODBUS_READ_BLOCK_SIZE];
+
+	element_t   *_element = NULL;
+	list_node_t *dev_node = NULL;
+	device_t    *device   = NULL;
+	list_node_t *reg_node = NULL;
+	element_t   *element  = NULL;
+	
     context_t *c = (context_t *)arg;
     int header_length = modbus_get_header_length(c->ctx_modbus);
     unsigned char query[MODBUS_RTU_MAX_ADU_LENGTH];
@@ -105,7 +139,11 @@ static void* thread_modbus_rtu_master(void *arg)
     // wait for added event.
     while (c->ctx_thread_running != 0 && c->ctx_added == 0)
     {
+#ifdef WIN32
+		Sleep(10);
+#else
         usleep(10*1000);
+#endif
     }
 
     // main loop.
@@ -136,20 +174,18 @@ static void* thread_modbus_rtu_master(void *arg)
             }
 
             // get a new query.
-            int ctx_idx = c - &context_table[0];
+            ctx_idx = c - &context_table[0];
             led_blink(ctx_idx);
-            unsigned char devid = query[0];
-            unsigned char function = query[header_length];
-            unsigned short addr = (query[header_length+1]<<8) + query[header_length+2];
-            unsigned short nb = (query[header_length + 3] << 8) + query[header_length + 4];
+            devid = query[0];
+            function = query[header_length];
+            addr = (query[header_length+1]<<8) + query[header_length+2];
+            nb = (query[header_length + 3] << 8) + query[header_length + 4];
+			
             if (function == MODBUS_FC_WRITE_SINGLE_COIL || function == MODBUS_FC_WRITE_SINGLE_REGISTER) {
                 nb = 1;
             }
 
-            modbus_mapping_t modbus_mapping;
             memset(&modbus_mapping, 0, sizeof(modbus_mapping_t));
-
-            unsigned short modbus_data[MODBUS_READ_BLOCK_SIZE];
 
             if (addr < 10000 && nb <= 10000 && (addr + nb) <= 10000 &&
                     nb <= MODBUS_READ_BLOCK_SIZE) {
@@ -163,7 +199,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									element_t *element = (element_t*)(dev_node) ; 
+#else
+									element_t *element = list_entry_safe(reg_node, element_t);
+#endif
                                     _modbus_data[i] = (unsigned char)_element->val;
                                     reg_node = reg_node->next;
                                 }
@@ -193,7 +233,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									_element = (element_t*)(reg_node) ; 
+#else
+                                    _element = list_entry_safe(reg_node, element_t);
+#endif
                                     _modbus_data[i] = (unsigned char)_element->val;
                                     reg_node = reg_node->next;
                                 }
@@ -210,7 +254,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 int i;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									_element = (element_t*)(reg_node) ; 
+#else
+                                    _element = list_entry_safe(reg_node, element_t);
+#endif
                                     modbus_data[i] = _element->val;
                                     reg_node = reg_node->next;
                                 }
@@ -228,7 +276,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 int i;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									_element = (element_t*)(reg_node) ; 
+#else
+                                    _element = list_entry_safe(reg_node, element_t);
+#endif
                                     modbus_data[i] = _element->val;
                                     reg_node = reg_node->next;
                                 }
@@ -276,7 +328,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									_element = (element_t*)(reg_node) ; 
+#else
+                                    _element = list_entry_safe(reg_node, element_t);
+#endif
                                     _element->val = (unsigned short)_modbus_data[i];
                                     reg_node = reg_node->next;
                                 }
@@ -299,7 +355,11 @@ static void* thread_modbus_rtu_master(void *arg)
                                 int i;
                                 list_node_t *reg_node = &element->node;
                                 for (i=0; i<nb; i++) {
-                                    element_t *_element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+									_element = (element_t*)(reg_node) ; 
+#else
+                                    _element = list_entry_safe(reg_node, element_t);
+#endif
                                     _element->val = modbus_data[i];
                                     reg_node = reg_node->next;
                                 }
@@ -325,31 +385,51 @@ static void* thread_modbus_rtu_master(void *arg)
 
 #ifdef DEBUG_LIST
     {
-        list_node_t *dev_node = c->devices.first;
+        dev_node = c->devices.first;
         while (dev_node != NULL) {
-            device_t *device = list_entry_safe(dev_node, device_t);
+#ifdef WIN32
+			device = (device_t*)(dev_node) ; 
+#else
+            device = list_entry_safe(dev_node, device_t);
+#endif
             printf("Device [%d]\n", device->addr);
             list_node_t *reg_node = device->DO.first;
             while (reg_node != NULL) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 printf("  %d\n", element->addr);
                 reg_node = reg_node->next;
             }
             reg_node = device->DI.first;
             while (reg_node != NULL) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 printf("  %d\n", element->addr);
                 reg_node = reg_node->next;
             }
             reg_node = device->INPUT.first;
             while (reg_node != NULL) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 printf("  %d\n", element->addr);
                 reg_node = reg_node->next;
             }
             reg_node = device->HOLD.first;
             while (reg_node != NULL) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 printf("  %d\n", element->addr);
                 reg_node = reg_node->next;
             }
@@ -360,13 +440,21 @@ static void* thread_modbus_rtu_master(void *arg)
 
     // free device regs
     {
-        list_node_t *dev_node = list_get(&c->devices);
+        dev_node = list_get(&c->devices);
         while (dev_node) {
-            device_t *device = list_entry_safe(dev_node, device_t);
+#ifdef WIN32
+			device = (device_t*)(dev_node) ; 
+#else
+            device = list_entry_safe(dev_node, device_t);
+#endif
             // DO
-            list_node_t *reg_node = list_get(&device->DO);
+            reg_node = list_get(&device->DO);
             while (reg_node) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 free(element);
 #ifdef DEBUG_LIST
                 mem_count--;
@@ -376,7 +464,11 @@ static void* thread_modbus_rtu_master(void *arg)
             // DI
             reg_node = list_get(&device->DI);
             while (reg_node) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 free(element);
 #ifdef DEBUG_LIST
                 mem_count--;
@@ -386,7 +478,11 @@ static void* thread_modbus_rtu_master(void *arg)
             // INPUT
             reg_node = list_get(&device->INPUT);
             while (reg_node) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 free(element);
 #ifdef DEBUG_LIST
                 mem_count--;
@@ -396,7 +492,11 @@ static void* thread_modbus_rtu_master(void *arg)
             // HOLD
             reg_node = list_get(&device->HOLD);
             while (reg_node) {
-                element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+				element = (element_t*)(reg_node) ; 
+#else
+				element = list_entry_safe(reg_node, element_t);
+#endif
                 free(element);
 #ifdef DEBUG_LIST
                 mem_count--;
@@ -422,20 +522,26 @@ static void* thread_modbus_rtu_master(void *arg)
     modbus_free(c->ctx_modbus);
     c->ctx_modbus = NULL;
 
+#ifndef WIN32
     pthread_exit(NULL);
+#endif
 
     return (void*)NULL;
 }
 
 int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
 {
+	float *p = NULL;
+    int data = 0;
+	element_t *element = NULL;
+	element_t *next_element = NULL;
     // read device elapsed time.
     if (addr == 0) {
         buf[0] = 0;
         return 1;
     }
 
-    element_t *element = (element_t *)device_addr;
+    element = (element_t *)device_addr;
     if (element != NULL && element->addr == addr) {
         if (len == 1) {
             // int
@@ -450,9 +556,12 @@ int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
         }
         if (len == 3) {
             // dint
-            element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+			next_element = (element_t*)(element->node.next) ; 
+#else
+            next_element = list_entry_safe(element->node.next, element_t);
+#endif
             if (next_element != NULL && next_element->addr == addr + 1) {
-                int data = 0;
                 if (element->endian != 0) {
                     unsigned int _data = (element->val << 16) | next_element->val;
                     data = (int)_data;
@@ -466,7 +575,11 @@ int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
         }
         if (len == 4) {
             // dword
-            element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+			next_element = (element_t*)(element->node.next) ; 
+#else
+            next_element = list_entry_safe(element->node.next, element_t);
+#endif
             if (next_element != NULL && next_element->addr == addr + 1) {
                 unsigned int data = 0;
                 if (element->endian != 0) {
@@ -480,7 +593,11 @@ int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
         }
         if (len == 5) {
             // real
-            element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+			next_element = (element_t*)(element->node.next) ; 
+#else
+            next_element = list_entry_safe(element->node.next, element_t);
+#endif
             if (next_element != NULL && next_element->addr == addr + 1) {
                 unsigned int data = 0;
                 if (element->endian != 0) {
@@ -488,7 +605,7 @@ int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
                 } else {
                     data = (next_element->val << 16) | element->val;
                 }
-                float *p = (float *)((char *)&data);
+                p = (float *)((char *)&data);
                 buf[0] = *p;
                 return 2;
             }
@@ -501,6 +618,7 @@ int rtu_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
 int rtu_master_write(int ctx_idx, int device_addr, int addr, float *buf, int len)
 {
     int result = -1;
+	element_t *next_element = NULL;
 
     element_t *element = (element_t *)device_addr;
     if (element != NULL && element->addr == addr) {
@@ -525,7 +643,11 @@ int rtu_master_write(int ctx_idx, int device_addr, int addr, float *buf, int len
             }
             if (len == 3) {
                 // dint
-                element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+				next_element = (element_t*)(element->node.next) ; 
+#else
+				next_element = list_entry_safe(element->node.next, element_t);
+#endif
                 if (next_element != NULL && next_element->addr == addr + 1) {
                     int data = (int)buf[0];
                     if (element->endian != 0) {
@@ -542,7 +664,11 @@ int rtu_master_write(int ctx_idx, int device_addr, int addr, float *buf, int len
             }
             if (len == 4) {
                 // dword
-                element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+				next_element = (element_t*)(element->node.next) ; 
+#else
+				next_element = list_entry_safe(element->node.next, element_t);
+#endif
                 if (next_element != NULL && next_element->addr == addr + 1) {
                     unsigned int data = (unsigned int)buf[0];
                     if (element->endian != 0) {
@@ -557,7 +683,11 @@ int rtu_master_write(int ctx_idx, int device_addr, int addr, float *buf, int len
             }
             if (len == 5) {
                 // real
-                element_t *next_element = list_entry_safe(element->node.next, element_t);
+#ifdef WIN32
+				next_element = (element_t*)(element->node.next) ; 
+#else
+				next_element = list_entry_safe(element->node.next, element_t);
+#endif
                 if (next_element != NULL && next_element->addr == addr + 1) {
                     unsigned int data = *((unsigned int *)buf);
                     if (element->endian != 0) {
@@ -578,10 +708,16 @@ int rtu_master_write(int ctx_idx, int device_addr, int addr, float *buf, int len
 
 static inline void list_ordered_put(list_head_t *head, element_t *element)
 {
+	element_t *first_elem = NULL;
+	element_t *next_elem  = NULL;
     if (head->len == 0) {
         list_put(head, &element->node);
     } else {
-        element_t *first_elem = list_entry_safe(head->first, element_t);
+#ifdef WIN32
+		first_elem = (element_t*)(head->first) ; 
+#else
+        first_elem = list_entry_safe(head->first, element_t);
+#endif
         if (first_elem->addr > element->addr) {
             list_put_begin(head, &element->node);
         } else {
@@ -592,7 +728,11 @@ static inline void list_ordered_put(list_head_t *head, element_t *element)
                     prev = reg_node;
                     break;
                 }
-                element_t *next_elem = list_entry_safe(reg_node->next, element_t);
+#ifdef WIN32
+				first_elem = (element_t*)(reg_node->next) ; 
+#else
+                next_elem = list_entry_safe(reg_node->next, element_t);
+#endif
                 if (next_elem->addr > element->addr) {
                     prev = reg_node;
                     break;
@@ -619,6 +759,16 @@ static inline void list_ordered_put(list_head_t *head, element_t *element)
 
 int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
 {
+	device_t *device = NULL;
+	device_t *_device = NULL;
+	element_t *element = NULL;
+	list_node_t *dev_node = NULL;
+	list_node_t *reg_node = NULL;
+
+    int register_node_addr = 0;
+    int is_new_node = 1;
+    list_head_t *reg_head = NULL;
+
     context_t *c = &context_table[ctx_idx];
     int endian = (device_addr >> 8) & 0xFF;
     device_addr = device_addr & 0xFF;
@@ -630,10 +780,13 @@ int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
     } else if (addr == 0 && len == 0) {
         // add device node.
         // find the device by device_addr
-        device_t *device = NULL;
-        list_node_t *dev_node = c->devices.first;
+        dev_node = c->devices.first;
         while (dev_node != NULL) {
-            device_t *_device = list_entry_safe(dev_node, device_t);
+#ifdef WIN32
+			device = (device_t*)(dev_node) ; 
+#else
+            device = list_entry_safe(dev_node, device_t);
+#endif
             if (_device->addr == device_addr) {
                 device = _device;
                 break;
@@ -660,10 +813,13 @@ int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
 
     // add register node
     // find the device by device_addr
-    device_t *device = NULL;
-    list_node_t *dev_node = c->devices.first;
+    dev_node = c->devices.first;
     while (dev_node != NULL) {
-        device_t *_device = list_entry_safe(dev_node, device_t);
+#ifdef WIN32
+		device = (device_t*)(dev_node) ; 
+#else
+		device = list_entry_safe(dev_node, device_t);
+#endif
         if (_device->addr == device_addr) {
             device = _device;
             break;
@@ -675,10 +831,7 @@ int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
         return 0;
     }
 
-    int register_node_addr = 0;
-    int is_new_node = 1;
     // search the list to check is the node is exist.
-    list_head_t *reg_head = NULL;
     if (addr > 0 && addr < 10000) {
         reg_head = &device->DO;
     } else if (addr > 10000 && addr < 20000) {
@@ -691,7 +844,11 @@ int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
     if (reg_head != NULL) {
         list_node_t *reg_node = reg_head->first;
         while (reg_node != NULL) {
-            element_t *element = list_entry_safe(reg_node, element_t);
+#ifdef WIN32
+			element = (element_t*)(reg_node) ; 
+#else
+			element = list_entry_safe(reg_node, element_t);
+#endif
             if (element->addr == addr) {
                 register_node_addr = (int)element;
                 is_new_node = 0;
@@ -720,6 +877,8 @@ int rtu_master_add(int ctx_idx, int device_addr, int addr, int len)
 
 int rtu_master_open(int ctx_idx, int band, int parity, int data_bit, int stop_bit)
 {
+	int bto = 4000;
+	modbus_t* ctx = NULL;
     char uart_name[32] = { 0 };
     char parity_name[] = {'N', 'E', 'O'};
 
@@ -731,7 +890,7 @@ int rtu_master_open(int ctx_idx, int band, int parity, int data_bit, int stop_bi
             return -1;
         }
 
-        modbus_t* ctx = modbus_new_rtu(uart_name, band, parity_name[parity], data_bit, stop_bit);
+        ctx = modbus_new_rtu(uart_name, band, parity_name[parity], data_bit, stop_bit);
         if (ctx == NULL) {
             printf("new rtu err !!! \n");
             release_uart(ctx_idx);
@@ -739,7 +898,6 @@ int rtu_master_open(int ctx_idx, int band, int parity, int data_bit, int stop_bi
         }
 
         modbus_set_response_timeout(ctx, 0, 500000);
-        int bto = 4000;
         if (band <= 1200) { bto = 38000; }
         else if (band <= 2400) { bto = 20000; }
         else if (band <= 4800) { bto = 10000; }
@@ -756,8 +914,13 @@ int rtu_master_open(int ctx_idx, int band, int parity, int data_bit, int stop_bi
         memset(&c->devices, 0, sizeof(list_head_t));
 
         c->ctx_thread_running = 1;
+#ifdef WIN32
+		c->ctx_thread =
+			(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_rtu_master, 0, NULL);
+#else
         pthread_create(&c->ctx_thread, NULL, thread_modbus_rtu_master, c);
         led_blink(ctx_idx);
+#endif // WIN32
 
         return ctx_idx;
     }
@@ -773,10 +936,19 @@ int rtu_master_close(int ctx_idx)
     }
 
     c->ctx_thread_running = 0;
+	
+#ifdef WIN32
+	CloseHandle( c->ctx_thread );  
+#else
     pthread_join(c->ctx_thread, NULL);
+#endif // WIN32
 
     while (c->ctx_modbus != NULL) {
+#ifdef WIN32
+        Sleep(10);
+#else
         usleep(10*1000);
+#endif // WIN32
     }
 
     release_uart(ctx_idx);

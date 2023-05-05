@@ -7,8 +7,6 @@
 #ifndef MODBUS_H
 #define MODBUS_H
 
-#pragma comment(lib, "..\\source\\test_libmodbus.lib")
-
 /* Add this for macros that defined unix flavor */
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
@@ -20,7 +18,7 @@
 #include "stdint.h"
 #endif
 
-#include "modbus-version.h"
+//#include "modbus-version.h"
 
 #if defined(_MSC_VER)
 # if defined(DLLBUILD)
@@ -283,8 +281,8 @@ MODBUS_API void modbus_set_float_dcba(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_badc(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_cdab(float f, uint16_t *dest);
 
-#include "modbus-tcp.h"
-#include "modbus-rtu.h"
+//#include "modbus-tcp.h"
+#include "modbus/modbus-rtu.h"
 
 MODBUS_END_DECLS
 

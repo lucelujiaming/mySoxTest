@@ -284,11 +284,19 @@ static ssize_t _modbus_rtu_send(modbus_t *ctx, const uint8_t *req, int req_lengt
         }
 
         ctx_rtu->set_rts(ctx, ctx_rtu->rts == MODBUS_RTU_RTS_UP);
+#ifdef WIN32
+		Sleep(ctx_rtu->rts_delay / 1000); 
+#else
         usleep(ctx_rtu->rts_delay);
+#endif
 
         size = write(ctx->s, req, req_length);
 
+#ifdef WIN32
+		Sleep((ctx_rtu->onebyte_time * req_length + ctx_rtu->rts_delay) / 1000); 
+#else
         usleep(ctx_rtu->onebyte_time * req_length + ctx_rtu->rts_delay);
+#endif
         ctx_rtu->set_rts(ctx, ctx_rtu->rts != MODBUS_RTU_RTS_UP);
 
         return size;

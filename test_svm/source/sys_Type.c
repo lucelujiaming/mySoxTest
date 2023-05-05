@@ -7,6 +7,7 @@
 //
 
 #include "sedona.h"
+#include <stdlib.h>
 
 // Obj Type.malloc()
 Cell sys_Type_malloc(SedonaVM* vm, Cell* params)
@@ -25,7 +26,7 @@ Cell sys_Type_malloc(SedonaVM* vm, Cell* params)
 
   // call instance initializer method
   args[0].aval = mem;
-  vm->call(vm, init, args, 1);
+  vm->call(vm, (uint16_t)init, args, 1);
 
   // return instance pointer
   ret.aval = mem;

@@ -7,6 +7,7 @@
 //
 
 #include "sedona.h"
+#include "stdlib.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Memory Management
@@ -95,7 +96,7 @@ Cell sys_Sys_andBytes(SedonaVM* vm, Cell* params)
   uint8_t* bytes = (uint8_t*)params[1].aval;
   size_t  off    = (size_t)params[2].ival;
   size_t  len    = (size_t)params[3].ival;
-  int i;
+  unsigned int i;
 
   bytes = bytes+off;
   
@@ -123,7 +124,7 @@ Cell sys_Sys_orBytes(SedonaVM* vm, Cell* params)
   uint8_t* bytes = (uint8_t*)params[1].aval;
   size_t  off    = (size_t)params[2].ival;
   size_t  len    = (size_t)params[3].ival;
-  int i;
+  unsigned int i;
 
   bytes = bytes+off;
 

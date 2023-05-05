@@ -15,6 +15,10 @@
 #include <stdlib.h>
 #include "errorcodes.h"
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 //needed to pass version info from gcc command line as a string value (only needed for QNX)
 #define VER1(x) #x
 #define VER(x) VER1(x)

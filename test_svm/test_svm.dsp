@@ -562,6 +562,10 @@ SOURCE=.\source\list.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\source\modbus-tcp.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\modbus\modbus.h
 # End Source File
 # Begin Source File

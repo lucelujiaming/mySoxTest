@@ -10,6 +10,7 @@
 #include <sys/sem.h>
 #include <sys/time.h>
 #endif
+#include "board.h"
 
 #ifdef WIN32
 #include < time.h >

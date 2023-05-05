@@ -8,3 +8,5 @@ void release_uart(int idx);
 void led_blink(int led_idx);
 void led_on(int led_idx);
 void led_off(int led_idx);
+
+int gettimeofday(struct timeval *tv, struct timezone *tz);

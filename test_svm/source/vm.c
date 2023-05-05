@@ -6,9 +6,13 @@
 //   4 Mar 07  Brian Frank  Creation
 //
 
+#include<stdlib.h>
 #include "sedona.h"
 #include "scode.h"
 #include "errorcodes.h" 
+#ifdef WIN32
+#include "float.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // VM Macros

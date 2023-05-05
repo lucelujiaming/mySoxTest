@@ -7,7 +7,7 @@
 #ifndef MODBUS_H
 #define MODBUS_H
 
-#pragma comment(lib, "..\\source\\test_libmodbus.lib")
+// #pragma comment(lib, "..\\source\\test_libmodbus.lib")
 
 /* Add this for macros that defined unix flavor */
 #if (defined(__unix__) || defined(unix)) && !defined(USG)

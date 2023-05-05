@@ -21,6 +21,10 @@
 // =========================================================================== //
 #ifdef IMPL_SCHEME_CONVENTION
 
+#ifdef _WIN32
+#include <direct.h>
+#include <stdio.h>
+#endif
 #include "stdlib.h"
 #include "string.h"
 
@@ -204,7 +208,7 @@ Cell sys_FileStore_doOpen(SedonaVM* vm, Cell* params)
 
       // create dir (should be NOP if dir exists)
 #ifdef _WIN32
-      _mkdir((const char*)name);
+      mkdir((const char*)name);
 #else
       mkdir((const char*)name, S_IRWXU | S_IRWXG | S_IRWXO);
 #endif

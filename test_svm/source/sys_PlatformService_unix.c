@@ -7,6 +7,7 @@
 //
 
 #include "sedona.h"
+#include "stdlib.h"
 #include "sedonaPlatform.h"
 
 #ifndef _WIN32

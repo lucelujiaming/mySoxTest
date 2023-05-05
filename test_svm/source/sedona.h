@@ -113,6 +113,7 @@ typedef short             int_least16_t;
 #define TRUE 1
 #define FALSE 0
 
+
 #define ISNANF(f) (_isnan((double)(f)))
 #define ISNAN(d)  (_isnan(d))
 

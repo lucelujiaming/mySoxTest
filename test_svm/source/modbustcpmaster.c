@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "modbus.h"
+#include "modbus-tcp.h"
 #ifdef WIN32
 # include <windows.h>
 #include <time.h>
@@ -12,7 +14,6 @@
 #include <sys/time.h>
 #include <pthread.h>
 #endif
-#include "modbus.h"
 #include "board.h"
 #include "list.h"
 
@@ -141,7 +142,11 @@ static inline element_t* get_element(context_t *c, unsigned char devid, unsigned
 }
 
 #define MODBUS_TCP_MAX_ADU_LENGTH  260
+#ifdef WIN32
+static unsigned int __stdcall thread_modbus_tcp(void *arg)
+#else
 static void* thread_modbus_tcp(void *arg)
+#endif
 {
     unsigned char devid ;
     unsigned char function ;
@@ -153,8 +158,8 @@ static void* thread_modbus_tcp(void *arg)
     unsigned short modbus_data[MODBUS_READ_BLOCK_SIZE];
 
     context_t *c = (context_t *)arg;
-    int idx = c->curr_idx;
-    int fd = c->curr_fd;
+    unsigned int idx = c->curr_idx;
+    unsigned int fd = c->curr_fd;
     unsigned char query[MODBUS_TCP_MAX_ADU_LENGTH];
     int header_length = modbus_get_header_length(c->ctx_modbus);
     c->ctx_sub_thread_last_update[idx] = get_tick_ms();
@@ -205,7 +210,7 @@ static void* thread_modbus_tcp(void *arg)
                     case MODBUS_FC_READ_COILS:
                     case MODBUS_FC_WRITE_MULTIPLE_COILS:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 1), (int)nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -227,7 +232,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_COIL:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, 1);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 1), (int)1);
                             if (element != NULL) {
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 _modbus_data[0] = (unsigned char)element->val;
@@ -239,7 +244,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_READ_DISCRETE_INPUTS:
                         {
-                            element_t *element = get_element(c, devid, addr + 10001, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 10001), nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -261,7 +266,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_READ_INPUT_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 30001, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 30001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -283,7 +288,7 @@ static void* thread_modbus_tcp(void *arg)
                     case MODBUS_FC_READ_HOLDING_REGISTERS:
                     case MODBUS_FC_WRITE_MULTIPLE_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 40001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -304,7 +309,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_REGISTER:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, 1);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 40001), 1);
                             if (element != NULL) {
                                 modbus_data[0] = element->val;
                                 modbus_mapping.nb_registers = 1;
@@ -333,7 +338,7 @@ static void* thread_modbus_tcp(void *arg)
                 switch (function) {
                     case MODBUS_FC_WRITE_MULTIPLE_COILS:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 1), nb);
                             if (element != NULL) {
                                 int i;
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
@@ -352,7 +357,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_COIL:
                         {
-                            element_t *element = get_element(c, devid, addr + 1, 1);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 1), 1);
                             if (element != NULL) {
                                 unsigned char *_modbus_data = (unsigned char*)modbus_data;
                                 element->val = (unsigned short)_modbus_data[0];
@@ -361,7 +366,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_WRITE_MULTIPLE_REGISTERS:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, nb);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 40001), nb);
                             if (element != NULL) {
                                 int i;
                                 list_node_t *reg_node = &element->node;
@@ -379,7 +384,7 @@ static void* thread_modbus_tcp(void *arg)
                         }
                     case MODBUS_FC_WRITE_SINGLE_REGISTER:
                         {
-                            element_t *element = get_element(c, devid, addr + 40001, 1);
+                            element_t *element = get_element(c, devid, (unsigned short)(addr + 40001), 1);
                             if (element != NULL) {
                                 element->val = modbus_data[0];
                             }
@@ -399,12 +404,17 @@ static void* thread_modbus_tcp(void *arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
-
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
+#ifdef WIN32
+static unsigned __stdcall thread_modbus_tcp_master(void *arg)
+#else
 static void* thread_modbus_tcp_master(void *arg)
+#endif
 {
 #ifdef WIN32
     device_t *device = NULL;
@@ -414,7 +424,7 @@ static void* thread_modbus_tcp_master(void *arg)
 	list_node_t *reg_node = NULL;
 	
     context_t *c = (context_t *)arg;
-    int socket_fd = modbus_tcp_listen(c->ctx_modbus, 1);
+    unsigned int socket_fd = modbus_tcp_listen(c->ctx_modbus, 1);
 
     // wait for added event.
     while (c->ctx_thread_running != 0 && c->ctx_added == 0)
@@ -456,7 +466,7 @@ static void* thread_modbus_tcp_master(void *arg)
                     c->curr_fd = s_rc;
 #ifdef WIN32
 					c->ctx_sub_thread[i] =
-						(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_tcp, 0, NULL);
+						(HANDLE)_beginthreadex(NULL, 0, thread_modbus_tcp, c, 0, NULL);
 #else
                     pthread_create(&c->ctx_sub_thread[i], NULL, thread_modbus_tcp, c);
 #endif // WIN32
@@ -640,9 +650,10 @@ static void* thread_modbus_tcp_master(void *arg)
 
 #ifndef WIN32
     pthread_exit(NULL);
-#endif
-
     return (void*)NULL;
+#else
+    return (unsigned int)NULL;
+#endif
 }
 
 int tcp_master_read(int ctx_idx, int device_addr, int addr, float *buf, int len)
@@ -1031,7 +1042,7 @@ int tcp_master_open(int port)
     c->ctx_thread_running = 1;
 #ifdef WIN32
 		c->ctx_thread =
-			(HANDLE)_beginthreadex(NULL, 0, c, thread_modbus_tcp_master, 0, NULL);
+			(HANDLE)_beginthreadex(NULL, 0, thread_modbus_tcp_master, c, 0, NULL);
 #else
 		pthread_create(&c->ctx_thread, NULL, thread_modbus_tcp_master, c);
 #endif // WIN32

@@ -155,12 +155,14 @@ int mstp_close(int ctx_idx)
     return 0;
 }
 
-int mstp_add(int ctx_idx, int device_instance, int object_type, int object_instance, int object_property, int refreshms)
+int mstp_add(int ctx_idx, unsigned int device_instance, 
+			 unsigned int object_type, unsigned int object_instance, 
+			 unsigned int object_property, unsigned int refreshms)
 {
     if (refreshms == 0) {
         // add node
-        int i;
-        int is_exist = 0;
+        unsigned int i;
+        unsigned int is_exist = 0;
         for (i=0; i<context->object_size; i++) {
             T_OBJECT *obj = (T_OBJECT *)(OBJECT_PTR + sizeof(T_OBJECT) * i);
             if (obj->instance == object_instance && obj->device_instance == device_instance && obj->type == (unsigned char)(object_type & 0xFF) && obj->property == object_property) {
@@ -196,8 +198,8 @@ int mstp_add(int ctx_idx, int device_instance, int object_type, int object_insta
         */
     } else {
         // add device
-        int i;
-        int is_exist = 0;
+        unsigned int i;
+        unsigned int is_exist = 0;
         for (i=0; i<context->device_size; i++) {
             T_DEVICE *dev = (T_DEVICE *)(DEVICE_PTR + sizeof(T_DEVICE) * i);
             if (dev->instance == device_instance) {
@@ -217,14 +219,14 @@ int mstp_add(int ctx_idx, int device_instance, int object_type, int object_insta
     return -1;
 }
 
-int mstp_read(int ctx_idx, int cache, int reg_addr, float *buf, int type)
+int mstp_read(int ctx_idx, unsigned int cache, unsigned int reg_addr, float *buf, unsigned int type)
 {
     if (type == 10000) {
         if (cache == context->device_instance) {
             buf[0] = 0;
             return 1;
         } else {
-            int i;
+            unsigned int i;
             T_DEVICE *dev = NULL;
             for (i=0; i<context->device_size; i++) {
                 T_DEVICE *dev_t = (T_DEVICE *)(DEVICE_PTR + sizeof(T_DEVICE) * i);
@@ -239,7 +241,7 @@ int mstp_read(int ctx_idx, int cache, int reg_addr, float *buf, int type)
             }
         }
     } else {
-        int obj_idx = cache - 1;
+        unsigned int obj_idx = cache - 1;
         if (obj_idx >= 0 && obj_idx < context->object_size) {
             T_OBJECT *obj = (T_OBJECT *)(OBJECT_PTR + sizeof(T_OBJECT) * obj_idx);
             //printf("Read: %d %d %d %d\n", obj_idx, cache, reg_addr, type);
@@ -252,9 +254,9 @@ int mstp_read(int ctx_idx, int cache, int reg_addr, float *buf, int type)
     return -1;
 }
 
-int mstp_write(int ctx_idx, int cache, int reg_addr, float *buf, int type)
+int mstp_write(int ctx_idx, unsigned int cache, unsigned int reg_addr, float *buf, unsigned int type)
 {
-    int obj_idx = cache - 1;
+    unsigned int obj_idx = cache - 1;
     if (obj_idx >= 0 && obj_idx < context->object_size) {
         T_OBJECT *obj = (T_OBJECT *)(OBJECT_PTR + sizeof(T_OBJECT) * obj_idx);
         if (reg_addr == obj->instance && type == obj->type) {
@@ -287,7 +289,7 @@ int mstp_add_schedule(int ctx_idx, char *urlBuf, int *timeBuf, float *valueBuf)
 
     int is_dirty = 0;
     char name[32] = { 0 };
-    int i, j, k;
+    unsigned int i, j, k;
 
     T_SCHEDULE schedule = { 0 };
 
@@ -329,7 +331,7 @@ int mstp_add_schedule(int ctx_idx, char *urlBuf, int *timeBuf, float *valueBuf)
     for (i=0; i<7; i++) {
         unsigned int day_time[SCHEDULE_DAY_VALUE_SIZE] = { 0 };
         float day_value[SCHEDULE_DAY_VALUE_SIZE] = { 0.0f };
-        int day_index = 0;
+        unsigned int day_index = 0;
 
         for (j=0; j<SCHEDULE_DAY_VALUE_SIZE; j++) {
             k = timeBuf[3 + i * SCHEDULE_DAY_VALUE_SIZE + j];
@@ -402,7 +404,7 @@ int mstp_add_schedule(int ctx_idx, char *urlBuf, int *timeBuf, float *valueBuf)
     return -1;
 }
 
-int mstp_get_schedule(int ctx_idx, int sche_idx, int *timeBuf, float *valueBuf)
+int mstp_get_schedule(int ctx_idx, unsigned int sche_idx, int *timeBuf, float *valueBuf)
 {
     if (sche_idx < 0) {
         return -1;

@@ -1,0 +1,44 @@
+// Ellipse.h: interface for the CEllipse class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#if !defined(AFX_ELLIPSE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_ELLIPSE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
+#include "Graph.h"
+#include "ConnectPoint.h"
+
+class CEllipse : public CGraph  
+{
+	DECLARE_SERIAL(CEllipse)
+public:
+	CEllipse();
+	virtual ~CEllipse();
+
+public:
+	void Draw( CDC *pdc );
+	void DrawFocus( CDC *pdc );
+	void Move( int cx, int cy );
+	void AdjustSize( CPoint &pt );
+
+	void Serialize(CArchive& ar);
+
+	bool IsIn( CPoint &pt );
+	bool IsOn( CPoint &pt );
+	bool IsOn(CConnectPoint *pt);
+
+	int GetAdjustPoint();
+
+private:
+	void AdjustStartAndEnd();
+	void AdjustFocusPoint();
+
+private:
+	int m_AdjustPoint;
+};
+
+#endif // !defined(AFX_ELLIPSE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

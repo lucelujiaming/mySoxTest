@@ -26,7 +26,7 @@ public:
 
 	bool SetFocusGraphID(CPoint &pt);
 	bool IsAdjustSize(CPoint &pt);
-	void AdjustSize(CPoint &pt);
+//	void AdjustSize(CPoint &pt);
 	void Move(int cx, int cy);
 
 	CGraph* GetGraphAt(int ID);

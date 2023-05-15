@@ -216,10 +216,16 @@ bool CControlFlow::IsIn(CPoint &pt)
 		tempPs[1] = tempStart + temp;
 		tempPs[2] = tempEnd + temp;
 		tempPs[3] = tempEnd - temp;
-		cr.CreatePolygonRgn(tempPs, 4, WINDING);
-		if(cr.PtInRegion(pt))
+		BOOL bRet = cr.CreatePolygonRgn(tempPs, 4, WINDING);
+		if(bRet && cr.PtInRegion(pt))
 		{
 			flag = true;
+		}
+		else if (bRet == FALSE)
+		{
+			printf("tempPs = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
+				tempPs[0].x, tempPs[0].y, tempPs[1].x, tempPs[1].y, 
+				tempPs[2].x, tempPs[2].y, tempPs[3].x, tempPs[3].y);
 		}
 	}
 

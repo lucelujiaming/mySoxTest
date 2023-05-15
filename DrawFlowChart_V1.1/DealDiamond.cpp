@@ -172,11 +172,17 @@ bool CDealDiamond::IsIn( CPoint &pt )
 	points[3].y = m_End.y;
 
 	CRgn cr;
-	cr.CreatePolygonRgn(points, 4, ALTERNATE);
-	if(cr.PtInRegion( pt ))
+	BOOL bRet = cr.CreatePolygonRgn(points, 4, ALTERNATE);
+	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
 		m_AdjustPoint = -1;
+	}
+	else if (bRet == FALSE)
+	{
+		printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
+			points[0].x, points[0].y, points[1].x, points[1].y, 
+			points[2].x, points[2].y, points[3].x, points[3].y);
 	}
 	return flag;
 }
@@ -194,6 +200,7 @@ bool CDealDiamond::IsOn( CPoint &pt )
 		{
 			m_AdjustPoint = 1+i;
 		    flag = true;
+			break;
 		}
 	}
 

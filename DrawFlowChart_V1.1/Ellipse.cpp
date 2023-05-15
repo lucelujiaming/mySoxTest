@@ -126,11 +126,16 @@ bool CEllipse::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CRgn cr;
-	cr.CreateEllipticRgn( m_Start.x, m_Start.y, m_End.x, m_End.y );
-	if(cr.PtInRegion( pt ))
+	BOOL bRet = cr.CreateEllipticRgn( m_Start.x, m_Start.y, m_End.x, m_End.y );
+	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
 		m_AdjustPoint = -1;
+	}
+	else if (bRet == FALSE)
+	{
+		printf("m_Start/m_End = {(%d, %d), (%d, %d)}", 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
 }

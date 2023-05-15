@@ -33,6 +33,9 @@ CGraphManager::~CGraphManager()
 {
 }
 
+/************************************************************************/
+/* 功能：绘制操作                                                       */
+/************************************************************************/
 void CGraphManager::DrawAll( CDC *pdc )
 {
 	/*for(int i = GetGraphSum(); i > 0; i--)
@@ -47,19 +50,26 @@ void CGraphManager::DrawAll( CDC *pdc )
 
 	for(int i = 0; i < GetGraphSum(); i++)
 	{
+		// 调用每一个图形对象的Draw函数
 		GetGraphAt(i)->Draw(pdc);
 		//if(GetGraphAt(i)->IsControlFlow())
 			//CheckLinkGraph(GetGraphAt(i));
 	}
 
+	// 获得当前选中的图形对象
 	CGraph *temp = GetFocusGraph();
+	// 如果有选中的图形对象，
 	if(temp != NULL)
 	{
+		// 还要按照选中的情况进行绘制。包括绘制一个虚线框和绿色连接点。
 		temp->Draw(pdc);
 		temp->DrawFocus(pdc);
 	}
 }
 
+/************************************************************************/
+/* 功能：根据ID获得一个图形对象                                         */
+/************************************************************************/
 CGraph* CGraphManager::GetGraphAt( int ID )
 {
 	CGraph* temp = NULL;
@@ -70,22 +80,28 @@ CGraph* CGraphManager::GetGraphAt( int ID )
 	return temp;
 }
 
+/************************************************************************/
+/* 功能：获得图形对象个数                                               */
+/************************************************************************/
 int CGraphManager::GetGraphSum()
 {
 	return m_Graphs.GetSize();
 }
 
+/************************************************************************/
+/* 功能：按下删除按键以后触发，删除当前选中图形对象。                   */
+/************************************************************************/
 void CGraphManager::DeleteFocusGraph()
 {
 	if((m_FocusID >= 0) && (m_FocusID < GetGraphSum()))
 	{
-		CGraph* tempF = GetGraphAt(m_FocusID);
+		CGraph* tempFocus = GetGraphAt(m_FocusID);
 
 		for(int i = 0; i < GetGraphSum(); i++)
 		{
 			CGraph *temp = GetGraphAt(i);
 
-			if(temp->GetPreviousGraph() == tempF || temp->GetNextgraph() == tempF)
+			if(temp->GetPreviousGraph() == tempFocus || temp->GetNextgraph() == tempFocus)
 			{
 				DeleteGraphAt(i);
 			}
@@ -97,6 +113,9 @@ void CGraphManager::DeleteFocusGraph()
 	}
 }
 
+/************************************************************************/
+/* 功能：把一个对象从m_Graphs中删除。                                   */
+/************************************************************************/
 void CGraphManager::DeleteGraphAt( int ID )
 {
 	if((ID >= 0) && (ID < GetGraphSum()))
@@ -108,6 +127,9 @@ void CGraphManager::DeleteGraphAt( int ID )
 	}
 }
 
+/************************************************************************/
+/* 功能：获得当前选中的图形对象。                                       */
+/************************************************************************/
 CGraph* CGraphManager::GetFocusGraph()
 {
 	CGraph* temp = NULL;
@@ -122,66 +144,18 @@ CGraph* CGraphManager::GetFocusGraph()
 	return temp;
 }
 
+/************************************************************************/
+/* 功能：添加一个图形对象。                                             */
+/************************************************************************/
 void CGraphManager::AddGraph(CGraph* graph)
 {
 	m_Graphs.InsertAt(0, graph, 1);
 	m_FocusID = 0;
 }
 
-/*CGraph* CGraphManager::CreateGraph( int type )
-{
-	CGraph* temp = NULL;
-	switch( type )
-	{
-		case Rectangle: 
-			{
-				temp = new CRectangle();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case Ellipse: 
-			{
-				temp = new CEllipse();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case Diamond: 
-			{
-				temp = new CDiamond();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case DealDiamond: 
-			{
-				temp = new CDealDiamond();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case GenericLine: 
-			{
-				temp = new CGenericLine();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case Arrowhead: 
-			{
-				temp = new CArrowhead();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}
-		case ControlFlow: 
-			{
-				temp = new CControlFlow();
-				m_Graphs.InsertAt(0, temp, 1);
-				break;
-			}			
-	}
-
-	m_FocusID = 0;
-	return temp;
-}
-*/
-
+/************************************************************************/
+/* 功能：点击一个图形对象以后，发生的选中操作。                         */
+/************************************************************************/
 bool CGraphManager::SetFocusGraphID( CPoint &pt )
 {
 	CGraph* temp1 = GetFocusGraph();
@@ -209,6 +183,9 @@ bool CGraphManager::SetFocusGraphID( CPoint &pt )
 	return true;
 }
 
+/************************************************************************/
+/* 功能：是否在调整一个图形对象大小。                                   */
+/************************************************************************/
 bool CGraphManager::IsAdjustSize( CPoint &pt )
 {
 	CGraph* temp = GetFocusGraph();
@@ -216,6 +193,7 @@ bool CGraphManager::IsAdjustSize( CPoint &pt )
 	
 	if(temp != NULL)
 	{
+		// 当前坐标是否在图元边界。
 		if(temp->IsOn( pt ))
 		{
 			flag = true;
@@ -225,36 +203,42 @@ bool CGraphManager::IsAdjustSize( CPoint &pt )
 	return flag;
 }
 
-void CGraphManager::AdjustSize( CPoint &pt )
-{
-	CGraph* focusGraph = GetFocusGraph();
-	if(focusGraph != NULL)
-	{
-		focusGraph->AdjustSize( pt );
-	}
-}
+//	void CGraphManager::AdjustSize( CPoint &pt )
+//	{
+//		CGraph* focusGraph = GetFocusGraph();
+//		if(focusGraph != NULL)
+//		{
+//			focusGraph->AdjustSize( pt );
+//		}
+//	}
 
+/************************************************************************/
+/* 功能：移动一个图元对象。                                             */
+/************************************************************************/
 void CGraphManager::Move(int cx, int cy)
 {
-	CGraph* tempF = GetFocusGraph();
-	if(tempF != NULL)
+	CGraph* tempFocus = GetFocusGraph();
+	if(tempFocus != NULL)
 	{
-		tempF->Move(cx, cy);
+		tempFocus->Move(cx, cy);
 		/*if(!temp->IsControlFlow())
 		{
 		}*/
 		for(int i = 0; i < GetGraphSum(); i++)
 		{
 			CGraph* temp = GetGraphAt(i);
-			if(temp->GetPreviousGraph() == tempF)
+			// 如果当前图元对象的前图元对象是当前选中图元对象。
+			if(temp->GetPreviousGraph() == tempFocus)
 			{
+				// 跟随调整这条连线。
 				CPoint tempPoint;
 				temp->GetEndPoint(tempPoint);
 				temp->SetEndPoint(tempPoint + CPoint(cx, cy));
 			}
-
-			if(temp->GetNextgraph() == tempF)
+			// 如果当前图元对象的后图元对象是当前选中图元对象。
+			if(temp->GetNextgraph() == tempFocus)
 			{
+				// 跟随调整这条连线。
 				CPoint tempPoint;
 				temp->GetStartPoint(tempPoint);
 				temp->SetStartPoint(tempPoint + CPoint(cx, cy));
@@ -263,6 +247,9 @@ void CGraphManager::Move(int cx, int cy)
 	}
 }
 
+/************************************************************************/
+/* 功能：设置一个图元的前后图元对象。                                   */
+/************************************************************************/
 void CGraphManager::CheckLinkGraph(CGraph* graph)
 {
 	//if(graph == NULL && !graph->IsControlFlow()) return;
@@ -278,6 +265,9 @@ void CGraphManager::CheckLinkGraph(CGraph* graph)
 	}
 }
 
+/************************************************************************/
+/* 功能：检查所有图元的前后图元对象。                                   */
+/************************************************************************/
 void CGraphManager::CheckAllLinkGraph()
 {
 	for(int i = 0; i < GetGraphSum(); i++)
@@ -288,22 +278,26 @@ void CGraphManager::CheckAllLinkGraph()
 	}
 }
 
+/************************************************************************/
+/* 功能：路径处理。                                                     */
+/************************************************************************/
 int CGraphManager::SearchPath()
 {
+	int i = 0;
 	m_PathManager.DeleteAll();
 
-	CObArray tempBorders, tempBs, copyAllBorders, copyAllBordersTemp;
+	CObArray tempBorders, tempBs, copyAllBorders; // , copyAllBordersTemp;
 	// 找到开始和结束图元
 	CGraph *startGraph = NULL;
 	CGraph *endGraph = NULL;
-	for(int i = 0; i < GetGraphSum(); i++)
+	for(i = 0; i < GetGraphSum(); i++)
 	{
 		CGraph *temp = GetGraphAt(i);
 
 		if(temp->IsControlFlow())
 		{
 			copyAllBorders.Add(temp);
-			copyAllBordersTemp.Add(temp);
+			// copyAllBordersTemp.Add(temp);
 		}
 
 		CString str;
@@ -367,6 +361,9 @@ int CGraphManager::SearchPath()
 	return m_PathManager.GetSum();
 }
 
+/************************************************************************/
+/* 功能：路径标记。                                                     */
+/************************************************************************/
 void CGraphManager::MarkPath()
 {
 	CancelMarkPath();
@@ -379,6 +376,9 @@ void CGraphManager::MarkPath()
 	}
 }
 
+/************************************************************************/
+/* 功能：路径标记取消。                                                 */
+/************************************************************************/
 void CGraphManager::CancelMarkPath()
 {
 	for(int i = 0; i < GetGraphSum(); i++)
@@ -387,3 +387,58 @@ void CGraphManager::CancelMarkPath()
 		temp->SetIsMark(false);
 	}
 }
+
+
+/*CGraph* CGraphManager::CreateGraph( int type )
+{
+	CGraph* temp = NULL;
+	switch( type )
+	{
+		case Rectangle: 
+			{
+				temp = new CRectangle();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case Ellipse: 
+			{
+				temp = new CEllipse();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case Diamond: 
+			{
+				temp = new CDiamond();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case DealDiamond: 
+			{
+				temp = new CDealDiamond();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case GenericLine: 
+			{
+				temp = new CGenericLine();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case Arrowhead: 
+			{
+				temp = new CArrowhead();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}
+		case ControlFlow: 
+			{
+				temp = new CControlFlow();
+				m_Graphs.InsertAt(0, temp, 1);
+				break;
+			}			
+	}
+
+	m_FocusID = 0;
+	return temp;
+}
+*/

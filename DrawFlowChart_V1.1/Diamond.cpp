@@ -71,17 +71,19 @@ void CDiamond::Draw( CDC *pdc )
 
 void CDiamond::DrawFocus( CDC *pdc )
 {
+	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
 	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
 	CPen* oldpen = pdc->SelectObject(&pen);
 	CBrush* oldbrush = pdc->SelectObject( pBrush );
-		
+	// 画一个虚线框。
 	pdc->Rectangle( CRect(m_Start, m_End) );
 		
 	pdc->SelectObject(oldpen);
 	pdc->SelectObject(oldbrush);
 
 	CConnectPoint *temp = NULL;
+	// 绘制RGB(0,255,0)的绿色连接点。四角处为圆形，围框中段为矩形。
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
@@ -141,11 +143,16 @@ bool CDiamond::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CRgn cr;
-	cr.CreateEllipticRgn( m_Start.x, m_Start.y, m_End.x, m_End.y );
-	if(cr.PtInRegion( pt ))
+	BOOL bRet = cr.CreateEllipticRgn( m_Start.x, m_Start.y, m_End.x, m_End.y );
+	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
 		m_AdjustPoint = -1;
+	}
+	else if (bRet == FALSE)
+	{
+		printf("m_Start/m_End = {(%d, %d), (%d, %d)}", 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
 }

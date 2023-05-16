@@ -21,7 +21,7 @@ CDealDiamond::CDealDiamond()
 {
 	m_Start = CPoint(0, 0);
 	m_End = CPoint(0, 0);
-	m_AdjustPoint = -1;
+	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CConnectPoint *temp = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -41,15 +41,15 @@ void CDealDiamond::Draw( CDC *pdc )
 	AdjustFocusPoint();
 
 	CPoint points[4];
-	double tempx = (m_End.x - m_Start.x) * 0.15;
+	long tempX = (long)((m_End.x - m_Start.x) * 0.15);
 
-	points[0].x = m_Start.x + tempx;
+	points[0].x = m_Start.x + tempX;
 	points[0].y = m_Start.y;
 
 	points[1].x = m_End.x;
 	points[1].y = m_Start.y;
 
-	points[2].x = m_End.x - tempx;
+	points[2].x = m_End.x - tempX;
 	points[2].y = m_End.y;
 
 	points[3].x = m_Start.x;
@@ -105,48 +105,56 @@ void CDealDiamond::AdjustSize( CPoint &pt )
 
 	switch(m_AdjustPoint)
 	{
-		case 1: // ×óÉÏ½Ç
-			{
-				m_Start = pt;
-				break;
-			}
-		case 2: // ×óÏÂ½Ç
-			{
-				m_Start = CPoint(pt.x, temp2.y);
-				m_End = CPoint(temp2.x, pt.y);
-				break;
-			}
-		case 3: // ÓÒÉÏ½Ç
-			{
-				m_Start = CPoint(temp1.x, pt.y);
-				m_End = CPoint(pt.x, temp1.y);
-				break;
-			}
-		case 4: // ÓÒÏÂ½Ç
-			{
-				m_End = pt;
-				break;
-			}
-		case 5:
-			{
-				m_Start.y = pt.y;
-				break;
-			}
-		case 6:
-			{
-				m_End.x = pt.x;
-				break;
-			}
-		case 7:
-			{
-				m_End.y = pt.y;
-				break;
-			}
-		case 8:
-			{
-				m_Start.x = pt.x;
-				break;
-			}
+	// case 1: // ×óÉÏ½Ç
+	case CCONNECTPOINT_RECT_LEFT_TOP:
+		{
+			m_Start = pt;
+			break;
+		}
+	// case 2: // ×óÏÂ½Ç
+	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
+		{
+			m_Start = CPoint(pt.x, temp2.y);
+			m_End = CPoint(temp2.x, pt.y);
+			break;
+		}
+	// case 3: // ÓÒÉÏ½Ç
+	case CCONNECTPOINT_RECT_RIGHT_TOP:
+		{
+			m_Start = CPoint(temp1.x, pt.y);
+			m_End = CPoint(pt.x, temp1.y);
+			break;
+		}
+	// case 4: // ÓÒÏÂ½Ç
+	case CCONNECTPOINT_RECT_RIGHT_BOTTOM:
+		{
+			m_End = pt;
+			break;
+		}
+	// case 5:
+	case CCONNECTPOINT_RECT_MIDDLE_TOP:
+		{
+			m_Start.y = pt.y;
+			break;
+		}
+	// case 6:
+	case CCONNECTPOINT_RECT_MIDDLE_RIGHT:
+		{
+			m_End.x = pt.x;
+			break;
+		}
+	// case 7:
+	case CCONNECTPOINT_RECT_MIDDLE_BOTTOM:
+		{
+			m_End.y = pt.y;
+			break;
+		}
+	// case 8:
+	case CCONNECTPOINT_RECT_MIDDLE_LEFT:
+		{
+			m_Start.x = pt.x;
+			break;
+		}
 	}
 }
 
@@ -157,15 +165,15 @@ bool CDealDiamond::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	float tempx = (m_End.x - m_Start.x) * 0.25;
+	long tempX = (long)((m_End.x - m_Start.x) * 0.25);
 
-	points[0].x = m_Start.x + tempx;
+	points[0].x = m_Start.x + tempX;
 	points[0].y = m_Start.y;
 
 	points[1].x = m_End.x;
 	points[1].y = m_Start.y;
 
-	points[2].x = m_End.x - tempx;
+	points[2].x = m_End.x - tempX;
 	points[2].y = m_End.y;
 
 	points[3].x = m_Start.x;
@@ -176,7 +184,7 @@ bool CDealDiamond::IsIn( CPoint &pt )
 	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
-		m_AdjustPoint = -1;
+		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
 	else if (bRet == FALSE)
 	{
@@ -198,7 +206,7 @@ bool CDealDiamond::IsOn( CPoint &pt )
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			m_AdjustPoint = 1+i;
+			m_AdjustPoint = i; // 1+i;
 		    flag = true;
 			break;
 		}

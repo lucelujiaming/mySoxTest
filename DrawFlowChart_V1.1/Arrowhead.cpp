@@ -19,7 +19,7 @@ IMPLEMENT_SERIAL(CArrowhead, CObject, 1)
 
 CArrowhead::CArrowhead()
 {
-	m_AdjustPoint = -1;
+	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CConnectPoint *temp = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
@@ -76,16 +76,18 @@ void CArrowhead::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
-		case 1: // 起点
-			{
-				m_Start = pt;
-				break;
-			}
-		case 2: // 终点
-			{
-				m_End = pt;
-				break;
-			}
+	// case 1: // 起点
+	case CCONNECTPOINT_LINE_START:
+		{
+			m_Start = pt;
+			break;
+		}
+	// case 2: // 终点
+	case CCONNECTPOINT_LINE_END:
+		{
+			m_End = pt;
+			break;
+		}
 	}
 }
 
@@ -136,18 +138,18 @@ bool CArrowhead::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	int tempx = 0;
-	int tempy = 0;
+	int tempX = 0;
+	int tempY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		tempy = 6;
+		tempX = CCONNECTPOINT_X_MARGIN;
 	}
 	else
 	{
-		tempx = 6;
+		tempY = CCONNECTPOINT_Y_MARGIN;
 	}
 	
-	CPoint temp = CPoint(tempx, tempy);
+	CPoint temp = CPoint(tempX, tempY);
 	points[0] = m_Start - temp;
 	points[1] = m_Start + temp;
 	points[2] = m_End + temp;
@@ -158,7 +160,7 @@ bool CArrowhead::IsIn( CPoint &pt )
 	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
-		m_AdjustPoint = -1;
+		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
 	else if (bRet == FALSE)
 	{
@@ -179,7 +181,7 @@ bool CArrowhead::IsOn( CPoint &pt )
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			m_AdjustPoint = 1+i;
+			m_AdjustPoint = i; // 1+i;
 		    flag = true;
 			break;
 		}

@@ -19,7 +19,7 @@ IMPLEMENT_SERIAL(CEllipse, CObject, 1)
 
 CEllipse::CEllipse()
 {
-	m_AdjustPoint = -1;
+	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CConnectPoint *temp = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -84,38 +84,46 @@ void CEllipse::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
-		case 1:
-		case 2:
-			{
-				m_Start = pt;
-				break;
-			}
-		case 3:
-		case 4:
-			{
-				m_End = pt;
-				break;
-			}
-		case 5:
-			{
-				m_Start.y = pt.y;
-				break;
-			}
-		case 6:
-			{
-				m_End.x = pt.x;
-				break;
-			}
-		case 7:
-			{
-				m_End.y = pt.y;
-				break;
-			}
-		case 8:
-			{
-				m_Start.x = pt.x;
-				break;
-			}
+	// case 1:  // ×óÉÏ½Ç
+	case CCONNECTPOINT_RECT_LEFT_TOP:
+	// case 2:  // ×óÏÂ½Ç
+	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
+		{
+			m_Start = pt;
+			break;
+		}
+	// case 3:  // ÓÒÉÏ½Ç
+	case CCONNECTPOINT_RECT_RIGHT_TOP:
+	// case 4:  // ÓÒÏÂ½Ç
+	case CCONNECTPOINT_RECT_RIGHT_BOTTOM:
+		{
+			m_End = pt;
+			break;
+		}
+	// case 5:
+	case CCONNECTPOINT_RECT_MIDDLE_TOP:
+		{
+			m_Start.y = pt.y;
+			break;
+		}
+	// case 6:
+	case CCONNECTPOINT_RECT_MIDDLE_RIGHT:
+		{
+			m_End.x = pt.x;
+			break;
+		}
+	// case 7:
+	case CCONNECTPOINT_RECT_MIDDLE_BOTTOM:
+		{
+			m_End.y = pt.y;
+			break;
+		}
+	// case 8:
+	case CCONNECTPOINT_RECT_MIDDLE_LEFT:
+		{
+			m_Start.x = pt.x;
+			break;
+		}
 	}
 }
 
@@ -130,7 +138,7 @@ bool CEllipse::IsIn( CPoint &pt )
 	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
-		m_AdjustPoint = -1;
+		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
 	else if (bRet == FALSE)
 	{
@@ -174,7 +182,7 @@ bool CEllipse::IsOn( CPoint &pt )
 				m_Start = temp1;
 				m_End = temp2;
 			}
-			m_AdjustPoint = 1+i;
+			m_AdjustPoint = i; // 1+i;
 		    flag = true;
 			break;
 		}

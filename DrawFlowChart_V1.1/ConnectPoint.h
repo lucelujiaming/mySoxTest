@@ -9,6 +9,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+// 余量
+#define CCONNECTPOINT_X_MARGIN            6    // X方向余量
+#define CCONNECTPOINT_Y_MARGIN            6    // Y方向余量
+
 class CConnectPoint : public CObject
 {
 	DECLARE_SERIAL(CConnectPoint)

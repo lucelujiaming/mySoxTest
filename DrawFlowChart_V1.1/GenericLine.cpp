@@ -54,16 +54,18 @@ void CGenericLine::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
-		case 1: // 起点
-			{
-				m_Start = pt;
-				break;
-			}
-		case 2: // 终点
-			{
-				m_End = pt;
-				break;
-			}
+	// case 1: // 起点
+	case CCONNECTPOINT_LINE_START:
+		{
+			m_Start = pt;
+			break;
+		}
+	// case 2: // 终点
+	case CCONNECTPOINT_LINE_END:
+		{
+			m_End = pt;
+			break;
+		}
 	}
 }
 
@@ -97,18 +99,18 @@ bool CGenericLine::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	int tempx = 0;
-	int tempy = 0;
+	int tempX = 0;
+	int tempY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		tempy = 6;
+		tempY = CCONNECTPOINT_X_MARGIN;
 	}
 	else
 	{
-		tempx = 6;
+		tempX = CCONNECTPOINT_Y_MARGIN;
 	}
 	
-	CPoint temp = CPoint(tempx, tempy);
+	CPoint temp = CPoint(tempX, tempY);
 	points[0] = m_Start - temp;
 	points[1] = m_Start + temp;
 	points[2] = m_End + temp;
@@ -119,7 +121,7 @@ bool CGenericLine::IsIn( CPoint &pt )
 	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
-		m_AdjustPoint = -1;
+		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
 	else if (bRet == FALSE)
 	{
@@ -134,17 +136,27 @@ bool CGenericLine::IsIn( CPoint &pt )
 bool CGenericLine::IsOn( CPoint &pt )
 {
 	bool flag = false;
-	CRect temp1 = CRect(m_Start+CPoint(-6, -6), m_Start+CPoint(6, 6));
-	CRect temp2 = CRect(m_End+CPoint(-6, -6), m_End+CPoint(6, 6));
+	CRect temp1 = CRect(m_Start + CPoint(
+									-1 * CCONNECTPOINT_X_MARGIN, 
+									-1 * CCONNECTPOINT_Y_MARGIN), 
+						m_Start + CPoint(
+									CCONNECTPOINT_X_MARGIN, 
+									CCONNECTPOINT_Y_MARGIN));
+	CRect temp2 = CRect(m_End + CPoint(
+									-1 * CCONNECTPOINT_X_MARGIN, 
+									-1 * CCONNECTPOINT_Y_MARGIN), 
+						m_End+CPoint(
+									CCONNECTPOINT_X_MARGIN, 
+									CCONNECTPOINT_Y_MARGIN));
 
 	if(temp1.PtInRect(pt))
 	{ // 起点
-		m_AdjustPoint = 1;
+		m_AdjustPoint = CCONNECTPOINT_LINE_START; // 1;
 		flag = true;
 	}
 	else if(temp2.PtInRect(pt))
 	{ // 终点
-		m_AdjustPoint = 2;
+		m_AdjustPoint = CCONNECTPOINT_LINE_END; // 2;
 		flag = true;
 	}
 

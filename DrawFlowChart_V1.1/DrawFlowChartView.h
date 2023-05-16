@@ -86,7 +86,10 @@ protected:
 	afx_msg void OnStopMark();
 	afx_msg void OnToolbarEnd();
 	afx_msg void OnToolbarFlowcontrol();
+	afx_msg void OnToolbarArrowHead();
+	afx_msg void OnToolbarGenericLine();
 	afx_msg void OnToolbarJudge();
+	afx_msg void OnToolbarEllipse();
 	afx_msg void OnToolbarNext();
 	afx_msg void OnToolbarProcess();
 	afx_msg void OnToolbarRect();

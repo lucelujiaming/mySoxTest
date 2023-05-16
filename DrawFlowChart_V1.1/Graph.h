@@ -27,7 +27,6 @@
 #define CCONNECTPOINT_LINE_END            1    // жу╣Ц
 #define CCONNECTPOINT_LINE_MAX            2
 
-
 class CGraph : public CObject
 {
 public:

@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (中国) resources
+// Chinese (P.R.C.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 #ifdef _WIN32
@@ -95,12 +95,14 @@ BEGIN
     BUTTON      ID_FILE_PRINT
     SEPARATOR
     BUTTON      ID_TOOLBAR_START
+    BUTTON      ID_TOOLBAR_END
     BUTTON      ID_TOOLBAR_RECT
+    BUTTON      ID_TOOLBAR_ELLIPSE
     BUTTON      ID_TOOLBAR_JUDGE
     BUTTON      ID_TOOLBAR_PROCESS
-    BUTTON      ID_TOOLBAR_END
     BUTTON      ID_TOOLBAR_FLOWCONTROL
-    SEPARATOR
+    BUTTON      ID_TOOLBAR_GENERICLINE
+    BUTTON      ID_TOOLBAR_ARROWHEAD
     BUTTON      ID_TOOLBAR_SEARCH
     BUTTON      ID_TOOLBAR_NEXT
     BUTTON      ID_TOOLBAR_STOP
@@ -153,10 +155,10 @@ BEGIN
     BEGIN
         MENUITEM "开始",                        ID_START
         MENUITEM "结束",                        ID_END
-        MENUITEM "矩形",                        ID_RECTANGLE
+        MENUITEM "矩形框",                      ID_RECTANGLE
         MENUITEM "椭圆",                        ID_ELLIPSE
-        MENUITEM "判断菱形",                    ID_DIAMOND
-        MENUITEM "处理菱形",                    ID_DealDiamond
+        MENUITEM "判断菱形框",                  ID_DIAMOND
+        MENUITEM "处理四边形框",                ID_DealDiamond
         MENUITEM "控制流",                      ID_ControlFlow
         MENUITEM "线",                          ID_GenericLine
         MENUITEM "箭头",                        ID_Arrowhead
@@ -396,17 +398,24 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_TOOLBAR_START        "创建流程开始\n开始"
-    ID_TOOLBAR_JUDGE        "创建判断菱形\n判断框"
-    ID_TOOLBAR_PROCESS      "创建处理菱形\n处理框"
+    ID_TOOLBAR_JUDGE        "创建判断菱形\n判断菱形框"
+    ID_TOOLBAR_PROCESS      "创建处理菱形\n处理四边形框"
     ID_TOOLBAR_END          "创建流程结束\n结束"
     ID_TOOLBAR_SEARCH       "查找路径\n查找路径"
     ID_TOOLBAR_NEXT         "标记路径\n标记"
     ID_TOOLBAR_FLOWCONTROL  "创建控制流\n控制流"
     ID_TOOLBAR_STOP         "取消标记路径\n取消标记"
-    ID_TOOLBAR_RECT         "创建矩形\n输入输出框"
+    ID_TOOLBAR_RECT         "创建矩形\n输入输出矩形框"
 END
 
-#endif    // Chinese (中国) resources
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_TOOLBAR_ELLIPSE      "创建椭圆\n输入输出椭圆框"
+    ID_TOOLBAR_GENERICLINE  "创建流程线\n流程线"
+    ID_TOOLBAR_ARROWHEAD    "创建箭头\n箭头"
+END
+
+#endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

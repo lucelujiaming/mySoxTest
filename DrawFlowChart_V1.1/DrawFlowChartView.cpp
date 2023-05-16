@@ -42,7 +42,10 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_STOP_MARK, OnStopMark)
 	ON_COMMAND(ID_TOOLBAR_END, OnToolbarEnd)
 	ON_COMMAND(ID_TOOLBAR_FLOWCONTROL, OnToolbarFlowcontrol)
+	ON_COMMAND(ID_TOOLBAR_ARROWHEAD,   OnToolbarArrowHead)
+	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
 	ON_COMMAND(ID_TOOLBAR_JUDGE, OnToolbarJudge)
+	ON_COMMAND(ID_TOOLBAR_ELLIPSE, OnToolbarEllipse)
 	ON_COMMAND(ID_TOOLBAR_NEXT, OnToolbarNext)
 	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
 	ON_COMMAND(ID_TOOLBAR_RECT, OnToolbarRect)
@@ -531,7 +534,7 @@ void CDrawFlowChartView::OnGetMap()
         int panelsize = 0;  
         if (bInfo.bmBitsPixel<24) //非真彩色  
         {  
-            panelsize = pow((double)2,bInfo.bmBitsPixel)*sizeof(RGBQUAD);  
+            panelsize = (int)pow((double)2, bInfo.bmBitsPixel) * sizeof(RGBQUAD);  
         }  
   
         //定义位图信息  
@@ -614,10 +617,28 @@ void CDrawFlowChartView::OnToolbarFlowcontrol()
 	OnCreateControlFlow();
 }
 
+void CDrawFlowChartView::OnToolbarArrowHead() 
+{
+	// TODO: Add your command handler code here
+	OnCreateArrowhead();
+}
+
+void CDrawFlowChartView::OnToolbarGenericLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateGenericLine();
+}
+
 void CDrawFlowChartView::OnToolbarJudge() 
 {
 	// TODO: Add your command handler code here
 	OnCreateDiamond();
+}
+
+void CDrawFlowChartView::OnToolbarEllipse() 
+{
+	// TODO: Add your command handler code here
+	OnCreateEllipse();
 }
 
 void CDrawFlowChartView::OnToolbarNext() 

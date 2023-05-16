@@ -200,18 +200,18 @@ bool CControlFlow::IsIn(CPoint &pt)
 		p = (CConnectPoint*)m_Points.GetAt(i+1);
 		CPoint tempEnd = p->GetPoint();
 
-		int tempx = 0;
-		int tempy = 0;
+		long tempX = 0;
+		long tempY = 0;
 		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
 		{
-			tempy = 10;
+			tempY = 2 * (CCONNECTPOINT_Y_MARGIN - 1); // 10;
 		}
 		else
 		{
-			tempx = 10;
+			tempX = 2 * (CCONNECTPOINT_X_MARGIN - 1); // 10;
 		}
 	
-		CPoint temp = CPoint(tempx, tempy);
+		CPoint temp = CPoint(tempX, tempY);
 		tempPs[0] = tempStart - temp;
 		tempPs[1] = tempStart + temp;
 		tempPs[2] = tempEnd + temp;

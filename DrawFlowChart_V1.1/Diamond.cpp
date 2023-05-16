@@ -24,7 +24,7 @@ CDiamond::CDiamond()
 	m_AdjustPoint = -1;
 
 	CConnectPoint *temp = NULL; 
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 		temp = new CConnectPoint();
 		m_Points.Add(temp);
@@ -59,7 +59,7 @@ void CDiamond::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	pdc->Polygon(points,4);
+	pdc->Polygon(points, 4);
 
 	if(m_IsMark)
 	{
@@ -166,18 +166,19 @@ bool CDiamond::IsOn( CPoint &pt )
 	CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
 	CConnectPoint *temp = NULL;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			if(i == 1 || i == 2)
+			if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			{
 				m_Start = temp1;
 				m_End = temp2;
 			}
 			m_AdjustPoint = 1+i;
 		    flag = true;
+			break;
 		}
 	}
 
@@ -187,7 +188,7 @@ bool CDiamond::IsOn( CPoint &pt )
 bool CDiamond::IsOn(CConnectPoint *pt)
 {
 	CConnectPoint *temp = NULL;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt->GetPoint()))
@@ -225,27 +226,27 @@ int CDiamond::GetAdjustPoint()
 void CDiamond::AdjustFocusPoint()
 {
 	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(0);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
 	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(1);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
 	temp->SetPoint(CPoint(m_Start.x, m_End.y));
-	temp = (CConnectPoint *)m_Points.GetAt(2);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
 	temp->SetPoint(CPoint(m_End.x, m_Start.y));
-	temp = (CConnectPoint *)m_Points.GetAt(3);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
 	temp->SetPoint(m_End);
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
 		temp = (CConnectPoint *)m_Points.GetAt(i);
 		temp->SetType(false);
 	}
 
-	temp = (CConnectPoint *)m_Points.GetAt(4);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
 	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(5);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
 	temp->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	temp = (CConnectPoint *)m_Points.GetAt(6);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
 	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(7);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
 	temp->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 

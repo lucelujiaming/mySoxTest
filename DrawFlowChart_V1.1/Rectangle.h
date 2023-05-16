@@ -39,7 +39,7 @@ private:
 	void AdjustFocusPoint();
 
 private:
-	int m_AdjustPoint;
+	int m_AdjustPoint;		// 被修改的调整点标号。
 
 	//CObArray m_Points;
 };

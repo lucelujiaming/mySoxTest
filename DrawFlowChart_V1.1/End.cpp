@@ -16,6 +16,9 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 IMPLEMENT_SERIAL(CEnd, CObject, 1)
+/************************************************************************/
+/* 功能：建构函数。写死了起始点和结束点。还设定了连接点。               */
+/************************************************************************/
 
 CEnd::CEnd()
 {
@@ -24,7 +27,7 @@ CEnd::CEnd()
 	m_End = CPoint(400, 345);
 
 	CConnectPoint *temp = NULL; 
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 		temp = new CConnectPoint();
 		m_Points.Add(temp);
@@ -36,6 +39,9 @@ CEnd::~CEnd()
 
 }
 
+/************************************************************************/
+/* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
+/************************************************************************/
 void CEnd::Draw(CDC *pdc)
 {
 	AdjustFocusPoint();
@@ -74,6 +80,9 @@ void CEnd::Draw(CDC *pdc)
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(10, 15), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
+/************************************************************************/
+/* 功能：选中绘制函数。绘制了连接点。                                   */
+/************************************************************************/
 void CEnd::DrawFocus(CDC *pdc)
 {
 	CConnectPoint *temp = NULL;
@@ -84,17 +93,26 @@ void CEnd::DrawFocus(CDC *pdc)
 	}
 }
 
+/************************************************************************/
+/* 功能： 移动处理函数。                                                */
+/************************************************************************/
 void CEnd::Move(int cx, int cy)
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
+/************************************************************************/
+/* 功能：判断是否可编辑。                                               */
+/************************************************************************/
 bool CEnd::IsEditable()
 {
 	return false;
 }
 
+/************************************************************************/
+/* 功能：判断是否在图元区域内。                                         */
+/************************************************************************/
 bool CEnd::IsIn(CPoint &pt)
 {
 	bool flag = false;
@@ -106,10 +124,13 @@ bool CEnd::IsIn(CPoint &pt)
 	return flag;
 }
 
+/************************************************************************/
+/* 功能： 判断是否在图元边界上。                                        */
+/************************************************************************/
 bool CEnd::IsOn(CConnectPoint *pt)
 {
 	CConnectPoint *temp = NULL;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt->GetPoint()))
@@ -121,33 +142,39 @@ bool CEnd::IsOn(CConnectPoint *pt)
 	return false;
 }
 
+/************************************************************************/
+/* 功能：根据起始点和结束点坐标调整连接点坐标。                         */
+/************************************************************************/
 void CEnd::AdjustFocusPoint()
 {
 	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(0);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
 	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(1);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
 	temp->SetPoint(CPoint(m_Start.x, m_End.y));
-	temp = (CConnectPoint *)m_Points.GetAt(2);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
 	temp->SetPoint(CPoint(m_End.x, m_Start.y));
-	temp = (CConnectPoint *)m_Points.GetAt(3);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
 	temp->SetPoint(m_End);
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
 		temp = (CConnectPoint *)m_Points.GetAt(i);
 		temp->SetType(false);
 	}
 
-	temp = (CConnectPoint *)m_Points.GetAt(4);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
 	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(5);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
 	temp->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	temp = (CConnectPoint *)m_Points.GetAt(6);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
 	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(7);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
 	temp->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
+/************************************************************************/
+/* 功能：串行化操作。                                                   */
+/************************************************************************/
 void CEnd::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())

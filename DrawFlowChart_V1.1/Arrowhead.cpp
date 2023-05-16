@@ -22,7 +22,7 @@ CArrowhead::CArrowhead()
 	m_AdjustPoint = -1;
 
 	CConnectPoint *temp = NULL; 
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 		temp = new CConnectPoint();
 		m_Points.Add(temp);
@@ -174,13 +174,14 @@ bool CArrowhead::IsOn( CPoint &pt )
 {
 	bool flag = false;
 	CConnectPoint *temp = NULL;
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
 			m_AdjustPoint = 1+i;
 		    flag = true;
+			break;
 		}
 	}
 
@@ -235,7 +236,7 @@ void CArrowhead::DrawArrow( CDC *pdc )
 bool CArrowhead::IsOn(CConnectPoint *pt)
 {
 	CConnectPoint *temp = NULL;
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt->GetPoint()))
@@ -250,11 +251,11 @@ bool CArrowhead::IsOn(CConnectPoint *pt)
 void CArrowhead::AdjustFocusPoint()
 {
 	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(0);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
 	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(1);
+	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
 	temp->SetPoint(m_End);
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 		temp = (CConnectPoint *)m_Points.GetAt(i);
 		temp->SetType(false);

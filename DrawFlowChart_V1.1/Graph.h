@@ -11,6 +11,23 @@
 
 #include "ConnectPoint.h"
 
+#define CCONNECTPOINT_INVALID_OPTION      -1
+#define CCONNECTPOINT_RECT_LEFT_TOP       0    // 左上角
+#define CCONNECTPOINT_RECT_LEFT_BOTTOM    1    // 左下角
+#define CCONNECTPOINT_RECT_RIGHT_TOP      2    // 右上角
+#define CCONNECTPOINT_RECT_RIGHT_BOTTOM   3    // 右下角
+#define CCONNECTPOINT_RECT_CNT            4    
+#define CCONNECTPOINT_RECT_MIDDLE_TOP     4    // 左上角和右上角的中间位置
+#define CCONNECTPOINT_RECT_MIDDLE_RIGHT   5    // 右上角和右下角的中间位置
+#define CCONNECTPOINT_RECT_MIDDLE_BOTTOM  6    // 左下角和右下角的中间位置
+#define CCONNECTPOINT_RECT_MIDDLE_LEFT    7    // 左上角和左下角的中间位置
+#define CCONNECTPOINT_RECT_MAX            8  
+
+#define CCONNECTPOINT_LINE_START          0    // 起点
+#define CCONNECTPOINT_LINE_END            1    // 终点
+#define CCONNECTPOINT_LINE_MAX            2
+
+
 class CGraph : public CObject
 {
 public:

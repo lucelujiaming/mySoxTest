@@ -295,7 +295,8 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
 			strStatusBar += "\r\n";
 			TRACE(strStatusBar);
-			Invalidate();
+			// It would cause the flash of graph
+			// Invalidate();
 		}
 	}
 

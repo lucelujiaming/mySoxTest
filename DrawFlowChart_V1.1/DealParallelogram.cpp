@@ -100,8 +100,8 @@ void CDealParallelogram::Move( int cx, int cy )
 
 void CDealParallelogram::AdjustSize( CPoint &pt )
 {
-	CPoint temp1 = CPoint(m_Start.x, m_End.y);
-	CPoint temp2 = CPoint(m_End.x, m_Start.y);
+//	CPoint temp1 = CPoint(m_Start.x, m_End.y);
+//	CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
 	switch(m_AdjustPoint)
 	{
@@ -114,15 +114,15 @@ void CDealParallelogram::AdjustSize( CPoint &pt )
 	// case 2: // вСоб╫г
 	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
 		{
-			m_Start = CPoint(pt.x, temp2.y);
-			m_End = CPoint(temp2.x, pt.y);
+			m_Start.x = pt.x;
+			m_End.y = pt.y;
 			break;
 		}
 	// case 3: // срио╫г
 	case CCONNECTPOINT_RECT_RIGHT_TOP:
 		{
-			m_Start = CPoint(temp1.x, pt.y);
-			m_End = CPoint(pt.x, temp1.y);
+			m_Start.y = pt.y;
+			m_End.x = pt.x;
 			break;
 		}
 	// case 4: // сроб╫г

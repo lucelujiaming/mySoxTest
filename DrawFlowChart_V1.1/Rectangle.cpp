@@ -89,8 +89,8 @@ void CRectangle::Move( int cx, int cy )
 
 void CRectangle::AdjustSize( CPoint &pt )
 {
-	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
-		m_Start.x, m_Start.y, m_End.x, m_End.y);
+//	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+//		m_Start.x, m_Start.y, m_End.x, m_End.y);
 	switch(m_AdjustPoint)
 	{
 	// case 1:  // 左上角
@@ -144,8 +144,8 @@ void CRectangle::AdjustSize( CPoint &pt )
 			break;
 		}
 	}
-	m_objLogFile.WriteLog(_T("AdjustSize m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
-		m_Start.x, m_Start.y, m_End.x, m_End.y);
+//	m_objLogFile.WriteLog(_T("AdjustSize m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+//		m_Start.x, m_Start.y, m_End.x, m_End.y);
 }
 
 /************************************************************************/
@@ -159,8 +159,8 @@ bool CRectangle::IsIn( CPoint &pt )
 	CRect checkRect = CRect( m_Start, m_End );
 	if(checkRect.PtInRect( pt ))
 	{
-		m_objLogFile.WriteLog(_T("CRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
-			pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
+	//	m_objLogFile.WriteLog(_T("CRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+	//		pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
@@ -194,47 +194,47 @@ bool CRectangle::IsOn( CPoint &pt )
 
 	bool flag = false;
 	// 取得图元的左下角坐标。
-	CPoint temp1 = CPoint( m_Start.x, m_End.y );
+	// CPoint temp1 = CPoint( m_Start.x, m_End.y );
 	// 取得图元的右上角坐标。
-	CPoint temp2 = CPoint(m_End.x, m_Start.y);
+	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
 	CConnectPoint *temp = NULL;
 
-	m_objLogFile.WriteLog(_T("m_Points(0-3) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. "), 
-		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().y);
-	m_objLogFile.WriteLog(_T("m_Points(4-7) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. \n"), 
-		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().y, 
-		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().x, 
-		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().y);
+//	m_objLogFile.WriteLog(_T("m_Points(0-3) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. "), 
+//		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().y);
+//	m_objLogFile.WriteLog(_T("m_Points(4-7) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. \n"), 
+//		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().y, 
+//		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().x, 
+//		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().y);
 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			m_objLogFile.WriteLog("We click on the %dth CConnectPoint.\n", i);
-			temp->IsOn(pt);
-			if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
-			{
-				m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
-					m_Start.x, m_Start.y, m_End.x, m_End.y);
+			// m_objLogFile.WriteLog("We click on the %dth CConnectPoint.\n", i);
+			// temp->IsOn(pt);
+			//if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
+			//{
+			//	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+			//		m_Start.x, m_Start.y, m_End.x, m_End.y);
 			//	m_Start = temp1;
 			//	m_End = temp2;
-				m_objLogFile.WriteLog(_T("    Switch m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
-					m_Start.x, m_Start.y, m_End.x, m_End.y);
-			}
+			//	m_objLogFile.WriteLog(_T("    Switch m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+			//		m_Start.x, m_Start.y, m_End.x, m_End.y);
+			//}
 			m_AdjustPoint = i; // 1+i;
 		    flag = true;
 			// break;

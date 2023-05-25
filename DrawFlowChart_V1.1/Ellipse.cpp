@@ -86,14 +86,24 @@ void CEllipse::AdjustSize( CPoint &pt )
 	{
 	// case 1:  // ×óÉÏ½Ç
 	case CCONNECTPOINT_RECT_LEFT_TOP:
-	// case 2:  // ×óÏÂ½Ç
-	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
 		{
 			m_Start = pt;
 			break;
 		}
+	// case 2:  // ×óÏÂ½Ç
+	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
+		{
+			m_Start.x = pt.x;
+			m_End.y = pt.y;
+			break;
+		}
 	// case 3:  // ÓÒÉÏ½Ç
 	case CCONNECTPOINT_RECT_RIGHT_TOP:
+		{
+			m_Start.y = pt.y;
+			m_End.x = pt.x;
+			break;
+		}
 	// case 4:  // ÓÒÏÂ½Ç
 	case CCONNECTPOINT_RECT_RIGHT_BOTTOM:
 		{
@@ -177,11 +187,11 @@ bool CEllipse::IsOn( CPoint &pt )
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
-			{
-				m_Start = temp1;
-				m_End = temp2;
-			}
+			// if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
+			// {
+			//	m_Start = temp1;
+			//	m_End = temp2;
+			// }
 			m_AdjustPoint = i; // 1+i;
 		    flag = true;
 			break;

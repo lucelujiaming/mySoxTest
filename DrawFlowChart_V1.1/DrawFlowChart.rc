@@ -158,10 +158,10 @@ BEGIN
         MENUITEM "矩形框",                      ID_RECTANGLE
         MENUITEM "椭圆",                        ID_ELLIPSE
         MENUITEM "判断菱形框",                  ID_DIAMOND
-        MENUITEM "处理四边形框",                ID_DealDiamond
-        MENUITEM "控制流",                      ID_ControlFlow
-        MENUITEM "线",                          ID_GenericLine
-        MENUITEM "箭头",                        ID_Arrowhead
+        MENUITEM "处理四边形框",                ID_PARALLELOGRAM
+        MENUITEM "控制流",                      ID_CONTROLFLOW
+        MENUITEM "线",                          ID_GENERICLINE
+        MENUITEM "箭头",                        ID_ARROWHEAD
     END
     POPUP "路径"
     BEGIN

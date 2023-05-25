@@ -8,10 +8,10 @@
 #define ID_RECTANGLE                    32771
 #define ID_ELLIPSE                      32772
 #define ID_DIAMOND                      32773
-#define ID_DealDiamond                  32774
-#define ID_GenericLine                  32775
-#define ID_Arrowhead                    32776
-#define ID_ControlFlow                  32777
+#define ID_PARALLELOGRAM                32774
+#define ID_GENERICLINE                  32775
+#define ID_ARROWHEAD                    32776
+#define ID_CONTROLFLOW                  32777
 #define ID_START                        32778
 #define ID_END                          32779
 #define ID_SAVEIMAGE                    32780

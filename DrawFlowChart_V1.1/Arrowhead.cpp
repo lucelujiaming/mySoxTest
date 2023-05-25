@@ -252,15 +252,15 @@ bool CArrowhead::IsOn(CConnectPoint *pt)
 
 void CArrowhead::AdjustFocusPoint()
 {
-	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
-	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
-	temp->SetPoint(m_End);
+	CConnectPoint *connPoint = NULL;
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
+	connPoint->SetPoint(m_Start);
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
+	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->SetType(false);
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->SetType(false);
 	}
 }
 

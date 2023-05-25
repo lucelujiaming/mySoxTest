@@ -9,7 +9,7 @@
 #include "Rectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
-#include "DealDiamond.h"
+#include "DealParallelogram.h"
 #include "GenericLine.h"
 #include "Arrowhead.h"
 #include "ControlFlow.h"
@@ -43,7 +43,7 @@ CGraph* CGraphFactory::CreateJudgeDiamond()
 
 CGraph* CGraphFactory::CreateProcessDiamond()
 {
-	return new CDealDiamond();
+	return new CDealParallelogram();
 }
 
 CGraph* CGraphFactory::CreateRectangle()

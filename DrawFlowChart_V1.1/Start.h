@@ -19,6 +19,7 @@ class CStart : public CGraph
 public:
 	CStart();
 	virtual ~CStart();
+	CString GetTypeName() { return CString("CStart"); }
 
 public:
     bool IsEditable();

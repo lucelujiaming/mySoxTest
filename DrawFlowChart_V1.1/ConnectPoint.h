@@ -9,6 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "LogFile.h"
 // 余量
 #define CCONNECTPOINT_X_MARGIN            6    // X方向余量
 #define CCONNECTPOINT_Y_MARGIN            6    // Y方向余量
@@ -34,6 +35,8 @@ public:
 private:
 	CPoint m_Point;
 	bool m_type;
+
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_CONNECTPOINT_H__A77E1ADE_A0C8_495F_B106_8563A42EF899__INCLUDED_)

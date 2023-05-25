@@ -10,7 +10,11 @@
 #endif // _MSC_VER > 1000
 
 #include "Graph.h"
-#include "ConnectPoint.h"
+#include "LogFile.h"
+
+// 余量
+#define RECTANGLE_TEXT_XBORDER            8    // X方向文字边框宽度
+#define RECTANGLE_TEXT_YBORDER            8    // Y方向文字边框宽度
 
 class CRectangle : public CGraph  
 {
@@ -19,6 +23,7 @@ class CRectangle : public CGraph
 public:
 	CRectangle();
 	virtual ~CRectangle();
+	CString GetTypeName() { return CString("CRectangle"); }
 
 public:
 	void Draw( CDC *pdc );
@@ -42,6 +47,7 @@ private:
 	int m_AdjustPoint;		// 被修改的调整点标号。
 
 	//CObArray m_Points;
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_RECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)

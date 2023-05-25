@@ -17,6 +17,7 @@ class CGenericLine : public CGraph
 public:
 	CGenericLine();
 	virtual ~CGenericLine();
+	CString GetTypeName() { return CString("CGenericLine"); }
 
 public:
 	void Draw( CDC *pdc );

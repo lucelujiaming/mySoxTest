@@ -28,12 +28,12 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_RECTANGLE, OnCreateRectangle)
 	ON_COMMAND(ID_ELLIPSE, OnCreateEllipse)
 	ON_COMMAND(ID_DIAMOND, OnCreateDiamond)
-	ON_COMMAND(ID_DealDiamond, OnCreateDealDiamond)
-	ON_COMMAND(ID_GenericLine, OnCreateGenericLine)
-	ON_COMMAND(ID_Arrowhead, OnCreateArrowhead)
+	ON_COMMAND(ID_PARALLELOGRAM, OnCreateDealParallelogram)
+	ON_COMMAND(ID_GENERICLINE, OnCreateGenericLine)
+	ON_COMMAND(ID_ARROWHEAD, OnCreateArrowhead)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_KEYDOWN()
-	ON_COMMAND(ID_ControlFlow, OnCreateControlFlow)
+	ON_COMMAND(ID_CONTROLFLOW, OnCreateControlFlow)
 	ON_COMMAND(ID_START, OnCreateStart)
 	ON_COMMAND(ID_END, OnCreateEnd)
 	ON_COMMAND(ID_SAVE_BMP, OnSaveBmp)
@@ -257,13 +257,44 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your message handler code here and/or call default
+	CString strStatusBar;
+	CString strName;
+	CPoint ptStart, ptEnd;
+    strStatusBar.Format(_T("[%d,%d]  "), point.x, point.y);
+	GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
 
 	if(m_IsControlFlow)
 	{
-		CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-		if(temp != NULL)
+		CGraph* tempFocus = pDoc->m_GraphManager.GetFocusGraph();
+		if(tempFocus != NULL)
 		{
-			temp->SetStartPoint(point);
+			tempFocus->SetStartPoint(point);
+			tempFocus->GetStartPoint(ptStart);
+			tempFocus->GetEndPoint(ptEnd);
+			strName = tempFocus->GetTypeName();
+			strStatusBar.Format(_T("[%d, %d] - We selected [(%d, %d), (%d, %d)] with "), 
+				point.x, point.y, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+			strStatusBar += strName;
+			GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
+			strStatusBar += "\r\n";
+			TRACE(strStatusBar);
+			Invalidate();
+		}
+	}
+	else 
+	{
+		CGraph* tempFocus = pDoc->m_GraphManager.GetFocusGraph();
+		if(tempFocus != NULL)
+		{
+			tempFocus->GetStartPoint(ptStart);
+			tempFocus->GetEndPoint(ptEnd);
+			strName = tempFocus->GetTypeName();
+			strStatusBar.Format(_T("[%d, %d] - We selected [(%d, %d), (%d, %d)] with "), 
+				point.x, point.y, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+			strStatusBar += strName;
+			GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
+			strStatusBar += "\r\n";
+			TRACE(strStatusBar);
 			Invalidate();
 		}
 	}
@@ -371,7 +402,7 @@ void CDrawFlowChartView::OnCreateDiamond()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateJudgeDiamond());
 }
 
-void CDrawFlowChartView::OnCreateDealDiamond() 
+void CDrawFlowChartView::OnCreateDealParallelogram() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -385,7 +416,7 @@ void CDrawFlowChartView::OnCreateDealDiamond()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.DealDiamond );
+	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.DealParallelogram );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateProcessDiamond());
 }
 
@@ -650,7 +681,7 @@ void CDrawFlowChartView::OnToolbarNext()
 void CDrawFlowChartView::OnToolbarProcess() 
 {
 	// TODO: Add your command handler code here
-	OnCreateDealDiamond();
+	OnCreateDealParallelogram();
 }
 
 void CDrawFlowChartView::OnToolbarRect() 

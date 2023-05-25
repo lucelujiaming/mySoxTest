@@ -47,7 +47,7 @@ private:
 	void CheckLinkGraph(CGraph* graph);
 
 public:
-	//static enum GRAPH_TYPE{Rectangle, Ellipse, Diamond, DealDiamond, GenericLine, Arrowhead, ControlFlow};
+	//static enum GRAPH_TYPE{Rectangle, Ellipse, Diamond, DealParallelogram, GenericLine, Arrowhead, ControlFlow};
 //private:
 	CObArray m_Graphs;
 	int m_FocusID;

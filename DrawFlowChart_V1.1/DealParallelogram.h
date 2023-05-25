@@ -1,9 +1,9 @@
-// Diamond.h: interface for the CDiamond class.
+// DealParallelogram.h: interface for the CDealParallelogram class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_DIAMOND_H__85AA8554_C7C7_43A5_8F7B_52CC38C8CD8E__INCLUDED_)
-#define AFX_DIAMOND_H__85AA8554_C7C7_43A5_8F7B_52CC38C8CD8E__INCLUDED_
+#if !defined(AFX_DEALPARALLELOGRAM_H__16CD3E8D_896B_4831_9A95_BD1C3918B1E2__INCLUDED_)
+#define AFX_DEALPARALLELOGRAM_H__16CD3E8D_896B_4831_9A95_BD1C3918B1E2__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,12 +12,13 @@
 #include "Graph.h"
 #include "ConnectPoint.h"
 
-class CDiamond : public CGraph  
+class CDealParallelogram : public CGraph  
 {
-	DECLARE_SERIAL(CDiamond)
+	DECLARE_SERIAL(CDealParallelogram)
 public:
-	CDiamond();
-	virtual ~CDiamond();
+	CDealParallelogram();
+	virtual ~CDealParallelogram();
+	CString GetTypeName() { return CString("CDealParallelogram"); }
 
 public:
 	void Draw( CDC *pdc );
@@ -41,6 +42,7 @@ private:
 	int m_AdjustPoint;
 
 	//CObArray m_Points;
+
 };
 
-#endif // !defined(AFX_DIAMOND_H__85AA8554_C7C7_43A5_8F7B_52CC38C8CD8E__INCLUDED_)
+#endif // !defined(AFX_DEALPARALLELOGRAM_H__16CD3E8D_896B_4831_9A95_BD1C3918B1E2__INCLUDED_)

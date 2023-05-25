@@ -18,6 +18,7 @@ class CEllipse : public CGraph
 public:
 	CEllipse();
 	virtual ~CEllipse();
+	CString GetTypeName() { return CString("CEllipse"); }
 
 public:
 	void Draw( CDC *pdc );

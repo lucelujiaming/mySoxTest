@@ -9,7 +9,7 @@
 #include "Rectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
-#include "DealDiamond.h"
+#include "DealParallelogram.h"
 #include "GenericLine.h"
 #include "Arrowhead.h"
 #include "ControlFlow.h"
@@ -412,9 +412,9 @@ void CGraphManager::CancelMarkPath()
 				m_Graphs.InsertAt(0, temp, 1);
 				break;
 			}
-		case DealDiamond: 
+		case DealParallelogram: 
 			{
-				temp = new CDealDiamond();
+				temp = new CDealParallelogram();
 				m_Graphs.InsertAt(0, temp, 1);
 				break;
 			}

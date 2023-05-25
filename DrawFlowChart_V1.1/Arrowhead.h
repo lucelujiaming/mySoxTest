@@ -18,6 +18,7 @@ class CArrowhead : public CGraph
 public:
 	CArrowhead();
 	virtual ~CArrowhead();
+	CString GetTypeName() { return CString("CArrowhead"); }
 
 public:
 	void Draw(CDC *pdc);

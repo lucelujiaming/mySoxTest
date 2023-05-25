@@ -20,6 +20,7 @@ class CControlFlow : public CGraph
 public:
 	CControlFlow();
 	virtual ~CControlFlow();
+	CString GetTypeName() { return CString("CControlFlow"); }
 
 public:
 	void Draw( CDC *pdc );

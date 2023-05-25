@@ -102,7 +102,7 @@ SOURCE=.\ControlFlow.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DealDiamond.cpp
+SOURCE=.\DealParallelogram.cpp
 # End Source File
 # Begin Source File
 
@@ -150,6 +150,10 @@ SOURCE=.\GraphManager.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\LogFile.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
@@ -191,7 +195,7 @@ SOURCE=.\ControlFlow.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DealDiamond.h
+SOURCE=.\DealParallelogram.h
 # End Source File
 # Begin Source File
 
@@ -232,6 +236,10 @@ SOURCE=.\GraphFactory.h
 # Begin Source File
 
 SOURCE=.\GraphManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LogFile.h
 # End Source File
 # Begin Source File
 

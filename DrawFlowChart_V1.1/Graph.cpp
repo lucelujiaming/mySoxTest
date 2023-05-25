@@ -108,7 +108,14 @@ void CGraph::SetIsMark(bool isMark)
 
 bool CGraph::IsSelected( CPoint &pt )
 {
-	return (IsIn( pt ) || IsOn( pt ));
+	// return (IsIn( pt ) || IsOn( pt ));
+	bool bRet = IsIn( pt );
+	if(bRet)
+	{
+		return true;
+	}
+	bRet = IsOn( pt );
+	return bRet;
 }
 
 void CGraph::AdjustSize(CPoint &pt)

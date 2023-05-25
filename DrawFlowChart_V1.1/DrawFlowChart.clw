@@ -41,7 +41,7 @@ ImplementationFile=DrawFlowChartView.cpp
 Filter=C
 BaseClass=CView
 VirtualFilter=VWC
-LastObject=ID_TOOLBAR_STOP
+LastObject=CDrawFlowChartView
 
 
 [CLS:CMainFrame]
@@ -97,10 +97,10 @@ Command19=ID_END
 Command20=ID_RECTANGLE
 Command21=ID_ELLIPSE
 Command22=ID_DIAMOND
-Command23=ID_DealDiamond
-Command24=ID_ControlFlow
-Command25=ID_GenericLine
-Command26=ID_Arrowhead
+Command23=DEAL_PARALLELOGRAM
+Command24=ID_CONTROLFLOW
+Command25=ID_GENERICLINE
+Command26=ID_ARROWHEAD
 Command27=ID_SEARCH_PATH
 Command28=ID_MARK_PATH
 Command29=ID_STOP_MARK

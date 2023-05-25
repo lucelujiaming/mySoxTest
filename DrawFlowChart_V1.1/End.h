@@ -18,6 +18,7 @@ class CEnd : public CGraph
 public:
 	CEnd();
 	virtual ~CEnd();
+	CString GetTypeName() { return CString("CEnd"); }
 
 public:
     bool IsEditable();

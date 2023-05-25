@@ -72,7 +72,7 @@ protected:
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateEllipse();
 	afx_msg void OnCreateDiamond();
-	afx_msg void OnCreateDealDiamond();
+	afx_msg void OnCreateDealParallelogram();
 	afx_msg void OnCreateGenericLine();
 	afx_msg void OnCreateArrowhead();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

@@ -215,29 +215,29 @@ int CEllipse::GetAdjustPoint()
 
 void CEllipse::AdjustFocusPoint()
 {
-	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
-	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
-	temp->SetPoint(CPoint(m_Start.x, m_End.y));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
-	temp->SetPoint(CPoint(m_End.x, m_Start.y));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
-	temp->SetPoint(m_End);
+	CConnectPoint *connPoint = NULL;
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
+	connPoint->SetPoint(m_Start);
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
+	connPoint->SetPoint(CPoint(m_Start.x, m_End.y));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
+	connPoint->SetPoint(CPoint(m_End.x, m_Start.y));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
+	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
-		temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->SetType(false);
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->SetType(false);
 	}
 
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
-	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
-	temp->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
-	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
-	temp->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
+	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
+	connPoint->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
+	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
+	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
 void CEllipse::Serialize(CArchive& ar)

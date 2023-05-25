@@ -69,6 +69,9 @@ public:
 	virtual void Serialize(CArchive& ar) = 0;
 
 public:
+	virtual CString GetTypeName() = 0;
+
+public:
 	CGraph();
 	virtual ~CGraph();
 

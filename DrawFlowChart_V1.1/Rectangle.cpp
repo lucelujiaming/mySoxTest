@@ -58,7 +58,11 @@ void CRectangle::Draw( CDC *pdc )
 		pdc->SelectObject(pOldPen);
 	}
 
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
+	pdc->DrawText(m_text, CRect(m_Start + CPoint(
+									RECTANGLE_TEXT_XBORDER, RECTANGLE_TEXT_YBORDER), 
+								m_End+CPoint(
+									-1 * RECTANGLE_TEXT_XBORDER, 
+									-1 * RECTANGLE_TEXT_YBORDER)), DT_CENTER);
 }
 
 /************************************************************************/
@@ -85,18 +89,30 @@ void CRectangle::Move( int cx, int cy )
 
 void CRectangle::AdjustSize( CPoint &pt )
 {
+	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+		m_Start.x, m_Start.y, m_End.x, m_End.y);
 	switch(m_AdjustPoint)
 	{
 	// case 1:  // 左上角
 	case CCONNECTPOINT_RECT_LEFT_TOP:
-	// case 2:  // 左下角
-	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
 		{
 			m_Start = pt;
 			break;
 		}
+	// case 2:  // 左下角
+	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
+		{
+			m_Start.x = pt.x;
+			m_End.y = pt.y;
+			break;
+		}
 	// case 3:  // 右上角
 	case CCONNECTPOINT_RECT_RIGHT_TOP:
+		{
+			m_Start.y = pt.y;
+			m_End.x = pt.x;
+			break;
+		}
 	// case 4:  // 右下角
 	case CCONNECTPOINT_RECT_RIGHT_BOTTOM:
 		{
@@ -128,6 +144,8 @@ void CRectangle::AdjustSize( CPoint &pt )
 			break;
 		}
 	}
+	m_objLogFile.WriteLog(_T("AdjustSize m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+		m_Start.x, m_Start.y, m_End.x, m_End.y);
 }
 
 /************************************************************************/
@@ -138,9 +156,11 @@ bool CRectangle::IsIn( CPoint &pt )
 	AdjustStartAndEnd();
 
 	bool flag = false;
-	CRect temp = CRect( m_Start, m_End );
-	if(temp.PtInRect( pt ))
+	CRect checkRect = CRect( m_Start, m_End );
+	if(checkRect.PtInRect( pt ))
 	{
+		m_objLogFile.WriteLog(_T("CRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+			pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 	}
@@ -152,13 +172,13 @@ bool CRectangle::IsIn( CPoint &pt )
 /************************************************************************/
 bool CRectangle::IsOn(CConnectPoint *pt)
 {
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt->GetPoint()))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt->GetPoint()))
 		{
-			pt->SetPoint(temp->GetPoint());
+			pt->SetPoint(connPoint->GetPoint());
 		    return true;
 		}
 	}
@@ -173,21 +193,47 @@ bool CRectangle::IsOn( CPoint &pt )
 	AdjustStartAndEnd();
 
 	bool flag = false;
+	// 取得图元的左下角坐标。
 	CPoint temp1 = CPoint( m_Start.x, m_End.y );
+	// 取得图元的右上角坐标。
 	CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
 	CConnectPoint *temp = NULL;
+
+	m_objLogFile.WriteLog(_T("m_Points(0-3) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. "), 
+		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().y);
+	m_objLogFile.WriteLog(_T("m_Points(4-7) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. \n"), 
+		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().y, 
+		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().x, 
+		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().y);
+
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 	    temp = (CConnectPoint *)m_Points.GetAt(i);
 		if(temp->IsOn(pt))
 		{
-			TRACE("We click on the %dth CConnectPoint\r\n", i);
+			m_objLogFile.WriteLog("We click on the %dth CConnectPoint.\n", i);
 			temp->IsOn(pt);
 			if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			{
-				m_Start = temp1;
-				m_End = temp2;
+				m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+					m_Start.x, m_Start.y, m_End.x, m_End.y);
+			//	m_Start = temp1;
+			//	m_End = temp2;
+				m_objLogFile.WriteLog(_T("    Switch m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+					m_Start.x, m_Start.y, m_End.x, m_End.y);
 			}
 			m_AdjustPoint = i; // 1+i;
 		    flag = true;
@@ -198,21 +244,45 @@ bool CRectangle::IsOn( CPoint &pt )
 	return flag;
 }
 
+/************************************************************************/
+/* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
+/************************************************************************/
 void CRectangle::AdjustStartAndEnd()
 {
 	CPoint temp1, temp2;
+	// 如果结束点在起始点的左上方。这个时候，起始点变成结束点。结束点变成起始点。
+	// 这种情况只会发生在拖动左下方和右下方调整点的情况下。
+	// 直接交换起始点和结束点坐标即可。
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
 	{
+		m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 		temp1 = m_Start;
 		m_Start = m_End;
 		m_End = temp1;
+		m_objLogFile.WriteLog(_T("Revert m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
+	// 如果结束点不在起始点的右下方。说明两种情况：
+	//    1. 结束点在起始点的右上方。此时，矩形框发生沿X轴方向的翻转。
+	//       这种情况只会发生在拖动左下方和右下方调整点沿Y轴拖动的情况下。此时坐标调整如下：
+	//       起始点的X变成结束点的X，起始点的Y不变。
+	//       结束点的X变成起始点的X，结束点的Y不变。
+	//    1. 结束点在起始点的左下方。此时，矩形框发生沿Y轴方向的翻转。
+	//       这种情况只会发生在拖动右上方和右下方调整点沿X轴拖动的情况下。此时坐标调整如下：
+	//       起始点的X变成结束点的X，起始点的Y不变。
+	//       结束点的X变成起始点的X，结束点的Y不变。
+	// 这就是下面的逻辑。
 	else if(!((m_End.x > m_Start.x) && (m_End.y > m_Start.y)))
 	{
+		m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 		temp1 = CPoint( m_End.x, m_Start.y );
 		temp2 = CPoint( m_Start.x, m_End.y );
 		m_Start = temp1;
 		m_End = temp2;
+		m_objLogFile.WriteLog(_T("    Recalc m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 
 	AdjustFocusPoint();
@@ -224,33 +294,33 @@ int CRectangle::GetAdjustPoint()
 }
 
 /************************************************************************/
-/* 功能：根据起始点和结束点坐标调整连接点坐标。                         */
+/* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
 void CRectangle::AdjustFocusPoint()
 {
-	CConnectPoint *temp = NULL;
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
-	temp->SetPoint(m_Start);
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
-	temp->SetPoint(CPoint(m_Start.x, m_End.y));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
-	temp->SetPoint(CPoint(m_End.x, m_Start.y));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
-	temp->SetPoint(m_End);
+	CConnectPoint *connPoint = NULL;
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
+	connPoint->SetPoint(m_Start);
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
+	connPoint->SetPoint(CPoint(m_Start.x, m_End.y));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
+	connPoint->SetPoint(CPoint(m_End.x, m_Start.y));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
+	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
-		temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->SetType(false);
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->SetType(false);
 	}
 
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
-	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
-	temp->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
-	temp->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	temp = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
-	temp->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
+	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
+	connPoint->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
+	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
+	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
+	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
 /************************************************************************/

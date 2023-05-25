@@ -18,15 +18,15 @@ public:
 	virtual ~CGraphFactory();
 
 public:
-	CGraph* CreateJudgeDiamond();
+	CGraph* CreateJudgeDiamond();       // Adjusted
 	CGraph* CreateProcessDiamond();
-	CGraph* CreateRectangle();
-	CGraph* CreateControlFlow();
-	CGraph* CreateLine();
-	CGraph* CreateArrowLine();
-	CGraph* CreateEllipse();
-	CGraph* CreateStart();
-	CGraph* CreateEnd();
+	CGraph* CreateRectangle();          // Adjusted
+	CGraph* CreateControlFlow();		// NotNeed
+	CGraph* CreateLine();				// NotNeed
+	CGraph* CreateArrowLine();			// NotNeed
+	CGraph* CreateEllipse();			// Adjusted
+	CGraph* CreateStart();				// NotNeed
+	CGraph* CreateEnd();				// NotNeed
 
 };
 

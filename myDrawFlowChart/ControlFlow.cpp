@@ -178,15 +178,15 @@ bool CControlFlow::IsIn(CPoint &pt)
 	
 	if(!m_IsCreateEnd)
 	{
-		CConnectPoint *temp = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		CConnectPoint *connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 		m_Points.RemoveAt(m_Points.GetSize()-1);
-		delete temp;
+		delete connPoint;
 		m_IsCreateEnd = true;
 
-		temp = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-		m_Start = temp->GetPoint();
-		temp = (CConnectPoint*)m_Points.GetAt(0);
-		m_End = temp->GetPoint();
+		connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		m_Start = connPoint->GetPoint();
+		connPoint = (CConnectPoint*)m_Points.GetAt(0);
+		m_End = connPoint->GetPoint();
 	}
 
 	bool flag = false;
@@ -200,22 +200,22 @@ bool CControlFlow::IsIn(CPoint &pt)
 		p = (CConnectPoint*)m_Points.GetAt(i+1);
 		CPoint tempEnd = p->GetPoint();
 
-		long tempX = 0;
-		long tempY = 0;
+		long marginX = 0;
+		long marginY = 0;
 		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
 		{
-			tempY = 2 * (CCONNECTPOINT_Y_MARGIN - 1); // 10;
+			marginY = 2 * (CCONNECTPOINT_Y_MARGIN - 1); // 10;
 		}
 		else
 		{
-			tempX = 2 * (CCONNECTPOINT_X_MARGIN - 1); // 10;
+			marginX = 2 * (CCONNECTPOINT_X_MARGIN - 1); // 10;
 		}
 	
-		CPoint temp = CPoint(tempX, tempY);
-		tempPs[0] = tempStart - temp;
-		tempPs[1] = tempStart + temp;
-		tempPs[2] = tempEnd + temp;
-		tempPs[3] = tempEnd - temp;
+		CPoint marginXY = CPoint(marginX, marginY);
+		tempPs[0] = tempStart - marginXY;
+		tempPs[1] = tempStart + marginXY;
+		tempPs[2] = tempEnd + marginXY;
+		tempPs[3] = tempEnd - marginXY;
 		BOOL bRet = cr.CreatePolygonRgn(tempPs, 4, WINDING);
 		if(bRet && cr.PtInRegion(pt))
 		{

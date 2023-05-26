@@ -249,7 +249,7 @@ bool CRectangle::IsOn( CPoint &pt )
 /************************************************************************/
 void CRectangle::AdjustStartAndEnd()
 {
-	CPoint temp1, temp2;
+	CPoint newStart, newEnd;
 	// 如果结束点在起始点的左上方。这个时候，起始点变成结束点。结束点变成起始点。
 	// 这种情况只会发生在拖动左下方和右下方调整点的情况下。
 	// 直接交换起始点和结束点坐标即可。
@@ -257,9 +257,9 @@ void CRectangle::AdjustStartAndEnd()
 	{
 		m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
-		temp1 = m_Start;
+		newEnd = m_Start;
 		m_Start = m_End;
-		m_End = temp1;
+		m_End = newEnd;
 		m_objLogFile.WriteLog(_T("Revert m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
@@ -277,10 +277,10 @@ void CRectangle::AdjustStartAndEnd()
 	{
 		m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
-		temp1 = CPoint( m_End.x, m_Start.y );
-		temp2 = CPoint( m_Start.x, m_End.y );
-		m_Start = temp1;
-		m_End = temp2;
+		newStart = CPoint( m_End.x, m_Start.y );
+		newEnd = CPoint( m_Start.x, m_End.y );
+		m_Start = newStart;
+		m_End = newEnd;
 		m_objLogFile.WriteLog(_T("    Recalc m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}

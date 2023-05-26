@@ -40,6 +40,9 @@ private:
 
 private:
 	int m_AdjustPoint;
+	
+	//CObArray m_Points;
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_ELLIPSE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

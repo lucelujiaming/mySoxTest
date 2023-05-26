@@ -12,6 +12,8 @@
 #include "Graph.h"
 #include "ConnectPoint.h"
 
+#define PARALLELOGRAM_INCLINATION_ANGLE      0.15
+
 class CDealParallelogram : public CGraph  
 {
 	DECLARE_SERIAL(CDealParallelogram)
@@ -42,7 +44,7 @@ private:
 	int m_AdjustPoint;
 
 	//CObArray m_Points;
-
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_DEALPARALLELOGRAM_H__16CD3E8D_896B_4831_9A95_BD1C3918B1E2__INCLUDED_)

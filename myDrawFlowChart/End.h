@@ -37,6 +37,7 @@ private:
 private:
 
 	//CObArray m_Points;
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_END_H__E5EC33B7_36C6_46AF_8800_13A4D4B7D421__INCLUDED_)

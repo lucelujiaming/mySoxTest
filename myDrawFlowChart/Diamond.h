@@ -42,6 +42,7 @@ private:
 	int m_AdjustPoint;
 
 	//CObArray m_Points;
+	CLogFile m_objLogFile;
 };
 
 #endif // !defined(AFX_DIAMOND_H__85AA8554_C7C7_43A5_8F7B_52CC38C8CD8E__INCLUDED_)

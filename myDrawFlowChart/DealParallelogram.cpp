@@ -41,7 +41,7 @@ void CDealParallelogram::Draw( CDC *pdc )
 	AdjustFocusPoint();
 
 	CPoint points[4];
-	long diffX = (long)((m_End.x - m_Start.x) * 0.15);
+	long diffX = (long)((m_End.x - m_Start.x) * PARALLELOGRAM_INCLINATION_ANGLE);
 
 	points[0].x = m_Start.x + diffX;
 	points[0].y = m_Start.y;
@@ -74,17 +74,19 @@ void CDealParallelogram::Draw( CDC *pdc )
 
 void CDealParallelogram::DrawFocus( CDC *pdc )
 {
+	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
 	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
 	CPen* oldpen = pdc->SelectObject(&pen);
 	CBrush* oldbrush = pdc->SelectObject( pBrush );
-		
+	// 画一个虚线框。
 	pdc->Rectangle( CRect(m_Start, m_End) );
 		
 	pdc->SelectObject(oldpen);
 	pdc->SelectObject(oldbrush);
 
 	CConnectPoint *connPoint = NULL;
+	// 绘制RGB(0,255,0)的绿色连接点。四角处为圆形，围框中段为矩形。
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
 	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
@@ -100,9 +102,6 @@ void CDealParallelogram::Move( int cx, int cy )
 
 void CDealParallelogram::AdjustSize( CPoint &pt )
 {
-//	CPoint temp1 = CPoint(m_Start.x, m_End.y);
-//	CPoint temp2 = CPoint(m_End.x, m_Start.y);
-
 	switch(m_AdjustPoint)
 	{
 	// case 1: // 左上角
@@ -165,7 +164,9 @@ bool CDealParallelogram::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	long diffX = (long)((m_End.x - m_Start.x) * 0.25);
+	// long diffX = (long)((m_End.x - m_Start.x) * 0.25);
+	long diffX = (long)((m_End.x - m_Start.x) * PARALLELOGRAM_INCLINATION_ANGLE);
+	
 
 	points[0].x = m_Start.x + diffX;
 	points[0].y = m_Start.y;
@@ -188,7 +189,7 @@ bool CDealParallelogram::IsIn( CPoint &pt )
 	}
 	else if (bRet == FALSE)
 	{
-		printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
+		m_objLogFile.WriteLog("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
 			points[0].x, points[0].y, points[1].x, points[1].y, 
 			points[2].x, points[2].y, points[3].x, points[3].y);
 	}
@@ -220,11 +221,11 @@ bool CDealParallelogram::IsOn(CConnectPoint *pt)
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return true;
+			return true;
 		}
 	}
 	return false;
@@ -232,19 +233,19 @@ bool CDealParallelogram::IsOn(CConnectPoint *pt)
 
 void CDealParallelogram::AdjustStartAndEnd()
 {
-	CPoint temp1, temp2;
+	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
 	{
-		temp1 = m_Start;
+		newEnd = m_Start;
 		m_Start = m_End;
-		m_End = temp1;
+		m_End = newEnd;
 	}
 	else if(!((m_End.x > m_Start.x) && (m_End.y > m_Start.y)))
 	{
-		temp1 = CPoint( m_End.x, m_Start.y );
-		temp2 = CPoint( m_Start.x, m_End.y );
-		m_Start = temp1;
-		m_End = temp2;
+		newStart = CPoint( m_End.x, m_Start.y );
+		newEnd = CPoint( m_Start.x, m_End.y );
+		m_Start = newStart;
+		m_End = newEnd;
 	}
 }
 

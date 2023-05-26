@@ -63,11 +63,11 @@ bool CConnectPoint::IsOn(CPoint &pt)
 {
 	bool flag = false;
 	CRect checkRect = CRect(m_Point + CPoint(
-									-1 * CCONNECTPOINT_X_MARGIN, 
-									-1 * CCONNECTPOINT_Y_MARGIN), 
+									CCONNECTPOINT_NEGATIVE_X_MARGIN, 
+									CCONNECTPOINT_NEGATIVE_Y_MARGIN), 
 						m_Point+CPoint(
-									CCONNECTPOINT_X_MARGIN, 
-									CCONNECTPOINT_Y_MARGIN));
+									CCONNECTPOINT_POSITIVE_X_MARGIN, 
+									CCONNECTPOINT_POSITIVE_Y_MARGIN));
 	if(checkRect.PtInRect(pt))
 	{
 		m_objLogFile.WriteLog(_T("CConnectPoint pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 

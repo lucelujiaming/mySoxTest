@@ -202,19 +202,19 @@ bool CEllipse::IsOn( CPoint &pt )
 
 void CEllipse::AdjustStartAndEnd()
 {
-	CPoint temp1, temp2;
+	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
 	{
-		temp1 = m_Start;
+		newEnd = m_Start;
 		m_Start = m_End;
-		m_End = temp1;
+		m_End = newEnd;
 	}
 	else if(!((m_End.x > m_Start.x) && (m_End.y > m_Start.y)))
 	{
-		temp1 = CPoint( m_End.x, m_Start.y );
-		temp2 = CPoint( m_Start.x, m_End.y );
-		m_Start = temp1;
-		m_End = temp2;
+		newStart = CPoint( m_End.x, m_Start.y );
+		newEnd = CPoint( m_Start.x, m_End.y );
+		m_Start = newStart;
+		m_End = newEnd;
 	}
 }
 

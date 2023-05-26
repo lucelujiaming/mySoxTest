@@ -142,11 +142,11 @@ bool CArrowhead::IsIn( CPoint &pt )
 	int marginY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		marginX = CCONNECTPOINT_X_MARGIN;
+		marginX = CCONNECTPOINT_POSITIVE_X_MARGIN;
 	}
 	else
 	{
-		marginY = CCONNECTPOINT_Y_MARGIN;
+		marginY = CCONNECTPOINT_POSITIVE_Y_MARGIN;
 	}
 	
 	CPoint marginXY = CPoint(marginX, marginY);

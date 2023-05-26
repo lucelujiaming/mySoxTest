@@ -169,10 +169,25 @@ bool CDiamond::IsIn( CPoint &pt )
 	}
 	else if (bRet == FALSE)
 	{
-		printf("m_Start/m_End = {(%d, %d), (%d, %d)}", 
+		m_objLogFile.WriteLog("CDiamond::m_Start/m_End = {(%d, %d), (%d, %d)}", 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
+}
+
+bool CDiamond::IsOn(CConnectPoint *pt)
+{
+	CConnectPoint *connPoint = NULL;
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
+	{
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt->GetPoint()))
+		{
+			pt->SetPoint(connPoint->GetPoint());
+			return true;
+		}
+	}
+	return false;
 }
 
 bool CDiamond::IsOn( CPoint &pt )
@@ -180,8 +195,8 @@ bool CDiamond::IsOn( CPoint &pt )
 	AdjustStartAndEnd();
 
 	bool flag = false;
-	CPoint temp1 = CPoint( m_Start.x, m_End.y );
-	CPoint temp2 = CPoint(m_End.x, m_Start.y);
+	// CPoint temp1 = CPoint( m_Start.x, m_End.y );
+	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -201,21 +216,6 @@ bool CDiamond::IsOn( CPoint &pt )
 	}
 
 	return flag;
-}
-
-bool CDiamond::IsOn(CConnectPoint *pt)
-{
-	CConnectPoint *connPoint = NULL;
-	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
-	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
-		if(connPoint->IsOn(pt->GetPoint()))
-		{
-			pt->SetPoint(connPoint->GetPoint());
-		    return true;
-		}
-	}
-	return false;
 }
 
 void CDiamond::AdjustStartAndEnd()

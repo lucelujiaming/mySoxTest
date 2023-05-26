@@ -204,11 +204,11 @@ bool CControlFlow::IsIn(CPoint &pt)
 		long marginY = 0;
 		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
 		{
-			marginY = 2 * (CCONNECTPOINT_Y_MARGIN - 1); // 10;
+			marginY = 2 * (CCONNECTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
 		}
 		else
 		{
-			marginX = 2 * (CCONNECTPOINT_X_MARGIN - 1); // 10;
+			marginX = 2 * (CCONNECTPOINT_POSITIVE_X_MARGIN - 1); // 10;
 		}
 	
 		CPoint marginXY = CPoint(marginX, marginY);

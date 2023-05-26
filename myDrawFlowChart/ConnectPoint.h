@@ -11,8 +11,13 @@
 
 #include "LogFile.h"
 // 余量
-#define CCONNECTPOINT_X_MARGIN            6    // X方向余量
-#define CCONNECTPOINT_Y_MARGIN            6    // Y方向余量
+#define CCONNECTPOINT_POSITIVE_X_MARGIN          (6)     // X方向余量
+#define CCONNECTPOINT_NEGATIVE_X_MARGIN          (-6)    // X方向余量
+#define CCONNECTPOINT_POSITIVE_Y_MARGIN          (6)     // Y方向余量
+#define CCONNECTPOINT_NEGATIVE_Y_MARGIN          (-6)    // Y方向余量
+
+#define CONNECTPOINT_POSITIVE_RADIUS	(3)	     // 点的绘制半径
+#define CONNECTPOINT_NEGATIVE_RADIUS	(-3)	 // 点的绘制半径
 
 class CConnectPoint : public CObject
 {

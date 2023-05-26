@@ -21,11 +21,11 @@ CArrowhead::CArrowhead()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *temp = NULL; 
+	CConnectPoint *connPoint = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		temp = new CConnectPoint();
-		m_Points.Add(temp);
+		connPoint = new CConnectPoint();
+		m_Points.Add(connPoint);
 	}
 }
 
@@ -58,11 +58,11 @@ void CArrowhead::Draw( CDC *pdc )
 
 void CArrowhead::DrawFocus( CDC *pdc )
 {	
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->Draw(pdc);
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->Draw(pdc);
 	}
 }
 
@@ -138,22 +138,22 @@ bool CArrowhead::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	int tempX = 0;
-	int tempY = 0;
+	int marginX = 0;
+	int marginY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		tempX = CCONNECTPOINT_X_MARGIN;
+		marginX = CCONNECTPOINT_X_MARGIN;
 	}
 	else
 	{
-		tempY = CCONNECTPOINT_Y_MARGIN;
+		marginY = CCONNECTPOINT_Y_MARGIN;
 	}
 	
-	CPoint temp = CPoint(tempX, tempY);
-	points[0] = m_Start - temp;
-	points[1] = m_Start + temp;
-	points[2] = m_End + temp;
-	points[3] = m_End - temp;
+	CPoint marginXY = CPoint(marginX, marginY);
+	points[0] = m_Start - marginXY;
+	points[1] = m_Start + marginXY;
+	points[2] = m_End + marginXY;
+	points[3] = m_End - marginXY;
 
 	CRgn cr;
 	BOOL bRet = cr.CreatePolygonRgn(points, 4, ALTERNATE);
@@ -175,11 +175,11 @@ bool CArrowhead::IsIn( CPoint &pt )
 bool CArrowhead::IsOn( CPoint &pt )
 {
 	bool flag = false;
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt))
 		{
 			m_AdjustPoint = i; // 1+i;
 		    flag = true;
@@ -237,13 +237,13 @@ void CArrowhead::DrawArrow( CDC *pdc )
 
 bool CArrowhead::IsOn(CConnectPoint *pt)
 {
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt->GetPoint()))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt->GetPoint()))
 		{
-			pt->SetPoint(temp->GetPoint());
+			pt->SetPoint(connPoint->GetPoint());
 		    return true;
 		}
 	}

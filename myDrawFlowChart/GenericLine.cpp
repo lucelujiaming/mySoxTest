@@ -99,22 +99,22 @@ bool CGenericLine::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[4];
-	int tempX = 0;
-	int tempY = 0;
+	int marginX = 0;
+	int marginY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		tempY = CCONNECTPOINT_X_MARGIN;
+		marginY = CCONNECTPOINT_X_MARGIN;
 	}
 	else
 	{
-		tempX = CCONNECTPOINT_Y_MARGIN;
+		marginX = CCONNECTPOINT_Y_MARGIN;
 	}
 	
-	CPoint temp = CPoint(tempX, tempY);
-	points[0] = m_Start - temp;
-	points[1] = m_Start + temp;
-	points[2] = m_End + temp;
-	points[3] = m_End - temp;
+	CPoint marginXY = CPoint(marginX, marginY);
+	points[0] = m_Start - marginXY;
+	points[1] = m_Start + marginXY;
+	points[2] = m_End + marginXY;
+	points[3] = m_End - marginXY;
 
 	CRgn cr;
 	BOOL bRet = cr.CreatePolygonRgn(points, 4, ALTERNATE);

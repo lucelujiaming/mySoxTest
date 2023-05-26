@@ -21,11 +21,11 @@ CEllipse::CEllipse()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *temp = NULL; 
+	CConnectPoint *connPoint = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-		temp = new CConnectPoint();
-		m_Points.Add(temp);
+		connPoint = new CConnectPoint();
+		m_Points.Add(connPoint);
 	}
 }
 
@@ -66,11 +66,11 @@ void CEllipse::DrawFocus( CDC *pdc )
 	pdc->SelectObject(oldpen);
 	pdc->SelectObject(oldbrush);
 
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->Draw(pdc);
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->Draw(pdc);
 	}
 }
 
@@ -160,13 +160,13 @@ bool CEllipse::IsIn( CPoint &pt )
 
 bool CEllipse::IsOn(CConnectPoint *pt)
 {
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt->GetPoint()))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt->GetPoint()))
 		{
-			pt->SetPoint(temp->GetPoint());
+			pt->SetPoint(connPoint->GetPoint());
 		    return true;
 		}
 	}
@@ -181,11 +181,11 @@ bool CEllipse::IsOn( CPoint &pt )
 	CPoint temp1 = CPoint( m_Start.x, m_End.y );
 	CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt))
 		{
 			// if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			// {

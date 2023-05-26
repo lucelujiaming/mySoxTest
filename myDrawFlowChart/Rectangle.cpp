@@ -24,11 +24,11 @@ CRectangle::CRectangle()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *temp = NULL; 
+	CConnectPoint *connPoint = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-		temp = new CConnectPoint();
-		m_Points.Add(temp);
+		connPoint = new CConnectPoint();
+		m_Points.Add(connPoint);
 	}
 }
 
@@ -70,11 +70,11 @@ void CRectangle::Draw( CDC *pdc )
 /************************************************************************/
 void CRectangle::DrawFocus( CDC *pdc )
 {
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		temp->Draw(pdc);
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint->Draw(pdc);
 	}
 }
 
@@ -198,7 +198,7 @@ bool CRectangle::IsOn( CPoint &pt )
 	// 取得图元的右上角坐标。
 	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
-	CConnectPoint *temp = NULL;
+	CConnectPoint *connPoint = NULL;
 
 //	m_objLogFile.WriteLog(_T("m_Points(0-3) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. "), 
 //		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().x, 
@@ -221,8 +221,8 @@ bool CRectangle::IsOn( CPoint &pt )
 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    temp = (CConnectPoint *)m_Points.GetAt(i);
-		if(temp->IsOn(pt))
+	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt))
 		{
 			// m_objLogFile.WriteLog("We click on the %dth CConnectPoint.\n", i);
 			// temp->IsOn(pt);

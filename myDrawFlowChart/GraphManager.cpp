@@ -188,15 +188,53 @@ bool CGraphManager::SetFocusGraphID( CPoint &pt )
 /************************************************************************/
 bool CGraphManager::IsAdjustSize( CPoint &pt )
 {
-	CGraph* temp = GetFocusGraph();
+	CGraph* tempFocus = GetFocusGraph();
 	bool flag = false;
 	
-	if(temp != NULL)
+	if(tempFocus != NULL)
 	{
 		// 当前坐标是否在图元边界。
-		if(temp->IsOn( pt ))
+		if(tempFocus->IsOn( pt ))
 		{
 			flag = true;
+
+			
+			for(int i = 0; i < GetGraphSum(); i++)
+			{
+				CGraph* temp = GetGraphAt(i);
+				// 如果当前图元对象的前图元对象是当前选中图元对象。
+				if(temp->GetPreviousGraph() == tempFocus)
+				{
+					if(temp->m_iPreviousConnPointIdx == CCONNECTPOINT_INVALID_OPTION)
+					{
+						;
+					}
+					else
+					{
+						CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
+						if(p)
+						{
+							temp->SetEndPoint(p->GetPoint());
+						}
+					}
+				}
+				// 如果当前图元对象的后图元对象是当前选中图元对象。
+				if(temp->GetNextgraph() == tempFocus)
+				{
+					if(temp->m_iNextConnPointIdx == CCONNECTPOINT_INVALID_OPTION)
+					{
+						;
+					}
+					else
+					{
+						CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
+						if(p)
+						{
+							temp->SetStartPoint(p->GetPoint());
+						}
+					}
+				}
+			}
 		}
 	}
 

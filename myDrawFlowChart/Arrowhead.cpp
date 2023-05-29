@@ -27,6 +27,8 @@ CArrowhead::CArrowhead()
 		connPoint = new CConnectPoint();
 		m_Points.Add(connPoint);
 	}
+	m_Previous = NULL;
+	m_Next = NULL;
 }
 
 CArrowhead::~CArrowhead()

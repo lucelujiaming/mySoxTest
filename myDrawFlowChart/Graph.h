@@ -77,13 +77,15 @@ public:
 
 public:
 	bool m_IsMark; // 是否标记
-	CPoint m_Start; // 开始点
-	CPoint m_End; // 结束点
 	CString m_text; // 描述文字
 	CObArray m_Points; // 该图元包含的所有连接点(CConnentPoint)
 	
 	int     m_iPreviousConnPointIdx ;
 	int     m_iNextConnPointIdx ;
+
+protected:
+	CPoint m_Start; // 开始点
+	CPoint m_End; // 结束点
 };
 
 #endif // !defined(AFX_GRAPH_H__AC673236_A970_4407_939B_BDA6723EFFF1__INCLUDED_)

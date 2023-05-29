@@ -21,6 +21,8 @@ CGraph::CGraph()
 	m_Start = CPoint(0, 0);
 	m_End = CPoint(0, 0);
 	m_IsMark = false;
+	m_iPreviousConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
+	m_iNextConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
 }
 
 CGraph::~CGraph()
@@ -69,9 +71,9 @@ bool CGraph::IsOn(CPoint &pt)
 	return false;
 }
 
-bool CGraph::IsOn(CConnectPoint *pt)
+int CGraph::IsConnectOn(CConnectPoint *pt)
 {
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 bool CGraph::IsEditable()

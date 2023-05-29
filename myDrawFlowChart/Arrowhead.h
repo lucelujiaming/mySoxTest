@@ -30,7 +30,7 @@ public:
 
 	bool IsIn(CPoint &pt);
 	bool IsOn(CPoint &pt);
-	bool IsOn(CConnectPoint *pt);
+	int  IsConnectOn(CConnectPoint *pt);
 
 	bool IsEditable();
 	bool IsControlFlow();
@@ -53,6 +53,7 @@ private:
 
 	CGraph* m_Previous;
 	CGraph* m_Next;
+
 };
 
 #endif // !defined(AFX_ARROWHEAD_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)

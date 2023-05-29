@@ -21,7 +21,7 @@ CArrowhead::CArrowhead()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *connPoint = NULL; 
+	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 		connPoint = new CConnectPoint();
@@ -38,10 +38,10 @@ void CArrowhead::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
-	CPen p, *pOldPen;     
+	CPen p, *pOldPen;
 	if(m_IsMark)
 	{
-        p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
+        p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色）
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
@@ -57,7 +57,7 @@ void CArrowhead::Draw( CDC *pdc )
 }
 
 void CArrowhead::DrawFocus( CDC *pdc )
-{	
+{
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
@@ -93,8 +93,9 @@ void CArrowhead::AdjustSize( CPoint &pt )
 
 void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);                                                       
-	if(previousGraph->IsOn(p))
+	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
+	int iConnPoint = previousGraph->IsConnectOn(p);
+	if(iConnPoint >= 0)
 	{
 		m_Previous = previousGraph;
 	}
@@ -105,8 +106,9 @@ void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 }
 void CArrowhead::SetNextgraph(CGraph *nextGraph)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(1);                                                       
-	if(nextGraph->IsOn(p))
+	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(1);
+	int iConnPoint = nextGraph->IsConnectOn(p);
+	if(iConnPoint >= 0)
 	{
 		m_Next = nextGraph;
 	}
@@ -116,11 +118,13 @@ void CArrowhead::SetNextgraph(CGraph *nextGraph)
 	}
 }
 CGraph* CArrowhead::GetPreviousGraph()
-{return m_Next;
+{
+	return m_Next;
 	//return m_Previous;
 }
 CGraph* CArrowhead::GetNextgraph()
-{return m_Previous;
+{
+	return m_Previous;
 	//return m_Next;
 }
 
@@ -148,7 +152,7 @@ bool CArrowhead::IsIn( CPoint &pt )
 	{
 		marginY = CCONNECTPOINT_POSITIVE_Y_MARGIN;
 	}
-	
+
 	CPoint marginXY = CPoint(marginX, marginY);
 	points[0] = m_Start - marginXY;
 	points[1] = m_Start + marginXY;
@@ -164,8 +168,8 @@ bool CArrowhead::IsIn( CPoint &pt )
 	}
 	else if (bRet == FALSE)
 	{
-		printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
-			points[0].x, points[0].y, points[1].x, points[1].y, 
+		printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
+			points[0].x, points[0].y, points[1].x, points[1].y,
 			points[2].x, points[2].y, points[3].x, points[3].y);
 	}
 
@@ -214,14 +218,14 @@ void CArrowhead::DrawArrow( CDC *pdc )
 	double flLength = 10;
 	double flAngle = 40;
 
-	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;   
-			
-	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);   
-	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);   
-	double fl1X = (tmpX - flEx) * cos(-flAngle/2) - (tmpY - flEy) * sin(-flAngle/2) + flEx;   
-	double fl1Y = (tmpY - flEy) * cos(-flAngle/2) + (tmpX - flEx) * sin(-flAngle/2) + flEy;   
-	double fl2X = (tmpX - flEx) * cos(flAngle/2) - (tmpY - flEy) * sin(flAngle/2) + flEx;   
-	double fl2Y = (tmpY - flEy) * cos(flAngle/2) + (tmpX - flEx) * sin(flAngle/2) + flEy;   
+	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;
+
+	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);
+	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);
+	double fl1X = (tmpX - flEx) * cos(-flAngle/2) - (tmpY - flEy) * sin(-flAngle/2) + flEx;
+	double fl1Y = (tmpY - flEy) * cos(-flAngle/2) + (tmpX - flEx) * sin(-flAngle/2) + flEy;
+	double fl2X = (tmpX - flEx) * cos(flAngle/2) - (tmpY - flEy) * sin(flAngle/2) + flEx;
+	double fl2Y = (tmpY - flEy) * cos(flAngle/2) + (tmpX - flEx) * sin(flAngle/2) + flEy;
 	CPoint aPoint((int)fl1X, (int)fl1Y);
 	CPoint bPoint((int)fl2X, (int)fl2Y);
 	CPoint points[]={aPoint, bPoint, m_End};
@@ -235,7 +239,7 @@ void CArrowhead::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-bool CArrowhead::IsOn(CConnectPoint *pt)
+int CArrowhead::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
@@ -244,10 +248,10 @@ bool CArrowhead::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return true;
+		    return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 void CArrowhead::AdjustFocusPoint()

@@ -24,11 +24,13 @@ CControlFlow::CControlFlow()
 	m_Points.Add(p);
 
 	m_IsCreateEnd = false;
-
 	m_IsMark = false;
 
 	m_Previous = NULL;
 	m_Next = NULL;
+
+	m_Start = CPoint(0, 0);
+	m_End = CPoint(0, 0);
 }
 
 CControlFlow::~CControlFlow()
@@ -98,6 +100,14 @@ void CControlFlow::AdjustSize(CPoint &pt)
 	}
 }
 
+void CControlFlow::SetStartPoint(CPoint &pt)
+{
+	if(m_Points.GetSize() <= 0) return;
+
+	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	p->SetPoint(pt);
+}
+
 void CControlFlow::SetEndPoint(CPoint &pt)
 {
 	CConnectPoint *p;
@@ -119,18 +129,11 @@ void CControlFlow::GetStartPoint(CPoint &pt)
 	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 	pt = p->GetPoint();
 }
+
 void CControlFlow::GetEndPoint(CPoint &pt)
 {
 	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
 	pt = p->GetPoint();
-}
-
-void CControlFlow::SetStartPoint(CPoint &pt)
-{
-	if(m_Points.GetSize() <= 0) return;
-
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	p->SetPoint(pt);
 }
 
 void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
@@ -151,6 +154,7 @@ void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
 		}
 	}
 }
+
 void CControlFlow::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
@@ -169,13 +173,25 @@ void CControlFlow::SetNextgraph(CGraph *nextGraph)
 		}
 	}
 }
+
 CGraph* CControlFlow::GetPreviousGraph()
 {
 	return m_Previous;
 }
+
 CGraph* CControlFlow::GetNextgraph()
 {
 	return m_Next;
+}
+
+bool CControlFlow::IsEditable()
+{
+	return false;
+}
+
+bool CControlFlow::IsControlFlow()
+{
+	return true;
 }
 
 bool CControlFlow::IsIn(CPoint &pt)
@@ -188,11 +204,11 @@ bool CControlFlow::IsIn(CPoint &pt)
 		m_Points.RemoveAt(m_Points.GetSize()-1);
 		delete connPoint;
 		m_IsCreateEnd = true;
-
+		// m_Start和m_End对于这项来说，好像没有用。
 		connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-		m_Start = connPoint->GetPoint();
+		// m_Start = connPoint->GetPoint();
 		connPoint = (CConnectPoint*)m_Points.GetAt(0);
-		m_End = connPoint->GetPoint();
+		// m_End = connPoint->GetPoint();
 	}
 
 	bool flag = false;
@@ -226,6 +242,7 @@ bool CControlFlow::IsIn(CPoint &pt)
 		if(bRet && cr.PtInRegion(pt))
 		{
 			flag = true;
+			break;
 		}
 		else if (bRet == FALSE)
 		{
@@ -252,16 +269,6 @@ bool CControlFlow::IsOn(CPoint &pt)
 
 	m_FocusPoint = -1;
 	return false;
-}
-
-bool CControlFlow::IsEditable()
-{
-	return false;
-}
-
-bool CControlFlow::IsControlFlow()
-{
-	return true;
 }
 
 double CControlFlow::GetDistance(int x1, int y1, int x2,int y2)

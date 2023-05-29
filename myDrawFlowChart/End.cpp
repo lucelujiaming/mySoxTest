@@ -127,7 +127,7 @@ bool CEnd::IsIn(CPoint &pt)
 /************************************************************************/
 /* 功能： 判断是否在图元边界上。                                        */
 /************************************************************************/
-bool CEnd::IsOn(CConnectPoint *pt)
+int CEnd::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -136,10 +136,10 @@ bool CEnd::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return true;
+		    return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 /************************************************************************/

@@ -43,7 +43,7 @@ public:
 
 	// 是否在该图元边界上
 	virtual bool IsOn(CPoint &pt);
-	virtual bool IsOn(CConnectPoint *pt);
+	virtual int  IsConnectOn(CConnectPoint *pt);
 
 	// 是否被选中
 	virtual bool IsSelected(CPoint &pt);
@@ -81,6 +81,9 @@ public:
 	CPoint m_End; // 结束点
 	CString m_text; // 描述文字
 	CObArray m_Points; // 该图元包含的所有连接点(CConnentPoint)
+	
+	int     m_iPreviousConnPointIdx ;
+	int     m_iNextConnPointIdx ;
 };
 
 #endif // !defined(AFX_GRAPH_H__AC673236_A970_4407_939B_BDA6723EFFF1__INCLUDED_)

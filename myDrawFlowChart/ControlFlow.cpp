@@ -45,11 +45,11 @@ void CControlFlow::Draw( CDC *pdc )
 	{
 		pdc->MoveTo(p->GetPoint());
 	}
-	
-	CPen pe, *pOldPen;     
+
+	CPen pe, *pOldPen;
 	if(m_IsMark)
 	{
-        pe.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
+        pe.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色）
         pOldPen=pdc-> SelectObject(&pe);     //把画笔选入DC，并保存原来画笔
 	}
 
@@ -137,10 +137,13 @@ void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);                                                       
-		if(previousGraph->IsOn(p))
+		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
+		// m_iPreviousConnPointIdx = -1;
+		int iConnPoint =  previousGraph->IsConnectOn(p);
+		if(iConnPoint >= 0)
 		{
 			m_Previous = previousGraph;
+			m_iPreviousConnPointIdx = iConnPoint;
 		}
 		else if(m_Previous == previousGraph)
 		{
@@ -152,10 +155,13 @@ void CControlFlow::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);                                                       
-		if(nextGraph->IsOn(p))
+		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		// m_iNextConnPointIdx = -1;
+		int iConnPoint =  nextGraph->IsConnectOn(p);
+		if(iConnPoint >= 0)
 		{
 			m_Next = nextGraph;
+			m_iNextConnPointIdx = iConnPoint;
 		}
 		else if(m_Next == nextGraph)
 		{
@@ -175,7 +181,7 @@ CGraph* CControlFlow::GetNextgraph()
 bool CControlFlow::IsIn(CPoint &pt)
 {
 	if(m_Points.GetSize() < 1) return false;
-	
+
 	if(!m_IsCreateEnd)
 	{
 		CConnectPoint *connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
@@ -210,7 +216,7 @@ bool CControlFlow::IsIn(CPoint &pt)
 		{
 			marginX = 2 * (CCONNECTPOINT_POSITIVE_X_MARGIN - 1); // 10;
 		}
-	
+
 		CPoint marginXY = CPoint(marginX, marginY);
 		tempPs[0] = tempStart - marginXY;
 		tempPs[1] = tempStart + marginXY;
@@ -223,8 +229,8 @@ bool CControlFlow::IsIn(CPoint &pt)
 		}
 		else if (bRet == FALSE)
 		{
-			printf("tempPs = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}", 
-				tempPs[0].x, tempPs[0].y, tempPs[1].x, tempPs[1].y, 
+			printf("tempPs = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
+				tempPs[0].x, tempPs[0].y, tempPs[1].x, tempPs[1].y,
 				tempPs[2].x, tempPs[2].y, tempPs[3].x, tempPs[3].y);
 		}
 	}
@@ -281,14 +287,14 @@ void CControlFlow::DrawArrow( CDC *pdc )
 	double flLength = 10;
 	double flAngle = 40;
 
-	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;   
-			
-	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);   
-	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);   
-	double fl1X = (tmpX - flEx) * cos(-flAngle/2) - (tmpY - flEy) * sin(-flAngle/2) + flEx;   
-	double fl1Y = (tmpY - flEy) * cos(-flAngle/2) + (tmpX - flEx) * sin(-flAngle/2) + flEy;   
-	double fl2X = (tmpX - flEx) * cos(flAngle/2) - (tmpY - flEy) * sin(flAngle/2) + flEx;   
-	double fl2Y = (tmpY - flEy) * cos(flAngle/2) + (tmpX - flEx) * sin(flAngle/2) + flEy;   
+	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;
+
+	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);
+	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);
+	double fl1X = (tmpX - flEx) * cos(-flAngle/2) - (tmpY - flEy) * sin(-flAngle/2) + flEx;
+	double fl1Y = (tmpY - flEy) * cos(-flAngle/2) + (tmpX - flEx) * sin(-flAngle/2) + flEy;
+	double fl2X = (tmpX - flEx) * cos(flAngle/2) - (tmpY - flEy) * sin(flAngle/2) + flEx;
+	double fl2Y = (tmpY - flEy) * cos(flAngle/2) + (tmpX - flEx) * sin(flAngle/2) + flEy;
 	CPoint aPoint((int)fl1X, (int)fl1Y);
 	CPoint bPoint((int)fl2X, (int)fl2Y);
 	CPoint points[]={aPoint, bPoint, End};

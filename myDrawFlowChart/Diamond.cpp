@@ -175,7 +175,7 @@ bool CDiamond::IsIn( CPoint &pt )
 	return flag;
 }
 
-bool CDiamond::IsOn(CConnectPoint *pt)
+int CDiamond::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -184,10 +184,10 @@ bool CDiamond::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-			return true;
+			return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 bool CDiamond::IsOn( CPoint &pt )

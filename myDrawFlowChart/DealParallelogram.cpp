@@ -216,7 +216,7 @@ bool CDealParallelogram::IsOn( CPoint &pt )
 	return flag;
 }
 
-bool CDealParallelogram::IsOn(CConnectPoint *pt)
+int CDealParallelogram::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -225,10 +225,10 @@ bool CDealParallelogram::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-			return true;
+			return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 void CDealParallelogram::AdjustStartAndEnd()

@@ -170,7 +170,7 @@ bool CRectangle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-bool CRectangle::IsOn(CConnectPoint *pt)
+int CRectangle::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -179,10 +179,10 @@ bool CRectangle::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return true;
+		    return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 /************************************************************************/

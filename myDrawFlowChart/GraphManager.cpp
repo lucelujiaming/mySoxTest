@@ -230,18 +230,40 @@ void CGraphManager::Move(int cx, int cy)
 			// 如果当前图元对象的前图元对象是当前选中图元对象。
 			if(temp->GetPreviousGraph() == tempFocus)
 			{
-				// 跟随调整这条连线。
-				CPoint tempPoint;
-				temp->GetEndPoint(tempPoint);
-				temp->SetEndPoint(tempPoint + CPoint(cx, cy));
+				if(temp->m_iPreviousConnPointIdx == CCONNECTPOINT_INVALID_OPTION)
+				{
+					// 跟随调整这条连线。
+					CPoint tempPoint;
+					temp->GetEndPoint(tempPoint);
+					temp->SetEndPoint(tempPoint + CPoint(cx, cy));
+				}
+				else
+				{
+					CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
+					if(p)
+					{
+						temp->SetEndPoint(p->GetPoint());
+					}
+				}
 			}
 			// 如果当前图元对象的后图元对象是当前选中图元对象。
 			if(temp->GetNextgraph() == tempFocus)
 			{
-				// 跟随调整这条连线。
-				CPoint tempPoint;
-				temp->GetStartPoint(tempPoint);
-				temp->SetStartPoint(tempPoint + CPoint(cx, cy));
+				if(temp->m_iNextConnPointIdx == CCONNECTPOINT_INVALID_OPTION)
+				{
+					// 跟随调整这条连线。
+					CPoint tempPoint;
+					temp->GetStartPoint(tempPoint);
+					temp->SetStartPoint(tempPoint + CPoint(cx, cy));
+				}
+				else
+				{
+					CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
+					if(p)
+					{
+						temp->SetStartPoint(p->GetPoint());
+					}
+				}
 			}
 		}
 	}

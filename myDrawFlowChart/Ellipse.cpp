@@ -158,7 +158,7 @@ bool CEllipse::IsIn( CPoint &pt )
 	return flag;
 }
 
-bool CEllipse::IsOn(CConnectPoint *pt)
+int CEllipse::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -167,10 +167,10 @@ bool CEllipse::IsOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return true;
+		    return i;
 		}
 	}
-	return false;
+	return CCONNECTPOINT_INVALID_OPTION;
 }
 
 bool CEllipse::IsOn( CPoint &pt )

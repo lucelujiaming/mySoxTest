@@ -32,7 +32,7 @@ public:
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );
-	bool IsOn(CConnectPoint *pt);
+	int  IsConnectOn(CConnectPoint *pt);
 
 	int GetAdjustPoint();
 

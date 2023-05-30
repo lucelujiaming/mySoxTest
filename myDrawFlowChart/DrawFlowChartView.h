@@ -76,6 +76,7 @@ protected:
 	afx_msg void OnCreateDealParallelogram();
 	afx_msg void OnCreateGenericLine();
 	afx_msg void OnCreateArrowhead();
+	afx_msg void OnCreatePolygonalLine();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnCreateControlFlow();
@@ -88,6 +89,7 @@ protected:
 	afx_msg void OnToolbarEnd();
 	afx_msg void OnToolbarFlowcontrol();
 	afx_msg void OnToolbarArrowHead();
+	afx_msg void OnToolbarPolygonalLine();
 	afx_msg void OnToolbarGenericLine();
 	afx_msg void OnToolbarJudge();
 	afx_msg void OnToolbarEllipse();

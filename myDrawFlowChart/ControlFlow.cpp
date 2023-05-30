@@ -19,9 +19,9 @@ IMPLEMENT_SERIAL(CControlFlow, CObject, 1)
 
 CControlFlow::CControlFlow()
 {
-	CConnectPoint *p = new CConnectPoint();
-	p->SetPoint(CPoint(0, 0));
-	m_Points.Add(p);
+	CConnectPoint *pStart = new CConnectPoint();
+	pStart->SetPoint(CPoint(0, 0));
+	m_Points.Add(pStart);
 
 	m_IsCreateEnd = false;
 	m_IsMark = false;
@@ -38,14 +38,31 @@ CControlFlow::~CControlFlow()
 
 }
 
+void CControlFlow::printAllPoints(CString strCaption)
+{
+	CString strStatusBar;
+	CString strPoint;
+	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.GetSize());
+	for(int i = 0; i < m_Points.GetSize(); i++)
+	{
+		CConnectPoint *pNext = (CConnectPoint*)m_Points.GetAt(i);
+		
+		strPoint.Format(_T("(%d - [%d, %d]), "), i, pNext->GetPoint().x, pNext->GetPoint().y);
+		strStatusBar += strPoint;
+	}
+	strStatusBar += "\r\n";
+	TRACE(strStatusBar);
+}
+
 void CControlFlow::Draw( CDC *pdc )
 {
 	if(m_Points.GetSize() < 2) return;
 
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
-	if(p != NULL)
+	// printAllPoints("CControlFlow::Draw");
+	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
+	if(pStart != NULL)
 	{
-		pdc->MoveTo(p->GetPoint());
+		pdc->MoveTo(pStart->GetPoint());
 	}
 
 	CPen pe, *pOldPen;
@@ -57,8 +74,8 @@ void CControlFlow::Draw( CDC *pdc )
 
 	for(int i = 1; i < m_Points.GetSize(); i++)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(i);
-		pdc->LineTo(p->GetPoint());
+		CConnectPoint *pNext = (CConnectPoint*)m_Points.GetAt(i);
+		pdc->LineTo(pNext->GetPoint());
 	}
 
 	if(m_IsMark)
@@ -73,11 +90,12 @@ void CControlFlow::DrawFocus(CDC *pdc)
 {
 	if(m_Points.GetSize() < 2) return;
 
+	// printAllPoints("CControlFlow::DrawFocus");
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(i);
-		if(i == 0 || i == m_Points.GetSize()-1) p->SetType(false);
-		p->Draw(pdc);
+		CConnectPoint *pConnPoint = (CConnectPoint*)m_Points.GetAt(i);
+		if(i == 0 || i == m_Points.GetSize()-1) pConnPoint->SetType(false);
+		pConnPoint->Draw(pdc);
 	}
 }
 
@@ -85,64 +103,89 @@ void CControlFlow::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(i);
-		CPoint temp = p->GetPoint() + CPoint(cx, cy);
-		p->SetPoint(temp);
+		CConnectPoint *pConnPoint = (CConnectPoint*)m_Points.GetAt(i);
+		CPoint temp = pConnPoint->GetPoint() + CPoint(cx, cy);
+		pConnPoint->SetPoint(temp);
 	}
 }
 
 void CControlFlow::AdjustSize(CPoint &pt)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_FocusPoint);
-	if(p != NULL)
+	CConnectPoint *pFocusConnPoint = (CConnectPoint*)m_Points.GetAt(m_FocusPoint);
+	if(pFocusConnPoint != NULL)
 	{
-		p->SetPoint(pt);
+		pFocusConnPoint->SetPoint(pt);
 	}
+	// printAllPoints("CControlFlow::AdjustSize");
 }
 
 void CControlFlow::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.GetSize() <= 0) return;
 
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	p->SetPoint(pt);
+	// CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
+	pStart->SetPoint(pt);
+	// printAllPoints("CControlFlow::SetStartPoint");
 }
 
 void CControlFlow::SetEndPoint(CPoint &pt)
 {
-	CConnectPoint *p;
+	CConnectPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
-		p = new CConnectPoint();
-		p->SetPoint(pt);
-		m_Points.InsertAt(m_Points.GetSize()-1, p);
+		pNewPoint = new CConnectPoint();
+		pNewPoint->SetPoint(pt);
+		if(m_Points.GetSize() == 0)
+		{
+			m_Points.InsertAt(0, pNewPoint);
+		}
+		else if(m_Points.GetSize() > 0)
+		{
+			m_Points.InsertAt(m_Points.GetSize()-1, pNewPoint);
+		}
+		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd)");
 	}
 	else
 	{
-		p = (CConnectPoint*)m_Points.GetAt(0);
-		p->SetPoint(pt);
+		// p = (CConnectPoint*)m_Points.GetAt(0);
+		pNewPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		pNewPoint->SetPoint(pt);
+		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd)");
 	}
+}
+
+
+void CControlFlow::SetLastPoint( CPoint &pt )
+{
+	CConnectPoint *pLast;
+	pLast = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	pLast->SetPoint(pt);
+	// printAllPoints("CControlFlow::SetLastPoint");
+
 }
 
 void CControlFlow::GetStartPoint(CPoint &pt)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	pt = p->GetPoint();
+	// CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
+	pt = pStart->GetPoint();
 }
 
 void CControlFlow::GetEndPoint(CPoint &pt)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
-	pt = p->GetPoint();
+	// CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(0);
+	CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	pt = pEnd->GetPoint();
 }
 
 void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
+		CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
 		// m_iPreviousConnPointIdx = -1;
-		int iConnPoint =  previousGraph->IsConnectOn(p);
+		int iConnPoint =  previousGraph->IsConnectOn(pStart);
 		if(iConnPoint >= 0)
 		{
 			m_Previous = previousGraph;
@@ -159,9 +202,9 @@ void CControlFlow::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 		// m_iNextConnPointIdx = -1;
-		int iConnPoint =  nextGraph->IsConnectOn(p);
+		int iConnPoint =  nextGraph->IsConnectOn(pEnd);
 		if(iConnPoint >= 0)
 		{
 			m_Next = nextGraph;
@@ -204,12 +247,13 @@ bool CControlFlow::IsIn(CPoint &pt)
 		m_Points.RemoveAt(m_Points.GetSize()-1);
 		delete connPoint;
 		m_IsCreateEnd = true;
-		// m_Start和m_End对于这项来说，好像没有用。
+		// m_Start和m_End对于折线来说，好像没有用。
 		connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 		// m_Start = connPoint->GetPoint();
 		connPoint = (CConnectPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
+	// printAllPoints("CControlFlow::IsIn");
 
 	bool flag = false;
 	CPoint tempPs[4];
@@ -217,10 +261,10 @@ bool CControlFlow::IsIn(CPoint &pt)
 	{
 		CRgn cr;
 
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(i);
-		CPoint tempStart = p->GetPoint();
-		p = (CConnectPoint*)m_Points.GetAt(i+1);
-		CPoint tempEnd = p->GetPoint();
+		CConnectPoint *pConnPoint = (CConnectPoint*)m_Points.GetAt(i);
+		CPoint tempStart = pConnPoint->GetPoint();
+		pConnPoint = (CConnectPoint*)m_Points.GetAt(i+1);
+		CPoint tempEnd = pConnPoint->GetPoint();
 
 		long marginX = 0;
 		long marginY = 0;
@@ -259,15 +303,15 @@ bool CControlFlow::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-		CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(i);
-		if(p->IsOn(pt))
+		CConnectPoint *pConnPoint = (CConnectPoint*)m_Points.GetAt(i);
+		if(pConnPoint->IsOn(pt))
 		{
 			m_FocusPoint = i;
 			return true;
 		}
 	}
 
-	m_FocusPoint = -1;
+	m_FocusPoint = CCONNECTPOINT_INVALID_OPTION;
 	return false;
 }
 
@@ -283,18 +327,25 @@ double CControlFlow::GetDistance(int x1, int y1, int x2,int y2)
 
 void CControlFlow::DrawArrow( CDC *pdc )
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-2);
-	CPoint Start = p->GetPoint();
+	if(m_Points.GetSize() < 2) return;
+
+	CConnectPoint *pArrowPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-2);
+	CPoint Start = pArrowPoint->GetPoint();
 	int flSx = Start.x;
 	int flSy = Start.y;
-	p = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	CPoint End = p->GetPoint();
+	pArrowPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	CPoint End = pArrowPoint->GetPoint();
 	int flEx = End.x;
 	int flEy = End.y;
 	double flLength = 10;
 	double flAngle = 40;
 
-	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;
+	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
+	{
+		// return;
+		flEx = flSx + 3;
+		flEy = flSy + 3;
+	}
 
 	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);
 	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);

@@ -24,6 +24,7 @@ public:
 	CGraph* CreateControlFlow();		// NotNeed
 	CGraph* CreateLine();				// NotNeed
 	CGraph* CreateArrowLine();			// NotNeed
+	CGraph* CreatePolygonalLine();		// NotNeed
 	CGraph* CreateEllipse();			// Adjusted
 	CGraph* CreateStart();				// NotNeed
 	CGraph* CreateEnd();				// NotNeed

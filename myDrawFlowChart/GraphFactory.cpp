@@ -12,6 +12,7 @@
 #include "DealParallelogram.h"
 #include "GenericLine.h"
 #include "Arrowhead.h"
+#include "PolygonalLine.h"
 #include "ControlFlow.h"
 #include "Start.h"
 #include "End.h"
@@ -64,6 +65,11 @@ CGraph* CGraphFactory::CreateLine()
 CGraph* CGraphFactory::CreateArrowLine()
 {
 	return new CArrowhead();
+}
+
+CGraph* CGraphFactory::CreatePolygonalLine()
+{
+	return new CPolygonalLine();
 }
 
 CGraph* CGraphFactory::CreateEllipse()

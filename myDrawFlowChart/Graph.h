@@ -27,6 +27,12 @@
 #define CCONNECTPOINT_LINE_END            1    // 终点
 #define CCONNECTPOINT_LINE_MAX            2
 
+#define CCONNECTPOINT_POLYGONALLINE_START          0    // 起点
+#define CCONNECTPOINT_POLYGONALLINE_MIDDLE         1    // 中间点
+#define CCONNECTPOINT_POLYGONALLINE_END            2    // 终点
+#define CCONNECTPOINT_POLYGONALLINE_MAX			   3
+
+
 class CGraph : public CObject
 {
 public:

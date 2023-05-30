@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_PARALLELOGRAM, OnCreateDealParallelogram)
 	ON_COMMAND(ID_GENERICLINE, OnCreateGenericLine)
 	ON_COMMAND(ID_ARROWHEAD, OnCreateArrowhead)
+	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE, OnCreatePolygonalLine)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_KEYDOWN()
 	ON_COMMAND(ID_CONTROLFLOW, OnCreateControlFlow)
@@ -43,6 +44,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_END, OnToolbarEnd)
 	ON_COMMAND(ID_TOOLBAR_FLOWCONTROL, OnToolbarFlowcontrol)
 	ON_COMMAND(ID_TOOLBAR_ARROWHEAD,   OnToolbarArrowHead)
+	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
 	ON_COMMAND(ID_TOOLBAR_JUDGE, OnToolbarJudge)
 	ON_COMMAND(ID_TOOLBAR_ELLIPSE, OnToolbarEllipse)
@@ -239,7 +241,10 @@ void CDrawFlowChartView::OnLButtonUp(UINT nFlags, CPoint point)
 				if(!m_IsControlFlow)
 				{
 					CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-					temp->SetEndPoint( point );
+					if(temp)
+					{
+						temp->SetEndPoint( point );
+					}
 				}
 				break;
 			}
@@ -345,6 +350,152 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 	CView::OnMouseMove(nFlags, point);
 }
 
+
+void CDrawFlowChartView::OnLButtonDblClk(UINT nFlags, CPoint point) 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your message handler code here and/or call default
+
+	pDoc->m_GraphManager.SetFocusGraphID(point);
+
+	CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+	m_FocusGraph = focusGraph;
+	if(focusGraph != NULL && focusGraph->IsEditable())
+	{
+		m_LDoubleBtnSignal = true;
+		CPoint focusGraphStart, focusGraphEnd;
+		focusGraph->GetStartPoint(focusGraphStart);
+		focusGraph->GetEndPoint(focusGraphEnd);
+		CRect rect = CRect(focusGraphStart + CPoint(12, 12), focusGraphEnd + CPoint(-12, -12));
+		m_pEdit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rect, this, 1);
+		CString strCaption;
+		focusGraph->GetText(strCaption);
+		SetDlgItemText(1, strCaption);
+	}
+
+	if(m_OperateType == CREATE)
+	{
+		m_IsControlFlow = false;
+		m_OperateType = SELECT;
+	}
+	CView::OnLButtonDblClk(nFlags, point);
+}
+
+void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your message handler code here and/or call default
+	switch(nChar)
+	{
+	    case VK_DELETE:
+			{
+				pDoc->m_GraphManager.DeleteFocusGraph();
+				Invalidate();
+				break;
+			}
+	}
+
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CDrawFlowChartView::OnGetMap()  
+{  
+    CDC* pDC = GetWindowDC();  
+    CBitmap bitmap;  
+    CDC memDC ;  
+    CRect rect;  
+    GetWindowRect(rect);  
+    memDC.CreateCompatibleDC(pDC);  
+  
+    bitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());  
+    memDC.SelectObject(&bitmap);  
+    memDC.BitBlt(0,0,rect.Width(),rect.Height(),pDC,0,0,SRCCOPY);  
+  
+    CFileDialog fDlg(FALSE,_T("bmp"),NULL,OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,_T("*.bmp"),this);  
+    if (fDlg.DoModal()==IDOK)  
+    {  
+  
+        CString bmpfile = fDlg.GetPathName();  
+  
+        CFile file(bmpfile,CFile::modeCreate|CFile::modeWrite);  
+          
+        BITMAP bInfo;  
+        bitmap.GetBitmap(&bInfo);  
+  
+        //计算调色板大小  
+        int panelsize = 0;  
+        if (bInfo.bmBitsPixel<24) //非真彩色  
+        {  
+            panelsize = (int)pow((double)2, bInfo.bmBitsPixel) * sizeof(RGBQUAD);  
+        }  
+  
+        //定义位图信息  
+        BITMAPINFO*  bMapInfo = (BITMAPINFO*)LocalAlloc(LPTR,sizeof(BITMAPINFO)+panelsize);  
+        bMapInfo->bmiHeader.biBitCount = bInfo.bmBitsPixel;  
+        bMapInfo->bmiHeader.biClrImportant = 0;  
+        bMapInfo->bmiHeader.biCompression = 0;  
+        bMapInfo->bmiHeader.biHeight = bInfo.bmHeight;  
+        bMapInfo->bmiHeader.biPlanes = bInfo.bmPlanes;  
+        bMapInfo->bmiHeader.biSize = sizeof(BITMAPINFO);  
+        bMapInfo->bmiHeader.biSizeImage = bInfo.bmHeight*bInfo.bmWidthBytes;  
+        bMapInfo->bmiHeader.biWidth = bInfo.bmWidth;  
+        bMapInfo->bmiHeader.biXPelsPerMeter = 0;  
+        bMapInfo->bmiHeader.biYPelsPerMeter = 0;  
+  
+        //获取位图的实际数据  
+        char* pData = new char[bMapInfo->bmiHeader.biSizeImage];  
+        int len = GetDIBits(pDC->m_hDC,bitmap,0,bInfo.bmHeight,pData,bMapInfo,DIB_RGB_COLORS);  
+  
+        BITMAPFILEHEADER bFileHeader;  
+        bFileHeader.bfType = 0x4D42;  
+        bFileHeader.bfReserved1 = 0;  
+        bFileHeader.bfReserved2 = 0;  
+        bFileHeader.bfSize = sizeof(BITMAPFILEHEADER);   
+        bFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+panelsize;  
+          
+        //向文件中写入位图数据  
+        file.Write(&bFileHeader,sizeof(BITMAPFILEHEADER));  
+        file.Write(&bMapInfo->bmiHeader,sizeof(BITMAPINFOHEADER));  
+        file.Write(pData,bMapInfo->bmiHeader.biSizeImage+panelsize);  
+        file.Close();  
+        delete pData;  
+        LocalFree(bMapInfo);  
+    }  
+    bitmap.DeleteObject();  
+    memDC.DeleteDC();   
+}  
+
+void CDrawFlowChartView::OnSaveBmp() 
+{
+	// TODO: Add your command handler code here
+	OnGetMap();
+}
+
+void CDrawFlowChartView::OnSearchPath() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	int temp = pDoc->m_GraphManager.SearchPath();
+	CString str;
+	str.Format("目前发现 %d 条路径", temp);  
+	MessageBox(str);
+}
+
+void CDrawFlowChartView::OnMarkPath() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.MarkPath();
+	Invalidate();
+}
+
+void CDrawFlowChartView::OnStopMark() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.CancelMarkPath();
+	Invalidate();
+}
 
 /**
 *   鼠标有以下几种操作
@@ -463,51 +614,22 @@ void CDrawFlowChartView::OnCreateArrowhead()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArrowLine());
 }
 
-void CDrawFlowChartView::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CDrawFlowChartView::OnCreatePolygonalLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
-	// TODO: Add your message handler code here and/or call default
-
-	pDoc->m_GraphManager.SetFocusGraphID(point);
-
-	CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-	m_FocusGraph = temp;
-	if(temp != NULL && temp->IsEditable())
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
 	{
-		m_LDoubleBtnSignal = true;
-		CPoint temp1, temp2;
-		temp->GetStartPoint(temp1);
-		temp->GetEndPoint(temp2);
-		CRect rect = CRect(temp1 + CPoint(12, 12), temp2 + CPoint(-12, -12));
-		m_pEdit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rect, this, 1);
-		CString str;
-		temp->GetText(str);
-		SetDlgItemText(1, str);
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
 	}
 
-	if(m_OperateType == CREATE)
-	{
-		m_IsControlFlow = false;
-		m_OperateType = SELECT;
-	}
-	CView::OnLButtonDblClk(nFlags, point);
-}
-
-void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
-{
-	CDrawFlowChartDoc* pDoc = GetDocument();
-	// TODO: Add your message handler code here and/or call default
-	switch(nChar)
-	{
-	    case VK_DELETE:
-			{
-				pDoc->m_GraphManager.DeleteFocusGraph();
-				Invalidate();
-				break;
-			}
-	}
-
-	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+	m_IsControlFlow = false;
+	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
+	// pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArrowLine());
 }
 
 void CDrawFlowChartView::OnCreateControlFlow() 
@@ -544,105 +666,6 @@ void CDrawFlowChartView::OnCreateEnd()
 	Invalidate();
 }
 
-void CDrawFlowChartView::OnGetMap()  
-{  
-    CDC* pDC = GetWindowDC();  
-    CBitmap bitmap;  
-    CDC memDC ;  
-    CRect rect;  
-    GetWindowRect(rect);  
-    memDC.CreateCompatibleDC(pDC);  
-  
-    bitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());  
-    memDC.SelectObject(&bitmap);  
-    memDC.BitBlt(0,0,rect.Width(),rect.Height(),pDC,0,0,SRCCOPY);  
-  
-    CFileDialog fDlg(FALSE,_T("bmp"),NULL,OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,_T("*.bmp"),this);  
-    if (fDlg.DoModal()==IDOK)  
-    {  
-  
-        CString bmpfile = fDlg.GetPathName();  
-  
-        CFile file(bmpfile,CFile::modeCreate|CFile::modeWrite);  
-          
-        BITMAP bInfo;  
-        bitmap.GetBitmap(&bInfo);  
-  
-        //计算调色板大小  
-        int panelsize = 0;  
-        if (bInfo.bmBitsPixel<24) //非真彩色  
-        {  
-            panelsize = (int)pow((double)2, bInfo.bmBitsPixel) * sizeof(RGBQUAD);  
-        }  
-  
-        //定义位图信息  
-        BITMAPINFO*  bMapInfo = (BITMAPINFO*)LocalAlloc(LPTR,sizeof(BITMAPINFO)+panelsize);  
-        bMapInfo->bmiHeader.biBitCount = bInfo.bmBitsPixel;  
-        bMapInfo->bmiHeader.biClrImportant = 0;  
-        bMapInfo->bmiHeader.biCompression = 0;  
-        bMapInfo->bmiHeader.biHeight = bInfo.bmHeight;  
-        bMapInfo->bmiHeader.biPlanes = bInfo.bmPlanes;  
-        bMapInfo->bmiHeader.biSize = sizeof(BITMAPINFO);  
-        bMapInfo->bmiHeader.biSizeImage = bInfo.bmHeight*bInfo.bmWidthBytes;  
-        bMapInfo->bmiHeader.biWidth = bInfo.bmWidth;  
-        bMapInfo->bmiHeader.biXPelsPerMeter = 0;  
-        bMapInfo->bmiHeader.biYPelsPerMeter = 0;  
-  
-        //获取位图的实际数据  
-        char* pData = new char[bMapInfo->bmiHeader.biSizeImage];  
-        int len = GetDIBits(pDC->m_hDC,bitmap,0,bInfo.bmHeight,pData,bMapInfo,DIB_RGB_COLORS);  
-  
-        BITMAPFILEHEADER bFileHeader;  
-        bFileHeader.bfType = 0x4D42;  
-        bFileHeader.bfReserved1 = 0;  
-        bFileHeader.bfReserved2 = 0;  
-        bFileHeader.bfSize = sizeof(BITMAPFILEHEADER);   
-        bFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+panelsize;  
-          
-        //向文件中写入位图数据  
-        file.Write(&bFileHeader,sizeof(BITMAPFILEHEADER));  
-        file.Write(&bMapInfo->bmiHeader,sizeof(BITMAPINFOHEADER));  
-        file.Write(pData,bMapInfo->bmiHeader.biSizeImage+panelsize);  
-        file.Close();  
-        delete pData;  
-        LocalFree(bMapInfo);  
-    }  
-    bitmap.DeleteObject();  
-    memDC.DeleteDC();   
-}  
-
-void CDrawFlowChartView::OnSaveBmp() 
-{
-	// TODO: Add your command handler code here
-	OnGetMap();
-}
-
-void CDrawFlowChartView::OnSearchPath() 
-{
-	CDrawFlowChartDoc* pDoc = GetDocument();
-	// TODO: Add your command handler code here
-	int temp = pDoc->m_GraphManager.SearchPath();
-	CString str;
-	str.Format("目前发现 %d 条路径", temp);  
-	MessageBox(str);
-}
-
-void CDrawFlowChartView::OnMarkPath() 
-{
-	CDrawFlowChartDoc* pDoc = GetDocument();
-	// TODO: Add your command handler code here
-	pDoc->m_GraphManager.MarkPath();
-	Invalidate();
-}
-
-void CDrawFlowChartView::OnStopMark() 
-{
-	CDrawFlowChartDoc* pDoc = GetDocument();
-	// TODO: Add your command handler code here
-	pDoc->m_GraphManager.CancelMarkPath();
-	Invalidate();
-}
-
 void CDrawFlowChartView::OnToolbarEnd() 
 {
 	// TODO: Add your command handler code here
@@ -659,6 +682,12 @@ void CDrawFlowChartView::OnToolbarArrowHead()
 {
 	// TODO: Add your command handler code here
 	OnCreateArrowhead();
+}
+
+void CDrawFlowChartView::OnToolbarPolygonalLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreatePolygonalLine();
 }
 
 void CDrawFlowChartView::OnToolbarGenericLine() 

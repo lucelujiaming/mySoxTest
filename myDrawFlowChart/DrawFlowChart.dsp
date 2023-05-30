@@ -166,6 +166,10 @@ SOURCE=.\PathManager.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PolygonalLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Rectangle.cpp
 # End Source File
 # Begin Source File
@@ -252,6 +256,10 @@ SOURCE=.\Path.h
 # Begin Source File
 
 SOURCE=.\PathManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PolygonalLine.h
 # End Source File
 # Begin Source File
 

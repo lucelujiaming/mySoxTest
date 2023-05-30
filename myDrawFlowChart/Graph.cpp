@@ -60,6 +60,12 @@ void CGraph::SetEndPoint(CPoint &pt)
 {
 	m_End = pt;
 }
+
+void CGraph::SetLastPoint(CPoint &pt)
+{
+	m_End = pt;
+}
+
 // 是否在该图元区域内
 bool CGraph::IsIn(CPoint &pt)
 {
@@ -122,4 +128,9 @@ bool CGraph::IsSelected( CPoint &pt )
 
 void CGraph::AdjustSize(CPoint &pt)
 {
+}
+
+void CGraph::AdjustFocusPoint()
+{
+	
 }

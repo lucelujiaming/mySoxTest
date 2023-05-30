@@ -268,7 +268,7 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 		CGraph* tempFocus = pDoc->m_GraphManager.GetFocusGraph();
 		if(tempFocus != NULL)
 		{
-			tempFocus->SetStartPoint(point);
+			tempFocus->SetLastPoint(point);
 			tempFocus->GetStartPoint(ptStart);
 			tempFocus->GetEndPoint(ptEnd);
 			strName = tempFocus->GetTypeName();

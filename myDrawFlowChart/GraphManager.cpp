@@ -211,10 +211,11 @@ bool CGraphManager::IsAdjustSize( CPoint &pt )
 					}
 					else
 					{
-						CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
-						if(p)
+						// tempFocus->AdjustFocusPoint();
+						CConnectPoint *pNewStart = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
+						if(pNewStart)
 						{
-							temp->SetEndPoint(p->GetPoint());
+							temp->SetStartPoint(pNewStart->GetPoint());
 						}
 					}
 				}
@@ -227,10 +228,10 @@ bool CGraphManager::IsAdjustSize( CPoint &pt )
 					}
 					else
 					{
-						CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
-						if(p)
+						CConnectPoint *pNewEnd = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
+						if(pNewEnd)
 						{
-							temp->SetStartPoint(p->GetPoint());
+							temp->SetEndPoint(pNewEnd->GetPoint());
 						}
 					}
 				}
@@ -272,15 +273,15 @@ void CGraphManager::Move(int cx, int cy)
 				{
 					// 跟随调整这条连线。
 					CPoint tempPoint;
-					temp->GetEndPoint(tempPoint);
-					temp->SetEndPoint(tempPoint + CPoint(cx, cy));
+					temp->GetStartPoint(tempPoint);
+					temp->SetStartPoint(tempPoint + CPoint(cx, cy));
 				}
 				else
 				{
-					CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
-					if(p)
+					CConnectPoint *pNewStart = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
+					if(pNewStart)
 					{
-						temp->SetEndPoint(p->GetPoint());
+						temp->SetStartPoint(pNewStart->GetPoint());
 					}
 				}
 			}
@@ -291,15 +292,15 @@ void CGraphManager::Move(int cx, int cy)
 				{
 					// 跟随调整这条连线。
 					CPoint tempPoint;
-					temp->GetStartPoint(tempPoint);
-					temp->SetStartPoint(tempPoint + CPoint(cx, cy));
+					temp->GetEndPoint(tempPoint);
+					temp->SetEndPoint(tempPoint + CPoint(cx, cy));
 				}
 				else
 				{
-					CConnectPoint *p = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
-					if(p)
+					CConnectPoint *pNewEnd = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
+					if(pNewEnd)
 					{
-						temp->SetStartPoint(p->GetPoint());
+						temp->SetEndPoint(pNewEnd->GetPoint());
 					}
 				}
 			}
@@ -319,8 +320,11 @@ void CGraphManager::CheckLinkGraph(CGraph* graph)
 		CGraph *temp = GetGraphAt(j);
 		if(!temp->IsControlFlow())
 		{
+		    // TRACE("---------------------111111111111111---------------------------\r\n");
 			graph->SetNextgraph(temp);
+		    // TRACE("---------------------222222222222222---------------------------\r\n");
 			graph->SetPreviousGraph(temp);
+		    // TRACE("---------------------333333333333333---------------------------\r\n");
 		}
 	}
 }

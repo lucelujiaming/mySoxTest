@@ -95,11 +95,12 @@ void CArrowhead::AdjustSize( CPoint &pt )
 
 void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(0);
-	int iConnPoint = previousGraph->IsConnectOn(p);
+	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
+	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
 	{
 		m_Previous = previousGraph;
+		m_iPreviousConnPointIdx = iConnPoint;
 	}
 	else if(m_Previous == previousGraph)
 	{
@@ -108,11 +109,12 @@ void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 }
 void CArrowhead::SetNextgraph(CGraph *nextGraph)
 {
-	CConnectPoint *p = (CConnectPoint*)m_Points.GetAt(1);
-	int iConnPoint = nextGraph->IsConnectOn(p);
+	CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(1);
+	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
 		m_Next = nextGraph;
+		m_iNextConnPointIdx = iConnPoint;
 	}
 	else if(m_Next == nextGraph)
 	{
@@ -121,13 +123,13 @@ void CArrowhead::SetNextgraph(CGraph *nextGraph)
 }
 CGraph* CArrowhead::GetPreviousGraph()
 {
-	return m_Next;
-	//return m_Previous;
+	//return m_Next;
+	return m_Previous;
 }
 CGraph* CArrowhead::GetNextgraph()
 {
-	return m_Previous;
-	//return m_Next;
+	//return m_Previous;
+	return m_Next;
 }
 
 bool CArrowhead::IsEditable()

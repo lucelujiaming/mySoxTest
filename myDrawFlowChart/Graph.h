@@ -38,6 +38,7 @@ public:
 	virtual void GetEndPoint(CPoint &pt);
 	virtual void SetStartPoint(CPoint &pt);
 	virtual void SetEndPoint(CPoint &pt);
+	virtual void SetLastPoint(CPoint &pt);
 	// 是否在该图元区域内
 	virtual bool IsIn(CPoint &pt);
 
@@ -70,6 +71,7 @@ public:
 
 public:
 	virtual CString GetTypeName() = 0;
+	virtual void AdjustFocusPoint();
 
 public:
 	CGraph();

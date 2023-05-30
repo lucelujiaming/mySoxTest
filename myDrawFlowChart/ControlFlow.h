@@ -34,6 +34,7 @@ public:
 	void SetEndPoint( CPoint &pt );
 	void GetStartPoint(CPoint &pt);
 	void GetEndPoint(CPoint &pt);
+	void SetLastPoint( CPoint &pt );
 
 	void SetPreviousGraph(CGraph *previousGraph);
 	void SetNextgraph(CGraph *nextGraph);
@@ -48,6 +49,8 @@ public:
 private:
 	double GetDistance(int x1, int y1, int x2,int y2);
 	void DrawArrow( CDC *pdc );
+
+	void printAllPoints(CString strCaption);
 
 private:
 	//CObArray m_Points;

@@ -331,6 +331,8 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 				CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
 				if(temp != NULL)
 				{
+					// 图元大小调整时，连线自动跟随连接点。
+					pDoc->m_GraphManager.Move(0, 0);
 					temp->AdjustSize( point );
 				}
 				break;

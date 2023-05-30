@@ -277,9 +277,11 @@ void CArrowhead::Serialize(CArchive& ar)
 	if(ar.IsStoring())
 	{
 		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
+		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
 	}
 	else
 	{
 		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
+		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
 	}
 }

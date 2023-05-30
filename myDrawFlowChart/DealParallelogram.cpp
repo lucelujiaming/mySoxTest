@@ -17,6 +17,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 IMPLEMENT_SERIAL(CDealParallelogram, CObject, 1)
 
+/************************************************************************/
+/* 功能：建构函数。设定了连接点。                                       */
+/************************************************************************/
 CDealParallelogram::CDealParallelogram()
 {
 	m_Start = CPoint(0, 0);
@@ -36,6 +39,9 @@ CDealParallelogram::~CDealParallelogram()
 
 }
 
+/************************************************************************/
+/* 功能：绘制函数。绘制了一个多边形和上面的文字。                         */
+/************************************************************************/
 void CDealParallelogram::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
@@ -72,6 +78,9 @@ void CDealParallelogram::Draw( CDC *pdc )
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
+/************************************************************************/
+/* 功能：选中绘制函数。绘制了连接点。                                   */
+/************************************************************************/
 void CDealParallelogram::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
@@ -94,12 +103,19 @@ void CDealParallelogram::DrawFocus( CDC *pdc )
 	}
 }
 
+/************************************************************************/
+/* 功能： 移动处理函数。                                                */
+/************************************************************************/
 void CDealParallelogram::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
+/************************************************************************/
+/* 功能： 大小调整处理函数。                                            */
+/*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
+/************************************************************************/
 void CDealParallelogram::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
@@ -157,6 +173,9 @@ void CDealParallelogram::AdjustSize( CPoint &pt )
 	}
 }
 
+/************************************************************************/
+/* 功能：判断是否在图元区域内。                                         */
+/************************************************************************/
 bool CDealParallelogram::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
@@ -196,6 +215,27 @@ bool CDealParallelogram::IsIn( CPoint &pt )
 	return flag;
 }
 
+/************************************************************************/
+/* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
+/************************************************************************/
+int CDealParallelogram::IsConnectOn(CConnectPoint *pt)
+{
+	CConnectPoint *connPoint = NULL;
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
+	{
+		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		if(connPoint->IsOn(pt->GetPoint()))
+		{
+			pt->SetPoint(connPoint->GetPoint());
+			return i;
+		}
+	}
+	return CCONNECTPOINT_INVALID_OPTION;
+}
+
+/************************************************************************/
+/* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
+/************************************************************************/
 bool CDealParallelogram::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
@@ -216,21 +256,9 @@ bool CDealParallelogram::IsOn( CPoint &pt )
 	return flag;
 }
 
-int CDealParallelogram::IsConnectOn(CConnectPoint *pt)
-{
-	CConnectPoint *connPoint = NULL;
-	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
-	{
-		connPoint = (CConnectPoint *)m_Points.GetAt(i);
-		if(connPoint->IsOn(pt->GetPoint()))
-		{
-			pt->SetPoint(connPoint->GetPoint());
-			return i;
-		}
-	}
-	return CCONNECTPOINT_INVALID_OPTION;
-}
-
+/************************************************************************/
+/* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
+/************************************************************************/
 void CDealParallelogram::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
@@ -254,6 +282,9 @@ int CDealParallelogram::GetAdjustPoint()
 	return m_AdjustPoint;
 }
 
+/************************************************************************/
+/* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
+/************************************************************************/
 void CDealParallelogram::AdjustFocusPoint()
 {
 	CConnectPoint *connPoint = NULL;
@@ -281,6 +312,9 @@ void CDealParallelogram::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
+/************************************************************************/
+/* 功能：串行化操作。                                                   */
+/************************************************************************/
 void CDealParallelogram::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())

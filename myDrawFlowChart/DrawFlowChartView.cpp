@@ -629,7 +629,7 @@ void CDrawFlowChartView::OnCreatePolygonalLine()
 
 	m_IsControlFlow = false;
 	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
-	// pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArrowLine());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePolygonalLine());
 }
 
 void CDrawFlowChartView::OnCreateControlFlow() 

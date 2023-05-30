@@ -17,6 +17,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 IMPLEMENT_SERIAL(CEllipse, CObject, 1)
 
+/************************************************************************/
+/* 功能：建构函数。设定了连接点。                                       */
+/************************************************************************/
 CEllipse::CEllipse()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
@@ -34,6 +37,9 @@ CEllipse::~CEllipse()
 
 }
 
+/************************************************************************/
+/* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
+/************************************************************************/
 void CEllipse::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
@@ -54,13 +60,17 @@ void CEllipse::Draw( CDC *pdc )
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
+/************************************************************************/
+/* 功能：选中绘制函数。绘制了连接点。                                   */
+/************************************************************************/
 void CEllipse::DrawFocus( CDC *pdc )
 {
+	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
 	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
 	CPen* oldpen = pdc->SelectObject(&pen);
 	CBrush* oldbrush = pdc->SelectObject( pBrush );
-		
+	// 画一个虚线框。
 	pdc->Rectangle( CRect(m_Start, m_End) );
 		
 	pdc->SelectObject(oldpen);
@@ -74,12 +84,19 @@ void CEllipse::DrawFocus( CDC *pdc )
 	}
 }
 
+/************************************************************************/
+/* 功能： 移动处理函数。                                                */
+/************************************************************************/
 void CEllipse::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
+/************************************************************************/
+/* 功能： 大小调整处理函数。                                            */
+/*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
+/************************************************************************/
 void CEllipse::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
@@ -137,6 +154,9 @@ void CEllipse::AdjustSize( CPoint &pt )
 	}
 }
 
+/************************************************************************/
+/* 功能：判断是否在图元区域内。                                         */
+/************************************************************************/
 bool CEllipse::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
@@ -158,6 +178,9 @@ bool CEllipse::IsIn( CPoint &pt )
 	return flag;
 }
 
+/************************************************************************/
+/* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
+/************************************************************************/
 int CEllipse::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
@@ -173,6 +196,9 @@ int CEllipse::IsConnectOn(CConnectPoint *pt)
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
+/************************************************************************/
+/* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
+/************************************************************************/
 bool CEllipse::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
@@ -200,6 +226,9 @@ bool CEllipse::IsOn( CPoint &pt )
 	return flag;
 }
 
+/************************************************************************/
+/* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
+/************************************************************************/
 void CEllipse::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
@@ -223,6 +252,9 @@ int CEllipse::GetAdjustPoint()
 	return m_AdjustPoint;
 }
 
+/************************************************************************/
+/* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
+/************************************************************************/
 void CEllipse::AdjustFocusPoint()
 {
 	CConnectPoint *connPoint = NULL;
@@ -250,6 +282,9 @@ void CEllipse::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
+/************************************************************************/
+/* 功能：串行化操作。                                                   */
+/************************************************************************/
 void CEllipse::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())

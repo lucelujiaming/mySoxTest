@@ -269,6 +269,7 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 		if(tempFocus != NULL)
 		{
 			tempFocus->SetLastPoint(point);
+			// Show point information in the StatusBar
 			tempFocus->GetStartPoint(ptStart);
 			tempFocus->GetEndPoint(ptEnd);
 			strName = tempFocus->GetTypeName();
@@ -277,7 +278,8 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			strStatusBar += strName;
 			GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
 			strStatusBar += "\r\n";
-			TRACE(strStatusBar);
+			// TRACE(strStatusBar);
+			// Show point information in the StatusBar end
 			Invalidate();
 		}
 	}
@@ -294,7 +296,7 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			strStatusBar += strName;
 			GetParent()->GetDescendantWindow(AFX_IDW_STATUS_BAR)->SetWindowText(strStatusBar);
 			strStatusBar += "\r\n";
-			TRACE(strStatusBar);
+			// TRACE(strStatusBar);
 			// It would cause the flash of graph
 			// Invalidate();
 		}

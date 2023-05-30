@@ -111,6 +111,7 @@ void CControlFlow::Move(int cx, int cy)
 
 void CControlFlow::AdjustSize(CPoint &pt)
 {
+	// printAllPoints("CControlFlow::AdjustSize Before");
 	CConnectPoint *pFocusConnPoint = (CConnectPoint*)m_Points.GetAt(m_FocusPoint);
 	if(pFocusConnPoint != NULL)
 	{
@@ -123,6 +124,7 @@ void CControlFlow::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.GetSize() <= 0) return;
 
+	// printAllPoints("CControlFlow::SetStartPoint Before");
 	// CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
 	pStart->SetPoint(pt);
@@ -136,22 +138,17 @@ void CControlFlow::SetEndPoint(CPoint &pt)
 	{
 		pNewPoint = new CConnectPoint();
 		pNewPoint->SetPoint(pt);
-		if(m_Points.GetSize() == 0)
-		{
-			m_Points.InsertAt(0, pNewPoint);
-		}
-		else if(m_Points.GetSize() > 0)
-		{
-			m_Points.InsertAt(m_Points.GetSize()-1, pNewPoint);
-		}
-		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd)");
+		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) Before");
+		m_Points.InsertAt(m_Points.GetSize()-1, pNewPoint);
+		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) After");
 	}
 	else
 	{
+		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) Before");
 		// p = (CConnectPoint*)m_Points.GetAt(0);
 		pNewPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd)");
+		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) After");
 	}
 }
 
@@ -241,6 +238,7 @@ bool CControlFlow::IsIn(CPoint &pt)
 {
 	if(m_Points.GetSize() < 1) return false;
 
+	// printAllPoints("CControlFlow::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		CConnectPoint *connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
@@ -248,12 +246,12 @@ bool CControlFlow::IsIn(CPoint &pt)
 		delete connPoint;
 		m_IsCreateEnd = true;
 		// m_Start和m_End对于折线来说，好像没有用。
-		connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		// connPoint = (CConnectPoint*)m_Points.GetAt(m_Points.GetSize()-1);
 		// m_Start = connPoint->GetPoint();
-		connPoint = (CConnectPoint*)m_Points.GetAt(0);
+		// connPoint = (CConnectPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CControlFlow::IsIn");
+	// printAllPoints("CControlFlow::IsIn After");
 
 	bool flag = false;
 	CPoint tempPs[4];
@@ -342,9 +340,8 @@ void CControlFlow::DrawArrow( CDC *pdc )
 
 	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
 	{
-		// return;
-		flEx = flSx + 3;
-		flEy = flSy + 3;
+		TRACE("GetDistance == 0");
+		return;
 	}
 
 	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);

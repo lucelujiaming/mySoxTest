@@ -84,7 +84,7 @@ BOOL CDrawFlowChartView::PreCreateWindow(CREATESTRUCT& cs)
 
 	m_FocusGraph = NULL;
 
-	pedit = new CEdit(); 
+	m_pEdit = new CEdit(); 
 
 	return CView::PreCreateWindow(cs);
 }
@@ -167,7 +167,7 @@ void CDrawFlowChartView::OnLButtonDown(UINT nFlags, CPoint point)
 				else
 				{
 					m_OperateType = MOVE;
-					m_Start1 = point;
+					m_lastMovePos = point;
 				}
 
 				if(flag)
@@ -175,12 +175,12 @@ void CDrawFlowChartView::OnLButtonDown(UINT nFlags, CPoint point)
 					if(m_LDoubleBtnSignal)
 					{
 						CString str;
-						pedit->GetWindowText(str);
+						m_pEdit->GetWindowText(str);
 						if(m_FocusGraph != NULL)
 						{
 							m_FocusGraph->SetText(str);
 						}
-						pedit->DestroyWindow();
+						m_pEdit->DestroyWindow();
 						m_LDoubleBtnSignal = false;
 					}
 				}
@@ -193,12 +193,12 @@ void CDrawFlowChartView::OnLButtonDown(UINT nFlags, CPoint point)
 				if(m_LDoubleBtnSignal)
 				{
 					CString str;
-					pedit->GetWindowText(str);
+					m_pEdit->GetWindowText(str);
 					if(m_FocusGraph != NULL)
 					{
 						m_FocusGraph->SetText(str);
 					}
-					pedit->DestroyWindow();
+					m_pEdit->DestroyWindow();
 					m_LDoubleBtnSignal = false;
 				}
 				CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
@@ -312,8 +312,8 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		case MOVE:
 			{
-				pDoc->m_GraphManager.Move(point.x - m_Start1.x, point.y - m_Start1.y);
-				m_Start1 = point;
+				pDoc->m_GraphManager.Move(point.x - m_lastMovePos.x, point.y - m_lastMovePos.y);
+				m_lastMovePos = point;
 				break;
 			}
 		case CREATE:
@@ -322,7 +322,9 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 				if(temp != NULL)
 				{
 					if(!m_IsControlFlow)
+					{
 						temp->SetEndPoint( point );
+					}
 				}
 				break;
 			}
@@ -477,7 +479,7 @@ void CDrawFlowChartView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		temp->GetStartPoint(temp1);
 		temp->GetEndPoint(temp2);
 		CRect rect = CRect(temp1 + CPoint(12, 12), temp2 + CPoint(-12, -12));
-		pedit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rect, this, 1);
+		m_pEdit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rect, this, 1);
 		CString str;
 		temp->GetText(str);
 		SetDlgItemText(1, str);

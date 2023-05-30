@@ -23,7 +23,7 @@ protected: // create from serialization only
 public:
 	CDrawFlowChartDoc* GetDocument();
 
-	CPoint m_Start1;
+	CPoint m_lastMovePos;
 
 	int m_OperateType;
 	enum OPERATE_TYPE{SELECT, MOVE, CREATE, ADJUST_SIZE};
@@ -34,7 +34,7 @@ public:
 
 	CGraph* m_FocusGraph;
 
-	CEdit *pedit;
+	CEdit *m_pEdit;
 
 	//CGraphManager m_GraphManager;
 	//CGraphFactory m_GraphFactory;

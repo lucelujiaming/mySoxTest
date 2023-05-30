@@ -40,7 +40,8 @@ public:
 	//CGraphFactory m_GraphFactory;
 // Operations
 public:
-void OnGetMap();
+	void OnGetMap();
+
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDrawFlowChartView)

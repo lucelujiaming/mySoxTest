@@ -368,10 +368,12 @@ void CControlFlow::Serialize(CArchive& ar)
 	if(ar.IsStoring())
 	{
 		ar<<m_FocusPoint<<m_IsCreateEnd;
+		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
 	}
 	else
 	{
 		ar>>m_FocusPoint>>m_IsCreateEnd;
+		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
 	}
 
 	m_Points.Serialize(ar);

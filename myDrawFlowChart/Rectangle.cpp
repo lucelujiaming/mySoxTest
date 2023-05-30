@@ -87,6 +87,10 @@ void CRectangle::Move( int cx, int cy )
 	m_End +=  CPoint(cx, cy);
 }
 
+/************************************************************************/
+/* 功能： 大小调整处理函数。                                            */
+/*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
+/************************************************************************/
 void CRectangle::AdjustSize( CPoint &pt )
 {
 //	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 

@@ -158,6 +158,10 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\OrthogonalWire.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Path.cpp
 # End Source File
 # Begin Source File
@@ -248,6 +252,10 @@ SOURCE=.\LogFile.h
 # Begin Source File
 
 SOURCE=.\MainFrm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalWire.h
 # End Source File
 # Begin Source File
 

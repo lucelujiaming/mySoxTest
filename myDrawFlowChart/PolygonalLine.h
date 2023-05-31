@@ -10,7 +10,11 @@
 #endif // _MSC_VER > 1000
 
 #include "Graph.h"
+#include "OrthogonalWire.h"
 #include <math.h>
+
+#define POLYGONALLINE_STUB_LEN          (20)    // 桩长度
+
 
 class CPolygonalLine : public CGraph  
 {
@@ -23,6 +27,9 @@ public:
 public:
 	void Draw(CDC *pdc);
 	void DrawFocus(CDC *pdc);
+	
+	void DrawSelectBorderArea( CDC *pdc );
+
 	void Move(int cx, int cy);
 	void AdjustSize(CPoint &pt);
 
@@ -42,10 +49,15 @@ public:
 
 	int GetAdjustPoint();
 
+	void printInfomation(CString strCaption);
+
 private:
 	void AdjustFocusPoint();
 	double GetDistance(int x1, int y1, int x2,int y2);
 	void DrawArrow( CDC *pdc );
+	
+	CWirePoint calculateStartLineStub(CPoint rootPoint, int iConnectPointIdx);
+	CWirePoint calculateEndLineStub(CPoint rootPoint, int iConnectPointIdx);
 
 private:
 	int m_FocusPoint;
@@ -54,8 +66,19 @@ private:
 	CGraph* m_Previous;
 	CGraph* m_Next;
 
+	int m_iConnectPointCount ;
+
 private:
 	float   m_fBendPercent;
+	COrthogonalWire   m_objOrthogonalWire;
+	
+private:
+	CWirePoint m_StartStub; // 从开始点引出的延长线的桩。
+	CWirePoint m_EndStub;   // 从结束点引出的延长线的桩。
+	
+	int    m_iBendTimes;
+//	CPoint m_pFirstBendPoint;
+//	CPoint m_pSecondBendPoint;
 };
 
 #endif // !defined(AFX_POLYGONALLINE_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)

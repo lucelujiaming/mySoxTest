@@ -29,7 +29,6 @@ CPolygonalLine::CPolygonalLine()
 	}
 	m_Previous = NULL;
 	m_Next = NULL;
-	m_fBendPercent = 0.5;
 	m_iBendTimes = 0;
 	m_iPreviousConnPointIdx = -1;
 	m_iNextConnPointIdx = -1;
@@ -282,7 +281,14 @@ void CPolygonalLine::AdjustSize( CPoint &pt )
 			// m_End = pt;
 			if (m_iBendTimes == 2)
 			{
-				m_fBendPercent = (float)(pt.x - m_Start.x) / (float)(m_End.x - m_Start.x);
+				if(abs(m_objOrthogonalWire.m_ptBend[1].endDirection) == ORTHOGONALWIRE_SOUTH)
+				{
+					m_objOrthogonalWire.m_fBendPercent = (float)(pt.x - m_Start.x) / (float)(m_End.x - m_Start.x);
+				}
+				else if(abs(m_objOrthogonalWire.m_ptBend[1].endDirection) == ORTHOGONALWIRE_EAST)
+				{
+					m_objOrthogonalWire.m_fBendPercent = (float)(pt.y - m_Start.y) / (float)(m_End.y - m_Start.y);
+				}
 			}
 			break;
 		}

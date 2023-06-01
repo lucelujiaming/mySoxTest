@@ -19,6 +19,9 @@
 #define CONNECTPOINT_POSITIVE_RADIUS	(3)	     // 点的绘制半径
 #define CONNECTPOINT_NEGATIVE_RADIUS	(-3)	 // 点的绘制半径
 
+#define CONNECTPOINT_COMMON             1         // 只能调整大小，不能连接。
+#define CONNECTPOINT_CONNECT            2         // 可以调整大小和连接
+
 class CConnectPoint : public CObject
 {
 	DECLARE_SERIAL(CConnectPoint)

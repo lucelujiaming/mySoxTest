@@ -75,7 +75,6 @@ private:
 	int m_iConnectPointCount ;
 
 private:
-	float   m_fBendPercent;
 	COrthogonalWire   m_objOrthogonalWire;
 	
 private:

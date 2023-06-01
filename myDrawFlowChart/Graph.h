@@ -83,6 +83,7 @@ public:
 	CGraph();
 	virtual ~CGraph();
 
+	void printAllPoints(CString strCaption);
 public:
 	bool m_IsMark; // 是否标记
 	CString m_text; // 描述文字

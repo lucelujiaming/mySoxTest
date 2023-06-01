@@ -29,6 +29,8 @@ CArrowhead::CArrowhead()
 	}
 	m_Previous = NULL;
 	m_Next = NULL;
+	m_iPreviousConnPointIdx = -1;
+	m_iNextConnPointIdx = -1;
 }
 
 CArrowhead::~CArrowhead()

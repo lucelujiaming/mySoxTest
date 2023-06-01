@@ -184,6 +184,7 @@ int CDiamond::IsConnectOn(CConnectPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
+			printAllPoints("CDiamond::IsConnectOn");
 			return i;
 		}
 	}

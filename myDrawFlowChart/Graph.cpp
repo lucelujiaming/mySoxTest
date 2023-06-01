@@ -23,11 +23,30 @@ CGraph::CGraph()
 	m_IsMark = false;
 	m_iPreviousConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
 	m_iNextConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
+	m_iPreviousConnPointIdx = -1;
+	m_iNextConnPointIdx = -1;
 }
 
 CGraph::~CGraph()
 {
 
+}
+
+
+void CGraph::printAllPoints(CString strCaption)
+{
+	CString strStatusBar;
+	CString strPoint;
+	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.GetSize());
+	for(int i = 0; i < m_Points.GetSize(); i++)
+	{
+		CConnectPoint *pNext = (CConnectPoint*)m_Points.GetAt(i);
+		
+		strPoint.Format(_T("(%d - [%d, %d]), "), i, pNext->GetPoint().x, pNext->GetPoint().y);
+		strStatusBar += strPoint;
+	}
+	strStatusBar += "\r\n";
+	TRACE(strStatusBar);
 }
 
 void CGraph::GetText(CString &str)

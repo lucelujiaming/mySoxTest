@@ -15,6 +15,10 @@
 
 #define POLYGONALLINE_STUB_LEN          (20)    // ×®³¤¶È
 
+#define POLYGONALLINE_BORDER_START         1
+#define POLYGONALLINE_BORDER_MIDDLE        2
+#define POLYGONALLINE_BORDER_END           3
+#define POLYGONALLINE_BORDER_MAX           4
 
 class CPolygonalLine : public CGraph  
 {
@@ -29,6 +33,8 @@ public:
 	void DrawFocus(CDC *pdc);
 	
 	void DrawSelectBorderArea( CDC *pdc );
+	static int creatOneBorderArea(int borderStage, 
+				CWirePoint& startWirePoint, CWirePoint& endWirePoint, CPoint * ptOutput);
 
 	void Move(int cx, int cy);
 	void AdjustSize(CPoint &pt);
@@ -56,8 +62,8 @@ private:
 	double GetDistance(int x1, int y1, int x2,int y2);
 	void DrawArrow( CDC *pdc );
 	
-	CWirePoint calculateStartLineStub(CPoint rootPoint, int iConnectPointIdx);
-	CWirePoint calculateEndLineStub(CPoint rootPoint, int iConnectPointIdx);
+	CWirePoint calculateStartLineStub(CPoint& rootPoint, int iConnectPointIdx);
+	CWirePoint calculateEndLineStub(CPoint& rootPoint, int iConnectPointIdx);
 
 private:
 	int m_FocusPoint;

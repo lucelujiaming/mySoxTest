@@ -7,6 +7,7 @@
 #include "GraphFactory.h"
 
 #include "Rectangle.h"
+#include "RoundRectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
 #include "DealParallelogram.h"
@@ -50,6 +51,11 @@ CGraph* CGraphFactory::CreateProcessDiamond()
 CGraph* CGraphFactory::CreateRectangle()
 {
 	return new CRectangle();
+}
+
+CGraph* CGraphFactory::CreateRoundRectangle()
+{
+	return new CRoundRectangle();
 }
 
 CGraph* CGraphFactory::CreateControlFlow()

@@ -26,6 +26,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_RECTANGLE, OnCreateRectangle)
+	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
 	ON_COMMAND(ID_ELLIPSE, OnCreateEllipse)
 	ON_COMMAND(ID_DIAMOND, OnCreateDiamond)
 	ON_COMMAND(ID_PARALLELOGRAM, OnCreateDealParallelogram)
@@ -50,7 +51,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ELLIPSE, OnToolbarEllipse)
 	ON_COMMAND(ID_TOOLBAR_NEXT, OnToolbarNext)
 	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
-	ON_COMMAND(ID_TOOLBAR_RECT, OnToolbarRect)
+	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
+	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnToolbarRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
 	ON_COMMAND(ID_TOOLBAR_START, OnToolbarStart)
 	ON_COMMAND(ID_TOOLBAR_STOP, OnToolbarStop)
@@ -524,6 +526,24 @@ void CDrawFlowChartView::OnCreateRectangle()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRectangle());
 }
 
+void CDrawFlowChartView::OnCreateRoundRectangle() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+	
+	m_IsControlFlow = false;
+	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundRectangle());
+}
+
 void CDrawFlowChartView::OnCreateEllipse() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -720,10 +740,16 @@ void CDrawFlowChartView::OnToolbarProcess()
 	OnCreateDealParallelogram();
 }
 
-void CDrawFlowChartView::OnToolbarRect() 
+void CDrawFlowChartView::OnToolbarRectangle() 
 {
 	// TODO: Add your command handler code here
 	OnCreateRectangle();
+}
+
+void CDrawFlowChartView::OnToolbarRoundRectangle() 
+{
+	// TODO: Add your command handler code here
+	OnCreateRoundRectangle();
 }
 
 void CDrawFlowChartView::OnToolbarSearch() 

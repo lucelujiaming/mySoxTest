@@ -96,7 +96,8 @@ BEGIN
     SEPARATOR
     BUTTON      ID_TOOLBAR_START
     BUTTON      ID_TOOLBAR_END
-    BUTTON      ID_TOOLBAR_RECT
+    BUTTON      ID_TOOLBAR_RECTANGLE
+    BUTTON      ID_TOOLBAR_ROUNDRECTANGLE
     BUTTON      ID_TOOLBAR_ELLIPSE
     BUTTON      ID_TOOLBAR_JUDGE
     BUTTON      ID_TOOLBAR_PROCESS
@@ -406,15 +407,15 @@ BEGIN
     ID_TOOLBAR_NEXT         "标记路径\n标记"
     ID_TOOLBAR_FLOWCONTROL  "创建控制流\n控制流"
     ID_TOOLBAR_STOP         "取消标记路径\n取消标记"
-    ID_TOOLBAR_RECT         "创建矩形\n输入输出矩形框"
+    ID_TOOLBAR_RECTANGLE    "创建矩形\n输入输出矩形框"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    ID_TOOLBAR_ELLIPSE         "创建椭圆\n输入输出椭圆框"
-    ID_TOOLBAR_GENERICLINE     "创建流程线\n流程线"
-    ID_TOOLBAR_POLYGONAL_LINE  "创建折线\n折线"
-    ID_TOOLBAR_ARROWHEAD       "创建箭头\n箭头"
+    ID_TOOLBAR_ELLIPSE      "创建椭圆\n输入输出椭圆框"
+    ID_TOOLBAR_GENERICLINE  "创建流程线\n流程线"
+    ID_TOOLBAR_ARROWHEAD    "创建箭头\n箭头"
+    ID_TOOLBAR_POLYGONAL_LINE "创建折线\n折线"
 END
 
 #endif    // Chinese (P.R.C.) resources

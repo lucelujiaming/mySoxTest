@@ -50,8 +50,6 @@ private:
 	double GetDistance(int x1, int y1, int x2,int y2);
 	void DrawArrow( CDC *pdc );
 
-	void printAllPoints(CString strCaption);
-
 private:
 	//CObArray m_Points;
 	int m_FocusPoint;

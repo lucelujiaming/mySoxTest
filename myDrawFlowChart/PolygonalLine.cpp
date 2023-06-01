@@ -31,6 +31,8 @@ CPolygonalLine::CPolygonalLine()
 	m_Next = NULL;
 	m_fBendPercent = 0.5;
 	m_iBendTimes = 0;
+	m_iPreviousConnPointIdx = -1;
+	m_iNextConnPointIdx = -1;
 }
 
 CPolygonalLine::~CPolygonalLine()
@@ -40,7 +42,7 @@ CPolygonalLine::~CPolygonalLine()
 
 void CPolygonalLine::Draw( CDC *pdc )
 {
-	printInfomation("Draw");
+	// printInfomation("Draw");
 	AdjustFocusPoint();
 
 	CPen p, *pOldPen;
@@ -55,10 +57,10 @@ void CPolygonalLine::Draw( CDC *pdc )
 
 	pdc->MoveTo(m_Start);
 	pdc->LineTo(m_StartStub.ptPosition);
-	pdc->LineTo(m_objOrthogonalWire.m_ptBend[0]);
+	pdc->LineTo(m_objOrthogonalWire.m_ptBend[0].ptPosition);
 	if(m_iBendTimes == 2)
 	{
-		pdc->LineTo(m_objOrthogonalWire.m_ptBend[1]);
+		pdc->LineTo(m_objOrthogonalWire.m_ptBend[1].ptPosition);
 
 	}
 	pdc->LineTo(m_EndStub.ptPosition);
@@ -83,7 +85,6 @@ void CPolygonalLine::printInfomation(CString strCaption)
 	TRACE(strStatusBar);
 }
 
-#define DRAW_FRAME
 void CPolygonalLine::DrawFocus( CDC *pdc )
 {
 	CConnectPoint *connPoint = NULL;
@@ -94,76 +95,164 @@ void CPolygonalLine::DrawFocus( CDC *pdc )
 	}
 }
 
+#define DRAW_FRAME
+/************************************************************************/
+/* 功能：建构一个图元选择包络区。支持三种模式。                         */
+/*       起始模式和结束模式都是贴着起始点和结束点的包络区。             */
+/*       中间模式则需要给出包含起始点和结束点的包络区。                 */
+/************************************************************************/
+int CPolygonalLine::creatOneBorderArea(int borderStage, 
+				CWirePoint& startWirePoint, CWirePoint& endWirePoint, CPoint * ptOutput)
+{
+	if(borderStage == POLYGONALLINE_BORDER_START)
+	{
+		if ((endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
+			|| (endWirePoint.endDirection == ORTHOGONALWIRE_NORTH))
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			return 4;
+		}
+		else if((endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
+			|| (endWirePoint.endDirection == ORTHOGONALWIRE_EAST))
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			return 4;
+		}
+	}
+	else if(borderStage == POLYGONALLINE_BORDER_END)
+	{
+		if ((endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
+			|| (endWirePoint.endDirection == ORTHOGONALWIRE_NORTH))
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			return 4;
+		}
+		else if((endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
+			|| (endWirePoint.endDirection == ORTHOGONALWIRE_EAST))
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			return 4;
+		}
+	}
+	else if(borderStage == POLYGONALLINE_BORDER_MIDDLE)
+	{
+		if (endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			return 4;
+		}
+		else if(endWirePoint.endDirection == ORTHOGONALWIRE_NORTH)
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			return 4;
+		}
+		else if(endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			return 4;
+		}
+		else if(endWirePoint.endDirection == ORTHOGONALWIRE_EAST)
+		{
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			return 4;
+		}
+	}
+	else
+	{
+		TRACE("Error borderStage\r\n");
+		return 0;
+	}
+	return 0;
+}
+
 void CPolygonalLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为黑色。
-	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
+	CPen blackPen( PS_DOT, 1, RGB(0, 0, 0) );
+	CPen greenPen( PS_DOT, 1, RGB(0, 255, 0) );
+	CPen purplePen( PS_DOT, 1, RGB(255, 0, 128) );
 	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
-	CPen* oldpen = pdc->SelectObject(&pen);
+	CPen* oldpen = pdc->SelectObject(&blackPen);
 	CBrush* oldbrush = pdc->SelectObject( pBrush );
 
 	CPoint points[8];
+	int iPolygonCount = 0;
+
+	CWirePoint 	  startWirePoint;
+	startWirePoint.endDirection = m_StartStub.endDirection;
+	startWirePoint.ptPosition   = m_Start;
+	
+	CWirePoint 	  endWirePoint;
+	endWirePoint.endDirection = m_EndStub.endDirection;
+	endWirePoint.ptPosition   = m_End;
+
 	if (m_iBendTimes == 1)
 	{
-		CConnectPoint *pMiddleConnPoint = (CConnectPoint*)m_Points.GetAt(1);
-		CPoint        middlePoint       = pMiddleConnPoint->GetPoint();
-
-		if (m_StartStub.direction == ORTHOGONALWIRE_SOUTH)
-		{
-			points[0] = m_Start                           + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[1] = m_Start                           + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[2] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[3] = m_End                             + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[4] = m_End                             + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_NORTH)
-		{
-			points[0] = m_Start                           + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[1] = m_Start                           + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[2] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[3] = m_End                             + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[4] = m_End                             + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[5] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_WEST)
-		{
-			points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[1] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[2] = m_End                             + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[3] = m_End                             + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[4] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_EAST)
-		{
-			points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[1] = CPoint(m_End.x, m_Start.y)        + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[2] = m_End                             + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[3] = m_End                             + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[4] = CPoint(m_End.x, m_Start.y)        + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-		pdc->Polygon(points, 6);
-		TRACE("m_iBendTimes == 1");
+		CWirePoint    middlePoint       = m_objOrthogonalWire.m_ptBend[0];
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_START, startWirePoint, m_StartStub, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&greenPen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, m_StartStub, middlePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&purplePen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, middlePoint, m_EndStub, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&blackPen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_END, m_EndStub, endWirePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		
+		TRACE("m_iBendTimes == 1\r\n");
 	}
 	else if (m_iBendTimes == 2)
 	{
-		CConnectPoint *pMiddleConnPoint = (CConnectPoint*)m_Points.GetAt(1);
-		CPoint        middlePoint       = pMiddleConnPoint->GetPoint();
+		CWirePoint    firstMiddlePoint        = m_objOrthogonalWire.m_ptBend[0];
+		CWirePoint    secondMiddlePoint       = m_objOrthogonalWire.m_ptBend[1];
 
-		points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[1] = CPoint(middlePoint.x, m_Start.y) + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[2] = CPoint(middlePoint.x,   m_End.y) + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[3] = m_End                            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[4] = m_End                            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[5] = CPoint(middlePoint.x,   m_End.y) + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[6] = CPoint(middlePoint.x, m_Start.y) + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[7] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+		CWirePoint 	  endStubWirePoint = m_EndStub;
+		endStubWirePoint.endDirection = m_objOrthogonalWire.calculateWireDirection(secondMiddlePoint, m_EndStub);
 		
-		pdc->Polygon(points, 8);
-		TRACE("m_iBendTimes == 2");
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_START, startWirePoint, m_StartStub, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&greenPen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, m_StartStub, firstMiddlePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&purplePen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, firstMiddlePoint, secondMiddlePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&greenPen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, secondMiddlePoint, endStubWirePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		pdc->SelectObject(&blackPen);
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_END, endStubWirePoint, endWirePoint, points);
+		pdc->Polygon(points, iPolygonCount);
+		
+		TRACE("m_iBendTimes == 2\r\n");
 	}
 	
 	pdc->SelectObject(oldpen);
@@ -213,7 +302,9 @@ void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 	if(iConnPoint >= 0)
 	{
 		m_Previous = previousGraph;
+		printInfomation("CPolygonalLine::SetPreviousGraph Before");
 		m_iPreviousConnPointIdx = iConnPoint;
+		printInfomation("CPolygonalLine::SetPreviousGraph After");
 	}
 	else if(m_Previous == previousGraph)
 	{
@@ -227,9 +318,9 @@ void CPolygonalLine::SetNextgraph(CGraph *nextGraph)
 	if(iConnPoint >= 0)
 	{
 		m_Next = nextGraph;
-		printInfomation("SetNextgraph");
+		printInfomation("CPolygonalLine::SetNextgraph Before");
 		m_iNextConnPointIdx = iConnPoint;
-		printInfomation("SetNextgraph");
+		printInfomation("CPolygonalLine::SetNextgraph After");
 	}
 	else if(m_Next == nextGraph)
 	{
@@ -261,94 +352,120 @@ bool CPolygonalLine::IsIn( CPoint &pt )
 	bool flag = false;
 
 	CPoint points[8];
-	int marginX = 0;
-	int marginY = 0;
-	marginX = marginY = CCONNECTPOINT_POSITIVE_X_MARGIN;
+	int iPolygonCount = 0;
 		
+	CWirePoint 	  startWirePoint;
+	startWirePoint.endDirection = m_StartStub.endDirection;
+	startWirePoint.ptPosition   = m_Start;
+	
+	CWirePoint 	  endWirePoint;
+	endWirePoint.endDirection = m_EndStub.endDirection;
+	endWirePoint.ptPosition   = m_End;
+	
 	if (m_iBendTimes == 1)
 	{
-		CConnectPoint *pMiddleConnPoint = (CConnectPoint*)m_Points.GetAt(1);
-		CPoint        middlePoint       = pMiddleConnPoint->GetPoint();
+		CWirePoint    middlePoint       = m_objOrthogonalWire.m_ptBend[0];
 
-		if (m_StartStub.direction == ORTHOGONALWIRE_SOUTH)
-		{
-			points[0] = m_Start                           + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[1] = m_Start                           + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[2] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[3] = m_End                             + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[4] = m_End                             + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_NORTH)
-		{
-			points[0] = m_Start                           + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[1] = m_Start                           + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[2] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[3] = m_End                             + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[4] = m_End                             + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[5] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_WEST)
-		{
-			points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[1] = middlePoint                       + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[2] = m_End                             + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[3] = m_End                             + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[4] = middlePoint                       + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-		else if (m_StartStub.direction == ORTHOGONALWIRE_EAST)
-		{
-			points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[1] = CPoint(m_End.x, m_Start.y)        + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			points[2] = m_End                             + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			points[3] = m_End                             + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			points[4] = CPoint(m_End.x, m_Start.y)        + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			points[5] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		}
-
-		CRgn cr;
-		BOOL bRet = cr.CreatePolygonRgn(points, 6, ALTERNATE);
-		if(bRet && cr.PtInRegion( pt ))
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_START, startWirePoint, m_StartStub, points);
+		CRgn objStartStubRgn;
+		BOOL bRet = objStartStubRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objStartStubRgn.PtInRegion( pt ))
 		{
 			flag = true;
 			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
 		}
-		else if (bRet == FALSE)
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, m_StartStub, middlePoint, points);
+		CRgn objMiddleRgn;
+		bRet = objMiddleRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objMiddleRgn.PtInRegion( pt ))
 		{
-			printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
-				points[0].x, points[0].y, points[1].x, points[1].y,
-				points[2].x, points[2].y, points[3].x, points[3].y);
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
 		}
-		TRACE("m_iBendTimes == 1");
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, middlePoint, m_EndStub, points);
+		CRgn objEndStubRgn;
+		bRet = objEndStubRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objEndStubRgn.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
+		}
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_END, m_EndStub, endWirePoint, points);
+		CRgn objEndRgn;
+		bRet = objEndRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objEndRgn.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
+		}
+		TRACE("m_iBendTimes == 1\r\n");
 	}
 	else if (m_iBendTimes == 2)
 	{
-		CConnectPoint *pMiddleConnPoint = (CConnectPoint*)m_Points.GetAt(1);
-		CPoint        middlePoint       = pMiddleConnPoint->GetPoint();
+		CWirePoint    firstMiddlePoint        = m_objOrthogonalWire.m_ptBend[0];
+		CWirePoint    secondMiddlePoint       = m_objOrthogonalWire.m_ptBend[1];
 
-		points[0] = m_Start                           + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[1] = CPoint(middlePoint.x, m_Start.y) + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[2] = CPoint(middlePoint.x,   m_End.y) + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[3] = m_End                            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-		points[4] = m_End                            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[5] = CPoint(middlePoint.x,   m_End.y) + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[6] = CPoint(middlePoint.x, m_Start.y) + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-		points[7] = m_Start                           + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-
-		CRgn cr;
-		BOOL bRet = cr.CreatePolygonRgn(points, 8, ALTERNATE);
-		if(bRet && cr.PtInRegion( pt ))
+		CWirePoint 	  endStubWirePoint = m_EndStub;
+		endStubWirePoint.endDirection = m_objOrthogonalWire.calculateWireDirection(secondMiddlePoint, m_EndStub);
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_START, startWirePoint, m_StartStub, points);
+		CRgn objStartStubRgn;
+		BOOL bRet = objStartStubRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objStartStubRgn.PtInRegion( pt ))
 		{
 			flag = true;
 			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
 		}
-		else if (bRet == FALSE)
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, m_StartStub, firstMiddlePoint, points);
+		CRgn objFirstMiddleRgn;
+		bRet = objFirstMiddleRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objFirstMiddleRgn.PtInRegion( pt ))
 		{
-			printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
-				points[0].x, points[0].y, points[1].x, points[1].y,
-				points[2].x, points[2].y, points[3].x, points[3].y);
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
 		}
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, firstMiddlePoint, secondMiddlePoint, points);
+		CRgn objSecondMiddleRgn;
+		bRet = objSecondMiddleRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objSecondMiddleRgn.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
+		}
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_MIDDLE, secondMiddlePoint, endStubWirePoint, points);
+		CRgn objEndStubRgn;
+		bRet = objEndStubRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objEndStubRgn.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
+		}
+		
+		iPolygonCount = creatOneBorderArea(POLYGONALLINE_BORDER_END, endStubWirePoint, endWirePoint, points);
+		CRgn objEndRgn;
+		bRet = objEndRgn.CreatePolygonRgn(points, iPolygonCount, ALTERNATE);
+		if(bRet && objEndRgn.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+			return flag;
+		}
+		
+		TRACE("m_iBendTimes == 2\r\n");
 	}
 	else 
 	{
@@ -440,54 +557,54 @@ int CPolygonalLine::IsConnectOn(CConnectPoint *pt)
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
-CWirePoint CPolygonalLine::calculateStartLineStub(CPoint rootPoint, int iConnectPointIdx)
+CWirePoint CPolygonalLine::calculateStartLineStub(CPoint& rootPoint, int iConnectPointIdx)
 {
 	CWirePoint stubPoint;
 	if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_TOP)
 	{
 		stubPoint.ptPosition = rootPoint - CPoint(0, POLYGONALLINE_STUB_LEN);
-		stubPoint.direction  = ORTHOGONALWIRE_NORTH;
+		stubPoint.endDirection  = ORTHOGONALWIRE_NORTH;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_RIGHT)
 	{
 		stubPoint.ptPosition = rootPoint + CPoint(POLYGONALLINE_STUB_LEN, 0);
-		stubPoint.direction  = ORTHOGONALWIRE_EAST;
+		stubPoint.endDirection  = ORTHOGONALWIRE_EAST;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_BOTTOM)
 	{
 		stubPoint.ptPosition = rootPoint + CPoint(0, POLYGONALLINE_STUB_LEN);
-		stubPoint.direction  = ORTHOGONALWIRE_SOUTH;
+		stubPoint.endDirection  = ORTHOGONALWIRE_SOUTH;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_LEFT)
 	{
 		stubPoint.ptPosition = rootPoint - CPoint(POLYGONALLINE_STUB_LEN, 0);
-		stubPoint.direction  = ORTHOGONALWIRE_WEST;
+		stubPoint.endDirection  = ORTHOGONALWIRE_WEST;
 	}
 	return stubPoint;
 }
 
-CWirePoint CPolygonalLine::calculateEndLineStub(CPoint rootPoint, int iConnectPointIdx)
+CWirePoint CPolygonalLine::calculateEndLineStub(CPoint& rootPoint, int iConnectPointIdx)
 {
 	CWirePoint stubPoint;
 	if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_TOP)
 	{
 		stubPoint.ptPosition = rootPoint - CPoint(0, POLYGONALLINE_STUB_LEN);
-		stubPoint.direction  = ORTHOGONALWIRE_SOUTH;
+		stubPoint.endDirection  = ORTHOGONALWIRE_SOUTH;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_RIGHT)
 	{
 		stubPoint.ptPosition = rootPoint + CPoint(POLYGONALLINE_STUB_LEN, 0);
-		stubPoint.direction  = ORTHOGONALWIRE_WEST;
+		stubPoint.endDirection  = ORTHOGONALWIRE_WEST;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_BOTTOM)
 	{
 		stubPoint.ptPosition = rootPoint + CPoint(0, POLYGONALLINE_STUB_LEN);
-		stubPoint.direction  = ORTHOGONALWIRE_NORTH;
+		stubPoint.endDirection  = ORTHOGONALWIRE_NORTH;
 	}
 	else if(iConnectPointIdx == CCONNECTPOINT_RECT_MIDDLE_LEFT)
 	{
 		stubPoint.ptPosition = rootPoint - CPoint(POLYGONALLINE_STUB_LEN, 0);
-		stubPoint.direction  = ORTHOGONALWIRE_EAST;
+		stubPoint.endDirection  = ORTHOGONALWIRE_EAST;
 	}
 	return stubPoint;
 }
@@ -512,13 +629,15 @@ void CPolygonalLine::AdjustFocusPoint()
 	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
 	if (m_iBendTimes == 1)
 	{
-		connPoint->SetPoint(m_objOrthogonalWire.m_ptBend[0]);
+		connPoint->SetPoint(m_objOrthogonalWire.m_ptBend[0].ptPosition);
 	}
 	else if (m_iBendTimes == 2)
 	{
 		CPoint middlePoint = CPoint(
-			(m_objOrthogonalWire.m_ptBend[0].x + m_objOrthogonalWire.m_ptBend[1].x) / 2,
-			(m_objOrthogonalWire.m_ptBend[0].y + m_objOrthogonalWire.m_ptBend[1].y) / 2);
+			(m_objOrthogonalWire.m_ptBend[0].ptPosition.x 
+					+ m_objOrthogonalWire.m_ptBend[1].ptPosition.x) / 2,
+			(m_objOrthogonalWire.m_ptBend[0].ptPosition.y 
+					+ m_objOrthogonalWire.m_ptBend[1].ptPosition.y) / 2);
 		connPoint->SetPoint(middlePoint);
 	}
 	

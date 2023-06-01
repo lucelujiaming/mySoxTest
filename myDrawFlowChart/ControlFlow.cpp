@@ -31,6 +31,8 @@ CControlFlow::CControlFlow()
 
 	m_Start = CPoint(0, 0);
 	m_End = CPoint(0, 0);
+	m_iPreviousConnPointIdx = -1;
+	m_iNextConnPointIdx = -1;
 }
 
 CControlFlow::~CControlFlow()
@@ -38,21 +40,6 @@ CControlFlow::~CControlFlow()
 
 }
 
-void CControlFlow::printAllPoints(CString strCaption)
-{
-	CString strStatusBar;
-	CString strPoint;
-	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.GetSize());
-	for(int i = 0; i < m_Points.GetSize(); i++)
-	{
-		CConnectPoint *pNext = (CConnectPoint*)m_Points.GetAt(i);
-		
-		strPoint.Format(_T("(%d - [%d, %d]), "), i, pNext->GetPoint().x, pNext->GetPoint().y);
-		strStatusBar += strPoint;
-	}
-	strStatusBar += "\r\n";
-	TRACE(strStatusBar);
-}
 
 void CControlFlow::Draw( CDC *pdc )
 {

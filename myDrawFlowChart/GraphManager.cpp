@@ -417,54 +417,54 @@ void CGraphManager::CancelMarkPath()
 
 /*CGraph* CGraphManager::CreateGraph( int type )
 {
-	CGraph* temp = NULL;
+	CGraph* objGraph = NULL;
 	switch( type )
 	{
 		case Rectangle: 
 			{
-				temp = new CRectangle();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CRectangle();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case Ellipse: 
 			{
-				temp = new CEllipse();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CEllipse();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case Diamond: 
 			{
-				temp = new CDiamond();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CDiamond();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case DealParallelogram: 
 			{
-				temp = new CDealParallelogram();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CDealParallelogram();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case GenericLine: 
 			{
-				temp = new CGenericLine();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CGenericLine();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case Arrowhead: 
 			{
-				temp = new CArrowhead();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CArrowhead();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
 		case ControlFlow: 
 			{
-				temp = new CControlFlow();
-				m_Graphs.InsertAt(0, temp, 1);
+				objGraph = new CControlFlow();
+				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}			
 	}
 
 	m_FocusID = 0;
-	return temp;
+	return objGraph;
 }
 */

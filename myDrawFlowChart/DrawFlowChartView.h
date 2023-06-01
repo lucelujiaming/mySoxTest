@@ -71,6 +71,7 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnCreateRectangle();
+	afx_msg void OnCreateRoundRectangle();
 	afx_msg void OnCreateEllipse();
 	afx_msg void OnCreateDiamond();
 	afx_msg void OnCreateDealParallelogram();
@@ -95,7 +96,8 @@ protected:
 	afx_msg void OnToolbarEllipse();
 	afx_msg void OnToolbarNext();
 	afx_msg void OnToolbarProcess();
-	afx_msg void OnToolbarRect();
+	afx_msg void OnToolbarRectangle();
+	afx_msg void OnToolbarRoundRectangle();
 	afx_msg void OnToolbarSearch();
 	afx_msg void OnToolbarStart();
 	afx_msg void OnToolbarStop();

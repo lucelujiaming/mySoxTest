@@ -21,6 +21,7 @@ public:
 	CGraph* CreateJudgeDiamond();       // Adjusted
 	CGraph* CreateProcessDiamond();
 	CGraph* CreateRectangle();          // Adjusted
+	CGraph* CreateRoundRectangle();
 	CGraph* CreateControlFlow();		// NotNeed
 	CGraph* CreateLine();				// NotNeed
 	CGraph* CreateArrowLine();			// NotNeed

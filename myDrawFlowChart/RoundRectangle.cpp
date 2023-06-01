@@ -72,12 +72,12 @@ void CRoundRectangle::Draw( CDC *pdc )
 	{
 		// Top Semicircle
 		pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
-			CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2),
-			CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
+			CPoint((m_End.x > m_Start.x)?m_End.x:m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2),
+			CPoint((m_End.x > m_Start.x)?m_Start.x:m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
 		// Bottom Semicircle
 		pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
-			CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)/2),
-			CPoint(m_End.x  , m_End.y - (m_End.x - m_Start.x)/2));
+			CPoint((m_End.x > m_Start.x)?m_Start.x:m_End.x, m_End.y - (m_End.x - m_Start.x)/2),
+			CPoint((m_End.x > m_Start.x)?m_End.x:m_Start.x, m_End.y - (m_End.x - m_Start.x)/2));
 		// Left Line
 		pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
 		pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));

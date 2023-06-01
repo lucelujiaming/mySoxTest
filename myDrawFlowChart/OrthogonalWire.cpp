@@ -12,7 +12,7 @@
 
 COrthogonalWire::COrthogonalWire()
 {
-
+	m_fBendPercent = 0.5;
 }
 
 COrthogonalWire::~COrthogonalWire()
@@ -99,9 +99,14 @@ int COrthogonalWire::calculateOrthogonalWire(CWirePoint& startPos, CWirePoint& e
 		{
 			m_ptBend[0].ptPosition.y = startPos.ptPosition.y;
 			m_ptBend[1].ptPosition.y = endPos.ptPosition.y;
-
-			m_ptBend[0].ptPosition.x = (startPos.ptPosition.x + endPos.ptPosition.x) / 2;
-			m_ptBend[1].ptPosition.x = (startPos.ptPosition.x + endPos.ptPosition.x) / 2;
+			m_ptBend[0].ptPosition.x = 
+				// (startPos.ptPosition.x + endPos.ptPosition.x) / 2;
+				startPos.ptPosition.x + (int)(m_fBendPercent *
+							(endPos.ptPosition.x - startPos.ptPosition.x));
+			m_ptBend[1].ptPosition.x = 
+				// (startPos.ptPosition.x + endPos.ptPosition.x) / 2;
+				endPos.ptPosition.x - (int)((1 - m_fBendPercent) *
+							(endPos.ptPosition.x - startPos.ptPosition.x));
 			
 			if(m_ptBend[0].ptPosition.y >= m_ptBend[1].ptPosition.y)
 			{
@@ -117,9 +122,15 @@ int COrthogonalWire::calculateOrthogonalWire(CWirePoint& startPos, CWirePoint& e
 			m_ptBend[0].ptPosition.x = startPos.ptPosition.x;
 			m_ptBend[1].ptPosition.x = endPos.ptPosition.x;
 
-			m_ptBend[0].ptPosition.y = (startPos.ptPosition.y + endPos.ptPosition.y) / 2;
-			m_ptBend[1].ptPosition.y = (startPos.ptPosition.y + endPos.ptPosition.y) / 2;
-			
+			m_ptBend[0].ptPosition.y = 
+				// (startPos.ptPosition.y + endPos.ptPosition.y) / 2;
+				startPos.ptPosition.y + (int)(m_fBendPercent *
+							(endPos.ptPosition.y - startPos.ptPosition.y));
+			m_ptBend[1].ptPosition.y = 
+				// (startPos.ptPosition.y + endPos.ptPosition.y) / 2;
+				endPos.ptPosition.y - (int)((1 - m_fBendPercent) *
+							(endPos.ptPosition.y - startPos.ptPosition.y));
+						
 			if(m_ptBend[0].ptPosition.x >= m_ptBend[1].ptPosition.x)
 			{
 				m_ptBend[1].endDirection = ORTHOGONALWIRE_WEST;

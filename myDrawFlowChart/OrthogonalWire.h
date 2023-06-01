@@ -115,6 +115,7 @@ private:
 	CDirectVector m_objDirectVector;
 public:
 	CWirePoint m_ptBend[2];
+	float         m_fBendPercent;
 };
 
 #endif // !defined(AFX_ORTHOGONALWIRE_H__B34F204D_BD00_42DB_86F4_DADDECD45E7B__INCLUDED_)

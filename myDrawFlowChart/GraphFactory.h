@@ -22,6 +22,7 @@ public:
 	CGraph* CreateProcessDiamond();
 	CGraph* CreateRectangle();          // Adjusted
 	CGraph* CreateRoundRectangle();
+	CGraph* CreateFourCornerRoundRectangle();
 	CGraph* CreateControlFlow();		// NotNeed
 	CGraph* CreateLine();				// NotNeed
 	CGraph* CreateArrowLine();			// NotNeed

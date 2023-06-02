@@ -34,6 +34,7 @@
 #define ID_TOOLBAR_ARROWHEAD            32808
 #define ID_TOOLBAR_POLYGONAL_LINE       32810
 #define ID_TOOLBAR_ROUNDRECTANGLE       32811
+#define ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE 32813
 
 // Next default values for new objects
 // 
@@ -41,7 +42,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_COMMAND_VALUE         32813
+#define _APS_NEXT_COMMAND_VALUE         32814
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

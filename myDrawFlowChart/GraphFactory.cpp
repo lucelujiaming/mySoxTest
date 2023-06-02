@@ -8,6 +8,7 @@
 
 #include "Rectangle.h"
 #include "RoundRectangle.h"
+#include "FourCornerRoundRectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
 #include "DealParallelogram.h"
@@ -56,6 +57,10 @@ CGraph* CGraphFactory::CreateRectangle()
 CGraph* CGraphFactory::CreateRoundRectangle()
 {
 	return new CRoundRectangle();
+}
+CGraph* CGraphFactory::CreateFourCornerRoundRectangle()
+{
+	return new CFourCornerRoundRectangle();
 }
 
 CGraph* CGraphFactory::CreateControlFlow()

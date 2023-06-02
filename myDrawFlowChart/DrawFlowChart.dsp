@@ -134,6 +134,10 @@ SOURCE=.\End.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FourCornerRoundRectangle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GenericLine.cpp
 # End Source File
 # Begin Source File
@@ -232,6 +236,10 @@ SOURCE=.\Ellipse.h
 # Begin Source File
 
 SOURCE=.\End.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FourCornerRoundRectangle.h
 # End Source File
 # Begin Source File
 

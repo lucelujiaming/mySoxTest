@@ -154,6 +154,10 @@ SOURCE=.\GraphManager.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Hexagon.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\LogFile.cpp
 # End Source File
 # Begin Source File
@@ -256,6 +260,10 @@ SOURCE=.\GraphFactory.h
 # Begin Source File
 
 SOURCE=.\GraphManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Hexagon.h
 # End Source File
 # Begin Source File
 

@@ -16,6 +16,9 @@
 #define FOURCORNER_ROUNDED_RECTANGLE_TEXT_XBORDER            8    // X方向文字边框宽度
 #define FOURCORNER_ROUNDED_RECTANGLE_TEXT_YBORDER            8    // Y方向文字边框宽度
 
+#define ROUNDED_CORNER_RADIUS                                (30) 
+#define ROUNDED_CORNER_DIAMETER                              (2 * ROUNDED_CORNER_RADIUS) 
+
 class CFourCornerRoundRectangle : public CGraph  
 {
 	DECLARE_SERIAL(CFourCornerRoundRectangle)

@@ -51,49 +51,82 @@ void CFourCornerRoundRectangle::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	if(abs(m_End.x - m_Start.x) >= abs(m_End.y - m_Start.y))
+	if(abs(m_End.x - m_Start.x) > ROUNDED_CORNER_DIAMETER
+		&& abs(m_End.y - m_Start.y) > ROUNDED_CORNER_DIAMETER)
 	{
 		if(m_End.y >= m_Start.y)
 		{
 			// m_End on the east and south of m_Start
 			if (m_End.x >= m_Start.x)
 			{
-				// Left Semicircle
-				pdc->Arc( CRect(m_Start, CPoint(m_Start.x + (m_End.y - m_Start.y), m_End.y)), 
-					CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y),
-					CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_End.x - (m_End.y - m_Start.y), m_Start.y), m_End), 
-					CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y),
-					CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				// Left-top Quarter circle
+				pdc->Arc( CRect(m_Start, m_Start + CPoint(ROUNDED_CORNER_DIAMETER, ROUNDED_CORNER_DIAMETER)), 
+					m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0),
+					m_Start + CPoint(0, ROUNDED_CORNER_RADIUS));
+				// Right-top Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x - ROUNDED_CORNER_DIAMETER, m_Start.y), 
+						        CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// Left-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_DIAMETER), 
+						        CPoint(m_Start.x + ROUNDED_CORNER_DIAMETER, m_End.y)), 
+					CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// Right-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x - ROUNDED_CORNER_DIAMETER, m_End.y - ROUNDED_CORNER_DIAMETER), m_End), 
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y),
+					CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y));
-				pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
+				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-				pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y));
+				pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// Left Line
+				pdc->MoveTo(m_Start + CPoint(0, ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// Right Line
+				pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
 			}
 			// m_End on the west and south of m_Start
 			else
 			{
-				// Left Semicircle
+				// Left-top Quarter circle
 				pdc->Arc( CRect(CPoint(m_End.x, m_Start.y), 
-							CPoint(m_End.x + (m_End.y - m_Start.y), 
-									m_Start.y + (m_End.y - m_Start.y))), 
-					CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_Start.y),
-					CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_End.y));
-
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_Start.x - (m_End.y - m_Start.y), m_Start.y), 
-							CPoint(m_Start.x, m_End.y)), 
-					CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_End.y),
-					CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_Start.y));
+							CPoint(m_End.x + ROUNDED_CORNER_DIAMETER, 
+									m_Start.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y),
+					CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				// Right-top Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x - ROUNDED_CORNER_DIAMETER, m_Start.y), 
+							    CPoint(m_Start.x, m_Start.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_Start.x, m_Start.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// Left-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_DIAMETER), 
+							    CPoint(m_End.x + ROUNDED_CORNER_DIAMETER, m_End.y)), 
+					CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// Right-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x - ROUNDED_CORNER_DIAMETER, m_End.y - ROUNDED_CORNER_DIAMETER), 
+							    CPoint(m_Start.x, m_End.y)), 
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y),
+					CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				//
 				// Top Line
-				pdc->MoveTo(CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_Start.y));
-				pdc->LineTo(CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_End.y));
-				pdc->LineTo(CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_End.y));
+				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// Left Line
+				pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// Right Line
+				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
 			}
 		}
 		else
@@ -101,135 +134,80 @@ void CFourCornerRoundRectangle::Draw( CDC *pdc )
 			// m_End on the east and north of m_Start
 			if (m_End.x >= m_Start.x)
 			{
-				// Left Semicircle
+				// Left-top Quarter circle
 				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
-							CPoint(m_Start.x + (m_Start.y - m_End.y), m_Start.y)), 
-					CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y),
-					CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_End.x - (m_Start.y - m_End.y), m_End.y), 
-							CPoint(m_End.x, m_Start.y)), 
-					CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y),
-					CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+						        CPoint(m_Start.x + ROUNDED_CORNER_DIAMETER, m_End.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y),
+					CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// Right-top Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x - ROUNDED_CORNER_DIAMETER, m_End.y), 
+						        CPoint(m_End.x, m_End.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// Left-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_DIAMETER), 
+						        CPoint(m_Start.x + ROUNDED_CORNER_DIAMETER, m_Start.y)), 
+					CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				// Right-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x - ROUNDED_CORNER_DIAMETER, 
+									   m_Start.y - ROUNDED_CORNER_DIAMETER), CPoint(m_End.x, m_Start.y)), 
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y),
+					CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y));
-				pdc->LineTo(CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+				pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
+				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
-				pdc->LineTo(CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y));
+				pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// Left Line
+				pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// Right Line
+				pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 			}
 			// m_End on the west and north of m_Start
 			else
 			{
-				// Left Semicircle
+				// Left-top Quarter circle
 				pdc->Arc( CRect(m_End, 
-							CPoint(m_End.x + (m_Start.y - m_End.y), 
-								   m_End.y + (m_Start.y - m_End.y))), 
-					CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_End.y),
-					CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_Start.y));
-
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_Start.x - (m_Start.y - m_End.y), m_End.y), 
-								m_Start), 
-					CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_Start.y),
-					CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_End.y));
+						        CPoint(m_End.x + ROUNDED_CORNER_DIAMETER, m_End.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y),
+					CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// Right-top Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x - ROUNDED_CORNER_DIAMETER, m_End.y), 
+						        CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_DIAMETER)), 
+					CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// Left-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_DIAMETER), 
+						        CPoint(m_End.x + ROUNDED_CORNER_DIAMETER, m_Start.y)), 
+					CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				// Right-bottom Quarter circle
+				pdc->Arc( CRect(CPoint(m_Start.x - ROUNDED_CORNER_DIAMETER, 
+									   m_Start.y - ROUNDED_CORNER_DIAMETER), m_Start), 
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y),
+					CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_End.y));
-				pdc->LineTo(CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_End.y));
+				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_Start.y));
-				pdc->LineTo(CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_Start.y));
+				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// Left Line
+				pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// Right Line
+				pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 			}
 		}
 	}
 	else
 	{
-		if (m_End.x >= m_Start.x)
-		{
-			// m_End on the east and south of m_Start
-			if(m_End.y >= m_Start.y)
-			{
-				// Top Semicircle
-				pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
-					CPoint(m_End.x,   m_Start.y + (m_End.x - m_Start.x)/2),
-					CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
-				// Bottom Semicircle
-				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
-					CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)/2),
-					CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
-				// Left Line
-				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
-				pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));
-				// Right Line
-				pdc->MoveTo(CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
-				pdc->LineTo(CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
-			}
-			// m_End on the east and north of m_Start
-			else
-			{
-				// Left Semicircle
-				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
-							CPoint(m_End.x, m_End.y + (m_End.x - m_Start.x))), 
-					CPoint(m_End.x,   m_End.y + (m_End.x - m_Start.x)/2),
-					CPoint(m_Start.x, m_End.y + (m_End.x - m_Start.x)/2));
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_Start.x, m_Start.y - (m_End.x - m_Start.x)), 
-								CPoint(m_End.x, m_Start.y)), 
-					CPoint(m_Start.x, m_Start.y- (m_End.x - m_Start.x)/2),
-					CPoint(m_End.x,   m_Start.y- (m_End.x - m_Start.x)/2));
-				// Top Line
-				pdc->MoveTo(CPoint(m_Start.x, m_End.y + (m_End.x - m_Start.x)/2));
-				pdc->LineTo(CPoint(m_Start.x, m_Start.y- (m_End.x - m_Start.x)/2));
-				// Bottom Line
-				pdc->MoveTo(CPoint(m_End.x,   m_Start.y - (m_End.x - m_Start.x)/2));
-				pdc->LineTo(CPoint(m_End.x,   m_End.y + (m_End.x - m_Start.x)/2));
-			}
-		}
-		else
-		{
-			// m_End on the west and south of m_Start
-			if(m_End.y >= m_Start.y)
-			{
-				// Top Semicircle
-				pdc->Arc(CRect(CPoint(m_End.x,   m_Start.y), 
-								CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x))), 
-					CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2),
-					CPoint(m_End.x,   m_Start.y + (m_Start.x - m_End.x)/2));
-
-				// Bottom Semicircle
-				pdc->Arc(CRect(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)), 
-								CPoint(m_Start.x, m_End.y)), 
-					CPoint(m_End.x, m_End.y - (m_Start.x - m_End.x)/2),
-					CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
-				// Left Line
-				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2));
-				pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
-				// Right Line
-				pdc->MoveTo(CPoint(m_End.x, m_Start.y + (m_Start.x - m_End.x)/2));
-				pdc->LineTo(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)/2));
-			}
-			// m_End on the west and north of m_Start
-			else
-			{
-				// Left Semicircle
-				pdc->Arc( CRect(m_End, 
-							CPoint(m_Start.x, 
-								   m_End.y + (m_Start.x - m_End.x))), 
-					CPoint(m_Start.x, m_End.y + (m_Start.x - m_End.x)/2),
-					CPoint(m_End.x,   m_End.y + (m_Start.x - m_End.x)/2));
-				// Right Semicircle
-				pdc->Arc( CRect(CPoint(m_End.x, m_Start.y - (m_Start.x - m_End.x)), 
-								m_Start), 
-					CPoint(m_End.x,   m_Start.y - (m_Start.x - m_End.x)/2),
-					CPoint(m_Start.x, m_Start.y - (m_Start.x - m_End.x)/2));
-				// Top Line
-				pdc->MoveTo(CPoint(m_End.x, m_End.y + (m_Start.x - m_End.x)/2));
-				pdc->LineTo(CPoint(m_End.x, m_Start.y - (m_Start.x - m_End.x)/2));
-				// Bottom Line
-				pdc->MoveTo(CPoint(m_Start.x, m_End.y + (m_Start.x - m_End.x)/2));
-				pdc->LineTo(CPoint(m_Start.x, m_Start.y - (m_Start.x - m_End.x)/2));
-			}
-		}
+		pdc->Rectangle( CRect(m_Start, m_End) );
 	}
 
 	if(m_IsMark)

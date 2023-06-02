@@ -51,83 +51,184 @@ void CRoundRectangle::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	if((m_End.x - m_Start.x) >= (m_End.y - m_Start.y))
+	if(abs(m_End.x - m_Start.x) >= abs(m_End.y - m_Start.y))
 	{
 		if(m_End.y >= m_Start.y)
 		{
-			// Left Semicircle
-			pdc->Arc( CRect(m_Start, CPoint(m_Start.x + (m_End.y - m_Start.y), m_End.y)), 
-				CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y),
-				CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-			// Right Semicircle
-			pdc->Arc( CRect(CPoint(m_End.x - (m_End.y - m_Start.y), m_Start.y), m_End), 
-				CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y),
-				CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
-			// Top Line
-			pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y));
-			pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
-			// Bottom Line
-			pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-			pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y));
+			// m_End on the east and south of m_Start
+			if (m_End.x >= m_Start.x)
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(m_Start, CPoint(m_Start.x + (m_End.y - m_Start.y), m_End.y)), 
+					CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y),
+					CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_End.x - (m_End.y - m_Start.y), m_Start.y), m_End), 
+					CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y),
+					CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				// Top Line
+				pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y));
+				pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
+				pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y));
+			}
+			// m_End on the west and south of m_Start
+			else
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(CPoint(m_End.x, m_Start.y), 
+							CPoint(m_End.x + (m_End.y - m_Start.y), 
+									m_Start.y + (m_End.y - m_Start.y))), 
+					CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_Start.y),
+					CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_End.y));
+
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x - (m_End.y - m_Start.y), m_Start.y), 
+							CPoint(m_Start.x, m_End.y)), 
+					CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_End.y),
+					CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				// Top Line
+				pdc->MoveTo(CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_Start.y));
+				pdc->LineTo(CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_Start.y));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_End.x + (m_End.y - m_Start.y)/2, m_End.y));
+				pdc->LineTo(CPoint(m_Start.x - (m_End.y - m_Start.y)/2, m_End.y));
+			}
 		}
 		else
 		{
-			// Left Semicircle
-			pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
-						CPoint(m_Start.x + (m_Start.y - m_End.y), m_Start.y)), 
-				CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y),
-				CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
-			// Right Semicircle
-			pdc->Arc( CRect(CPoint(m_End.x - (m_Start.y - m_End.y), m_End.y), 
-						CPoint(m_End.x, m_Start.y)), 
-				CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y),
-				CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
-			// Top Line
-			pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y));
-			pdc->LineTo(CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
-			// Bottom Line
-			pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
-			pdc->LineTo(CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y));
+			// m_End on the east and north of m_Start
+			if (m_End.x >= m_Start.x)
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
+							CPoint(m_Start.x + (m_Start.y - m_End.y), m_Start.y)), 
+					CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y),
+					CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_End.x - (m_Start.y - m_End.y), m_End.y), 
+							CPoint(m_End.x, m_Start.y)), 
+					CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y),
+					CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+				// Top Line
+				pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y));
+				pdc->LineTo(CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
+				pdc->LineTo(CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y));
+			}
+			// m_End on the west and north of m_Start
+			else
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(m_End, 
+							CPoint(m_End.x + (m_Start.y - m_End.y), 
+								   m_End.y + (m_Start.y - m_End.y))), 
+					CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_End.y),
+					CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_Start.y));
+
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x - (m_Start.y - m_End.y), m_End.y), 
+								m_Start), 
+					CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_Start.y),
+					CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_End.y));
+				// Top Line
+				pdc->MoveTo(CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_End.y));
+				pdc->LineTo(CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_End.y));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_End.x + (m_Start.y - m_End.y)/2, m_Start.y));
+				pdc->LineTo(CPoint(m_Start.x - (m_Start.y - m_End.y)/2, m_Start.y));
+			}
 		}
 	}
 	else
 	{
 		if (m_End.x >= m_Start.x)
 		{
-			// Top Semicircle
-			pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
-				CPoint(m_End.x,   m_Start.y + (m_End.x - m_Start.x)/2),
-				CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
-			// Bottom Semicircle
-			pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
-				CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)/2),
-				CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
-			// Left Line
-			pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
-			pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));
-			// Right Line
-			pdc->MoveTo(CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
-			pdc->LineTo(CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
+			// m_End on the east and south of m_Start
+			if(m_End.y >= m_Start.y)
+			{
+				// Top Semicircle
+				pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
+					CPoint(m_End.x,   m_Start.y + (m_End.x - m_Start.x)/2),
+					CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
+				// Bottom Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
+					CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)/2),
+					CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
+				// Left Line
+				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
+				pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));
+				// Right Line
+				pdc->MoveTo(CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
+				pdc->LineTo(CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
+			}
+			// m_End on the east and north of m_Start
+			else
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
+							CPoint(m_End.x, m_End.y + (m_End.x - m_Start.x))), 
+					CPoint(m_End.x,   m_End.y + (m_End.x - m_Start.x)/2),
+					CPoint(m_Start.x, m_End.y + (m_End.x - m_Start.x)/2));
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_Start.x, m_Start.y - (m_End.x - m_Start.x)), 
+								CPoint(m_End.x, m_Start.y)), 
+					CPoint(m_Start.x, m_Start.y- (m_End.x - m_Start.x)/2),
+					CPoint(m_End.x,   m_Start.y- (m_End.x - m_Start.x)/2));
+				// Top Line
+				pdc->MoveTo(CPoint(m_Start.x, m_End.y + (m_End.x - m_Start.x)/2));
+				pdc->LineTo(CPoint(m_Start.x, m_Start.y- (m_End.x - m_Start.x)/2));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_End.x,   m_Start.y - (m_End.x - m_Start.x)/2));
+				pdc->LineTo(CPoint(m_End.x,   m_End.y + (m_End.x - m_Start.x)/2));
+			}
 		}
 		else
 		{
-			// Top Semicircle
-			pdc->Arc(CRect(CPoint(m_End.x,   m_Start.y), 
-							CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x))), 
-				CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2),
-				CPoint(m_End.x,   m_Start.y + (m_Start.x - m_End.x)/2));
+			// m_End on the west and south of m_Start
+			if(m_End.y >= m_Start.y)
+			{
+				// Top Semicircle
+				pdc->Arc(CRect(CPoint(m_End.x,   m_Start.y), 
+								CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x))), 
+					CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2),
+					CPoint(m_End.x,   m_Start.y + (m_Start.x - m_End.x)/2));
 
-			// Bottom Semicircle
-			pdc->Arc(CRect(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)), 
-							CPoint(m_Start.x, m_End.y)), 
-				CPoint(m_End.x, m_End.y - (m_Start.x - m_End.x)/2),
-				CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
-			// Left Line
-			pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2));
-			pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
-			// Right Line
-			pdc->MoveTo(CPoint(m_End.x, m_Start.y + (m_Start.x - m_End.x)/2));
-			pdc->LineTo(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)/2));
+				// Bottom Semicircle
+				pdc->Arc(CRect(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)), 
+								CPoint(m_Start.x, m_End.y)), 
+					CPoint(m_End.x, m_End.y - (m_Start.x - m_End.x)/2),
+					CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
+				// Left Line
+				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2));
+				pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
+				// Right Line
+				pdc->MoveTo(CPoint(m_End.x, m_Start.y + (m_Start.x - m_End.x)/2));
+				pdc->LineTo(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)/2));
+			}
+			// m_End on the west and north of m_Start
+			else
+			{
+				// Left Semicircle
+				pdc->Arc( CRect(m_End, 
+							CPoint(m_Start.x, 
+								   m_End.y + (m_Start.x - m_End.x))), 
+					CPoint(m_Start.x, m_End.y + (m_Start.x - m_End.x)/2),
+					CPoint(m_End.x,   m_End.y + (m_Start.x - m_End.x)/2));
+				// Right Semicircle
+				pdc->Arc( CRect(CPoint(m_End.x, m_Start.y - (m_Start.x - m_End.x)), 
+								m_Start), 
+					CPoint(m_End.x,   m_Start.y - (m_Start.x - m_End.x)/2),
+					CPoint(m_Start.x, m_Start.y - (m_Start.x - m_End.x)/2));
+				// Top Line
+				pdc->MoveTo(CPoint(m_End.x, m_End.y + (m_Start.x - m_End.x)/2));
+				pdc->LineTo(CPoint(m_End.x, m_Start.y - (m_Start.x - m_End.x)/2));
+				// Bottom Line
+				pdc->MoveTo(CPoint(m_Start.x, m_End.y + (m_Start.x - m_End.x)/2));
+				pdc->LineTo(CPoint(m_Start.x, m_Start.y - (m_Start.x - m_End.x)/2));
+			}
 		}
 	}
 

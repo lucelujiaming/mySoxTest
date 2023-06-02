@@ -73,6 +73,7 @@ protected:
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateRoundRectangle();
 	afx_msg void OnCreateFourCornerRoundRectangle();
+	afx_msg void OnCreateHexagon();
 	afx_msg void OnCreateEllipse();
 	afx_msg void OnCreateDiamond();
 	afx_msg void OnCreateDealParallelogram();
@@ -100,6 +101,7 @@ protected:
 	afx_msg void OnToolbarRectangle();
 	afx_msg void OnToolbarRoundRectangle();
 	afx_msg void OnToolbarFourCornerRoundRectangle();
+	afx_msg void OnToolbarHexagon();
 	afx_msg void OnToolbarSearch();
 	afx_msg void OnToolbarStart();
 	afx_msg void OnToolbarStop();

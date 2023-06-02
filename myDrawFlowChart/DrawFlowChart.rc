@@ -99,6 +99,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_RECTANGLE
     BUTTON      ID_TOOLBAR_ROUNDRECTANGLE
     BUTTON      ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE
+    BUTTON      ID_TOOLBAR_HEXAGON
     BUTTON      ID_TOOLBAR_ELLIPSE
     BUTTON      ID_TOOLBAR_JUDGE
     BUTTON      ID_TOOLBAR_PROCESS
@@ -417,6 +418,10 @@ BEGIN
     ID_TOOLBAR_GENERICLINE  "创建流程线\n流程线"
     ID_TOOLBAR_ARROWHEAD    "创建箭头\n箭头"
     ID_TOOLBAR_POLYGONAL_LINE "创建折线\n折线"
+    ID_TOOLBAR_ROUNDRECTANGLE "创建圆角矩形\n输入输出圆角矩形框"
+    ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE 
+                            "创建四角圆角矩形\n输入输出四角圆角矩形框"
+    ID_TOOLBAR_HEXAGON      "创建六边形\n输入输出六边框"
 END
 
 #endif    // Chinese (P.R.C.) resources

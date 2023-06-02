@@ -38,7 +38,7 @@ CRoundRectangle::~CRoundRectangle()
 }
 
 /************************************************************************/
-/* 功能：绘制函数。绘制了一个矩形和上面的文字。                         */
+/* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
 void CRoundRectangle::Draw( CDC *pdc )
 {
@@ -53,37 +53,82 @@ void CRoundRectangle::Draw( CDC *pdc )
 
 	if((m_End.x - m_Start.x) >= (m_End.y - m_Start.y))
 	{
-		// Left Semicircle
-		pdc->Arc( CRect(m_Start, CPoint(m_Start.x + (m_End.y - m_Start.y), m_End.y)), 
-			CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y),
-			CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-		// Right Semicircle
-		pdc->Arc( CRect(CPoint(m_End.x - (m_End.y - m_Start.y), m_Start.y), m_End), 
-			CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y),
-			CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
-		// Top Line
-		pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y));
-		pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
-		// Bottom Line
-		pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
-		pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y));
+		if(m_End.y >= m_Start.y)
+		{
+			// Left Semicircle
+			pdc->Arc( CRect(m_Start, CPoint(m_Start.x + (m_End.y - m_Start.y), m_End.y)), 
+				CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y),
+				CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
+			// Right Semicircle
+			pdc->Arc( CRect(CPoint(m_End.x - (m_End.y - m_Start.y), m_Start.y), m_End), 
+				CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y),
+				CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+			// Top Line
+			pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_Start.y));
+			pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_Start.y));
+			// Bottom Line
+			pdc->MoveTo(CPoint(m_Start.x + (m_End.y - m_Start.y)/2, m_End.y));
+			pdc->LineTo(CPoint(m_End.x - (m_End.y - m_Start.y)/2, m_End.y));
+		}
+		else
+		{
+			// Left Semicircle
+			pdc->Arc( CRect(CPoint(m_Start.x, m_End.y), 
+						CPoint(m_Start.x + (m_Start.y - m_End.y), m_Start.y)), 
+				CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y),
+				CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
+			// Right Semicircle
+			pdc->Arc( CRect(CPoint(m_End.x - (m_Start.y - m_End.y), m_End.y), 
+						CPoint(m_End.x, m_Start.y)), 
+				CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y),
+				CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+			// Top Line
+			pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_End.y));
+			pdc->LineTo(CPoint(m_End.x   - (m_Start.y - m_End.y)/2, m_End.y));
+			// Bottom Line
+			pdc->MoveTo(CPoint(m_Start.x + (m_Start.y - m_End.y)/2, m_Start.y));
+			pdc->LineTo(CPoint(m_End.x - (m_Start.y - m_End.y)/2, m_Start.y));
+		}
 	}
 	else
 	{
-		// Top Semicircle
-		pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
-			CPoint((m_End.x > m_Start.x)?m_End.x:m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2),
-			CPoint((m_End.x > m_Start.x)?m_Start.x:m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
-		// Bottom Semicircle
-		pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
-			CPoint((m_End.x > m_Start.x)?m_Start.x:m_End.x, m_End.y - (m_End.x - m_Start.x)/2),
-			CPoint((m_End.x > m_Start.x)?m_End.x:m_Start.x, m_End.y - (m_End.x - m_Start.x)/2));
-		// Left Line
-		pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
-		pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));
-		// Right Line
-		pdc->MoveTo(CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
-		pdc->LineTo(CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
+		if (m_End.x >= m_Start.x)
+		{
+			// Top Semicircle
+			pdc->Arc( CRect(m_Start, CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x))), 
+				CPoint(m_End.x,   m_Start.y + (m_End.x - m_Start.x)/2),
+				CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
+			// Bottom Semicircle
+			pdc->Arc( CRect(CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)), m_End), 
+				CPoint(m_Start.x, m_End.y - (m_End.x - m_Start.x)/2),
+				CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
+			// Left Line
+			pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_End.x - m_Start.x)/2));
+			pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_End.x - m_Start.x)/2));
+			// Right Line
+			pdc->MoveTo(CPoint(m_End.x, m_End.y - (m_End.x - m_Start.x)/2));
+			pdc->LineTo(CPoint(m_End.x, m_Start.y + (m_End.x - m_Start.x)/2));
+		}
+		else
+		{
+			// Top Semicircle
+			pdc->Arc(CRect(CPoint(m_End.x,   m_Start.y), 
+							CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x))), 
+				CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2),
+				CPoint(m_End.x,   m_Start.y + (m_Start.x - m_End.x)/2));
+
+			// Bottom Semicircle
+			pdc->Arc(CRect(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)), 
+							CPoint(m_Start.x, m_End.y)), 
+				CPoint(m_End.x, m_End.y - (m_Start.x - m_End.x)/2),
+				CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
+			// Left Line
+			pdc->MoveTo(CPoint(m_Start.x, m_Start.y + (m_Start.x - m_End.x)/2));
+			pdc->LineTo(CPoint(m_Start.x,   m_End.y - (m_Start.x - m_End.x)/2));
+			// Right Line
+			pdc->MoveTo(CPoint(m_End.x, m_Start.y + (m_Start.x - m_End.x)/2));
+			pdc->LineTo(CPoint(m_End.x,   m_End.y - (m_Start.x - m_End.x)/2));
+		}
 	}
 
 	if(m_IsMark)

@@ -98,6 +98,10 @@ SOURCE=.\Arrowhead.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ConnectPoint.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ControlFlow.cpp
 # End Source File
 # Begin Source File
@@ -212,6 +216,10 @@ SOURCE=.\AdjustPoint.h
 # Begin Source File
 
 SOURCE=.\Arrowhead.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ConnectPoint.h
 # End Source File
 # Begin Source File
 

@@ -45,7 +45,6 @@ private:
 private:
 	CPoint m_Start;
 	CPoint m_End;
-	//int m_type;
 	CString m_text;
 	int m_AdjustPoint;
 

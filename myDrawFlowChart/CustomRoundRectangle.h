@@ -1,9 +1,9 @@
-// FourCornerRoundRectangle.h: interface for the CFourCornerRoundRectangle class.
+// CustomRoundRectangle.h: interface for the CCustomRoundRectangle class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_FOURCORNERROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)
-#define AFX_FOURCORNERROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_
+#if !defined(AFX_CUSTOM_ROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)
+#define AFX_CUSTOM_ROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -13,20 +13,20 @@
 #include "LogFile.h"
 
 // 余量
-#define FOURCORNER_ROUNDED_RECTANGLE_TEXT_XBORDER            8    // X方向文字边框宽度
-#define FOURCORNER_ROUNDED_RECTANGLE_TEXT_YBORDER            8    // Y方向文字边框宽度
+#define CUSTOM_ROUNDED_RECTANGLE_TEXT_XBORDER            8    // X方向文字边框宽度
+#define CUSTOM_ROUNDED_RECTANGLE_TEXT_YBORDER            8    // Y方向文字边框宽度
 
 #define ROUNDED_CORNER_RADIUS                                (30) 
 #define ROUNDED_CORNER_DIAMETER                              (2 * ROUNDED_CORNER_RADIUS) 
 
-class CFourCornerRoundRectangle : public CGraph  
+class CCustomRoundRectangle : public CGraph  
 {
-	DECLARE_SERIAL(CFourCornerRoundRectangle)
+	DECLARE_SERIAL(CCustomRoundRectangle)
 
 public:
-	CFourCornerRoundRectangle();
-	virtual ~CFourCornerRoundRectangle();
-	CString GetTypeName() { return CString("CFourCornerRoundRectangle"); }
+	CCustomRoundRectangle();
+	virtual ~CCustomRoundRectangle();
+	CString GetTypeName() { return CString("CCustomRoundRectangle"); }
 
 public:
 	void Draw( CDC *pdc );
@@ -53,4 +53,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_FOURCORNERROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)
+#endif // !defined(AFX_CUSTOM_ROUNDRECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)

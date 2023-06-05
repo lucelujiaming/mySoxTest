@@ -72,6 +72,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateRoundHeadRectangle();
+	afx_msg void OnCreateRoundRectangle();
 	afx_msg void OnCreateCustomRoundRectangle();
 	afx_msg void OnCreateHexagon();
 	afx_msg void OnCreateEllipse();
@@ -100,7 +101,8 @@ protected:
 	afx_msg void OnToolbarProcess();
 	afx_msg void OnToolbarRectangle();
 	afx_msg void OnToolbarRoundHeadRectangle();
-	afx_msg void OnToolbarFourCornerRoundRectangle();
+	afx_msg void OnToolbarCustomRoundRectangle();
+	afx_msg void OnToolbarRoundRectangle();
 	afx_msg void OnToolbarHexagon();
 	afx_msg void OnToolbarSearch();
 	afx_msg void OnToolbarStart();

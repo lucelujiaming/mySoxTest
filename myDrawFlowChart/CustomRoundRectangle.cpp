@@ -78,17 +78,26 @@ void CCustomRoundRectangle::Draw( CDC *pdc )
 					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y),
 					CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
-				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
+				// pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->Rectangle(CRect(CPoint(m_Start + 
+										CPoint(ROUNDED_CORNER_RADIUS, CONNECTPOINT_NEGATIVE_RADIUS)),
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
-				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->Rectangle(CRect(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_NEGATIVE_RADIUS),
+						CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Left Line
-				pdc->MoveTo(m_Start + CPoint(0, ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(m_Start + CPoint(0, ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_Start + CPoint(CONNECTPOINT_NEGATIVE_RADIUS, ROUNDED_CORNER_RADIUS)),
+						CPoint(m_Start.x + CONNECTPOINT_POSITIVE_RADIUS, m_End.y - ROUNDED_CORNER_RADIUS)));
 				// Right Line
-				pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_End.x + CONNECTPOINT_NEGATIVE_RADIUS, m_Start.y + ROUNDED_CORNER_RADIUS),
+						CPoint(m_End.x + CONNECTPOINT_POSITIVE_RADIUS, m_End.y - ROUNDED_CORNER_RADIUS)));
 			}
 			// m_End on the west and south of m_Start
 			else
@@ -116,17 +125,25 @@ void CCustomRoundRectangle::Draw( CDC *pdc )
 					CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
 				//
 				// Top Line
-				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
-				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->Rectangle(CRect(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_NEGATIVE_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
-				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->Rectangle(CRect(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_NEGATIVE_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Left Line
-				pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_End.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_End.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_End.x + CONNECTPOINT_NEGATIVE_RADIUS, m_Start.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x + CONNECTPOINT_POSITIVE_RADIUS, m_End.y - ROUNDED_CORNER_RADIUS)));
 				// Right Line
-				pdc->MoveTo(CPoint(m_Start.x, m_Start.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_Start.x, m_Start.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_Start.x, m_End.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_Start.x + CONNECTPOINT_NEGATIVE_RADIUS, m_Start.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x + CONNECTPOINT_POSITIVE_RADIUS, m_End.y - ROUNDED_CORNER_RADIUS)));
 			}
 		}
 		else
@@ -155,17 +172,25 @@ void CCustomRoundRectangle::Draw( CDC *pdc )
 					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y),
 					CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
-				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->MoveTo(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, 0)));
+				// pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->Rectangle(CRect(CPoint(m_Start + CPoint(ROUNDED_CORNER_RADIUS, CONNECTPOINT_NEGATIVE_RADIUS)),
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
-				pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->MoveTo(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->LineTo(CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->Rectangle(CRect(CPoint(m_Start.x + ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_NEGATIVE_RADIUS),
+					CPoint(m_End.x - ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Left Line
-				pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_Start.x + CONNECTPOINT_NEGATIVE_RADIUS, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x + CONNECTPOINT_POSITIVE_RADIUS, m_Start.y - ROUNDED_CORNER_RADIUS)));
 				// Right Line
-				pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_End.x + CONNECTPOINT_NEGATIVE_RADIUS, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x + CONNECTPOINT_POSITIVE_RADIUS, m_Start.y - ROUNDED_CORNER_RADIUS)));
 			}
 			// m_End on the west and north of m_Start
 			else
@@ -191,17 +216,25 @@ void CCustomRoundRectangle::Draw( CDC *pdc )
 					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y),
 					CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
 				// Top Line
-				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
-				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y));
+				// pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y));
+				pdc->Rectangle(CRect(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_NEGATIVE_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_End.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Bottom Line
-				pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
-				pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->MoveTo(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y));
+				// pdc->LineTo(CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y));
+				pdc->Rectangle(CRect(CPoint(m_End.x + ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_NEGATIVE_RADIUS),
+					CPoint(m_Start.x - ROUNDED_CORNER_RADIUS, m_Start.y + CONNECTPOINT_POSITIVE_RADIUS)));
 				// Left Line
-				pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_End.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_End.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_End.x + CONNECTPOINT_NEGATIVE_RADIUS, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_End.x + CONNECTPOINT_POSITIVE_RADIUS, m_Start.y - ROUNDED_CORNER_RADIUS)));
 				// Right Line
-				pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
-				pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				// pdc->MoveTo(CPoint(m_Start.x, m_End.y + ROUNDED_CORNER_RADIUS));
+				// pdc->LineTo(CPoint(m_Start.x, m_Start.y - ROUNDED_CORNER_RADIUS));
+				pdc->Rectangle(CRect(CPoint(m_Start.x + CONNECTPOINT_NEGATIVE_RADIUS, m_End.y + ROUNDED_CORNER_RADIUS),
+					CPoint(m_Start.x + CONNECTPOINT_POSITIVE_RADIUS, m_Start.y - ROUNDED_CORNER_RADIUS)));
 			}
 		}
 	}

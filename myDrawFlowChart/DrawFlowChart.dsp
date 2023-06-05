@@ -186,7 +186,7 @@ SOURCE=.\Rectangle.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RoundRectangle.cpp
+SOURCE=.\RoundHeadRectangle.cpp
 # End Source File
 # Begin Source File
 
@@ -299,7 +299,7 @@ SOURCE=.\Resource.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RoundRectangle.h
+SOURCE=.\RoundHeadRectangle.h
 # End Source File
 # Begin Source File
 

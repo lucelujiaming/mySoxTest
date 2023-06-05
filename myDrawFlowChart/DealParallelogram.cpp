@@ -49,16 +49,16 @@ void CDealParallelogram::Draw( CDC *pdc )
 	CPoint points[4];
 	long diffX = (long)((m_End.x - m_Start.x) * PARALLELOGRAM_INCLINATION_ANGLE);
 
-	points[0].x = m_Start.x + diffX;
+	points[0].x = m_Start.x + diffX/2;
 	points[0].y = m_Start.y;
 
-	points[1].x = m_End.x;
+	points[1].x = m_End.x + diffX/2;
 	points[1].y = m_Start.y;
 
-	points[2].x = m_End.x - diffX;
+	points[2].x = m_End.x - diffX/2;
 	points[2].y = m_End.y;
 
-	points[3].x = m_Start.x;
+	points[3].x = m_Start.x - diffX/2;
 	points[3].y = m_End.y;
 
 	CPen *oldPen;

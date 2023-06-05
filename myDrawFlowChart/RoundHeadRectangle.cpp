@@ -24,10 +24,10 @@ CRoundHeadRectangle::CRoundHeadRectangle()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *connPoint = NULL; 
+	CAdjustPoint *connPoint = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-		connPoint = new CConnectPoint();
+		connPoint = new CAdjustPoint();
 		m_Points.Add(connPoint);
 	}
 }
@@ -249,10 +249,10 @@ void CRoundHeadRectangle::Draw( CDC *pdc )
 /************************************************************************/
 void CRoundHeadRectangle::DrawFocus( CDC *pdc )
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->Draw(pdc);
 	}
 }
@@ -353,12 +353,12 @@ bool CRoundHeadRectangle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRoundHeadRectangle::IsConnectOn(CConnectPoint *pt)
+int CRoundHeadRectangle::IsConnectOn(CAdjustPoint *pt)
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -381,33 +381,33 @@ bool CRoundHeadRectangle::IsOn( CPoint &pt )
 	// 取得图元的右上角坐标。
 	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
 
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 
 //	m_objLogFile.WriteLog(_T("m_Points(0-3) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. "), 
-//		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(0))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(1))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(2))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(3))->GetPoint().y);
+//		((CAdjustPoint *)m_Points.GetAt(0))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(0))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(1))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(1))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(2))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(2))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(3))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(3))->GetPoint().y);
 //	m_objLogFile.WriteLog(_T("m_Points(4-7) is [(%d, %d), (%d, %d), (%d, %d), (%d, %d)]. \n"), 
-//		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(4))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(5))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(6))->GetPoint().y, 
-//		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().x, 
-//		((CConnectPoint *)m_Points.GetAt(7))->GetPoint().y);
+//		((CAdjustPoint *)m_Points.GetAt(4))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(4))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(5))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(5))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(6))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(6))->GetPoint().y, 
+//		((CAdjustPoint *)m_Points.GetAt(7))->GetPoint().x, 
+//		((CAdjustPoint *)m_Points.GetAt(7))->GetPoint().y);
 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt))
 		{
-			// m_objLogFile.WriteLog("We click on the %dth CConnectPoint.\n", i);
+			// m_objLogFile.WriteLog("We click on the %dth CAdjustPoint.\n", i);
 			// temp->IsOn(pt);
 			//if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			//{
@@ -481,28 +481,28 @@ int CRoundHeadRectangle::GetAdjustPoint()
 /************************************************************************/
 void CRoundHeadRectangle::AdjustFocusPoint()
 {
-	CConnectPoint *connPoint = NULL;
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
+	CAdjustPoint *connPoint = NULL;
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
 	connPoint->SetPoint(m_Start);
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
 	connPoint->SetPoint(CPoint(m_Start.x, m_End.y));
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
 	connPoint->SetPoint(CPoint(m_End.x, m_Start.y));
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
 	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
-		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->SetType(false);
 	}
 
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
 	connPoint->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 

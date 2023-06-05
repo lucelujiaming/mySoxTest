@@ -21,10 +21,10 @@ CArrowhead::CArrowhead()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		connPoint = new CConnectPoint();
+		connPoint = new CAdjustPoint();
 		m_Points.Add(connPoint);
 	}
 	m_Previous = NULL;
@@ -62,10 +62,10 @@ void CArrowhead::Draw( CDC *pdc )
 
 void CArrowhead::DrawFocus( CDC *pdc )
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->Draw(pdc);
 	}
 }
@@ -97,7 +97,7 @@ void CArrowhead::AdjustSize( CPoint &pt )
 
 void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 {
-	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(0);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
 	{
@@ -111,7 +111,7 @@ void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 }
 void CArrowhead::SetNextgraph(CGraph *nextGraph)
 {
-	CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(1);
+	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(1);
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
@@ -152,11 +152,11 @@ bool CArrowhead::IsIn( CPoint &pt )
 	int marginY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		marginX = CCONNECTPOINT_POSITIVE_X_MARGIN;
+		marginX = ADJUSTPOINT_POSITIVE_X_MARGIN;
 	}
 	else
 	{
-		marginY = CCONNECTPOINT_POSITIVE_Y_MARGIN;
+		marginY = ADJUSTPOINT_POSITIVE_Y_MARGIN;
 	}
 
 	CPoint marginXY = CPoint(marginX, marginY);
@@ -185,10 +185,10 @@ bool CArrowhead::IsIn( CPoint &pt )
 bool CArrowhead::IsOn( CPoint &pt )
 {
 	bool flag = false;
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt))
 		{
 			m_AdjustPoint = i; // 1+i;
@@ -245,12 +245,12 @@ void CArrowhead::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-int CArrowhead::IsConnectOn(CConnectPoint *pt)
+int CArrowhead::IsConnectOn(CAdjustPoint *pt)
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -262,14 +262,14 @@ int CArrowhead::IsConnectOn(CConnectPoint *pt)
 
 void CArrowhead::AdjustFocusPoint()
 {
-	CConnectPoint *connPoint = NULL;
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
+	CAdjustPoint *connPoint = NULL;
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
 	connPoint->SetPoint(m_Start);
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
 	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->SetType(false);
 	}
 }

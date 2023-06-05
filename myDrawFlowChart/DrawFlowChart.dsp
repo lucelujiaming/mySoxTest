@@ -90,11 +90,11 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\Arrowhead.cpp
+SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConnectPoint.cpp
+SOURCE=.\Arrowhead.cpp
 # End Source File
 # Begin Source File
 
@@ -207,11 +207,11 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\Arrowhead.h
+SOURCE=.\AdjustPoint.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConnectPoint.h
+SOURCE=.\Arrowhead.h
 # End Source File
 # Begin Source File
 

@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "ConnectPoint.h"
+#include "AdjustPoint.h"
 
 #define CCONNECTPOINT_INVALID_OPTION      -1
 #define CCONNECTPOINT_RECT_LEFT_TOP       0    // 左上角
@@ -50,7 +50,7 @@ public:
 
 	// 是否在该图元边界上
 	virtual bool IsOn(CPoint &pt);
-	virtual int  IsConnectOn(CConnectPoint *pt);
+	virtual int  IsConnectOn(CAdjustPoint *pt);
 
 	// 是否被选中
 	virtual bool IsSelected(CPoint &pt);

@@ -103,11 +103,11 @@ bool CGenericLine::IsIn( CPoint &pt )
 	int marginY = 0;
 	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
 	{
-		marginY = CCONNECTPOINT_POSITIVE_X_MARGIN;
+		marginY = ADJUSTPOINT_POSITIVE_X_MARGIN;
 	}
 	else
 	{
-		marginX = CCONNECTPOINT_POSITIVE_Y_MARGIN;
+		marginX = ADJUSTPOINT_POSITIVE_Y_MARGIN;
 	}
 	
 	CPoint marginXY = CPoint(marginX, marginY);
@@ -137,17 +137,17 @@ bool CGenericLine::IsOn( CPoint &pt )
 {
 	bool flag = false;
 	CRect temp1 = CRect(m_Start + CPoint(
-									CCONNECTPOINT_NEGATIVE_X_MARGIN, 
-									CCONNECTPOINT_NEGATIVE_Y_MARGIN), 
+									ADJUSTPOINT_NEGATIVE_X_MARGIN, 
+									ADJUSTPOINT_NEGATIVE_Y_MARGIN), 
 						m_Start + CPoint(
-									CCONNECTPOINT_POSITIVE_X_MARGIN, 
-									CCONNECTPOINT_POSITIVE_Y_MARGIN));
+									ADJUSTPOINT_POSITIVE_X_MARGIN, 
+									ADJUSTPOINT_POSITIVE_Y_MARGIN));
 	CRect temp2 = CRect(m_End + CPoint(
-									CCONNECTPOINT_NEGATIVE_X_MARGIN, 
-									CCONNECTPOINT_NEGATIVE_Y_MARGIN), 
+									ADJUSTPOINT_NEGATIVE_X_MARGIN, 
+									ADJUSTPOINT_NEGATIVE_Y_MARGIN), 
 						m_End+CPoint(
-									CCONNECTPOINT_POSITIVE_X_MARGIN, 
-									CCONNECTPOINT_POSITIVE_Y_MARGIN));
+									ADJUSTPOINT_POSITIVE_X_MARGIN, 
+									ADJUSTPOINT_POSITIVE_Y_MARGIN));
 
 	if(temp1.PtInRect(pt))
 	{ // Æðµã

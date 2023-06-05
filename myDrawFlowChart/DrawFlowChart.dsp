@@ -190,6 +190,10 @@ SOURCE=.\RoundHeadRectangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RoundRectangle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.cpp
 # End Source File
 # Begin Source File
@@ -300,6 +304,10 @@ SOURCE=.\Resource.h
 # Begin Source File
 
 SOURCE=.\RoundHeadRectangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RoundRectangle.h
 # End Source File
 # Begin Source File
 

@@ -9,6 +9,7 @@
 #include "Rectangle.h"
 #include "RoundHeadRectangle.h"
 #include "Hexagon.h"
+#include "RoundRectangle.h"
 #include "CustomRoundRectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
@@ -63,6 +64,11 @@ CGraph* CGraphFactory::CreateRoundHeadRectangle()
 CGraph* CGraphFactory::CreateCustomRoundRectangle()
 {
 	return new CCustomRoundRectangle();
+}
+
+CGraph* CGraphFactory::CreateRoundRectangle()
+{
+	return new CRoundRectangle();
 }
 
 CGraph* CGraphFactory::CreateHexagon()

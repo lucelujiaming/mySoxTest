@@ -59,7 +59,8 @@ void CHexagon::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	pdc->Polygon(points, 4);
+	// pdc->Polygon(points, 4);
+	pdc->RoundRect(CRect(m_Start, m_End), CPoint(70, 70));
 
 	if(m_IsMark)
 	{

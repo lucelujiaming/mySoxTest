@@ -240,7 +240,7 @@ void CGraphManager::Move(int cx, int cy)
 				}
 				else
 				{
-					CConnectPoint *pNewStart = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
+					CAdjustPoint *pNewStart = (CAdjustPoint*)tempFocus->m_Points.GetAt(temp->m_iPreviousConnPointIdx);
 					if(pNewStart)
 					{
 						temp->SetStartPoint(pNewStart->GetPoint());
@@ -259,7 +259,7 @@ void CGraphManager::Move(int cx, int cy)
 				}
 				else
 				{
-					CConnectPoint *pNewEnd = (CConnectPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
+					CAdjustPoint *pNewEnd = (CAdjustPoint*)tempFocus->m_Points.GetAt(temp->m_iNextConnPointIdx);
 					if(pNewEnd)
 					{
 						temp->SetEndPoint(pNewEnd->GetPoint());

@@ -21,10 +21,10 @@ CPolygonalLine::CPolygonalLine()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_POLYGONALLINE_MAX; i++)
 	{
-		connPoint = new CConnectPoint();
+		connPoint = new CAdjustPoint();
 		m_Points.Add(connPoint);
 	}
 	m_Previous = NULL;
@@ -50,7 +50,7 @@ void CPolygonalLine::Draw( CDC *pdc )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色）
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	// CConnectPoint *connMiddlePoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
+	// CAdjustPoint *connMiddlePoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
 	// CPoint pFirstBendPoint  = CPoint(connMiddlePoint->GetPoint().x, m_Start.y);
 	// CPoint pSecondBendPoint = CPoint(connMiddlePoint->GetPoint().x, m_End.y);
 
@@ -86,10 +86,10 @@ void CPolygonalLine::printInfomation(CString strCaption)
 
 void CPolygonalLine::DrawFocus( CDC *pdc )
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->Draw(pdc);
 	}
 }
@@ -108,19 +108,19 @@ int CPolygonalLine::creatOneBorderArea(int borderStage,
 		if ((endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
 			|| (endWirePoint.endDirection == ORTHOGONALWIRE_NORTH))
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, 0);
 			return 4;
 		}
 		else if((endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
 			|| (endWirePoint.endDirection == ORTHOGONALWIRE_EAST))
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
 			return 4;
 		}
 	}
@@ -129,19 +129,19 @@ int CPolygonalLine::creatOneBorderArea(int borderStage,
 		if ((endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
 			|| (endWirePoint.endDirection == ORTHOGONALWIRE_NORTH))
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, 0);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, 0);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, 0);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, 0);
 			return 4;
 		}
 		else if((endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
 			|| (endWirePoint.endDirection == ORTHOGONALWIRE_EAST))
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(0, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(0, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(0, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(0, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
 			return 4;
 		}
 	}
@@ -149,34 +149,34 @@ int CPolygonalLine::creatOneBorderArea(int borderStage,
 	{
 		if (endWirePoint.endDirection == ORTHOGONALWIRE_SOUTH)
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
 			return 4;
 		}
 		else if(endWirePoint.endDirection == ORTHOGONALWIRE_NORTH)
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
 			return 4;
 		}
 		else if(endWirePoint.endDirection == ORTHOGONALWIRE_WEST)
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
 			return 4;
 		}
 		else if(endWirePoint.endDirection == ORTHOGONALWIRE_EAST)
 		{
-			ptOutput[0] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
-			ptOutput[1] = startWirePoint.ptPosition          + CPoint(CCONNECTPOINT_NEGATIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[2] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_POSITIVE_Y_MARGIN);
-			ptOutput[3] = endWirePoint.ptPosition            + CPoint(CCONNECTPOINT_POSITIVE_X_MARGIN, CCONNECTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[0] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
+			ptOutput[1] = startWirePoint.ptPosition          + CPoint(ADJUSTPOINT_NEGATIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[2] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_POSITIVE_Y_MARGIN);
+			ptOutput[3] = endWirePoint.ptPosition            + CPoint(ADJUSTPOINT_POSITIVE_X_MARGIN, ADJUSTPOINT_NEGATIVE_Y_MARGIN);
 			return 4;
 		}
 	}
@@ -303,7 +303,7 @@ void CPolygonalLine::AdjustSize( CPoint &pt )
 
 void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 {
-	CConnectPoint *pStart = (CConnectPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
 	{
@@ -319,7 +319,7 @@ void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 }
 void CPolygonalLine::SetNextgraph(CGraph *nextGraph)
 {
-	CConnectPoint *pEnd = (CConnectPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
+	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
@@ -488,10 +488,10 @@ bool CPolygonalLine::IsIn( CPoint &pt )
 bool CPolygonalLine::IsOn( CPoint &pt )
 {
 	bool flag = false;
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt))
 		{
 			m_AdjustPoint = i; // 1+i;
@@ -548,12 +548,12 @@ void CPolygonalLine::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-int CPolygonalLine::IsConnectOn(CConnectPoint *pt)
+int CPolygonalLine::IsConnectOn(CAdjustPoint *pt)
 {
-	CConnectPoint *connPoint = NULL;
+	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CConnectPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -618,10 +618,10 @@ CWirePoint CPolygonalLine::calculateEndLineStub(CPoint& rootPoint, int iConnectP
 void CPolygonalLine::AdjustFocusPoint()
 {
 	m_iBendTimes = 0;
-	CConnectPoint *connPoint = NULL;
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
+	CAdjustPoint *connPoint = NULL;
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
 	connPoint->SetPoint(m_Start);
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
 	connPoint->SetPoint(m_End);
 	// Calc middle point
 	if((m_iPreviousConnPointIdx == -1) || (m_iNextConnPointIdx == -1))
@@ -632,7 +632,7 @@ void CPolygonalLine::AdjustFocusPoint()
 	
 	m_iBendTimes = m_objOrthogonalWire.calculateOrthogonalWire(m_StartStub, m_EndStub);
 
-	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
+	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
 	if (m_iBendTimes == 1)
 	{
 		connPoint->SetPoint(m_objOrthogonalWire.m_ptBend[0].ptPosition);
@@ -649,7 +649,7 @@ void CPolygonalLine::AdjustFocusPoint()
 	
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		connPoint = (CConnectPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->SetType(false);
 	}
 }

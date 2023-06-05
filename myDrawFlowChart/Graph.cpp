@@ -40,7 +40,7 @@ void CGraph::printAllPoints(CString strCaption)
 	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.GetSize());
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
-		CConnectPoint *pNext = (CConnectPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pNext = (CAdjustPoint*)m_Points.GetAt(i);
 		
 		strPoint.Format(_T("(%d - [%d, %d]), "), i, pNext->GetPoint().x, pNext->GetPoint().y);
 		strStatusBar += strPoint;
@@ -96,7 +96,7 @@ bool CGraph::IsOn(CPoint &pt)
 	return false;
 }
 
-int CGraph::IsConnectOn(CConnectPoint *pt)
+int CGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	return CCONNECTPOINT_INVALID_OPTION;
 }

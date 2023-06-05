@@ -43,7 +43,7 @@ public:
 
 	bool IsIn(CPoint &pt);
 	bool IsOn(CPoint &pt);
-	int  IsConnectOn(CConnectPoint *pt);
+	int  IsConnectOn(CAdjustPoint *pt);
 
 	bool IsEditable();
 	bool IsControlFlow();

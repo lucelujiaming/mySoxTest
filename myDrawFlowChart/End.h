@@ -29,7 +29,7 @@ public:
 	void Move(int cx, int cy);
 	void Serialize(CArchive& ar);
 
-	int IsConnectOn(CConnectPoint *pt);
+	int IsConnectOn(CAdjustPoint *pt);
 
 private:
 	void AdjustFocusPoint();

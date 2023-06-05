@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "Graph.h"
-#include "ConnectPoint.h"
+#include "AdjustPoint.h"
 
 #define PARALLELOGRAM_INCLINATION_ANGLE      0.15
 
@@ -32,7 +32,7 @@ public:
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );
-	int  IsConnectOn(CConnectPoint *pt);
+	int  IsConnectOn(CAdjustPoint *pt);
 
 	int GetAdjustPoint();
 

@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "Graph.h"
-#include "ConnectPoint.h"
+#include "AdjustPoint.h"
 
 class CStart : public CGraph  
 {
@@ -30,7 +30,7 @@ public:
 	void Move(int cx, int cy);
 	void Serialize(CArchive& ar);
 
-	int  IsConnectOn(CConnectPoint *pt);
+	int  IsConnectOn(CAdjustPoint *pt);
 
 private:
 	void AdjustFocusPoint();

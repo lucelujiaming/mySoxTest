@@ -1,10 +1,10 @@
-// ConnectPoint.cpp: implementation of the CConnectPoint class.
+// AdjustPoint.cpp: implementation of the CAdjustPoint class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "ConnectPoint.h"
+#include "AdjustPoint.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,19 +15,19 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CConnectPoint, CObject, 1)
+IMPLEMENT_SERIAL(CAdjustPoint, CObject, 1)
 
-CConnectPoint::CConnectPoint()
+CAdjustPoint::CAdjustPoint()
 {
 	m_type = true;
 }
 
-CConnectPoint::~CConnectPoint()
+CAdjustPoint::~CAdjustPoint()
 {
 
 }
 
-void CConnectPoint::Draw(CDC *pdc)
+void CAdjustPoint::Draw(CDC *pdc)
 {
 	CBrush brush(RGB(0,255,0));
 	CBrush* oldbrush = pdc->SelectObject(&brush);
@@ -44,40 +44,40 @@ void CConnectPoint::Draw(CDC *pdc)
 	pdc->SelectObject(oldbrush);
 }
 
-void CConnectPoint::SetType(bool type)
+void CAdjustPoint::SetType(bool type)
 {
 	m_type = type;
 }
 
-void CConnectPoint::SetPoint(CPoint &pt)
+void CAdjustPoint::SetPoint(CPoint &pt)
 {
 	m_Point = pt;
 }
 
-CPoint CConnectPoint::GetPoint()
+CPoint CAdjustPoint::GetPoint()
 {
 	return m_Point;
 }
 
-bool CConnectPoint::IsOn(CPoint &pt)
+bool CAdjustPoint::IsOn(CPoint &pt)
 {
 	bool flag = false;
 	CRect checkRect = CRect(m_Point + CPoint(
-									CCONNECTPOINT_NEGATIVE_X_MARGIN, 
-									CCONNECTPOINT_NEGATIVE_Y_MARGIN), 
+									ADJUSTPOINT_NEGATIVE_X_MARGIN, 
+									ADJUSTPOINT_NEGATIVE_Y_MARGIN), 
 						m_Point+CPoint(
-									CCONNECTPOINT_POSITIVE_X_MARGIN, 
-									CCONNECTPOINT_POSITIVE_Y_MARGIN));
+									ADJUSTPOINT_POSITIVE_X_MARGIN, 
+									ADJUSTPOINT_POSITIVE_Y_MARGIN));
 	if(checkRect.PtInRect(pt))
 	{
-		m_objLogFile.WriteLog(_T("CConnectPoint pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+		m_objLogFile.WriteLog(_T("CAdjustPoint pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
 			pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 	}
 	return flag;
 }
 
-void CConnectPoint::Serialize(CArchive& ar)
+void CAdjustPoint::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())
 	{

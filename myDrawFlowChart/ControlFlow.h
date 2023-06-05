@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "Graph.h"
-#include "ConnectPoint.h"
+#include "AdjustPoint.h"
 #include <math.h>
 
 class CControlFlow : public CGraph  

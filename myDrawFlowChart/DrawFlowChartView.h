@@ -72,7 +72,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateRoundHeadRectangle();
-	afx_msg void OnCreateFourCornerRoundRectangle();
+	afx_msg void OnCreateCustomRoundRectangle();
 	afx_msg void OnCreateHexagon();
 	afx_msg void OnCreateEllipse();
 	afx_msg void OnCreateDiamond();

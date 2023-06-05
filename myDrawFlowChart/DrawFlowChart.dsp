@@ -102,6 +102,10 @@ SOURCE=.\ControlFlow.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CustomRoundRectangle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\DealParallelogram.cpp
 # End Source File
 # Begin Source File
@@ -131,10 +135,6 @@ SOURCE=.\Ellipse.cpp
 # Begin Source File
 
 SOURCE=.\End.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FourCornerRoundRectangle.cpp
 # End Source File
 # Begin Source File
 
@@ -215,6 +215,10 @@ SOURCE=.\ControlFlow.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CustomRoundRectangle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DealParallelogram.h
 # End Source File
 # Begin Source File
@@ -240,10 +244,6 @@ SOURCE=.\Ellipse.h
 # Begin Source File
 
 SOURCE=.\End.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FourCornerRoundRectangle.h
 # End Source File
 # Begin Source File
 

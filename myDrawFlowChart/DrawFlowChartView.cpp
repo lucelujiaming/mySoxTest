@@ -27,7 +27,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_RECTANGLE, OnCreateRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnCreateRoundHeadRectangle)
-	ON_COMMAND(ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE, OnCreateFourCornerRoundRectangle)	
+	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)	
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)	
 	ON_COMMAND(ID_ELLIPSE, OnCreateEllipse)
 	ON_COMMAND(ID_DIAMOND, OnCreateDiamond)
@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnToolbarRoundHeadRectangle)
-	ON_COMMAND(ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE, OnCreateFourCornerRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
 	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
 	ON_COMMAND(ID_TOOLBAR_START, OnToolbarStart)
@@ -548,7 +548,7 @@ void CDrawFlowChartView::OnCreateRoundHeadRectangle()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundHeadRectangle());
 }
 
-void CDrawFlowChartView::OnCreateFourCornerRoundRectangle() 
+void CDrawFlowChartView::OnCreateCustomRoundRectangle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -563,7 +563,7 @@ void CDrawFlowChartView::OnCreateFourCornerRoundRectangle()
 	
 	m_IsControlFlow = false;
 	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateFourCornerRoundRectangle());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCustomRoundRectangle());
 }
 
 void CDrawFlowChartView::OnCreateHexagon() 
@@ -795,7 +795,7 @@ void CDrawFlowChartView::OnToolbarRoundHeadRectangle()
 void CDrawFlowChartView::OnToolbarFourCornerRoundRectangle() 
 {
 	// TODO: Add your command handler code here
-	OnCreateFourCornerRoundRectangle();
+	OnCreateCustomRoundRectangle();
 }
 
 void CDrawFlowChartView::OnToolbarHexagon() 

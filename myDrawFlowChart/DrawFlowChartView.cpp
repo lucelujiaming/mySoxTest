@@ -26,7 +26,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_RECTANGLE, OnCreateRectangle)
-	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnCreateRoundHeadRectangle)
 	ON_COMMAND(ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE, OnCreateFourCornerRoundRectangle)	
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)	
 	ON_COMMAND(ID_ELLIPSE, OnCreateEllipse)
@@ -54,7 +54,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_NEXT, OnToolbarNext)
 	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
-	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnToolbarRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnToolbarRoundHeadRectangle)
 	ON_COMMAND(ID_TOOLBAR_FOURCONDER_ROUNDRECTANGLE, OnCreateFourCornerRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
 	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
@@ -530,7 +530,7 @@ void CDrawFlowChartView::OnCreateRectangle()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRectangle());
 }
 
-void CDrawFlowChartView::OnCreateRoundRectangle() 
+void CDrawFlowChartView::OnCreateRoundHeadRectangle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -545,7 +545,7 @@ void CDrawFlowChartView::OnCreateRoundRectangle()
 	
 	m_IsControlFlow = false;
 	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundRectangle());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundHeadRectangle());
 }
 
 void CDrawFlowChartView::OnCreateFourCornerRoundRectangle() 
@@ -786,10 +786,10 @@ void CDrawFlowChartView::OnToolbarRectangle()
 	OnCreateRectangle();
 }
 
-void CDrawFlowChartView::OnToolbarRoundRectangle() 
+void CDrawFlowChartView::OnToolbarRoundHeadRectangle() 
 {
 	// TODO: Add your command handler code here
-	OnCreateRoundRectangle();
+	OnCreateRoundHeadRectangle();
 }
 
 void CDrawFlowChartView::OnToolbarFourCornerRoundRectangle() 

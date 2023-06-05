@@ -7,7 +7,7 @@
 #include "GraphFactory.h"
 
 #include "Rectangle.h"
-#include "RoundRectangle.h"
+#include "RoundHeadRectangle.h"
 #include "Hexagon.h"
 #include "FourCornerRoundRectangle.h"
 #include "Ellipse.h"
@@ -55,9 +55,9 @@ CGraph* CGraphFactory::CreateRectangle()
 	return new CRectangle();
 }
 
-CGraph* CGraphFactory::CreateRoundRectangle()
+CGraph* CGraphFactory::CreateRoundHeadRectangle()
 {
-	return new CRoundRectangle();
+	return new CRoundHeadRectangle();
 }
 
 CGraph* CGraphFactory::CreateFourCornerRoundRectangle()

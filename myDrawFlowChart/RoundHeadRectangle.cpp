@@ -1,10 +1,10 @@
-// RoundRectangle.cpp: implementation of the CRoundRectangle class.
+// RoundHeadRectangle.cpp: implementation of the CRoundHeadRectangle class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RoundRectangle.h"
+#include "RoundHeadRectangle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,12 +15,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CRoundRectangle, CObject, 1)
+IMPLEMENT_SERIAL(CRoundHeadRectangle, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRoundRectangle::CRoundRectangle()
+CRoundHeadRectangle::CRoundHeadRectangle()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -32,7 +32,7 @@ CRoundRectangle::CRoundRectangle()
 	}
 }
 
-CRoundRectangle::~CRoundRectangle()
+CRoundHeadRectangle::~CRoundHeadRectangle()
 {
 
 }
@@ -40,7 +40,7 @@ CRoundRectangle::~CRoundRectangle()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CRoundRectangle::Draw( CDC *pdc )
+void CRoundHeadRectangle::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
@@ -238,16 +238,16 @@ void CRoundRectangle::Draw( CDC *pdc )
 	}
 
 	pdc->DrawText(m_text, CRect(m_Start + CPoint(
-									ROUNDED_RECTANGLE_TEXT_XBORDER, ROUNDED_RECTANGLE_TEXT_YBORDER), 
+									ROUNDHEAD_RECTANGLE_TEXT_XBORDER, ROUNDHEAD_RECTANGLE_TEXT_YBORDER), 
 								m_End+CPoint(
-									-1 * ROUNDED_RECTANGLE_TEXT_XBORDER, 
-									-1 * ROUNDED_RECTANGLE_TEXT_YBORDER)), DT_CENTER);
+									-1 * ROUNDHEAD_RECTANGLE_TEXT_XBORDER, 
+									-1 * ROUNDHEAD_RECTANGLE_TEXT_YBORDER)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRoundRectangle::DrawFocus( CDC *pdc )
+void CRoundHeadRectangle::DrawFocus( CDC *pdc )
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
@@ -260,7 +260,7 @@ void CRoundRectangle::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRoundRectangle::Move( int cx, int cy )
+void CRoundHeadRectangle::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -270,7 +270,7 @@ void CRoundRectangle::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRoundRectangle::AdjustSize( CPoint &pt )
+void CRoundHeadRectangle::AdjustSize( CPoint &pt )
 {
 //	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 //		m_Start.x, m_Start.y, m_End.x, m_End.y);
@@ -334,7 +334,7 @@ void CRoundRectangle::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRoundRectangle::IsIn( CPoint &pt )
+bool CRoundHeadRectangle::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -342,7 +342,7 @@ bool CRoundRectangle::IsIn( CPoint &pt )
 	CRect checkRect = CRect( m_Start, m_End );
 	if(checkRect.PtInRect( pt ))
 	{
-	//	m_objLogFile.WriteLog(_T("CRoundRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+	//	m_objLogFile.WriteLog(_T("CRoundHeadRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
 	//		pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
@@ -353,7 +353,7 @@ bool CRoundRectangle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRoundRectangle::IsConnectOn(CConnectPoint *pt)
+int CRoundHeadRectangle::IsConnectOn(CConnectPoint *pt)
 {
 	CConnectPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -371,7 +371,7 @@ int CRoundRectangle::IsConnectOn(CConnectPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRoundRectangle::IsOn( CPoint &pt )
+bool CRoundHeadRectangle::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -430,7 +430,7 @@ bool CRoundRectangle::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRoundRectangle::AdjustStartAndEnd()
+void CRoundHeadRectangle::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	// 如果结束点在起始点的左上方。这个时候，起始点变成结束点。结束点变成起始点。
@@ -471,7 +471,7 @@ void CRoundRectangle::AdjustStartAndEnd()
 	AdjustFocusPoint();
 }
 
-int CRoundRectangle::GetAdjustPoint()
+int CRoundHeadRectangle::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -479,7 +479,7 @@ int CRoundRectangle::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRoundRectangle::AdjustFocusPoint()
+void CRoundHeadRectangle::AdjustFocusPoint()
 {
 	CConnectPoint *connPoint = NULL;
 	connPoint = (CConnectPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
@@ -509,7 +509,7 @@ void CRoundRectangle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRoundRectangle::Serialize(CArchive& ar)
+void CRoundHeadRectangle::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())
 	{

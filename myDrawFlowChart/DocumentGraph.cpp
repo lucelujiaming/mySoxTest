@@ -1,10 +1,10 @@
-// RoundRectangle.cpp: implementation of the CRoundRectangle class.
+// DocumentGraph.cpp: implementation of the CDocumentGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RoundRectangle.h"
+#include "DocumentGraph.h"
 #include "math.h"
 
 #ifdef _DEBUG
@@ -16,12 +16,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CRoundRectangle, CObject, 1)
+IMPLEMENT_SERIAL(CDocumentGraph, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRoundRectangle::CRoundRectangle()
+CDocumentGraph::CDocumentGraph()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -33,7 +33,7 @@ CRoundRectangle::CRoundRectangle()
 	}
 }
 
-CRoundRectangle::~CRoundRectangle()
+CDocumentGraph::~CDocumentGraph()
 {
 
 }
@@ -41,7 +41,7 @@ CRoundRectangle::~CRoundRectangle()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CRoundRectangle::Draw( CDC *pdc )
+void CDocumentGraph::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
@@ -52,7 +52,50 @@ void CRoundRectangle::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	pdc->RoundRect(CRect(m_Start, m_End), CPoint(ROUNDED_CORNER_RADIUS, ROUNDED_CORNER_RADIUS));
+
+	// pdc->RoundRect(CRect(m_Start, m_End), CPoint(ROUNDED_CORNER_RADIUS, ROUNDED_CORNER_RADIUS));
+	pdc->MoveTo(CPoint(m_Start.x, m_End.y));
+	pdc->LineTo(m_Start);
+	pdc->LineTo(CPoint(m_End.x, m_Start.y));
+	pdc->LineTo(m_End);
+
+	bool isFlatGraph = false;
+	int iWidth =0, iHeight = 0;
+	iWidth  = m_End.x - m_Start.x;
+	iHeight = m_End.y - m_Start.y;
+	int  iRadius =  (int)(iWidth / MAGIC_DOCUMENT_RADIUS_RATIO);
+	int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/4) * (iWidth/4));
+	if(iHeight > 0)
+	{
+		if(iArcHeight > iHeight/2)
+		{
+			// We have to recalculate the radius to prevent to cross the topline.
+			iRadius = iHeight/4 + iWidth * iWidth/(16 * iHeight);
+		}
+
+		// We minus one to let the graph close.
+		int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/4) * (iWidth/4)) - 1;
+		CPoint objFirstCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/4), m_End.y - iCosofRadius);
+		CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
+								CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+		//	pdc->Ellipse(m_FirstCircleRect);
+		pdc->Arc(objFirstCircleRect, 
+					CPoint(m_Start.x, m_End.y), 
+					CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_End.y));
+		
+		CPoint objSecondCircle = CPoint(m_End.x - (int)((m_End.x - m_Start.x)/4), m_End.y + iCosofRadius);
+		CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
+								CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
+		pdc->Arc(objSecondCircleRect, 
+					m_End, 
+					CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_End.y));
+	}
+	else
+	{
+		pdc->LineTo(CPoint(m_Start.x, m_End.y));
+	}
+
+
 
 	if(m_IsMark)
 	{
@@ -60,17 +103,17 @@ void CRoundRectangle::Draw( CDC *pdc )
 	}
 
 	pdc->DrawText(m_text, CRect(m_Start + CPoint(
-									CUSTOM_ROUNDED_RECTANGLE_TEXT_XBORDER, 
-									CUSTOM_ROUNDED_RECTANGLE_TEXT_YBORDER), 
+									CUSTOM_DOCUMENTGRAPH_TEXT_XBORDER, 
+									CUSTOM_DOCUMENTGRAPH_TEXT_YBORDER), 
 								m_End+CPoint(
-									-1 * CUSTOM_ROUNDED_RECTANGLE_TEXT_XBORDER, 
-									-1 * CUSTOM_ROUNDED_RECTANGLE_TEXT_YBORDER)), DT_CENTER);
+									-1 * CUSTOM_DOCUMENTGRAPH_TEXT_XBORDER, 
+									-1 * CUSTOM_DOCUMENTGRAPH_TEXT_YBORDER)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRoundRectangle::DrawFocus( CDC *pdc )
+void CDocumentGraph::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
@@ -83,7 +126,7 @@ void CRoundRectangle::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRoundRectangle::Move( int cx, int cy )
+void CDocumentGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -93,7 +136,7 @@ void CRoundRectangle::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRoundRectangle::AdjustSize( CPoint &pt )
+void CDocumentGraph::AdjustSize( CPoint &pt )
 {
 //	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 //		m_Start.x, m_Start.y, m_End.x, m_End.y);
@@ -157,7 +200,7 @@ void CRoundRectangle::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRoundRectangle::IsIn( CPoint &pt )
+bool CDocumentGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -165,7 +208,7 @@ bool CRoundRectangle::IsIn( CPoint &pt )
 	CRect checkRect = CRect( m_Start, m_End );
 	if(checkRect.PtInRect( pt ))
 	{
-	//	m_objLogFile.WriteLog(_T("CRoundRectangle pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+	//	m_objLogFile.WriteLog(_T("CDocumentGraph pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
 	//		pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
@@ -176,7 +219,7 @@ bool CRoundRectangle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRoundRectangle::IsConnectOn(CAdjustPoint *pt)
+int CDocumentGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -194,7 +237,7 @@ int CRoundRectangle::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRoundRectangle::IsOn( CPoint &pt )
+bool CDocumentGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -253,7 +296,7 @@ bool CRoundRectangle::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRoundRectangle::AdjustStartAndEnd()
+void CDocumentGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	// 如果结束点在起始点的左上方。这个时候，起始点变成结束点。结束点变成起始点。
@@ -294,7 +337,7 @@ void CRoundRectangle::AdjustStartAndEnd()
 	AdjustFocusPoint();
 }
 
-int CRoundRectangle::GetAdjustPoint()
+int CDocumentGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -302,7 +345,7 @@ int CRoundRectangle::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRoundRectangle::AdjustFocusPoint()
+void CDocumentGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
@@ -332,7 +375,7 @@ void CRoundRectangle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRoundRectangle::Serialize(CArchive& ar)
+void CDocumentGraph::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())
 	{

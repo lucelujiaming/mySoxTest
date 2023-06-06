@@ -23,6 +23,7 @@ public:
 	CGraph* CreateRectangle();          // Adjusted
 	CGraph* CreateRoundHeadRectangle();
 	CGraph* CreateRoundRectangle();
+	CGraph* CreateDocumentGraph();
 	CGraph* CreateCustomRoundRectangle();
 	CGraph* CreateHexagon();
 	CGraph* CreateControlFlow();		// NotNeed

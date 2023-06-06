@@ -98,10 +98,6 @@ SOURCE=.\Arrowhead.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConnectPoint.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ControlFlow.cpp
 # End Source File
 # Begin Source File
@@ -115,6 +111,10 @@ SOURCE=.\DealParallelogram.cpp
 # Begin Source File
 
 SOURCE=.\Diamond.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DocumentGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -219,10 +219,6 @@ SOURCE=.\Arrowhead.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConnectPoint.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ControlFlow.h
 # End Source File
 # Begin Source File
@@ -236,6 +232,10 @@ SOURCE=.\DealParallelogram.h
 # Begin Source File
 
 SOURCE=.\Diamond.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DocumentGraph.h
 # End Source File
 # Begin Source File
 

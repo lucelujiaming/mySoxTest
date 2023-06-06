@@ -99,6 +99,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_RECTANGLE
     BUTTON      ID_TOOLBAR_ROUNDHEAD_RECTANGLE
     BUTTON      ID_TOOLBAR_ROUNDRECTANGLE
+    BUTTON      ID_TOOLBAR_DOCUMENT
     BUTTON      ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE
     BUTTON      ID_TOOLBAR_HEXAGON
     BUTTON      ID_TOOLBAR_ELLIPSE
@@ -422,9 +423,13 @@ BEGIN
     ID_TOOLBAR_ROUNDHEAD_RECTANGLE "创建圆头矩形\n输入输出圆头矩形框"
     ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE 
                             "创建自定义圆角矩形\n输入输出自定义圆角矩形框"
-    ID_TOOLBAR_ROUNDRECTANGLE 
-                            "创建圆角矩形\n输入输出圆角矩形框"
     ID_TOOLBAR_HEXAGON      "创建六边形\n输入输出六边框"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_TOOLBAR_ROUNDRECTANGLE "创建圆角矩形\n输入输出圆角矩形框"
+    ID_TOOLBAR_DOCUMENT       "创建文档图标\n输入输出文档图标"
 END
 
 #endif    // Chinese (P.R.C.) resources

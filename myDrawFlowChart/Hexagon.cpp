@@ -39,18 +39,26 @@ CHexagon::~CHexagon()
 void CHexagon::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
-	CPoint points[4];
-	points[0].x = m_Start.x;
-	points[0].y = (m_Start.y + m_End.y)/2;
+	CPoint points[6];
+	long diffX = (long)((m_End.x - m_Start.x) * HEXAGON_INCLINATION_ANGLE);
+	
+	points[0].x = m_Start.x + diffX;
+	points[0].y = m_Start.y;
 
-	points[1].x = (m_Start.x + m_End.x)/2;
+	points[1].x = m_End.x - diffX;
 	points[1].y = m_Start.y;
 
 	points[2].x = m_End.x;
 	points[2].y = (m_Start.y + m_End.y)/2;
 
-	points[3].x = (m_Start.x + m_End.x)/2;
+	points[3].x = m_End.x - diffX;
 	points[3].y = m_End.y;
+
+	points[4].x = m_Start.x + diffX;
+	points[4].y = m_End.y;
+	 
+	points[5].x = m_Start.x ;
+ 	points[5].y = (m_Start.y + m_End.y)/2;
 
 	CPen p, *pOldPen;     
 	if(m_IsMark)
@@ -59,8 +67,7 @@ void CHexagon::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	// pdc->Polygon(points, 4);
-	pdc->RoundRect(CRect(m_Start, m_End), CPoint(70, 70));
+	 pdc->Polygon(points, 6);
 
 	if(m_IsMark)
 	{

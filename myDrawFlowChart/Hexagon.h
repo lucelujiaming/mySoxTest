@@ -12,6 +12,8 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 
+#define HEXAGON_INCLINATION_ANGLE      0.15
+
 class CHexagon : public CGraph  
 {
 	DECLARE_SERIAL(CHexagon)

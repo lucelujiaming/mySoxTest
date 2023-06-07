@@ -43,12 +43,12 @@ CGraphFactory::~CGraphFactory()
 
 }
 
-CGraph* CGraphFactory::CreateJudgeDiamond()
+CGraph* CGraphFactory::CreateDiamond()
 {
 	return new CDiamond();
 }
 
-CGraph* CGraphFactory::CreateProcessDiamond()
+CGraph* CGraphFactory::CreateParallelogram()
 {
 	return new CParallelogram();
 }

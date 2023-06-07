@@ -52,11 +52,11 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ARROWHEAD,   OnToolbarArrowHead)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
-	ON_COMMAND(ID_TOOLBAR_JUDGE, OnToolbarJudge)
+	ON_COMMAND(ID_TOOLBAR_DIAMOND, OnToolbarDiamond)
 	ON_COMMAND(ID_TOOLBAR_ELLIPSE, OnToolbarEllipse)
 	ON_COMMAND(ID_TOOLBAR_LADDER, OnToolbarLadder)
 	ON_COMMAND(ID_TOOLBAR_NEXT, OnToolbarNext)
-	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
+	ON_COMMAND(ID_TOOLBAR_PARALLELOGRAM, OnToolbarParallelogram)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnToolbarRoundHeadRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
@@ -678,7 +678,7 @@ void CDrawFlowChartView::OnCreateDiamond()
 
 	m_IsControlFlow = false;
 	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Diamond );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateJudgeDiamond());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateDiamond());
 }
 
 void CDrawFlowChartView::OnCreateDealParallelogram() 
@@ -696,7 +696,7 @@ void CDrawFlowChartView::OnCreateDealParallelogram()
 
 	m_IsControlFlow = false;
 	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.DealParallelogram );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateProcessDiamond());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateParallelogram());
 }
 
 void CDrawFlowChartView::OnCreateGenericLine() 
@@ -817,7 +817,7 @@ void CDrawFlowChartView::OnToolbarGenericLine()
 	OnCreateGenericLine();
 }
 
-void CDrawFlowChartView::OnToolbarJudge() 
+void CDrawFlowChartView::OnToolbarDiamond() 
 {
 	// TODO: Add your command handler code here
 	OnCreateDiamond();
@@ -841,7 +841,7 @@ void CDrawFlowChartView::OnToolbarNext()
 	OnMarkPath();
 }
 
-void CDrawFlowChartView::OnToolbarProcess() 
+void CDrawFlowChartView::OnToolbarParallelogram() 
 {
 	// TODO: Add your command handler code here
 	OnCreateDealParallelogram();

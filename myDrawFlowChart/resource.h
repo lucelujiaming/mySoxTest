@@ -20,15 +20,14 @@
 #define ID_MARK_PATH                    32783
 #define ID_STOP_MARK                    32784
 #define ID_TOOLBAR_START                32785
-#define ID_TOOLBAR_JUDGE                32787
-#define ID_TOOLBAR_PROCESS              32788
+#define ID_TOOLBAR_DIAMOND              32787
+#define ID_TOOLBAR_PARALLELOGRAM        32788
 #define ID_TOOLBAR_END                  32789
 #define ID_TOOLBAR_SEARCH               32792
 #define ID_TOOLBAR_NEXT                 32794
 #define ID_TOOLBAR_FLOWCONTROL          32795
 #define ID_TOOLBAR_STOP                 32796
 #define ID_TOOLBAR_RECTANGLE            32797
-#define ID_TOOLBAR_E                    32801
 #define ID_TOOLBAR_ELLIPSE              32801
 #define ID_TOOLBAR_GENERICLINE          32807
 #define ID_TOOLBAR_ARROWHEAD            32808

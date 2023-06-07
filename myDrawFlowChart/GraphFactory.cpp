@@ -12,9 +12,10 @@
 #include "RoundRectangle.h"
 #include "DocumentGraph.h"
 #include "CustomRoundRectangle.h"
+#include "Ladder.h"
 #include "Ellipse.h"
 #include "Diamond.h"
-#include "DealParallelogram.h"
+#include "Parallelogram.h"
 #include "GenericLine.h"
 #include "Arrowhead.h"
 #include "PolygonalLine.h"
@@ -49,7 +50,7 @@ CGraph* CGraphFactory::CreateJudgeDiamond()
 
 CGraph* CGraphFactory::CreateProcessDiamond()
 {
-	return new CDealParallelogram();
+	return new CParallelogram();
 }
 
 CGraph* CGraphFactory::CreateRectangle()
@@ -65,6 +66,11 @@ CGraph* CGraphFactory::CreateRoundHeadRectangle()
 CGraph* CGraphFactory::CreateCustomRoundRectangle()
 {
 	return new CCustomRoundRectangle();
+}
+
+CGraph* CGraphFactory::CreateLadder()
+{
+	return new CLadder();
 }
 
 CGraph* CGraphFactory::CreateRoundRectangle()

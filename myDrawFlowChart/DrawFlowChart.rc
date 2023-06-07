@@ -105,6 +105,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_ELLIPSE
     BUTTON      ID_TOOLBAR_JUDGE
     BUTTON      ID_TOOLBAR_PROCESS
+    BUTTON      ID_TOOLBAR_LADDER
     BUTTON      ID_TOOLBAR_FLOWCONTROL
     BUTTON      ID_TOOLBAR_POLYGONAL_LINE
     BUTTON      ID_TOOLBAR_GENERICLINE
@@ -429,7 +430,8 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_TOOLBAR_ROUNDRECTANGLE "创建圆角矩形\n输入输出圆角矩形框"
-    ID_TOOLBAR_DOCUMENT       "创建文档图标\n输入输出文档图标"
+    ID_TOOLBAR_DOCUMENT     "创建文档图标\n输入输出文档图标"
+    ID_TOOLBAR_LADDER       "创建梯形图标\n输入输出梯形图标"
 END
 
 #endif    // Chinese (P.R.C.) resources

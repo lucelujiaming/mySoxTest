@@ -30,6 +30,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_DOCUMENT, OnCreateDocumentGraph)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)	
 	ON_COMMAND(ID_ELLIPSE, OnCreateEllipse)
 	ON_COMMAND(ID_DIAMOND, OnCreateDiamond)
@@ -53,6 +54,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
 	ON_COMMAND(ID_TOOLBAR_JUDGE, OnToolbarJudge)
 	ON_COMMAND(ID_TOOLBAR_ELLIPSE, OnToolbarEllipse)
+	ON_COMMAND(ID_TOOLBAR_LADDER, OnToolbarLadder)
 	ON_COMMAND(ID_TOOLBAR_NEXT, OnToolbarNext)
 	ON_COMMAND(ID_TOOLBAR_PROCESS, OnToolbarProcess)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
@@ -60,6 +62,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_DOCUMENT, OnCreateDocumentGraph)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
 	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
 	ON_COMMAND(ID_TOOLBAR_START, OnToolbarStart)
@@ -570,6 +573,24 @@ void CDrawFlowChartView::OnCreateCustomRoundRectangle()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCustomRoundRectangle());
 }
 
+void CDrawFlowChartView::OnCreateLadder() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+	
+	m_IsControlFlow = false;
+	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateLadder());
+}
+
 void CDrawFlowChartView::OnCreateRoundRectangle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -806,6 +827,12 @@ void CDrawFlowChartView::OnToolbarEllipse()
 {
 	// TODO: Add your command handler code here
 	OnCreateEllipse();
+}
+
+void CDrawFlowChartView::OnToolbarLadder() 
+{
+	// TODO: Add your command handler code here
+	OnCreateLadder();
 }
 
 void CDrawFlowChartView::OnToolbarNext() 

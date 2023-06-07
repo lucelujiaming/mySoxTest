@@ -1,10 +1,10 @@
-// DealParallelogram.cpp: implementation of the CDealParallelogram class.
+// Ladder.cpp: implementation of the CLadder class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "DealParallelogram.h"
+#include "Ladder.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,12 +15,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CDealParallelogram, CObject, 1)
+IMPLEMENT_SERIAL(CLadder, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CDealParallelogram::CDealParallelogram()
+CLadder::CLadder()
 {
 	m_Start = CPoint(0, 0);
 	m_End = CPoint(0, 0);
@@ -34,7 +34,7 @@ CDealParallelogram::CDealParallelogram()
 	}
 }
 
-CDealParallelogram::~CDealParallelogram()
+CLadder::~CLadder()
 {
 
 }
@@ -42,20 +42,20 @@ CDealParallelogram::~CDealParallelogram()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个多边形和上面的文字。                         */
 /************************************************************************/
-void CDealParallelogram::Draw( CDC *pdc )
+void CLadder::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
 	CPoint points[4];
-	long diffX = (long)((m_End.x - m_Start.x) * PARALLELOGRAM_INCLINATION_ANGLE);
+	long diffX = (long)((m_End.x - m_Start.x) * LADDER_INCLINATION_ANGLE);
 
 	points[0].x = m_Start.x + diffX/2;
 	points[0].y = m_Start.y;
 
-	points[1].x = m_End.x + diffX/2;
+	points[1].x = m_End.x - diffX/2;
 	points[1].y = m_Start.y;
 
-	points[2].x = m_End.x - diffX/2;
+	points[2].x = m_End.x + diffX/2;
 	points[2].y = m_End.y;
 
 	points[3].x = m_Start.x - diffX/2;
@@ -81,7 +81,7 @@ void CDealParallelogram::Draw( CDC *pdc )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CDealParallelogram::DrawFocus( CDC *pdc )
+void CLadder::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -106,7 +106,7 @@ void CDealParallelogram::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CDealParallelogram::Move( int cx, int cy )
+void CLadder::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -116,7 +116,7 @@ void CDealParallelogram::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CDealParallelogram::AdjustSize( CPoint &pt )
+void CLadder::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -176,7 +176,7 @@ void CDealParallelogram::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CDealParallelogram::IsIn( CPoint &pt )
+bool CLadder::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -184,7 +184,7 @@ bool CDealParallelogram::IsIn( CPoint &pt )
 
 	CPoint points[4];
 	// long diffX = (long)((m_End.x - m_Start.x) * 0.25);
-	long diffX = (long)((m_End.x - m_Start.x) * PARALLELOGRAM_INCLINATION_ANGLE);
+	long diffX = (long)((m_End.x - m_Start.x) * LADDER_INCLINATION_ANGLE);
 	
 
 	points[0].x = m_Start.x + diffX;
@@ -218,7 +218,7 @@ bool CDealParallelogram::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CDealParallelogram::IsConnectOn(CAdjustPoint *pt)
+int CLadder::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -236,7 +236,7 @@ int CDealParallelogram::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CDealParallelogram::IsOn( CPoint &pt )
+bool CLadder::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -259,7 +259,7 @@ bool CDealParallelogram::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CDealParallelogram::AdjustStartAndEnd()
+void CLadder::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -277,7 +277,7 @@ void CDealParallelogram::AdjustStartAndEnd()
 	}
 }
 
-int CDealParallelogram::GetAdjustPoint()
+int CLadder::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -285,7 +285,7 @@ int CDealParallelogram::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CDealParallelogram::AdjustFocusPoint()
+void CLadder::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
@@ -315,7 +315,7 @@ void CDealParallelogram::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CDealParallelogram::Serialize(CArchive& ar)
+void CLadder::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())
 	{

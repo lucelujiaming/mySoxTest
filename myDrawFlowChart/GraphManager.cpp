@@ -9,7 +9,7 @@
 #include "Rectangle.h"
 #include "Ellipse.h"
 #include "Diamond.h"
-#include "DealParallelogram.h"
+#include "Parallelogram.h"
 #include "GenericLine.h"
 #include "Arrowhead.h"
 #include "ControlFlow.h"

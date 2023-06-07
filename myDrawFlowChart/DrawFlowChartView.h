@@ -75,6 +75,7 @@ protected:
 	afx_msg void OnCreateRoundRectangle();
 	afx_msg void OnCreateDocumentGraph();
 	afx_msg void OnCreateCustomRoundRectangle();
+	afx_msg void OnCreateLadder();
 	afx_msg void OnCreateHexagon();
 	afx_msg void OnCreateEllipse();
 	afx_msg void OnCreateDiamond();
@@ -98,6 +99,7 @@ protected:
 	afx_msg void OnToolbarGenericLine();
 	afx_msg void OnToolbarJudge();
 	afx_msg void OnToolbarEllipse();
+	afx_msg void OnToolbarLadder();
 	afx_msg void OnToolbarNext();
 	afx_msg void OnToolbarProcess();
 	afx_msg void OnToolbarRectangle();

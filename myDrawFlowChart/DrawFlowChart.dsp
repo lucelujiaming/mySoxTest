@@ -106,10 +106,6 @@ SOURCE=.\CustomRoundRectangle.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DealParallelogram.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Diamond.cpp
 # End Source File
 # Begin Source File
@@ -162,6 +158,10 @@ SOURCE=.\Hexagon.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Ladder.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\LogFile.cpp
 # End Source File
 # Begin Source File
@@ -171,6 +171,10 @@ SOURCE=.\MainFrm.cpp
 # Begin Source File
 
 SOURCE=.\OrthogonalWire.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Parallelogram.cpp
 # End Source File
 # Begin Source File
 
@@ -227,10 +231,6 @@ SOURCE=.\CustomRoundRectangle.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DealParallelogram.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Diamond.h
 # End Source File
 # Begin Source File
@@ -279,6 +279,10 @@ SOURCE=.\Hexagon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Ladder.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\LogFile.h
 # End Source File
 # Begin Source File
@@ -288,6 +292,10 @@ SOURCE=.\MainFrm.h
 # Begin Source File
 
 SOURCE=.\OrthogonalWire.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Parallelogram.h
 # End Source File
 # Begin Source File
 

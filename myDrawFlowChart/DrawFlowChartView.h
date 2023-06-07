@@ -97,11 +97,11 @@ protected:
 	afx_msg void OnToolbarArrowHead();
 	afx_msg void OnToolbarPolygonalLine();
 	afx_msg void OnToolbarGenericLine();
-	afx_msg void OnToolbarJudge();
+	afx_msg void OnToolbarDiamond();
 	afx_msg void OnToolbarEllipse();
 	afx_msg void OnToolbarLadder();
 	afx_msg void OnToolbarNext();
-	afx_msg void OnToolbarProcess();
+	afx_msg void OnToolbarParallelogram();
 	afx_msg void OnToolbarRectangle();
 	afx_msg void OnToolbarRoundHeadRectangle();
 	afx_msg void OnToolbarCustomRoundRectangle();

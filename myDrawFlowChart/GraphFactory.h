@@ -18,8 +18,8 @@ public:
 	virtual ~CGraphFactory();
 
 public:
-	CGraph* CreateJudgeDiamond();       // Adjusted
-	CGraph* CreateProcessDiamond();
+	CGraph* CreateDiamond();       // Adjusted
+	CGraph* CreateParallelogram();
 	CGraph* CreateRectangle();          // Adjusted
 	CGraph* CreateRoundHeadRectangle();
 	CGraph* CreateRoundRectangle();

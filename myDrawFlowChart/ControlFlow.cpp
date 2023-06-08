@@ -71,6 +71,7 @@ void CControlFlow::Draw( CDC *pdc )
 	}
 
 	DrawArrow(pdc);
+	DrawSelectBorderArea(pdc);
 }
 
 void CControlFlow::DrawFocus(CDC *pdc)
@@ -84,6 +85,56 @@ void CControlFlow::DrawFocus(CDC *pdc)
 		if(i == 0 || i == m_Points.GetSize()-1) pConnPoint->SetType(false);
 		pConnPoint->Draw(pdc);
 	}
+}
+
+#define DRAW_FRAME
+void CControlFlow::DrawSelectBorderArea( CDC *pdc )
+{
+#ifdef DRAW_FRAME
+	// 画笔为虚线，线宽为1，颜色为紫色。
+	CPen greenPen( PS_DOT, 1, RGB(255, 0, 128) );
+	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen* oldpen = pdc->SelectObject(&greenPen);
+	CBrush* oldbrush = pdc->SelectObject( pBrush );
+
+
+	bool flag = false;
+	CPoint tempPs[4];
+	for(int i = 0; i < m_Points.GetSize()-1; i++)
+	{
+		CRgn cr;
+
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
+		CPoint tempStart = pConnPoint->GetPoint();
+		pConnPoint = (CAdjustPoint*)m_Points.GetAt(i+1);
+		CPoint tempEnd = pConnPoint->GetPoint();
+
+		long marginX = 0;
+		long marginY = 0;
+		// Use smaller margin for showing
+		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
+		{
+			// marginY = 2 * (ADJUSTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
+			marginY = (ADJUSTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
+		}
+		else
+		{
+			// marginX = 2 * (ADJUSTPOINT_POSITIVE_X_MARGIN - 1); // 10;
+			marginX = (ADJUSTPOINT_POSITIVE_X_MARGIN - 1); // 10;
+		}
+
+		CPoint marginXY = CPoint(marginX, marginY);
+		tempPs[0] = tempStart - marginXY;
+		tempPs[1] = tempStart + marginXY;
+		tempPs[2] = tempEnd + marginXY;
+		tempPs[3] = tempEnd - marginXY;
+
+		pdc->Polygon(tempPs, 4);
+	}
+	
+	pdc->SelectObject(oldpen);
+	pdc->SelectObject(oldbrush);
+#endif
 }
 
 void CControlFlow::Move(int cx, int cy)

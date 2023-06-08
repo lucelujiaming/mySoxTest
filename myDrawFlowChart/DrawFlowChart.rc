@@ -405,7 +405,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_TOOLBAR_START        "创建流程开始\n开始"
-    ID_TOOLBAR_DIAMOND       "创建判断菱形\n判断菱形框"
+    ID_TOOLBAR_DIAMOND      "创建判断菱形\n判断菱形框"
     ID_TOOLBAR_PARALLELOGRAM "创建平行四边形\n处理平行四边形框"
     ID_TOOLBAR_END          "创建流程结束\n结束"
     ID_TOOLBAR_SEARCH       "查找路径\n查找路径"

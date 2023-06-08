@@ -31,6 +31,8 @@ void CGenericLine::Draw( CDC *pdc )
 {
 	pdc->MoveTo(m_Start);
 	pdc->LineTo(m_End);
+
+	DrawSelectBorderArea(pdc);
 }
 
 void CGenericLine::DrawFocus( CDC *pdc )
@@ -42,6 +44,41 @@ void CGenericLine::DrawFocus( CDC *pdc )
 	pdc->Ellipse( CRect(m_End+CPoint(3, 3), m_End+CPoint(-3, -3)) );
 
 	pdc->SelectObject(oldbrush);
+}
+
+#define DRAW_FRAME
+void CGenericLine::DrawSelectBorderArea( CDC *pdc )
+{
+#ifdef DRAW_FRAME
+	// 画笔为虚线，线宽为1，颜色为紫色。
+	CPen greenPen( PS_DOT, 1, RGB(255, 0, 128) );
+	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen* oldpen = pdc->SelectObject(&greenPen);
+	CBrush* oldbrush = pdc->SelectObject( pBrush );
+
+	CPoint points[4];
+	int marginX = 0;
+	int marginY = 0;
+	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
+	{
+		marginY = ADJUSTPOINT_POSITIVE_X_MARGIN;
+	}
+	else
+	{
+		marginX = ADJUSTPOINT_POSITIVE_Y_MARGIN;
+	}
+	
+	CPoint marginXY = CPoint(marginX, marginY);
+	points[0] = m_Start - marginXY;
+	points[1] = m_Start + marginXY;
+	points[2] = m_End + marginXY;
+	points[3] = m_End - marginXY;
+
+	pdc->Polygon(points, 4);
+	
+	pdc->SelectObject(oldpen);
+	pdc->SelectObject(oldbrush);
+#endif
 }
 
 void CGenericLine::Move( int cx, int cy )

@@ -25,6 +25,9 @@ public:
 public:
 	void Draw( CDC *pdc );
 	void DrawFocus( CDC *pdc );
+
+	void DrawSelectBorderArea( CDC *pdc );
+	
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 

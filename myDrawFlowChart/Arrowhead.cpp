@@ -58,6 +58,7 @@ void CArrowhead::Draw( CDC *pdc )
 	}
 
 	DrawArrow(pdc);
+	DrawSelectBorderArea(pdc);
 }
 
 void CArrowhead::DrawFocus( CDC *pdc )
@@ -68,6 +69,42 @@ void CArrowhead::DrawFocus( CDC *pdc )
 	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
 		connPoint->Draw(pdc);
 	}
+}
+
+#define DRAW_FRAME
+void CArrowhead::DrawSelectBorderArea( CDC *pdc )
+{
+#ifdef DRAW_FRAME
+	// 画笔为虚线，线宽为1，颜色为紫色。
+	CPen greenPen( PS_DOT, 1, RGB(255, 0, 128) );
+	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen* oldpen = pdc->SelectObject(&greenPen);
+	CBrush* oldbrush = pdc->SelectObject( pBrush );
+
+	
+	CPoint points[4];
+	int marginX = 0;
+	int marginY = 0;
+	if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
+	{
+		marginX = ADJUSTPOINT_POSITIVE_X_MARGIN;
+	}
+	else
+	{
+		marginY = ADJUSTPOINT_POSITIVE_Y_MARGIN;
+	}
+
+	CPoint marginXY = CPoint(marginX, marginY);
+	points[0] = m_Start - marginXY;
+	points[1] = m_Start + marginXY;
+	points[2] = m_End + marginXY;
+	points[3] = m_End - marginXY;
+
+	pdc->Polygon(points, 4);
+	
+	pdc->SelectObject(oldpen);
+	pdc->SelectObject(oldbrush);
+#endif
 }
 
 void CArrowhead::Move( int cx, int cy )

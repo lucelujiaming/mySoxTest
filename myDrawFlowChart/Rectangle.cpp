@@ -266,6 +266,7 @@ void CRectangle::AdjustStartAndEnd()
 		m_End = newEnd;
 		m_objLogFile.WriteLog(_T("Revert m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
+		AdjustFocusPoint();
 	}
 	// 如果结束点不在起始点的右下方。说明两种情况：
 	//    1. 结束点在起始点的右上方。此时，矩形框发生沿X轴方向的翻转。
@@ -287,9 +288,9 @@ void CRectangle::AdjustStartAndEnd()
 		m_End = newEnd;
 		m_objLogFile.WriteLog(_T("    Recalc m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
+		AdjustFocusPoint();
 	}
-
-	AdjustFocusPoint();
+	// else we need not to call AdjustFocusPoint
 }
 
 int CRectangle::GetAdjustPoint()

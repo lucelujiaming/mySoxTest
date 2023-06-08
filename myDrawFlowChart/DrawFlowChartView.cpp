@@ -245,8 +245,13 @@ void CDrawFlowChartView::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		case SELECT:
 		case MOVE:
+			{
+				break;
+			}
 		case ADJUST_SIZE:
 			{
+				// 图元大小调整时，连线自动跟随连接点。
+				pDoc->m_GraphManager.Move(0, 0);
 				break;
 			}
 		case CREATE:

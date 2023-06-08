@@ -238,9 +238,9 @@ bool CCylinderGraph::IsOn( CPoint &pt )
 
 	bool flag = false;
 	// 取得图元的左下角坐标。
-	// CPoint temp1 = CPoint( m_Start.x, m_End.y );
+	// CPoint startPoint = CPoint( m_Start.x, m_End.y );
 	// 取得图元的右上角坐标。
-	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
+	// CPoint endPoint = CPoint(m_End.x, m_Start.y);
 
 	CAdjustPoint *connPoint = NULL;
 
@@ -269,13 +269,13 @@ bool CCylinderGraph::IsOn( CPoint &pt )
 		if(connPoint->IsOn(pt))
 		{
 			// m_objLogFile.WriteLog("We click on the %dth CAdjustPoint.\n", i);
-			// temp->IsOn(pt);
+			// connPoint->IsOn(pt);
 			//if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			//{
 			//	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 			//		m_Start.x, m_Start.y, m_End.x, m_End.y);
-			//	m_Start = temp1;
-			//	m_End = temp2;
+			//	m_Start = startPoint;
+			//	m_End = endPoint;
 			//	m_objLogFile.WriteLog(_T("    Switch m_Start and m_End is [(%d, %d), (%d, %d)].\n"), 
 			//		m_Start.x, m_Start.y, m_End.x, m_End.y);
 			//}

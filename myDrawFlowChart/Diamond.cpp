@@ -196,8 +196,8 @@ bool CDiamond::IsOn( CPoint &pt )
 	AdjustStartAndEnd();
 
 	bool flag = false;
-	// CPoint temp1 = CPoint( m_Start.x, m_End.y );
-	// CPoint temp2 = CPoint(m_End.x, m_Start.y);
+	// CPoint startPoint = CPoint( m_Start.x, m_End.y );
+	// CPoint endPoint = CPoint(m_End.x, m_Start.y);
 
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -207,8 +207,8 @@ bool CDiamond::IsOn( CPoint &pt )
 		{
 			// if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			// {
-			//	m_Start = temp1;
-			//	m_End = temp2;
+			//	m_Start = startPoint;
+			//	m_End = endPoint;
 			// }
 			m_AdjustPoint = i; // 1+i;
 		    flag = true;

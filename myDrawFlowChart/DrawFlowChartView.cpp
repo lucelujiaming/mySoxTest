@@ -216,16 +216,16 @@ void CDrawFlowChartView::OnLButtonDown(UINT nFlags, CPoint point)
 					m_pEdit->DestroyWindow();
 					m_LDoubleBtnSignal = false;
 				}
-				CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-				if(temp != NULL)
+				CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+				if(focusGraph != NULL)
 				{
 					if(!m_IsControlFlow)
 					{
-						temp->SetStartPoint(point);
+						focusGraph->SetStartPoint(point);
 					}
 					else
 					{
-						temp->SetEndPoint(point);
+						focusGraph->SetEndPoint(point);
 					}
 				}
 				break;
@@ -258,10 +258,10 @@ void CDrawFlowChartView::OnLButtonUp(UINT nFlags, CPoint point)
 			{
 				if(!m_IsControlFlow)
 				{
-					CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-					if(temp)
+					CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+					if(focusGraph)
 					{
-						temp->SetEndPoint( point );
+						focusGraph->SetEndPoint( point );
 					}
 				}
 				break;
@@ -341,24 +341,24 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			}
 		case CREATE:
 			{
-				CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-				if(temp != NULL)
+				CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+				if(focusGraph != NULL)
 				{
 					if(!m_IsControlFlow)
 					{
-						temp->SetEndPoint( point );
+						focusGraph->SetEndPoint( point );
 					}
 				}
 				break;
 			}
 		case ADJUST_SIZE:
 			{
-				CGraph* temp = pDoc->m_GraphManager.GetFocusGraph();
-				if(temp != NULL)
+				CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+				if(focusGraph != NULL)
 				{
 					// 图元大小调整时，连线自动跟随连接点。
 					pDoc->m_GraphManager.Move(0, 0);
-					temp->AdjustSize( point );
+					focusGraph->AdjustSize( point );
 				}
 				break;
 			}
@@ -493,9 +493,9 @@ void CDrawFlowChartView::OnSearchPath()
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
-	int temp = pDoc->m_GraphManager.SearchPath();
+	int numPath = pDoc->m_GraphManager.SearchPath();
 	CString str;
-	str.Format("目前发现 %d 条路径", temp);  
+	str.Format("目前发现 %d 条路径", numPath);  
 	MessageBox(str);
 }
 
@@ -538,7 +538,7 @@ void CDrawFlowChartView::OnCreateRectangle()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRectangle());
 }
 
@@ -556,7 +556,7 @@ void CDrawFlowChartView::OnCreateRoundHeadRectangle()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundHeadRectangle());
 }
 
@@ -574,7 +574,7 @@ void CDrawFlowChartView::OnCreateCustomRoundRectangle()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCustomRoundRectangle());
 }
 
@@ -592,7 +592,7 @@ void CDrawFlowChartView::OnCreateLadder()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateLadder());
 }
 
@@ -610,7 +610,7 @@ void CDrawFlowChartView::OnCreateRoundRectangle()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundRectangle());
 }
 
@@ -628,7 +628,7 @@ void CDrawFlowChartView::OnCreateDocumentGraph()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateDocumentGraph());
 }
 
@@ -646,7 +646,7 @@ void CDrawFlowChartView::OnCreateHexagon()
 	}
 	
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateHexagon());
 }
 
@@ -664,7 +664,7 @@ void CDrawFlowChartView::OnCreateEllipse()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateEllipse());
 }
 
@@ -682,7 +682,7 @@ void CDrawFlowChartView::OnCreateDiamond()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Diamond );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Diamond );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateDiamond());
 }
 
@@ -700,7 +700,7 @@ void CDrawFlowChartView::OnCreateDealParallelogram()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.DealParallelogram );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.DealParallelogram );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateParallelogram());
 }
 
@@ -718,7 +718,7 @@ void CDrawFlowChartView::OnCreateGenericLine()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.GenericLine );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.GenericLine );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateLine());
 }
 
@@ -736,7 +736,7 @@ void CDrawFlowChartView::OnCreateArrowhead()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArrowLine());
 }
 
@@ -754,7 +754,7 @@ void CDrawFlowChartView::OnCreatePolygonalLine()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePolygonalLine());
 }
 
@@ -772,7 +772,7 @@ void CDrawFlowChartView::OnCreateControlFlow()
 	}
 
 	m_IsControlFlow = true;
-	//CGraph* temp = pDoc->m_GraphManager.CreateGraph( CGraphManager.ControlFlow );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.ControlFlow );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateControlFlow());
 }
 

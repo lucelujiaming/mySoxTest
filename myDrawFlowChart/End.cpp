@@ -116,8 +116,8 @@ bool CEnd::IsEditable()
 bool CEnd::IsIn(CPoint &pt)
 {
 	bool flag = false;
-	CRect temp = CRect( m_Start, m_End );
-	if(temp.PtInRect( pt ))
+	CRect rect = CRect( m_Start, m_End );
+	if(rect.PtInRect( pt ))
 	{
 		flag = true;
 	}

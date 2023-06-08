@@ -274,7 +274,7 @@ bool CDocumentGraph::IsOn( CPoint &pt )
 		if(connPoint->IsOn(pt))
 		{
 			// m_objLogFile.WriteLog("We click on the %dth CAdjustPoint.\n", i);
-			// temp->IsOn(pt);
+			// connPoint->IsOn(pt);
 			//if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			//{
 			//	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 

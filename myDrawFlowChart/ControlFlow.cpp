@@ -142,8 +142,8 @@ void CControlFlow::Move(int cx, int cy)
 	for(int i = 0; i < m_Points.GetSize(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
-		CPoint temp = pConnPoint->GetPoint() + CPoint(cx, cy);
-		pConnPoint->SetPoint(temp);
+		CPoint newPoint = pConnPoint->GetPoint() + CPoint(cx, cy);
+		pConnPoint->SetPoint(newPoint);
 	}
 }
 

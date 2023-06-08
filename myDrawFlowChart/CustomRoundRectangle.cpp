@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CCustomRoundRectangle, CObject, 1)
+// IMPLEMENT_SERIAL(CCustomRoundRectangle, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
@@ -28,7 +28,7 @@ CCustomRoundRectangle::CCustomRoundRectangle()
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
 		connPoint = new CAdjustPoint();
-		m_Points.Add(connPoint);
+		m_Points.push_back(connPoint);
 	}
 }
 
@@ -262,9 +262,9 @@ void CCustomRoundRectangle::Draw( CDC *pdc )
 void CCustomRoundRectangle::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->Draw(pdc);
 	}
 }
@@ -370,7 +370,7 @@ int CCustomRoundRectangle::IsConnectOn(CAdjustPoint *pt)
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -416,7 +416,7 @@ bool CCustomRoundRectangle::IsOn( CPoint &pt )
 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt))
 		{
 			// m_objLogFile.WriteLog("We click on the %dth CAdjustPoint.\n", i);
@@ -494,43 +494,48 @@ int CCustomRoundRectangle::GetAdjustPoint()
 void CCustomRoundRectangle::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
 	connPoint->SetPoint(m_Start);
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_BOTTOM];
 	connPoint->SetPoint(CPoint(m_Start.x, m_End.y));
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_TOP);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_RIGHT_TOP];
 	connPoint->SetPoint(CPoint(m_End.x, m_Start.y));
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_RIGHT_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_RIGHT_BOTTOM];
 	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_RECT_CNT; i++)
 	{
-		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->SetType(false);
 	}
 
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_TOP);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_TOP];
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_Start.y ));
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_RIGHT);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_RIGHT];
 	connPoint->SetPoint(CPoint( m_End.x, (m_Start.y+m_End.y)/2 ));
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_BOTTOM);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_BOTTOM];
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_MIDDLE_LEFT);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_LEFT];
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CCustomRoundRectangle::Serialize(CArchive& ar)
+void CCustomRoundRectangle::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
-	}
-	else
-	{
-		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
+//	}
+//	else
+//	{
+//		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
+//	}
 
-	m_Points.Serialize(ar);
+	std::vector<CAdjustPoint *>::iterator iter;
+	for (iter = m_Points.begin(); iter != m_Points.end(); iter++)
+	{
+		CAdjustPoint * objAdjustPoint  = *iter;
+		objAdjustPoint->Serialize(objJSON);
+	}
 }

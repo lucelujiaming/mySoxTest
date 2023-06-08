@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CConnectPoint, CObject, 1)
+// IMPLEMENT_SERIAL(CConnectPoint, CObject, 1)
 
 CConnectPoint::CConnectPoint()
 {
@@ -77,7 +77,7 @@ bool CConnectPoint::IsOn(CPoint &pt)
 	return flag;
 }
 
-void CConnectPoint::Serialize(CArchive& ar)
+void CConnectPoint::Serialize(cJSON * objJSON)
 {
 	if(ar.IsStoring())
 	{

@@ -16,7 +16,7 @@
 
 class CHexagon : public CGraph  
 {
-	DECLARE_SERIAL(CHexagon)
+//		DECLARE_SERIAL(CHexagon)
 public:
 	CHexagon();
 	virtual ~CHexagon();
@@ -28,7 +28,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

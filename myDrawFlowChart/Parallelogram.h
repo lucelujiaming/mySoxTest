@@ -16,7 +16,7 @@
 
 class CParallelogram : public CGraph  
 {
-	DECLARE_SERIAL(CParallelogram)
+//		DECLARE_SERIAL(CParallelogram)
 public:
 	CParallelogram();
 	virtual ~CParallelogram();
@@ -28,7 +28,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

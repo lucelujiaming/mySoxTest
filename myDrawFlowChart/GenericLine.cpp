@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CGenericLine, CObject, 1)
+// IMPLEMENT_SERIAL(CGenericLine, CObject, 1)
 
 CGenericLine::CGenericLine()
 {
@@ -210,14 +210,14 @@ int CGenericLine::GetAdjustPoint()
 	return m_AdjustPoint;
 }
 
-void CGenericLine::Serialize(CArchive& ar)
+void CGenericLine::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
-	}
-	else
-	{
-		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
+//	}
+//	else
+//	{
+//		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
+//	}
 }

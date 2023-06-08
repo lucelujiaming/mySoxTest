@@ -14,7 +14,7 @@
 
 class CStart : public CGraph  
 {
-	DECLARE_SERIAL(CStart)
+//		DECLARE_SERIAL(CStart)
 
 public:
 	CStart();
@@ -28,7 +28,7 @@ public:
 	void Draw(CDC *pdc);
 	void DrawFocus(CDC *pdc);
 	void Move(int cx, int cy);
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	int  IsConnectOn(CAdjustPoint *pt);
 

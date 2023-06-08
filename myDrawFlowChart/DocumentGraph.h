@@ -44,7 +44,7 @@
 
 class CDocumentGraph : public CGraph  
 {
-	DECLARE_SERIAL(CDocumentGraph)
+//		DECLARE_SERIAL(CDocumentGraph)
 
 public:
 	CDocumentGraph();
@@ -57,7 +57,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

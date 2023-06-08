@@ -10,6 +10,8 @@
 #endif // _MSC_VER > 1000
 
 #include "LogFile.h"
+#include "flowchart_cJSON.h"
+
 // 余量
 #define ADJUSTPOINT_POSITIVE_X_MARGIN          (6)     // X方向余量
 #define ADJUSTPOINT_NEGATIVE_X_MARGIN          (-6)    // X方向余量
@@ -19,9 +21,9 @@
 #define CONNECTPOINT_POSITIVE_RADIUS	(3)	     // 点的绘制半径
 #define CONNECTPOINT_NEGATIVE_RADIUS	(-3)	 // 点的绘制半径
 
-class CAdjustPoint : public CObject
+class CAdjustPoint //  : public CObject
 {
-	DECLARE_SERIAL(CAdjustPoint)
+//	DECLARE_SERIAL(CAdjustPoint)
 
 public:
 	CAdjustPoint();
@@ -35,7 +37,7 @@ public:
 
 	void SetType(bool type);
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 private:
 	CPoint m_Point;

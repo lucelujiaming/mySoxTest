@@ -95,7 +95,6 @@ BOOL CDrawFlowChartApp::InitInstance()
 	return TRUE;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
 

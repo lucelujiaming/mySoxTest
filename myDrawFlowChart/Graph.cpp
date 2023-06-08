@@ -37,10 +37,10 @@ void CGraph::printAllPoints(CString strCaption)
 {
 	CString strStatusBar;
 	CString strPoint;
-	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.GetSize());
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	strStatusBar.Format(_T("(%s) - m_Points have %d points which includes "), strCaption, m_Points.size());
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-		CAdjustPoint *pNext = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pNext = (CAdjustPoint*)m_Points[i];
 		
 		strPoint.Format(_T("(%d - [%d, %d]), "), i, pNext->GetPoint().x, pNext->GetPoint().y);
 		strStatusBar += strPoint;

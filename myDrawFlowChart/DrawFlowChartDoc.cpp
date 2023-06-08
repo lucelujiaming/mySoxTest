@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "DrawFlowChart.h"
 
+#include "flowchart_cJSON.h"
 #include "DrawFlowChartDoc.h"
 #include "DrawFlowChartView.h"
 
@@ -55,28 +56,29 @@ BOOL CDrawFlowChartDoc::OnNewDocument()
 /////////////////////////////////////////////////////////////////////////////
 // CDrawFlowChartDoc serialization
 
-void CDrawFlowChartDoc::Serialize(CArchive& ar)
-{
-	//POSITION pos = GetFirstViewPosition();
-	//CDrawFlowChartView *pView = (CDrawFlowChartView*)GetNextView(pos);
-
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-		int FocusID = m_GraphManager.m_FocusID;
-		ar<<FocusID;
-	}
-	else
-	{
-		// TODO: add loading code here
-		int FocusID = -1;
-		ar>>FocusID;
-		m_GraphManager.m_FocusID = FocusID;
-	}
-
-	m_GraphManager.m_Graphs.Serialize(ar);
-	//pView->m_GraphManager.m_path.Serialize(ar);
-}
+//	void CDrawFlowChartDoc::Serialize(CArchive& ar)
+//	{
+//		//POSITION pos = GetFirstViewPosition();
+//		//CDrawFlowChartView *pView = (CDrawFlowChartView*)GetNextView(pos);
+//
+//		if (ar.IsStoring())
+//		{
+//			// TODO: add storing code here
+//			int FocusID = m_GraphManager.m_FocusID;
+//			ar<<FocusID;
+//		}
+//		else
+//		{
+//			// TODO: add loading code here
+//			int FocusID = -1;
+//			ar>>FocusID;
+//			m_GraphManager.m_FocusID = FocusID;
+//		}
+//
+//		// m_GraphManager.m_Graphs.Serialize(ar);
+//		m_GraphManager.Serialize();
+//		//pView->m_GraphManager.m_path.Serialize(ar);
+//	}
 
 /////////////////////////////////////////////////////////////////////////////
 // CDrawFlowChartDoc diagnostics
@@ -108,4 +110,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_GraphManager.CheckAllLinkGraph();
 
 	return TRUE;
+}
+
+BOOL CDrawFlowChartDoc::OnSaveDocument(LPCTSTR lpszPathName) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+	cJSON * objJSON = cJSON_CreateObject();
+	cJSON_AddNumberToObject(objJSON,"FocusID",m_GraphManager.m_FocusID);
+	m_GraphManager.Serialize(objJSON);
+	
+	return CDocument::OnSaveDocument(lpszPathName);
 }

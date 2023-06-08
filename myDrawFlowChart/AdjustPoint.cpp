@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CAdjustPoint, CObject, 1)
+// IMPLEMENT_SERIAL(CAdjustPoint, CObject, 1)
 
 CAdjustPoint::CAdjustPoint()
 {
@@ -77,14 +77,14 @@ bool CAdjustPoint::IsOn(CPoint &pt)
 	return flag;
 }
 
-void CAdjustPoint::Serialize(CArchive& ar)
+void CAdjustPoint::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_Point;
-	}
-	else
-	{
-		ar>>m_Point;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_Point;
+//	}
+//	else
+//	{
+//		ar>>m_Point;
+//	}
 }

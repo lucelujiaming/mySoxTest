@@ -101,6 +101,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_ROUNDRECTANGLE
     BUTTON      ID_TOOLBAR_DOCUMENT
     BUTTON      ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE
+    BUTTON      ID_TOOLBAR_CYLINDER
     BUTTON      ID_TOOLBAR_HEXAGON
     BUTTON      ID_TOOLBAR_ELLIPSE
     BUTTON      ID_TOOLBAR_DIAMOND
@@ -432,6 +433,7 @@ BEGIN
     ID_TOOLBAR_ROUNDRECTANGLE "创建圆角矩形\n输入输出圆角矩形框"
     ID_TOOLBAR_DOCUMENT     "创建文档图标\n输入输出文档图标"
     ID_TOOLBAR_LADDER       "创建梯形图标\n输入输出梯形图标"
+    ID_TOOLBAR_CYLINDER     "创建圆柱体图标\n输入输出圆柱体图标"
 END
 
 #endif    // Chinese (P.R.C.) resources

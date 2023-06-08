@@ -69,7 +69,7 @@ BOOL CDrawFlowChartApp::InitInstance()
 
 	LoadStdProfileSettings();  // Load standard INI file options (including MRU)
 
-	// Register the application's document templates.  Document templates
+	// Register the application's document Templates.  Document Templates
 	//  serve as the connection between documents, frame windows and views.
 
 	CSingleDocTemplate* pDocTemplate;

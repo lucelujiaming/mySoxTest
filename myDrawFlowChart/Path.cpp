@@ -34,12 +34,12 @@ void CPath::AddGraph(CGraph *graph)
 
 CGraph* CPath::GetHead()
 {
-	CGraph *temp = NULL;
+	CGraph *headPath = NULL;
 	if(GetSum() != 0)
 	{
-		temp = (CGraph*)m_Graphs.GetAt(0);
+		headPath = (CGraph*)m_Graphs.GetAt(0);
 	}
-	return temp;
+	return headPath;
 }
 
 CGraph* CPath::GetEnd()
@@ -49,15 +49,15 @@ CGraph* CPath::GetEnd()
 
 CGraph* CPath::GetNext()
 {
-	CGraph *temp = NULL;
+	CGraph *nextPath = NULL;
 	m_CurrentNum++;
 
 	if(GetSum() > m_CurrentNum)
 	{
-		temp = (CGraph*)m_Graphs.GetAt(m_CurrentNum);
+		nextPath = (CGraph*)m_Graphs.GetAt(m_CurrentNum);
 	}
 
-	return temp;
+	return nextPath;
 }
 
 int CPath::GetSum()
@@ -74,32 +74,33 @@ void CPath::MarkPath()
 {
 	for(int i = 0; i < GetSum(); i++)
 	{
-		CGraph *temp = (CGraph*)m_Graphs.GetAt(i);
-		temp->SetIsMark(true);
+		CGraph *currentPath = (CGraph*)m_Graphs.GetAt(i);
+		currentPath->SetIsMark(true);
 
-		CGraph *tempPre = temp->GetPreviousGraph();
-		if(tempPre != NULL)
+		CGraph *previousPath = currentPath->GetPreviousGraph();
+		if(previousPath != NULL)
 		{
-			tempPre->SetIsMark(true);
+			previousPath->SetIsMark(true);
 		}
 
-		CGraph *tempNext = temp->GetNextgraph();
-		if(tempNext != NULL)
+		CGraph *nextPath = currentPath->GetNextgraph();
+		if(nextPath != NULL)
 		{
-			tempNext->SetIsMark(true);
+			nextPath->SetIsMark(true);
 		}
 	}
 }
 
 bool CPath::IsInclude(CGraph *graph, int count)
 {
-	int temp = 0;
+	int iCounter = 0;
 	for(int i = 0; i < GetSum(); i++)
 	{
-		CGraph *temp = (CGraph*)m_Graphs.GetAt(i);
-		if(temp == graph) temp++;
+		CGraph *currentGraph = (CGraph*)m_Graphs.GetAt(i);
+		if(currentGraph == graph) 
+			iCounter++;
 	}
-	if(temp == count) return true;
+	if(iCounter == count) return true;
 
 	return false;
 }

@@ -99,20 +99,20 @@ void CControlFlow::DrawSelectBorderArea( CDC *pdc )
 
 
 	bool flag = false;
-	CPoint tempPs[4];
+	CPoint points[4];
 	for(int i = 0; i < m_Points.GetSize()-1; i++)
 	{
 		CRgn cr;
 
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
-		CPoint tempStart = pConnPoint->GetPoint();
+		CPoint connStart = pConnPoint->GetPoint();
 		pConnPoint = (CAdjustPoint*)m_Points.GetAt(i+1);
-		CPoint tempEnd = pConnPoint->GetPoint();
+		CPoint connEnd = pConnPoint->GetPoint();
 
 		long marginX = 0;
 		long marginY = 0;
 		// Use smaller margin for showing
-		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
+		if(abs(connEnd.x - connStart.x) > abs(connEnd.y - connStart.y))
 		{
 			// marginY = 2 * (ADJUSTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
 			marginY = (ADJUSTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
@@ -124,12 +124,12 @@ void CControlFlow::DrawSelectBorderArea( CDC *pdc )
 		}
 
 		CPoint marginXY = CPoint(marginX, marginY);
-		tempPs[0] = tempStart - marginXY;
-		tempPs[1] = tempStart + marginXY;
-		tempPs[2] = tempEnd + marginXY;
-		tempPs[3] = tempEnd - marginXY;
+		points[0] = connStart - marginXY;
+		points[1] = connStart + marginXY;
+		points[2] = connEnd + marginXY;
+		points[3] = connEnd - marginXY;
 
-		pdc->Polygon(tempPs, 4);
+		pdc->Polygon(points, 4);
 	}
 	
 	pdc->SelectObject(oldpen);
@@ -292,19 +292,19 @@ bool CControlFlow::IsIn(CPoint &pt)
 	// printAllPoints("CControlFlow::IsIn After");
 
 	bool flag = false;
-	CPoint tempPs[4];
+	CPoint points[4];
 	for(int i = 0; i < m_Points.GetSize()-1; i++)
 	{
 		CRgn cr;
 
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
-		CPoint tempStart = pConnPoint->GetPoint();
+		CPoint connStart = pConnPoint->GetPoint();
 		pConnPoint = (CAdjustPoint*)m_Points.GetAt(i+1);
-		CPoint tempEnd = pConnPoint->GetPoint();
+		CPoint connEnd = pConnPoint->GetPoint();
 
 		long marginX = 0;
 		long marginY = 0;
-		if(abs(tempEnd.x - tempStart.x) > abs(tempEnd.y - tempStart.y))
+		if(abs(connEnd.x - connStart.x) > abs(connEnd.y - connStart.y))
 		{
 			marginY = 2 * (ADJUSTPOINT_POSITIVE_Y_MARGIN - 1); // 10;
 		}
@@ -314,11 +314,11 @@ bool CControlFlow::IsIn(CPoint &pt)
 		}
 
 		CPoint marginXY = CPoint(marginX, marginY);
-		tempPs[0] = tempStart - marginXY;
-		tempPs[1] = tempStart + marginXY;
-		tempPs[2] = tempEnd + marginXY;
-		tempPs[3] = tempEnd - marginXY;
-		BOOL bRet = cr.CreatePolygonRgn(tempPs, 4, WINDING);
+		points[0] = connStart - marginXY;
+		points[1] = connStart + marginXY;
+		points[2] = connEnd + marginXY;
+		points[3] = connEnd - marginXY;
+		BOOL bRet = cr.CreatePolygonRgn(points, 4, WINDING);
 		if(bRet && cr.PtInRegion(pt))
 		{
 			flag = true;
@@ -326,9 +326,9 @@ bool CControlFlow::IsIn(CPoint &pt)
 		}
 		else if (bRet == FALSE)
 		{
-			printf("tempPs = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
-				tempPs[0].x, tempPs[0].y, tempPs[1].x, tempPs[1].y,
-				tempPs[2].x, tempPs[2].y, tempPs[3].x, tempPs[3].y);
+			printf("points = {(%d, %d), (%d, %d), (%d, %d), (%d, %d)}",
+				points[0].x, points[0].y, points[1].x, points[1].y,
+				points[2].x, points[2].y, points[3].x, points[3].y);
 		}
 	}
 

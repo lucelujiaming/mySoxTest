@@ -28,48 +28,48 @@ CPathManager::~CPathManager()
 
 void CPathManager::InitPaths(CGraph *graph)
 {
-	CPath *temp = new CPath();
-	temp->AddGraph(graph);
+	CPath *newPath = new CPath();
+	newPath->AddGraph(graph);
 
-	m_Paths.Add(temp);
+	m_Paths.Add(newPath);
 
 	m_CurrentID = 0;
 }
 
 bool CPathManager::UpdatePaths(CGraph *graph)
 {
-	CPath *temp;
-	CGraph *tempGraph;
+	CPath *currentPath;
+	CGraph *endPathGraph;
 
 	bool flag = true;
 
 	for(int i = 0; i < GetSum(); i++)
 	{
-		temp = (CPath*)m_Paths.GetAt(i);
-		tempGraph = temp->GetEnd();
+		currentPath = (CPath*)m_Paths.GetAt(i);
+		endPathGraph = currentPath->GetEnd();
 
-		if(graph != tempGraph && graph->GetPreviousGraph() == tempGraph->GetPreviousGraph())
+		if(graph != endPathGraph && graph->GetPreviousGraph() == endPathGraph->GetPreviousGraph())
 		{
-			if(temp->IsInclude(graph))
+			if(currentPath->IsInclude(graph))
 			{
 				flag = false;
 				break;
 			}
-			CPath *tempPath;
-			tempPath = ClonePath(temp);
-			tempPath->AddGraph(graph);
+			CPath *clonePath;
+			clonePath = ClonePath(currentPath);
+			clonePath->AddGraph(graph);
 
-			m_Paths.Add(tempPath);
+			m_Paths.Add(clonePath);
 			break;
 		}
-		if(graph->GetPreviousGraph() == tempGraph->GetNextgraph())
+		if(graph->GetPreviousGraph() == endPathGraph->GetNextgraph())
 		{
-			if(temp->IsInclude(graph, 2))
+			if(currentPath->IsInclude(graph, 2))
 			{
 				flag = false;
 				break;
 			}
-			temp->AddGraph(graph);
+			currentPath->AddGraph(graph);
 			//return;
 		}
 	}
@@ -84,13 +84,13 @@ int CPathManager::GetSum()
 
 CPath* CPathManager::ClonePath(CPath *path)
 {
-	CPath *temp = new CPath();
+	CPath *newPath = new CPath();
 	for(int i = 0; i < path->GetSum()-1; i++)
 	{
-		temp->AddGraph(path->GetPathAt(i));
+		newPath->AddGraph(path->GetPathAt(i));
 	}
 
-	return temp;
+	return newPath;
 }
 
 void CPathManager::DeleteAll()
@@ -100,18 +100,18 @@ void CPathManager::DeleteAll()
 
 CPath* CPathManager::GetPath()
 {
-	CPath *temp = NULL;
+	CPath *currentPath = NULL;
 	if(m_Paths.GetSize() == 0) return NULL;
 	m_CurrentID++;
 	if(m_CurrentID >=0 && m_CurrentID < m_Paths.GetSize())
 	{
 		
-		temp = (CPath *)m_Paths.GetAt(m_CurrentID);
+		currentPath = (CPath *)m_Paths.GetAt(m_CurrentID);
 	}
 	else
 	{
 		m_CurrentID = -1;
 	}
 
-	return temp;
+	return currentPath;
 }

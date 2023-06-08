@@ -173,25 +173,25 @@ bool CGenericLine::IsIn( CPoint &pt )
 bool CGenericLine::IsOn( CPoint &pt )
 {
 	bool flag = false;
-	CRect temp1 = CRect(m_Start + CPoint(
+	CRect startPoint = CRect(m_Start + CPoint(
 									ADJUSTPOINT_NEGATIVE_X_MARGIN, 
 									ADJUSTPOINT_NEGATIVE_Y_MARGIN), 
 						m_Start + CPoint(
 									ADJUSTPOINT_POSITIVE_X_MARGIN, 
 									ADJUSTPOINT_POSITIVE_Y_MARGIN));
-	CRect temp2 = CRect(m_End + CPoint(
+	CRect endPoint = CRect(m_End + CPoint(
 									ADJUSTPOINT_NEGATIVE_X_MARGIN, 
 									ADJUSTPOINT_NEGATIVE_Y_MARGIN), 
 						m_End+CPoint(
 									ADJUSTPOINT_POSITIVE_X_MARGIN, 
 									ADJUSTPOINT_POSITIVE_Y_MARGIN));
 
-	if(temp1.PtInRect(pt))
+	if(startPoint.PtInRect(pt))
 	{ // Æðµã
 		m_AdjustPoint = CCONNECTPOINT_LINE_START; // 1;
 		flag = true;
 	}
-	else if(temp2.PtInRect(pt))
+	else if(endPoint.PtInRect(pt))
 	{ // ÖÕµã
 		m_AdjustPoint = CCONNECTPOINT_LINE_END; // 2;
 		flag = true;

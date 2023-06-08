@@ -290,14 +290,14 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if(m_IsControlFlow)
 	{
-		CGraph* tempFocus = pDoc->m_GraphManager.GetFocusGraph();
-		if(tempFocus != NULL)
+		CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+		if(focusGraph != NULL)
 		{
-			tempFocus->SetLastPoint(point);
+			focusGraph->SetLastPoint(point);
 			// Show point information in the StatusBar
-			tempFocus->GetStartPoint(ptStart);
-			tempFocus->GetEndPoint(ptEnd);
-			strName = tempFocus->GetTypeName();
+			focusGraph->GetStartPoint(ptStart);
+			focusGraph->GetEndPoint(ptEnd);
+			strName = focusGraph->GetTypeName();
 			strStatusBar.Format(_T("[%d, %d] - We selected [(%d, %d), (%d, %d)] with "), 
 				point.x, point.y, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
 			strStatusBar += strName;
@@ -310,12 +310,12 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 	}
 	else 
 	{
-		CGraph* tempFocus = pDoc->m_GraphManager.GetFocusGraph();
-		if(tempFocus != NULL)
+		CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+		if(focusGraph != NULL)
 		{
-			tempFocus->GetStartPoint(ptStart);
-			tempFocus->GetEndPoint(ptEnd);
-			strName = tempFocus->GetTypeName();
+			focusGraph->GetStartPoint(ptStart);
+			focusGraph->GetEndPoint(ptEnd);
+			strName = focusGraph->GetTypeName();
 			strStatusBar.Format(_T("[%d, %d] - We selected [(%d, %d), (%d, %d)] with "), 
 				point.x, point.y, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
 			strStatusBar += strName;
@@ -386,8 +386,8 @@ void CDrawFlowChartView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		CPoint focusGraphStart, focusGraphEnd;
 		focusGraph->GetStartPoint(focusGraphStart);
 		focusGraph->GetEndPoint(focusGraphEnd);
-		CRect rect = CRect(focusGraphStart + CPoint(12, 12), focusGraphEnd + CPoint(-12, -12));
-		m_pEdit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rect, this, 1);
+		CRect rectFocusGraph = CRect(focusGraphStart + CPoint(12, 12), focusGraphEnd + CPoint(-12, -12));
+		m_pEdit->Create(ES_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectFocusGraph, this, 1);
 		CString strCaption;
 		focusGraph->GetText(strCaption);
 		SetDlgItemText(1, strCaption);
@@ -423,13 +423,13 @@ void CDrawFlowChartView::OnGetMap()
     CDC* pDC = GetWindowDC();  
     CBitmap bitmap;  
     CDC memDC ;  
-    CRect rect;  
-    GetWindowRect(rect);  
+    CRect rectCurrent;  
+    GetWindowRect(rectCurrent);  
     memDC.CreateCompatibleDC(pDC);  
   
-    bitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());  
+    bitmap.CreateCompatibleBitmap(pDC, rectCurrent.Width(), rectCurrent.Height());  
     memDC.SelectObject(&bitmap);  
-    memDC.BitBlt(0,0,rect.Width(),rect.Height(),pDC,0,0,SRCCOPY);  
+    memDC.BitBlt(0,0, rectCurrent.Width(), rectCurrent.Height(),pDC,0,0,SRCCOPY);  
   
     CFileDialog fDlg(FALSE,_T("bmp"),NULL,OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,_T("*.bmp"),this);  
     if (fDlg.DoModal()==IDOK)  

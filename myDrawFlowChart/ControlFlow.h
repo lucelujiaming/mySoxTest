@@ -15,7 +15,7 @@
 
 class CControlFlow : public CGraph  
 {
-	DECLARE_SERIAL(CControlFlow)
+//		DECLARE_SERIAL(CControlFlow)
 
 public:
 	CControlFlow();
@@ -31,7 +31,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	void SetStartPoint( CPoint &pt );
 	void SetEndPoint( CPoint &pt );

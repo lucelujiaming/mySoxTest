@@ -21,7 +21,7 @@
 
 class CConnectPoint : public CObject
 {
-	DECLARE_SERIAL(CConnectPoint)
+//		DECLARE_SERIAL(CConnectPoint)
 
 public:
 	CConnectPoint();
@@ -35,7 +35,7 @@ public:
 
 	void SetType(bool type);
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 private:
 	CPoint m_Point;

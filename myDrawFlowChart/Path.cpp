@@ -28,7 +28,7 @@ CPath::~CPath()
 
 void CPath::AddGraph(CGraph *graph)
 {
-	m_Graphs.Add(graph);
+	m_Graphs.push_back(graph);
 	m_CurrentNum = 0;
 }
 
@@ -37,14 +37,14 @@ CGraph* CPath::GetHead()
 	CGraph *headPath = NULL;
 	if(GetSum() != 0)
 	{
-		headPath = (CGraph*)m_Graphs.GetAt(0);
+		headPath = (CGraph*)m_Graphs[0];
 	}
 	return headPath;
 }
 
 CGraph* CPath::GetEnd()
 {
-	return (CGraph*)m_Graphs.GetAt(m_Graphs.GetSize()-1);
+	return (CGraph*)m_Graphs[m_Graphs.size()];
 }
 
 CGraph* CPath::GetNext()
@@ -54,7 +54,7 @@ CGraph* CPath::GetNext()
 
 	if(GetSum() > m_CurrentNum)
 	{
-		nextPath = (CGraph*)m_Graphs.GetAt(m_CurrentNum);
+		nextPath = (CGraph*)m_Graphs[m_CurrentNum];
 	}
 
 	return nextPath;
@@ -62,19 +62,19 @@ CGraph* CPath::GetNext()
 
 int CPath::GetSum()
 {
-	return m_Graphs.GetSize();
+	return m_Graphs.size();
 }
 
 CGraph* CPath::GetPathAt(int ID)
 {
-	return (CGraph*)m_Graphs.GetAt(ID);
+	return (CGraph*)m_Graphs[ID];
 }
 
 void CPath::MarkPath()
 {
 	for(int i = 0; i < GetSum(); i++)
 	{
-		CGraph *currentPath = (CGraph*)m_Graphs.GetAt(i);
+		CGraph *currentPath = (CGraph*)m_Graphs[i];
 		currentPath->SetIsMark(true);
 
 		CGraph *previousPath = currentPath->GetPreviousGraph();
@@ -96,7 +96,7 @@ bool CPath::IsInclude(CGraph *graph, int count)
 	int iCounter = 0;
 	for(int i = 0; i < GetSum(); i++)
 	{
-		CGraph *currentGraph = (CGraph*)m_Graphs.GetAt(i);
+		CGraph *currentGraph = (CGraph*)m_Graphs[i];
 		if(currentGraph == graph) 
 			iCounter++;
 	}

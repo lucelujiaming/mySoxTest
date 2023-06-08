@@ -13,7 +13,7 @@
 
 class CEnd : public CGraph  
 {
-	DECLARE_SERIAL(CEnd)
+//		DECLARE_SERIAL(CEnd)
 
 public:
 	CEnd();
@@ -27,7 +27,7 @@ public:
 	void Draw(CDC *pdc);
 	void DrawFocus(CDC *pdc);
 	void Move(int cx, int cy);
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	int IsConnectOn(CAdjustPoint *pt);
 

@@ -15,13 +15,13 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CControlFlow, CObject, 1)
+// IMPLEMENT_SERIAL(CControlFlow, CObject, 1)
 
 CControlFlow::CControlFlow()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
-	m_Points.Add(pStart);
+	m_Points.push_back(pStart);
 
 	m_IsCreateEnd = false;
 	m_IsMark = false;
@@ -43,10 +43,10 @@ CControlFlow::~CControlFlow()
 
 void CControlFlow::Draw( CDC *pdc )
 {
-	if(m_Points.GetSize() < 2) return;
+	if(m_Points.size() < 2) return;
 
 	// printAllPoints("CControlFlow::Draw");
-	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	if(pStart != NULL)
 	{
 		pdc->MoveTo(pStart->GetPoint());
@@ -59,9 +59,9 @@ void CControlFlow::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&pe);     //把画笔选入DC，并保存原来画笔
 	}
 
-	for(int i = 1; i < m_Points.GetSize(); i++)
+	for(int i = 1; i < m_Points.size(); i++)
 	{
-		CAdjustPoint *pNext = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pNext = (CAdjustPoint*)m_Points[i];
 		pdc->LineTo(pNext->GetPoint());
 	}
 
@@ -76,13 +76,13 @@ void CControlFlow::Draw( CDC *pdc )
 
 void CControlFlow::DrawFocus(CDC *pdc)
 {
-	if(m_Points.GetSize() < 2) return;
+	if(m_Points.size() < 2) return;
 
 	// printAllPoints("CControlFlow::DrawFocus");
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
-		if(i == 0 || i == m_Points.GetSize()-1) pConnPoint->SetType(false);
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
+		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -100,13 +100,13 @@ void CControlFlow::DrawSelectBorderArea( CDC *pdc )
 
 	bool flag = false;
 	CPoint points[4];
-	for(int i = 0; i < m_Points.GetSize()-1; i++)
+	for(int i = 0; i < m_Points.size()-1; i++)
 	{
 		CRgn cr;
 
-		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
 		CPoint connStart = pConnPoint->GetPoint();
-		pConnPoint = (CAdjustPoint*)m_Points.GetAt(i+1);
+		pConnPoint = (CAdjustPoint*)m_Points[i+1];
 		CPoint connEnd = pConnPoint->GetPoint();
 
 		long marginX = 0;
@@ -139,9 +139,9 @@ void CControlFlow::DrawSelectBorderArea( CDC *pdc )
 
 void CControlFlow::Move(int cx, int cy)
 {
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
 		CPoint newPoint = pConnPoint->GetPoint() + CPoint(cx, cy);
 		pConnPoint->SetPoint(newPoint);
 	}
@@ -150,7 +150,7 @@ void CControlFlow::Move(int cx, int cy)
 void CControlFlow::AdjustSize(CPoint &pt)
 {
 	// printAllPoints("CControlFlow::AdjustSize Before");
-	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points.GetAt(m_FocusPoint);
+	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
@@ -160,11 +160,11 @@ void CControlFlow::AdjustSize(CPoint &pt)
 
 void CControlFlow::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.GetSize() <= 0) return;
+	if(m_Points.size() <= 0) return;
 
 	// printAllPoints("CControlFlow::SetStartPoint Before");
-	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
+	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
 	// printAllPoints("CControlFlow::SetStartPoint");
 }
@@ -177,14 +177,14 @@ void CControlFlow::SetEndPoint(CPoint &pt)
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
 		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) Before");
-		m_Points.InsertAt(m_Points.GetSize()-1, pNewPoint);
+		m_Points.insert(m_Points.end(), pNewPoint);
 		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) After");
 	}
 	else
 	{
 		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
-		pNewPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
 		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) After");
 	}
@@ -194,7 +194,7 @@ void CControlFlow::SetEndPoint(CPoint &pt)
 void CControlFlow::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
-	pLast = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
 	// printAllPoints("CControlFlow::SetLastPoint");
 
@@ -202,15 +202,15 @@ void CControlFlow::SetLastPoint( CPoint &pt )
 
 void CControlFlow::GetStartPoint(CPoint &pt)
 {
-	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
+	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
 void CControlFlow::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
-	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
@@ -218,7 +218,7 @@ void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
+		CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 		// m_iPreviousConnPointIdx = -1;
 		int iConnPoint =  previousGraph->IsConnectOn(pStart);
 		if(iConnPoint >= 0)
@@ -237,7 +237,7 @@ void CControlFlow::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
-		CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		// m_iNextConnPointIdx = -1;
 		int iConnPoint =  nextGraph->IsConnectOn(pEnd);
 		if(iConnPoint >= 0)
@@ -274,17 +274,17 @@ bool CControlFlow::IsControlFlow()
 
 bool CControlFlow::IsIn(CPoint &pt)
 {
-	if(m_Points.GetSize() < 1) return false;
+	if(m_Points.size() < 1) return false;
 
 	// printAllPoints("CControlFlow::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
-		CAdjustPoint *connPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
-		m_Points.RemoveAt(m_Points.GetSize()-1);
+		CAdjustPoint *connPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
+		m_Points.pop_back();
 		delete connPoint;
 		m_IsCreateEnd = true;
 		// m_Start和m_End对于折线来说，好像没有用。
-		// connPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+		// connPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 		// m_Start = connPoint->GetPoint();
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
@@ -293,13 +293,13 @@ bool CControlFlow::IsIn(CPoint &pt)
 
 	bool flag = false;
 	CPoint points[4];
-	for(int i = 0; i < m_Points.GetSize()-1; i++)
+	for(int i = 0; i < m_Points.size()-1; i++)
 	{
 		CRgn cr;
 
-		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
 		CPoint connStart = pConnPoint->GetPoint();
-		pConnPoint = (CAdjustPoint*)m_Points.GetAt(i+1);
+		pConnPoint = (CAdjustPoint*)m_Points[i+1];
 		CPoint connEnd = pConnPoint->GetPoint();
 
 		long marginX = 0;
@@ -337,9 +337,9 @@ bool CControlFlow::IsIn(CPoint &pt)
 
 bool CControlFlow::IsOn(CPoint &pt)
 {
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points.GetAt(i);
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
 		if(pConnPoint->IsOn(pt))
 		{
 			m_FocusPoint = i;
@@ -363,13 +363,13 @@ double CControlFlow::GetDistance(int x1, int y1, int x2,int y2)
 
 void CControlFlow::DrawArrow( CDC *pdc )
 {
-	if(m_Points.GetSize() < 2) return;
+	if(m_Points.size() < 2) return;
 
-	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-2);
+	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();
 	int flSx = Start.x;
 	int flSy = Start.y;
-	pArrowPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.GetSize()-1);
+	pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	CPoint End = pArrowPoint->GetPoint();
 	int flEx = End.x;
 	int flEy = End.y;
@@ -401,18 +401,23 @@ void CControlFlow::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CControlFlow::Serialize(CArchive& ar)
+void CControlFlow::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_FocusPoint<<m_IsCreateEnd;
-		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
-	}
-	else
-	{
-		ar>>m_FocusPoint>>m_IsCreateEnd;
-		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_FocusPoint<<m_IsCreateEnd;
+//		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
+//	}
+//	else
+//	{
+//		ar>>m_FocusPoint>>m_IsCreateEnd;
+//		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
+//	}
 
-	m_Points.Serialize(ar);
+	std::vector<CAdjustPoint *>::iterator iter;
+	for (iter = m_Points.begin(); iter != m_Points.end(); iter++)
+	{
+		CAdjustPoint * objAdjustPoint  = *iter;
+		objAdjustPoint->Serialize(objJSON);
+	}
 }

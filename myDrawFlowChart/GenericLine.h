@@ -13,7 +13,7 @@
 
 class CGenericLine : public CGraph  
 {
-	DECLARE_SERIAL(CGenericLine)
+//		DECLARE_SERIAL(CGenericLine)
 public:
 	CGenericLine();
 	virtual ~CGenericLine();
@@ -28,7 +28,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	void GetStartPoint( CPoint &pt );
 	void GetEndPoint( CPoint &pt );

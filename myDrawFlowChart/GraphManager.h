@@ -9,6 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <vector>
 #include "Graph.h"
 #include "PathManager.h"
 
@@ -42,6 +43,7 @@ public:
 	int SearchPath();
 
 	void CheckAllLinkGraph();
+	int  Serialize(cJSON * objJSON);
 
 private:
 	void CheckLinkGraph(CGraph* graph);
@@ -49,7 +51,7 @@ private:
 public:
 	//static enum GRAPH_TYPE{Rectangle, Ellipse, Diamond, DealParallelogram, GenericLine, Arrowhead, ControlFlow};
 //private:
-	CObArray m_Graphs;
+	std::vector<CGraph *> m_Graphs;
 	int m_FocusID;
 
 	CPathManager m_PathManager;

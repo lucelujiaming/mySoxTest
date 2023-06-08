@@ -9,6 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <vector>
 #include "AdjustPoint.h"
 
 #define CCONNECTPOINT_INVALID_OPTION      -1
@@ -33,7 +34,7 @@
 #define CCONNECTPOINT_POLYGONALLINE_MAX			   3
 
 
-class CGraph : public CObject
+class CGraph  // : public CObject
 {
 public:
 	// 得到和设置该图元的文字
@@ -73,7 +74,7 @@ public:
 	virtual void Move(int cx, int cy) = 0;
 	// 调整图元大小
 	virtual void AdjustSize(CPoint &pt);
-	virtual void Serialize(CArchive& ar) = 0;
+	virtual void Serialize(cJSON * objJSON) = 0;
 
 public:
 	virtual CString GetTypeName() = 0;
@@ -87,7 +88,7 @@ public:
 public:
 	bool m_IsMark; // 是否标记
 	CString m_text; // 描述文字
-	CObArray m_Points; // 该图元包含的所有连接点(CConnentPoint)
+	std::vector<CAdjustPoint *>  m_Points; // 该图元包含的所有连接点(CConnentPoint)
 	
 	int     m_iPreviousConnPointIdx ;
 	int     m_iNextConnPointIdx ;

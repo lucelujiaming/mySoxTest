@@ -18,7 +18,7 @@
 
 class CRectangle : public CGraph  
 {
-	DECLARE_SERIAL(CRectangle)
+//		DECLARE_SERIAL(CRectangle)
 
 public:
 	CRectangle();
@@ -31,7 +31,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

@@ -75,7 +75,7 @@ CGraph* CGraphManager::GetGraphAt( int ID )
 	CGraph* resultGraph = NULL;
 	if((ID >= 0) && (ID < GetGraphSum()))
 	{
-		resultGraph = (CGraph*)m_Graphs.GetAt( ID );
+		resultGraph = (CGraph*)m_Graphs[ID];
 	}
 	return resultGraph;
 }
@@ -85,7 +85,7 @@ CGraph* CGraphManager::GetGraphAt( int ID )
 /************************************************************************/
 int CGraphManager::GetGraphSum()
 {
-	return m_Graphs.GetSize();
+	return m_Graphs.size();
 }
 
 /************************************************************************/
@@ -123,7 +123,7 @@ void CGraphManager::DeleteGraphAt( int ID )
 		//CGraph* objGraph = (CGraph*)m_Graphs.GetAt(ID);
 		//if(objGraph != NULL)
 		//	delete objGraph;
-		m_Graphs.RemoveAt( ID );
+		m_Graphs.erase( m_Graphs.begin() + ID );
 	}
 }
 
@@ -135,7 +135,7 @@ CGraph* CGraphManager::GetFocusGraph()
 	CGraph* objGraph = NULL;
 	if((m_FocusID >= 0) && (m_FocusID < GetGraphSum()))
 	{
-		objGraph = (CGraph*)m_Graphs.GetAt( m_FocusID );
+		objGraph = (CGraph*)m_Graphs[m_FocusID];
 
 		if(objGraph->IsControlFlow())
 			CheckLinkGraph(objGraph);
@@ -148,7 +148,8 @@ CGraph* CGraphManager::GetFocusGraph()
 /************************************************************************/
 void CGraphManager::AddGraph(CGraph* graph)
 {
-	m_Graphs.InsertAt(0, graph, 1);
+	
+	m_Graphs.insert(m_Graphs.begin(), graph);
 	m_FocusID = 0;
 }
 
@@ -168,7 +169,7 @@ bool CGraphManager::SetFocusGraphID( CPoint &pt )
 			if(oldFocusGraph != objGraph)
 			{
 				DeleteGraphAt( i );
-				m_Graphs.InsertAt(0, objGraph, 1);
+				m_Graphs.insert(m_Graphs.begin(), objGraph);
 				m_FocusID = 0;
 				return true;
 			}
@@ -241,7 +242,7 @@ void CGraphManager::Move(int cx, int cy)
 				}
 				else
 				{
-					CAdjustPoint *pNewStart = (CAdjustPoint*)focusGraph->m_Points.GetAt(objGraph->m_iPreviousConnPointIdx);
+					CAdjustPoint *pNewStart = (CAdjustPoint*)focusGraph->m_Points[objGraph->m_iPreviousConnPointIdx];
 					if(pNewStart)
 					{
 						objGraph->SetStartPoint(pNewStart->GetPoint());
@@ -260,7 +261,7 @@ void CGraphManager::Move(int cx, int cy)
 				}
 				else
 				{
-					CAdjustPoint *pNewEnd = (CAdjustPoint*)focusGraph->m_Points.GetAt(objGraph->m_iNextConnPointIdx);
+					CAdjustPoint *pNewEnd = (CAdjustPoint*)focusGraph->m_Points[objGraph->m_iNextConnPointIdx];
 					if(pNewEnd)
 					{
 						objGraph->SetEndPoint(pNewEnd->GetPoint());
@@ -305,6 +306,17 @@ void CGraphManager::CheckAllLinkGraph()
 	}
 }
 
+int CGraphManager::Serialize(cJSON * objJSON)
+{
+	std::vector<CGraph *>::iterator iter;
+	for (iter = m_Graphs.begin(); iter != m_Graphs.end(); iter++)
+	{
+		CGraph * objGraph  = *iter;
+		objGraph->Serialize(objJSON);
+	}
+	return 1;
+}
+
 /************************************************************************/
 /* 功能：路径处理。                                                     */
 /************************************************************************/
@@ -313,7 +325,7 @@ int CGraphManager::SearchPath()
 	int i = 0;
 	m_PathManager.DeleteAll();
 
-	CObArray obArrayBorders, obArrayBs, copyAllBorders; // , copyAllBordersTemp;
+	std::vector<CGraph *> obArrayBorders, obArrayBs, copyAllBorders; // , copyAllBordersTemp;
 	// 找到开始和结束图元
 	CGraph *startGraph = NULL;
 	CGraph *endGraph = NULL;
@@ -323,47 +335,50 @@ int CGraphManager::SearchPath()
 
 		if(objGraph->IsControlFlow())
 		{
-			copyAllBorders.Add(objGraph);
+			copyAllBorders.push_back(objGraph);
 			// copyAllBorders.Add(objGraph);
 		}
-
-		CString str;
-		objGraph->GetText(str);
-		if(str == "开始")
+		else
 		{
-			startGraph = objGraph;
-		}
-		if(str == "结束")
-		{
-			endGraph = objGraph;
+			CString str;
+			objGraph->GetText(str);
+			if(str == "开始")
+			{
+				startGraph = objGraph;
+			}
+			else if(str == "结束")
+			{
+				endGraph = objGraph;
+			}
 		}
 	}
 
 	// 找到第一条边，并初始化路径管理器
-	for(i = 0; i < copyAllBorders.GetSize(); i++)
+	for(i = 0; i < copyAllBorders.size(); i++)
 	{
-		CGraph *objGraph = (CGraph *)copyAllBorders.GetAt(i);
+		CGraph *objGraph = (CGraph *)copyAllBorders[i];
 		if(objGraph->GetPreviousGraph() == startGraph)
 		{
 			m_PathManager.InitPaths(objGraph);
 			//copyAllBordersTemp.RemoveAt(i);
 			if(objGraph->GetNextgraph() != NULL && objGraph->GetNextgraph() != endGraph)
-				obArrayBorders.Add(objGraph);
+				obArrayBorders.push_back(objGraph);
 		}
 	}
-	if(obArrayBorders.GetSize() == 0 && m_PathManager.GetSum() == 0) return 0;
+	if(obArrayBorders.size() == 0 && m_PathManager.GetSum() == 0) 
+		return 0;
 	//copyAllBorders.RemoveAll();
 	//copyAllBorders.Append(copyAllBordersTemp);
 
 	while(true)
 	{
-		for(int j = 0; j < obArrayBorders.GetSize(); j++)
+		for(int j = 0; j < obArrayBorders.size(); j++)
 		{
-			CGraph *objGraph = (CGraph *)obArrayBorders.GetAt(j);
+			CGraph *objGraph = (CGraph *)obArrayBorders[j];
 			bool flag = false;
-			for(int k = 0; k < copyAllBorders.GetSize(); k++)
+			for(int k = 0; k < copyAllBorders.size(); k++)
 			{
-				CGraph *currentGraph = (CGraph *)copyAllBorders.GetAt(k);
+				CGraph *currentGraph = (CGraph *)copyAllBorders[k];
 				if(currentGraph->GetPreviousGraph() == objGraph->GetNextgraph())
 				{
 					if(!m_PathManager.UpdatePaths(currentGraph)) 
@@ -372,17 +387,17 @@ int CGraphManager::SearchPath()
 						break;
 					}
 					if(currentGraph->GetNextgraph() != NULL && currentGraph->GetNextgraph() != endGraph)
-						obArrayBs.Add(currentGraph);
+						obArrayBs.push_back(currentGraph);
 				}
 			}
 			//if(flag) continue;
 		}
 
-		if(obArrayBs.GetSize() == 0) break;
+		if(obArrayBs.size() == 0) break;
 
-		obArrayBorders.RemoveAll();	
-		obArrayBorders.Append(obArrayBs);
-		obArrayBs.RemoveAll();
+		obArrayBorders.clear();	
+		obArrayBorders.insert(obArrayBorders.end(), obArrayBs.begin(), obArrayBs.end());
+		obArrayBs.clear();
 	}
 
 	return m_PathManager.GetSum();

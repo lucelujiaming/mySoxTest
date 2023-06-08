@@ -16,7 +16,7 @@
 
 class CLadder : public CGraph  
 {
-	DECLARE_SERIAL(CLadder)
+//		DECLARE_SERIAL(CLadder)
 public:
 	CLadder();
 	virtual ~CLadder();
@@ -28,7 +28,7 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(CArchive& ar);
+	void Serialize(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

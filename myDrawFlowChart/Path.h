@@ -9,6 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <vector>
 #include "Graph.h"
 
 class CPath : public CObject
@@ -29,7 +30,7 @@ public:
 	bool IsInclude(CGraph *graph, int count = 1);
 
 private:
-	CObArray m_Graphs;
+	std::vector<CGraph *> m_Graphs;
 	int m_CurrentNum;
 };
 

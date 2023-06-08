@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CArrowhead, CObject, 1)
+// IMPLEMENT_SERIAL(CArrowhead, CObject, 1)
 
 CArrowhead::CArrowhead()
 {
@@ -25,7 +25,7 @@ CArrowhead::CArrowhead()
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
 		connPoint = new CAdjustPoint();
-		m_Points.Add(connPoint);
+		m_Points.push_back(connPoint);
 	}
 	m_Previous = NULL;
 	m_Next = NULL;
@@ -64,9 +64,9 @@ void CArrowhead::Draw( CDC *pdc )
 void CArrowhead::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->Draw(pdc);
 	}
 }
@@ -134,7 +134,7 @@ void CArrowhead::AdjustSize( CPoint &pt )
 
 void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 {
-	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(0);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
 	{
@@ -148,7 +148,7 @@ void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 }
 void CArrowhead::SetNextgraph(CGraph *nextGraph)
 {
-	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(1);
+	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[1];
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
@@ -225,7 +225,7 @@ bool CArrowhead::IsOn( CPoint &pt )
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt))
 		{
 			m_AdjustPoint = i; // 1+i;
@@ -287,7 +287,7 @@ int CArrowhead::IsConnectOn(CAdjustPoint *pt)
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -300,27 +300,27 @@ int CArrowhead::IsConnectOn(CAdjustPoint *pt)
 void CArrowhead::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_START);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_LINE_START];
 	connPoint->SetPoint(m_Start);
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_LINE_END);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_LINE_END];
 	connPoint->SetPoint(m_End);
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->SetType(false);
 	}
 }
 
-void CArrowhead::Serialize(CArchive& ar)
+void CArrowhead::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
-		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
-	}
-	else
-	{
-		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
-		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
+//		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
+//	}
+//	else
+//	{
+//		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
+//		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
+//	}
 }

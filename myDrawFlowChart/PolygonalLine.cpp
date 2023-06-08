@@ -15,7 +15,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CPolygonalLine, CObject, 1)
+// IMPLEMENT_SERIAL(CPolygonalLine, CObject, 1)
 
 CPolygonalLine::CPolygonalLine()
 {
@@ -25,7 +25,7 @@ CPolygonalLine::CPolygonalLine()
 	for(int i = 0; i < CCONNECTPOINT_POLYGONALLINE_MAX; i++)
 	{
 		connPoint = new CAdjustPoint();
-		m_Points.Add(connPoint);
+		m_Points.push_back(connPoint);
 	}
 	m_Previous = NULL;
 	m_Next = NULL;
@@ -87,9 +87,9 @@ void CPolygonalLine::printInfomation(CString strCaption)
 void CPolygonalLine::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
-	for(int i = 0; i < m_Points.GetSize(); i++)
+	for(int i = 0; i < m_Points.size(); i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->Draw(pdc);
 	}
 }
@@ -303,7 +303,7 @@ void CPolygonalLine::AdjustSize( CPoint &pt )
 
 void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 {
-	CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
+	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[CCONNECTPOINT_POLYGONALLINE_START];
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
 	{
@@ -319,7 +319,7 @@ void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 }
 void CPolygonalLine::SetNextgraph(CGraph *nextGraph)
 {
-	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
+	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[CCONNECTPOINT_POLYGONALLINE_END];
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
@@ -491,7 +491,7 @@ bool CPolygonalLine::IsOn( CPoint &pt )
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt))
 		{
 			m_AdjustPoint = i; // 1+i;
@@ -553,7 +553,7 @@ int CPolygonalLine::IsConnectOn(CAdjustPoint *pt)
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
@@ -619,9 +619,9 @@ void CPolygonalLine::AdjustFocusPoint()
 {
 	m_iBendTimes = 0;
 	CAdjustPoint *connPoint = NULL;
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_START);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_POLYGONALLINE_START];
 	connPoint->SetPoint(m_Start);
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_END);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_POLYGONALLINE_END];
 	connPoint->SetPoint(m_End);
 	// Calc middle point
 	if((m_iPreviousConnPointIdx == -1) || (m_iNextConnPointIdx == -1))
@@ -632,7 +632,7 @@ void CPolygonalLine::AdjustFocusPoint()
 	
 	m_iBendTimes = m_objOrthogonalWire.calculateOrthogonalWire(m_StartStub, m_EndStub);
 
-	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_POLYGONALLINE_MIDDLE);
+	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_POLYGONALLINE_MIDDLE];
 	if (m_iBendTimes == 1)
 	{
 		connPoint->SetPoint(m_objOrthogonalWire.m_ptBend[0].ptPosition);
@@ -649,21 +649,21 @@ void CPolygonalLine::AdjustFocusPoint()
 	
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
 	{
-		connPoint = (CAdjustPoint *)m_Points.GetAt(i);
+		connPoint = (CAdjustPoint *)m_Points[i];
 		connPoint->SetType(false);
 	}
 }
 
-void CPolygonalLine::Serialize(CArchive& ar)
+void CPolygonalLine::Serialize(cJSON * objJSON)
 {
-	if(ar.IsStoring())
-	{
-		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
-		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
-	}
-	else
-	{
-		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
-		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
-	}
+//	if(ar.IsStoring())
+//	{
+//		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
+//		ar<<m_iPreviousConnPointIdx<<m_iNextConnPointIdx;
+//	}
+//	else
+//	{
+//		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
+//		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
+//	}
 }

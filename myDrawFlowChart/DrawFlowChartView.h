@@ -73,6 +73,7 @@ protected:
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateRoundHeadRectangle();
 	afx_msg void OnCreateRoundRectangle();
+	afx_msg void OnCreateCylinderGraph();
 	afx_msg void OnCreateDocumentGraph();
 	afx_msg void OnCreateCustomRoundRectangle();
 	afx_msg void OnCreateLadder();
@@ -106,6 +107,7 @@ protected:
 	afx_msg void OnToolbarRoundHeadRectangle();
 	afx_msg void OnToolbarCustomRoundRectangle();
 	afx_msg void OnToolbarRoundRectangle();
+	afx_msg void OnToolbarCylinderGraph();
 	afx_msg void OnToolbarDocumentGraph();
 	afx_msg void OnToolbarHexagon();
 	afx_msg void OnToolbarSearch();

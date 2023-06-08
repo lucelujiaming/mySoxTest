@@ -106,6 +106,10 @@ SOURCE=.\CustomRoundRectangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CylinderGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.cpp
 # End Source File
 # Begin Source File
@@ -228,6 +232,10 @@ SOURCE=.\ControlFlow.h
 # Begin Source File
 
 SOURCE=.\CustomRoundRectangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CylinderGraph.h
 # End Source File
 # Begin Source File
 

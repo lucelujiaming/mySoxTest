@@ -13,6 +13,7 @@
 #include "DocumentGraph.h"
 #include "CustomRoundRectangle.h"
 #include "Ladder.h"
+#include "CylinderGraph.h"
 #include "Ellipse.h"
 #include "Diamond.h"
 #include "Parallelogram.h"
@@ -76,6 +77,11 @@ CGraph* CGraphFactory::CreateLadder()
 CGraph* CGraphFactory::CreateRoundRectangle()
 {
 	return new CRoundRectangle();
+}
+
+CGraph* CGraphFactory::CreateCylinderGraph()
+{
+	return new CCylinderGraph();
 }
 
 CGraph* CGraphFactory::CreateDocumentGraph()

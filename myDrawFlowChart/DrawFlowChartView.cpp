@@ -28,6 +28,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_RECTANGLE, OnCreateRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnCreateRoundHeadRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_CYLINDER, OnCreateCylinderGraph)
 	ON_COMMAND(ID_TOOLBAR_DOCUMENT, OnCreateDocumentGraph)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
@@ -60,6 +61,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnToolbarRoundHeadRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
+	ON_COMMAND(ID_TOOLBAR_CYLINDER, OnCreateCylinderGraph)
 	ON_COMMAND(ID_TOOLBAR_DOCUMENT, OnCreateDocumentGraph)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
@@ -614,6 +616,24 @@ void CDrawFlowChartView::OnCreateRoundRectangle()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRoundRectangle());
 }
 
+void CDrawFlowChartView::OnCreateCylinderGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+	
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Rectangle );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCylinderGraph());
+}
+
 void CDrawFlowChartView::OnCreateDocumentGraph() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -874,6 +894,12 @@ void CDrawFlowChartView::OnToolbarRoundRectangle()
 {
 	// TODO: Add your command handler code here
 	OnCreateRoundRectangle();
+}
+
+void CDrawFlowChartView::OnToolbarCylinderGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCylinderGraph();
 }
 
 void CDrawFlowChartView::OnToolbarDocumentGraph() 

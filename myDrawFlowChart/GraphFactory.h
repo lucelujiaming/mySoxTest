@@ -23,6 +23,7 @@ public:
 	CGraph* CreateRectangle();          // Adjusted
 	CGraph* CreateRoundHeadRectangle();
 	CGraph* CreateRoundRectangle();
+	CGraph* CreateCylinderGraph();
 	CGraph* CreateDocumentGraph();
 	CGraph* CreateCustomRoundRectangle();
 	CGraph* CreateLadder();

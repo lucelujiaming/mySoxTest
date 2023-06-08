@@ -1,10 +1,10 @@
-// DocumentGraph.cpp: implementation of the CDocumentGraph class.
+// CylinderGraph.cpp: implementation of the CCylinderGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "DocumentGraph.h"
+#include "CylinderGraph.h"
 #include "math.h"
 
 #ifdef _DEBUG
@@ -16,12 +16,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CDocumentGraph, CObject, 1)
+IMPLEMENT_SERIAL(CCylinderGraph, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CDocumentGraph::CDocumentGraph()
+CCylinderGraph::CCylinderGraph()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -33,7 +33,7 @@ CDocumentGraph::CDocumentGraph()
 	}
 }
 
-CDocumentGraph::~CDocumentGraph()
+CCylinderGraph::~CCylinderGraph()
 {
 
 }
@@ -41,7 +41,7 @@ CDocumentGraph::~CDocumentGraph()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CDocumentGraph::Draw( CDC *pdc )
+void CCylinderGraph::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
@@ -52,67 +52,63 @@ void CDocumentGraph::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-
-	// pdc->RoundRect(CRect(m_Start, m_End), CPoint(ROUNDED_CORNER_RADIUS, ROUNDED_CORNER_RADIUS));
-	pdc->MoveTo(CPoint(m_Start.x, m_End.y));
-	pdc->LineTo(m_Start);
-	pdc->LineTo(CPoint(m_End.x, m_Start.y));
+	pdc->MoveTo(CPoint(m_End.x, m_Start.y));
 	pdc->LineTo(m_End);
-
+	pdc->LineTo(CPoint(m_Start.x, m_End.y));
+	pdc->LineTo(m_Start);
+	
 	int iWidth =0, iHeight = 0;
 	iWidth  = m_End.x - m_Start.x;
 	iHeight = m_End.y - m_Start.y;
-	int  iRadius =  (int)(iWidth / MAGIC_DOCUMENT_RADIUS_RATIO);
-	int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/4) * (iWidth/4));
+	int  iRadius =  (int)(iWidth * sqrt(2) / 2);
+	int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
+
 	if(iHeight > 0)
 	{
 		if(iArcHeight > iHeight/2)
 		{
 			// We have to recalculate the radius to prevent to cross the topline.
-			iRadius = iHeight/4 + iWidth * iWidth/(16 * iHeight);
+			/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
+		    /*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
+		    /*     整理有：                                                  */
+		    /*          R = H/4 + W * W/(4 * H)                              */
+			iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
 		}
-
+		
 		// We minus one to let the graph close.
-		int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/4) * (iWidth/4)) - 1;
-		CPoint objFirstCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/4), m_End.y - iCosofRadius);
+		int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
+		CPoint objFirstCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_Start.y - iCosofRadius);
 		CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
 								CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
-		//	pdc->Ellipse(m_FirstCircleRect);
+
 		pdc->Arc(objFirstCircleRect, 
-					CPoint(m_Start.x, m_End.y), 
-					CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_End.y));
+					CPoint(m_Start.x, m_Start.y), 
+					CPoint(m_End.x, m_Start.y));
 		
-		CPoint objSecondCircle = CPoint(m_End.x - (int)((m_End.x - m_Start.x)/4), m_End.y + iCosofRadius);
+		CPoint objSecondCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_Start.y + iCosofRadius);
 		CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
 								CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
 		pdc->Arc(objSecondCircleRect, 
-					m_End, 
-					CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_End.y));
+					CPoint(m_End.x, m_Start.y), 
+					CPoint(m_Start.x, m_Start.y));
 	}
-	else
-	{
-		pdc->LineTo(CPoint(m_Start.x, m_End.y));
-	}
-
-
-
 	if(m_IsMark)
 	{
 		pdc->SelectObject(pOldPen);
 	}
 
 	pdc->DrawText(m_text, CRect(m_Start + CPoint(
-									CUSTOM_DOCUMENTGRAPH_TEXT_XBORDER, 
-									CUSTOM_DOCUMENTGRAPH_TEXT_YBORDER), 
+									CUSTOM_CYLINDER_TEXT_XBORDER, 
+									CUSTOM_CYLINDER_TEXT_YBORDER), 
 								m_End+CPoint(
-									-1 * CUSTOM_DOCUMENTGRAPH_TEXT_XBORDER, 
-									-1 * CUSTOM_DOCUMENTGRAPH_TEXT_YBORDER)), DT_CENTER);
+									-1 * CUSTOM_CYLINDER_TEXT_XBORDER, 
+									-1 * CUSTOM_CYLINDER_TEXT_YBORDER)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CDocumentGraph::DrawFocus( CDC *pdc )
+void CCylinderGraph::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.GetSize(); i++)
@@ -125,7 +121,7 @@ void CDocumentGraph::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CDocumentGraph::Move( int cx, int cy )
+void CCylinderGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -135,7 +131,7 @@ void CDocumentGraph::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CDocumentGraph::AdjustSize( CPoint &pt )
+void CCylinderGraph::AdjustSize( CPoint &pt )
 {
 //	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
 //		m_Start.x, m_Start.y, m_End.x, m_End.y);
@@ -199,7 +195,7 @@ void CDocumentGraph::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CDocumentGraph::IsIn( CPoint &pt )
+bool CCylinderGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -207,7 +203,7 @@ bool CDocumentGraph::IsIn( CPoint &pt )
 	CRect checkRect = CRect( m_Start, m_End );
 	if(checkRect.PtInRect( pt ))
 	{
-	//	m_objLogFile.WriteLog(_T("CDocumentGraph pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
+	//	m_objLogFile.WriteLog(_T("CCylinderGraph pt(%d, %d) is in the [(%d, %d), (%d, %d)]. \n"), 
 	//		pt.x, pt.y, checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		flag = true;
 		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
@@ -218,7 +214,7 @@ bool CDocumentGraph::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CDocumentGraph::IsConnectOn(CAdjustPoint *pt)
+int CCylinderGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -236,7 +232,7 @@ int CDocumentGraph::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CDocumentGraph::IsOn( CPoint &pt )
+bool CCylinderGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -273,7 +269,7 @@ bool CDocumentGraph::IsOn( CPoint &pt )
 		if(connPoint->IsOn(pt))
 		{
 			// m_objLogFile.WriteLog("We click on the %dth CAdjustPoint.\n", i);
-			// connPoint->IsOn(pt);
+			// temp->IsOn(pt);
 			//if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
 			//{
 			//	m_objLogFile.WriteLog(_T("The m_Start and m_End is [(%d, %d), (%d, %d)]. "), 
@@ -295,7 +291,7 @@ bool CDocumentGraph::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CDocumentGraph::AdjustStartAndEnd()
+void CCylinderGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	// 如果结束点在起始点的左上方。这个时候，起始点变成结束点。结束点变成起始点。
@@ -336,7 +332,7 @@ void CDocumentGraph::AdjustStartAndEnd()
 	AdjustFocusPoint();
 }
 
-int CDocumentGraph::GetAdjustPoint()
+int CCylinderGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -344,7 +340,7 @@ int CDocumentGraph::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CDocumentGraph::AdjustFocusPoint()
+void CCylinderGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points.GetAt(CCONNECTPOINT_RECT_LEFT_TOP);
@@ -374,7 +370,7 @@ void CDocumentGraph::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CDocumentGraph::Serialize(CArchive& ar)
+void CCylinderGraph::Serialize(CArchive& ar)
 {
 	if(ar.IsStoring())
 	{

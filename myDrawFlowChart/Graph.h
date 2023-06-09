@@ -33,7 +33,6 @@
 #define CCONNECTPOINT_POLYGONALLINE_END            2    // 终点
 #define CCONNECTPOINT_POLYGONALLINE_MAX			   3
 
-
 class CGraph  // : public CObject
 {
 public:
@@ -74,7 +73,15 @@ public:
 	virtual void Move(int cx, int cy) = 0;
 	// 调整图元大小
 	virtual void AdjustSize(CPoint &pt);
-	virtual void Serialize(cJSON * objJSON) = 0;
+
+	// 保存图元参数。
+	virtual void SaveParamsToJSON(cJSON * objJSON) = 0;
+	// 加载图元参数。
+	virtual void LoadParamsFromJSON(cJSON * objJSON) = 0;
+
+	// 加载该图元的前赴图元和后继图元。只在文件加载的时候调用。
+	void loadPreviousGraph(CGraph *previousGraph) { m_Previous = previousGraph; }
+	void loadNextgraph(CGraph *nextGraph) { m_Next = nextGraph; }
 
 public:
 	virtual CString GetTypeName() = 0;
@@ -85,17 +92,27 @@ public:
 	virtual ~CGraph();
 
 	void printAllPoints(CString strCaption);
+	
+	int  getGraphSeq() { return m_iGraphSeq ; }
+	void setGraphSeq(int iGraphSeq) { m_iGraphSeq = iGraphSeq; }
 public:
 	bool m_IsMark; // 是否标记
 	CString m_text; // 描述文字
 	std::vector<CAdjustPoint *>  m_Points; // 该图元包含的所有连接点(CConnentPoint)
 	
+	int     m_iGraphSeq ;
+	// Connect Point information
+	int     m_iPreviousGraphSeq ;
 	int     m_iPreviousConnPointIdx ;
+	int     m_iNextGraphSeq ;
 	int     m_iNextConnPointIdx ;
 
 protected:
 	CPoint m_Start; // 开始点
 	CPoint m_End; // 结束点
+	
+	CGraph* m_Previous;
+	CGraph* m_Next;
 };
 
 #endif // !defined(AFX_GRAPH_H__AC673236_A970_4407_939B_BDA6723EFFF1__INCLUDED_)

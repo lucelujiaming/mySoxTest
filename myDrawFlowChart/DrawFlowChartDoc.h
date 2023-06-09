@@ -12,7 +12,7 @@
 #include "GraphManager.h"
 #include "GraphFactory.h"
 
-class CDrawFlowChartDoc : public CDocument
+	class CDrawFlowChartDoc : public CDocument
 {
 protected: // create from serialization only
 	CDrawFlowChartDoc();
@@ -52,6 +52,9 @@ protected:
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+private:
+	cJSON * getJSONFromFile(LPCTSTR lpszPathName);
+	void saveJSONToFile(cJSON * objJSON, LPCTSTR lpszPathName);
 };
 
 /////////////////////////////////////////////////////////////////////////////

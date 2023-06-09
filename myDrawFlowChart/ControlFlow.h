@@ -31,7 +31,8 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(cJSON * objJSON);
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 	void SetStartPoint( CPoint &pt );
 	void SetEndPoint( CPoint &pt );
@@ -58,8 +59,8 @@ private:
 	int m_FocusPoint;
 	int m_IsCreateEnd;
 
-	CGraph* m_Previous;
-	CGraph* m_Next;
+//	CGraph* m_Previous;
+//	CGraph* m_Next;
 };
 
 #endif // !defined(AFX_CONTROLFLOW_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)

@@ -623,7 +623,7 @@ void CPolygonalLine::AdjustFocusPoint()
 	connPoint->SetPoint(m_Start);
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_POLYGONALLINE_END];
 	connPoint->SetPoint(m_End);
-	// Calc middle point
+	// Calculate middle point
 	if((m_iPreviousConnPointIdx == -1) || (m_iNextConnPointIdx == -1))
 		return;
 
@@ -654,7 +654,7 @@ void CPolygonalLine::AdjustFocusPoint()
 	}
 }
 
-void CPolygonalLine::Serialize(cJSON * objJSON)
+void CPolygonalLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -666,4 +666,139 @@ void CPolygonalLine::Serialize(cJSON * objJSON)
 //		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON * jsonStart = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonStart, "x", m_Start.x);
+	cJSON_AddNumberToObject(jsonStart, "y", m_Start.y);
+	cJSON_AddItemToObject(jsonGraph, "Start", jsonStart);
+
+	cJSON * jsonEnd = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonEnd, "x", m_End.x);
+	cJSON_AddNumberToObject(jsonEnd, "y", m_End.y);
+	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
+
+	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
+	// Save PreviousConnPoint and NextConnPoint
+	if (m_Previous)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", m_Previous->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", -1);
+	}
+	cJSON_AddNumberToObject(jsonGraph, "PreviousConnPointIdx", m_iPreviousConnPointIdx);
+	if (m_Next)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", m_Next->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", -1);
+	}
+	cJSON_AddNumberToObject(jsonGraph, "NextConnPointIdx", m_iNextConnPointIdx);
+	// End of save PreviousConnPoint and NextConnPoint
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CPolygonalLine::LoadParamsFromJSON(cJSON * objJSON)
+{
+	cJSON *child = objJSON->child;
+    while(child)
+    {   
+        switch ((child->type)&255)
+        {   
+        case cJSON_True:    
+            TRACE("cJSON_True"); 
+			break;
+        case cJSON_Number:    
+            {   
+                if(strcmp(child->string, "GraphSeq") == 0)
+                {   
+					setGraphSeq((int)child->valueint);
+                }
+				else if(strcmp(child->string, "PreviousGraphSeq") == 0)
+                {   
+					m_iPreviousGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "PreviousConnPointIdx") == 0)
+                {   
+					m_iPreviousConnPointIdx = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextGraphSeq") == 0)
+                {   
+					m_iNextGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextConnPointIdx") == 0)
+                {   
+					m_iNextConnPointIdx = (int)child->valueint;
+                }
+            }   
+            break;
+        case cJSON_String: 
+            TRACE("cJSON_String\n"); 
+            {   
+                if(strcmp(child->string, "Text") == 0)
+                {   
+                    m_text = CString(child->valuestring);
+                }
+            }    
+            break;
+        case cJSON_Array:
+            TRACE("cJSON_Array\n"); 
+            break;
+        case cJSON_Object:  
+            TRACE("cJSON_Object\n"); 
+            {   
+                if(strcmp(child->string, "Start") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_Start.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_Start.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+				else if(strcmp(child->string, "End") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_End.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_End.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
 }

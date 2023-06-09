@@ -26,7 +26,8 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(cJSON * objJSON);
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 	bool IsIn( CPoint &pt );
 	bool IsOn( CPoint &pt );

@@ -77,7 +77,7 @@ bool CConnectPoint::IsOn(CPoint &pt)
 	return flag;
 }
 
-void CConnectPoint::Serialize(cJSON * objJSON)
+void CConnectPoint::SaveParamsToJSON(cJSON * objJSON)
 {
 	if(ar.IsStoring())
 	{
@@ -87,4 +87,8 @@ void CConnectPoint::Serialize(cJSON * objJSON)
 	{
 		ar>>m_Point;
 	}
+}
+
+void CConnectPoint::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

@@ -146,9 +146,12 @@ CGraph* CGraphManager::GetFocusGraph()
 /************************************************************************/
 /* 功能：添加一个图形对象。                                             */
 /************************************************************************/
-void CGraphManager::AddGraph(CGraph* graph)
+void CGraphManager::AddGraph(CGraph* graph, cJSON * jsonParam)
 {
-	
+	if(jsonParam)
+	{
+		graph->LoadParamsFromJSON(jsonParam);
+	}
 	m_Graphs.insert(m_Graphs.begin(), graph);
 	m_FocusID = 0;
 }
@@ -300,21 +303,63 @@ void CGraphManager::CheckAllLinkGraph()
 {
 	for(int i = 0; i < GetGraphSum(); i++)
 	{
-		CGraph* graph = GetGraphAt(i);
-	
-		CheckLinkGraph(graph);
+		CGraph* objGraph = GetGraphAt(i);
+		if(objGraph && objGraph->IsControlFlow())
+		{	
+			// SetPreviousGraph 
+			if(objGraph->m_iPreviousGraphSeq > 0)
+			{
+				for(int i = 0; i < GetGraphSum(); i++)
+				{
+					CGraph* graph = GetGraphAt(i);
+					if(graph && graph->getGraphSeq() == objGraph->m_iPreviousGraphSeq)
+					{	
+						objGraph->loadPreviousGraph(graph);
+						break;
+					}
+				}
+			}
+			// SetNextgraph 
+			if(objGraph->m_iNextGraphSeq > 0)
+			{
+				for(int i = 0; i < GetGraphSum(); i++)
+				{
+					CGraph* graph = GetGraphAt(i);
+					if(graph && graph->getGraphSeq() == objGraph->m_iNextGraphSeq)
+					{	
+						objGraph->loadNextgraph(graph);
+						break;
+					}
+				}
+			}
+		}
 	}
 }
 
-int CGraphManager::Serialize(cJSON * objJSON)
+void CGraphManager::SaveToJSON(cJSON * objJSON)
 {
+	int iGraphSeq = 0;
+	cJSON_AddNumberToObject(objJSON, "FocusID", m_FocusID);
+
 	std::vector<CGraph *>::iterator iter;
+	// Set the GraphSeq to all of Graphs
 	for (iter = m_Graphs.begin(); iter != m_Graphs.end(); iter++)
 	{
 		CGraph * objGraph  = *iter;
-		objGraph->Serialize(objJSON);
+		iGraphSeq++;
+		objGraph->setGraphSeq(iGraphSeq);
 	}
-	return 1;
+	// Serialize all of Graphs
+	for (iter = m_Graphs.begin(); iter != m_Graphs.end(); iter++)
+	{
+		CGraph * objGraph  = *iter;
+		objGraph->SaveParamsToJSON(objJSON);
+	}
+}
+
+void CGraphManager::LoadFromJSON(cJSON * objJSON)
+{
+	return ;
 }
 
 /************************************************************************/

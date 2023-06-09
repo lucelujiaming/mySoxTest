@@ -401,7 +401,7 @@ void CControlFlow::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CControlFlow::Serialize(cJSON * objJSON)
+void CControlFlow::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -413,11 +413,22 @@ void CControlFlow::Serialize(cJSON * objJSON)
 //		ar>>m_FocusPoint>>m_IsCreateEnd;
 //		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON_AddNumberToObject(jsonGraph, "FocusPoint", m_FocusPoint);
+	cJSON_AddNumberToObject(jsonGraph, "IsCreateEnd", m_IsCreateEnd);
 
-	std::vector<CAdjustPoint *>::iterator iter;
-	for (iter = m_Points.begin(); iter != m_Points.end(); iter++)
-	{
-		CAdjustPoint * objAdjustPoint  = *iter;
-		objAdjustPoint->Serialize(objJSON);
-	}
+	// Save PreviousConnPoint and NextConnPoint
+	cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", GetPreviousGraph()->getGraphSeq());
+	cJSON_AddNumberToObject(jsonGraph, "PreviousConnPointIdx", m_iPreviousConnPointIdx);
+	cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", GetNextgraph()->getGraphSeq());
+	cJSON_AddNumberToObject(jsonGraph, "NextConnPointIdx", m_iNextConnPointIdx);
+	// End of save PreviousConnPoint and NextConnPoint
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CControlFlow::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

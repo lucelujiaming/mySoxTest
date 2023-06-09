@@ -28,7 +28,8 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
-	void Serialize(cJSON * objJSON);
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 	void GetStartPoint( CPoint &pt );
 	void GetEndPoint( CPoint &pt );

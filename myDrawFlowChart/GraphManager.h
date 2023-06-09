@@ -21,7 +21,7 @@ public:
 
 public:
 	void DrawAll(CDC *pdc);
-	void DeleteAll();
+	void DeleteAll() { m_Graphs.clear(); }
 	void DeleteFocusGraph();
 	void DeleteGraphAt(int ID);
 
@@ -36,14 +36,16 @@ public:
 	void MarkPath();
 	void CancelMarkPath();
 
-	void AddGraph(CGraph* graph);
+	void AddGraph(CGraph* graph, cJSON * jsonParam = NULL);
 
 	int GetGraphSum();
 
 	int SearchPath();
 
 	void CheckAllLinkGraph();
-	int  Serialize(cJSON * objJSON);
+
+	void SaveToJSON(cJSON * objJSON);
+	void LoadFromJSON(cJSON * objJSON);
 
 private:
 	void CheckLinkGraph(CGraph* graph);

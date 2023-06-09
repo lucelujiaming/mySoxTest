@@ -210,7 +210,7 @@ int CGenericLine::GetAdjustPoint()
 	return m_AdjustPoint;
 }
 
-void CGenericLine::Serialize(cJSON * objJSON)
+void CGenericLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -220,4 +220,26 @@ void CGenericLine::Serialize(cJSON * objJSON)
 //	{
 //		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON * jsonStart = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonStart, "x", m_Start.x);
+	cJSON_AddNumberToObject(jsonStart, "y", m_Start.y);
+	cJSON_AddItemToObject(jsonGraph, "Start", jsonStart);
+
+	cJSON * jsonEnd = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonEnd, "x", m_End.x);
+	cJSON_AddNumberToObject(jsonEnd, "y", m_End.y);
+	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
+
+	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
+	
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CGenericLine::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

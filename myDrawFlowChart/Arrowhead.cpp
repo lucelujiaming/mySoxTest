@@ -311,7 +311,7 @@ void CArrowhead::AdjustFocusPoint()
 	}
 }
 
-void CArrowhead::Serialize(cJSON * objJSON)
+void CArrowhead::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -323,4 +323,31 @@ void CArrowhead::Serialize(cJSON * objJSON)
 //		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON * jsonStart = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonStart, "x", m_Start.x);
+	cJSON_AddNumberToObject(jsonStart, "y", m_Start.y);
+	cJSON_AddItemToObject(jsonGraph, "Start", jsonStart);
+
+	cJSON * jsonEnd = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonEnd, "x", m_End.x);
+	cJSON_AddNumberToObject(jsonEnd, "y", m_End.y);
+	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
+
+	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
+	// Save PreviousConnPoint and NextConnPoint
+	cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", GetPreviousGraph()->getGraphSeq());
+	cJSON_AddNumberToObject(jsonGraph, "PreviousConnPointIdx", m_iPreviousConnPointIdx);
+	cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", GetNextgraph()->getGraphSeq());
+	cJSON_AddNumberToObject(jsonGraph, "NextConnPointIdx", m_iNextConnPointIdx);
+	// End of save PreviousConnPoint and NextConnPoint
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CArrowhead::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

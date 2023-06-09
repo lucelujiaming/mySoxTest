@@ -35,7 +35,8 @@ public:
 
 	void SetType(bool type);
 
-	void Serialize(cJSON * objJSON);
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 private:
 	CPoint m_Point;

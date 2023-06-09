@@ -332,7 +332,7 @@ void CRoundRectangle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRoundRectangle::Serialize(cJSON * objJSON)
+void CRoundRectangle::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -342,11 +342,109 @@ void CRoundRectangle::Serialize(cJSON * objJSON)
 //	{
 //		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON * jsonStart = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonStart, "x", m_Start.x);
+	cJSON_AddNumberToObject(jsonStart, "y", m_Start.y);
+	cJSON_AddItemToObject(jsonGraph, "Start", jsonStart);
 
-	std::vector<CAdjustPoint *>::iterator iter;
-	for (iter = m_Points.begin(); iter != m_Points.end(); iter++)
-	{
-		CAdjustPoint * objAdjustPoint  = *iter;
-		objAdjustPoint->Serialize(objJSON);
-	}
+	cJSON * jsonEnd = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonEnd, "x", m_End.x);
+	cJSON_AddNumberToObject(jsonEnd, "y", m_End.y);
+	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
+
+	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
+
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CRoundRectangle::LoadParamsFromJSON(cJSON * objJSON)
+{
+	cJSON *child = objJSON->child;
+    while(child)
+    {   
+        switch ((child->type)&255)
+        {   
+        case cJSON_True:    
+            TRACE("cJSON_True"); 
+			break;
+        case cJSON_Number:    
+            {   
+                if(strcmp(child->string, "GraphSeq") == 0)
+                {   
+					setGraphSeq((int)child->valueint);
+                }
+				else if(strcmp(child->string, "currentAdjustPoint") == 0)
+                {   
+                    m_AdjustPoint = (int)child->valueint;
+                }
+            }   
+            break;
+        case cJSON_String: 
+            TRACE("cJSON_String\n"); 
+            {   
+                if(strcmp(child->string, "Text") == 0)
+                {   
+                    m_text = CString(child->valuestring);
+                }
+            }    
+            break;
+        case cJSON_Array:
+            TRACE("cJSON_Array\n"); 
+            break;
+        case cJSON_Object:  
+            TRACE("cJSON_Object\n"); 
+            {   
+                if(strcmp(child->string, "Start") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_Start.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_Start.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+				else if(strcmp(child->string, "End") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_End.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_End.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
+	AdjustFocusPoint();
 }

@@ -27,7 +27,9 @@ public:
 	void Draw(CDC *pdc);
 	void DrawFocus(CDC *pdc);
 	void Move(int cx, int cy);
-	void Serialize(cJSON * objJSON);
+	
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 	int IsConnectOn(CAdjustPoint *pt);
 

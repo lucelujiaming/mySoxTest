@@ -77,7 +77,7 @@ bool CAdjustPoint::IsOn(CPoint &pt)
 	return flag;
 }
 
-void CAdjustPoint::Serialize(cJSON * objJSON)
+void CAdjustPoint::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -87,4 +87,11 @@ void CAdjustPoint::Serialize(cJSON * objJSON)
 //	{
 //		ar>>m_Point;
 //	}
+	cJSON * jsonPoint = cJSON_CreateObject();
+	cJSON_AddNumberToObject(objJSON, "x", m_Point.x);
+	cJSON_AddNumberToObject(objJSON, "y", m_Point.y);
+}
+
+void CAdjustPoint::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

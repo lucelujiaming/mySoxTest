@@ -370,7 +370,7 @@ void CCylinderGraph::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CCylinderGraph::Serialize(cJSON * objJSON)
+void CCylinderGraph::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -380,11 +380,26 @@ void CCylinderGraph::Serialize(cJSON * objJSON)
 //	{
 //		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //	}
+	cJSON * jsonGraph = cJSON_CreateObject();
+	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
+	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
+	
+	cJSON * jsonStart = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonStart, "x", m_Start.x);
+	cJSON_AddNumberToObject(jsonStart, "y", m_Start.y);
+	cJSON_AddItemToObject(jsonGraph, "Start", jsonStart);
 
-	std::vector<CAdjustPoint *>::iterator iter;
-	for (iter = m_Points.begin(); iter != m_Points.end(); iter++)
-	{
-		CAdjustPoint * objAdjustPoint  = *iter;
-		objAdjustPoint->Serialize(objJSON);
-	}
+	cJSON * jsonEnd = cJSON_CreateObject();
+	cJSON_AddNumberToObject(jsonEnd, "x", m_End.x);
+	cJSON_AddNumberToObject(jsonEnd, "y", m_End.y);
+	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
+
+	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
+
+	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CCylinderGraph::LoadParamsFromJSON(cJSON * objJSON)
+{
 }

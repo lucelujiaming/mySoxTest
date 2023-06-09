@@ -47,38 +47,9 @@ BOOL CDrawFlowChartDoc::OnNewDocument()
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
 	SetTitle("流程图编辑器");
-
+	m_GraphManager.DeleteAll();
 	return TRUE;
 }
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CDrawFlowChartDoc serialization
-
-//	void CDrawFlowChartDoc::Serialize(CArchive& ar)
-//	{
-//		//POSITION pos = GetFirstViewPosition();
-//		//CDrawFlowChartView *pView = (CDrawFlowChartView*)GetNextView(pos);
-//
-//		if (ar.IsStoring())
-//		{
-//			// TODO: add storing code here
-//			int FocusID = m_GraphManager.m_FocusID;
-//			ar<<FocusID;
-//		}
-//		else
-//		{
-//			// TODO: add loading code here
-//			int FocusID = -1;
-//			ar>>FocusID;
-//			m_GraphManager.m_FocusID = FocusID;
-//		}
-//
-//		// m_GraphManager.m_Graphs.Serialize(ar);
-//		m_GraphManager.Serialize();
-//		//pView->m_GraphManager.m_path.Serialize(ar);
-//	}
 
 /////////////////////////////////////////////////////////////////////////////
 // CDrawFlowChartDoc diagnostics
@@ -104,20 +75,156 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 	
 	// TODO: Add your specialized creation code here
-	//POSITION pos = GetFirstViewPosition();
-	//CDrawFlowChartView *pView = (CDrawFlowChartView*)GetNextView(pos);
+	// POSITION pos = GetFirstViewPosition();
+	// CDrawFlowChartView *pView = (CDrawFlowChartView*)GetNextView(pos);
 
+	// m_GraphManager.SaveParamsToJSON(objJSON);
+	cJSON * objJSON = getJSONFromFile(lpszPathName);
+	cJSON *child = objJSON->child;
+    while(child)
+    {   
+        switch ((child->type)&255)
+        {   
+        case cJSON_True:    
+            TRACE("cJSON_True"); 
+			break;
+        case cJSON_Number:    
+            {   
+                if(strcmp(child->string, "FocusID") == 0)
+                {   
+                    m_GraphManager.m_FocusID = (int)child->valueint ;
+                }
+            }   
+            break;
+        case cJSON_String: 
+            TRACE("cJSON_String\n"); 
+            break;
+        case cJSON_Array:
+            TRACE("cJSON_Array\n"); 
+            break;
+        case cJSON_Object:  
+            TRACE("cJSON_Object\n"); 
+            {   
+                if(strcmp(child->string, "CRectangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateRectangle(), child);
+                }
+				else if(strcmp(child->string, "CRoundHeadRectangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateRoundHeadRectangle(), child);
+                }
+				else if(strcmp(child->string, "CCustomRoundRectangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateCustomRoundRectangle(), child);
+                }
+				else if(strcmp(child->string, "CLadder") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateLadder(), child);
+                }
+				else if(strcmp(child->string, "CRoundRectangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateRoundRectangle(), child);
+                }
+				else if(strcmp(child->string, "CCylinderGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateCylinderGraph(), child);
+                }
+				else if(strcmp(child->string, "CDocumentGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateDocumentGraph(), child);
+                }
+				else if(strcmp(child->string, "CHexagon") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateHexagon(), child);
+                }
+				else if(strcmp(child->string, "CEllipse") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateEllipse(), child);
+                }
+				else if(strcmp(child->string, "CDiamond") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateDiamond(), child);
+                }
+				else if(strcmp(child->string, "CParallelogram") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateParallelogram(), child);
+                }
+				else if(strcmp(child->string, "CLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateLine(), child);
+                }
+				else if(strcmp(child->string, "CArrowLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateArrowLine(), child);
+                }
+				else if(strcmp(child->string, "CPolygonalLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreatePolygonalLine(), child);
+                }
+				else if(strcmp(child->string, "CControlFlow") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateControlFlow(), child);
+                }
+				else if(strcmp(child->string, "CStart") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateStart(), child);
+                }
+				else if(strcmp(child->string, "CEnd") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateEnd(), child);
+                }
+				else 
+				{
+					TRACE("Unknown graph");
+				}
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
+	
+	cJSON_Delete(objJSON);
+	// When we load all of graph, we need to calculate 
+	// the previous and next graph for each link graph.
 	m_GraphManager.CheckAllLinkGraph();
-
 	return TRUE;
+}
+
+cJSON * CDrawFlowChartDoc::getJSONFromFile(LPCTSTR lpszPathName)
+{
+	CFile file;
+    file.Open(lpszPathName, CFile::modeRead);
+	int iBufLen = file.GetLength();
+	char * pPrintPtr = (char *)malloc(iBufLen + 1);
+    file.Read(pPrintPtr, iBufLen + 1);
+    file.Close();
+	cJSON * objJSON = cJSON_Parse(pPrintPtr);
+	free(pPrintPtr);
+	return objJSON;
 }
 
 BOOL CDrawFlowChartDoc::OnSaveDocument(LPCTSTR lpszPathName) 
 {
 	// TODO: Add your specialized code here and/or call the base class
 	cJSON * objJSON = cJSON_CreateObject();
-	cJSON_AddNumberToObject(objJSON,"FocusID",m_GraphManager.m_FocusID);
-	m_GraphManager.Serialize(objJSON);
+	m_GraphManager.SaveToJSON(objJSON);
+	saveJSONToFile(objJSON, lpszPathName);
+	cJSON_Delete(objJSON);
+	// return CDocument::OnSaveDocument(lpszPathName);
+	return TRUE;
+}
+
+void CDrawFlowChartDoc::saveJSONToFile(cJSON * objJSON, LPCTSTR lpszPathName)
+{
+	char * pPrintPtr = cJSON_Print(objJSON);
+	// TRACE(pPrintPtr);
+	CFile file;
+    //不管文件是否存在，都创建新文件
+    file.Open(lpszPathName, CFile::modeCreate | CFile::modeWrite);
+    //开始写文件
+    file.Write(pPrintPtr, strlen(pPrintPtr));
+    file.Flush();
+    file.Close();
 	
-	return CDocument::OnSaveDocument(lpszPathName);
+	free(pPrintPtr);
 }

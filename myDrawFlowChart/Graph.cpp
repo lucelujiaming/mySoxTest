@@ -23,8 +23,8 @@ CGraph::CGraph()
 	m_IsMark = false;
 	m_iPreviousConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
 	m_iNextConnPointIdx = CCONNECTPOINT_INVALID_OPTION;
-	m_iPreviousConnPointIdx = -1;
-	m_iNextConnPointIdx = -1;
+	m_iGraphSeq = m_iPreviousGraphSeq = m_iNextGraphSeq = -1;
+	m_iPreviousConnPointIdx = m_iNextConnPointIdx = -1;
 }
 
 CGraph::~CGraph()

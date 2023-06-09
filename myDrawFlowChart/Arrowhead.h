@@ -29,7 +29,8 @@ public:
 	void Move(int cx, int cy);
 	void AdjustSize(CPoint &pt);
 
-	void Serialize(cJSON * objJSON);
+	void SaveParamsToJSON(cJSON * objJSON);
+	void LoadParamsFromJSON(cJSON * objJSON);
 
 	bool IsIn(CPoint &pt);
 	bool IsOn(CPoint &pt);
@@ -54,8 +55,8 @@ private:
 	int m_FocusPoint;
 	int m_AdjustPoint;
 
-	CGraph* m_Previous;
-	CGraph* m_Next;
+//	CGraph* m_Previous;
+//	CGraph* m_Next;
 
 };
 

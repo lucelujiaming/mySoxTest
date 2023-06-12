@@ -737,6 +737,10 @@ void CPolygonalLine::LoadParamsFromJSON(cJSON * objJSON)
                 {   
 					m_iNextConnPointIdx = (int)child->valueint;
                 }
+				else if(strcmp(child->string, "currentAdjustPoint") == 0)
+                {   
+					m_AdjustPoint = (int)child->valueint;
+                }
             }   
             break;
         case cJSON_String: 

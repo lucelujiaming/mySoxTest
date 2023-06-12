@@ -80,6 +80,11 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// m_GraphManager.SaveParamsToJSON(objJSON);
 	cJSON * objJSON = getJSONFromFile(lpszPathName);
+	if (objJSON == NULL)
+	{
+		AfxMessageBox("Format error!");
+		return FALSE;
+	}
 	cJSON *child = objJSON->child;
     while(child)
     {   
@@ -172,6 +177,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 				else if(strcmp(child->string, "CEnd") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateEnd(), child);
+                }
+				else if(strcmp(child->string, "CGenericLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateLine(), child);
+                }
+				else if(strcmp(child->string, "CArrowhead") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateArrowLine(), child);
                 }
 				else 
 				{

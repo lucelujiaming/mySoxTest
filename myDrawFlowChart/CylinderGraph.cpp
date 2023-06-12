@@ -52,45 +52,187 @@ void CCylinderGraph::Draw( CDC *pdc )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 
-	pdc->MoveTo(CPoint(m_End.x, m_Start.y));
-	pdc->LineTo(m_End);
-	pdc->LineTo(CPoint(m_Start.x, m_End.y));
-	pdc->LineTo(m_Start);
-	
-	int iWidth =0, iHeight = 0;
-	iWidth  = m_End.x - m_Start.x;
-	iHeight = m_End.y - m_Start.y;
-	int  iRadius =  (int)(iWidth * sqrt(2) / 2);
-	int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
-
-	if(iHeight > 0)
+	if(m_End.y >= m_Start.y)
 	{
-		if(iArcHeight > iHeight/2)
+		// m_End on the east and south of m_Start
+		if (m_End.x >= m_Start.x)
 		{
-			// We have to recalculate the radius to prevent to cross the topline.
-			/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
-		    /*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
-		    /*     整理有：                                                  */
-		    /*          R = H/4 + W * W/(4 * H)                              */
-			iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
-		}
-		
-		// We minus one to let the graph close.
-		int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
-		CPoint objFirstCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_Start.y - iCosofRadius);
-		CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
-								CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+			pdc->MoveTo(CPoint(m_End.x, m_Start.y));
+			pdc->LineTo(m_End);
+			pdc->LineTo(CPoint(m_Start.x, m_End.y));
+			pdc->LineTo(m_Start);
+			
+			int iWidth =0, iHeight = 0;
+			iWidth  = m_End.x - m_Start.x;
+			iHeight = m_End.y - m_Start.y;
+			int  iRadius =  (int)(iWidth * sqrt(2) / 2);
+			int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
 
-		pdc->Arc(objFirstCircleRect, 
-					CPoint(m_Start.x, m_Start.y), 
-					CPoint(m_End.x, m_Start.y));
-		
-		CPoint objSecondCircle = CPoint(m_Start.x + (int)((m_End.x - m_Start.x)/2), m_Start.y + iCosofRadius);
-		CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
-								CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
-		pdc->Arc(objSecondCircleRect, 
-					CPoint(m_End.x, m_Start.y), 
-					CPoint(m_Start.x, m_Start.y));
+			if(iHeight > 0)
+			{
+				if(iArcHeight > iHeight/2)
+				{
+					// We have to recalculate the radius to prevent to cross the topline.
+					/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
+					/*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
+					/*     整理有：                                                  */
+					/*          R = H/4 + W * W/(4 * H)                              */
+					iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
+				}
+				
+				// We minus one to let the graph close.
+				int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
+				CPoint objFirstCircle = CPoint(m_Start.x + (int)(iWidth/2), m_Start.y - iCosofRadius);
+				CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+
+				pdc->Arc(objFirstCircleRect, 
+							CPoint(m_Start.x, m_Start.y), 
+							CPoint(m_End.x, m_Start.y));
+				
+				CPoint objSecondCircle = CPoint(m_Start.x + (int)(iWidth/2), m_Start.y + iCosofRadius);
+				CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
+				pdc->Arc(objSecondCircleRect, 
+							CPoint(m_End.x, m_Start.y), 
+							CPoint(m_Start.x, m_Start.y));
+			}
+		}
+		// m_End on the west and south of m_Start
+		else 
+		{
+			pdc->MoveTo(CPoint(m_End.x, m_Start.y));
+			pdc->LineTo(m_End);
+			pdc->LineTo(CPoint(m_Start.x, m_End.y));
+			pdc->LineTo(m_Start);
+			
+			int iWidth =0, iHeight = 0;
+			iWidth  = m_Start.x - m_End.x;
+			iHeight = m_End.y - m_Start.y;
+			int  iRadius =  (int)(iWidth * sqrt(2) / 2);
+			int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
+
+			if(iHeight > 0)
+			{
+				if(iArcHeight > iHeight/2)
+				{
+					// We have to recalculate the radius to prevent to cross the topline.
+					/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
+					/*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
+					/*     整理有：                                                  */
+					/*          R = H/4 + W * W/(4 * H)                              */
+					iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
+				}
+				
+				// We minus one to let the graph close.
+				int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
+				CPoint objFirstCircle = CPoint(m_End.x + (int)(iWidth/2), m_Start.y - iCosofRadius);
+				CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+
+				pdc->Arc(objFirstCircleRect, 
+							CPoint(m_End.x, m_Start.y), 
+							CPoint(m_Start.x, m_Start.y));
+				
+				CPoint objSecondCircle = CPoint(m_End.x + (int)(iWidth/2), m_Start.y + iCosofRadius);
+				CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
+				pdc->Arc(objSecondCircleRect, 
+							CPoint(m_Start.x, m_Start.y), 
+							CPoint(m_End.x, m_Start.y));
+			}
+		}
+	}
+	else
+	{
+		// m_End on the east and north of m_Start
+		if (m_End.x >= m_Start.x)
+		{
+			pdc->MoveTo(CPoint(m_Start.x, m_End.y));
+			pdc->LineTo(m_Start);
+			pdc->LineTo(CPoint(m_End.x, m_Start.y));
+			pdc->LineTo(m_End);
+			
+			int iWidth =0, iHeight = 0;
+			iWidth  = m_End.x - m_Start.x;
+			iHeight = m_Start.y - m_End.y;
+			int  iRadius =  (int)(iWidth * sqrt(2) / 2);
+			int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
+
+			if(iHeight > 0)
+			{
+				if(iArcHeight > iHeight/2)
+				{
+					// We have to recalculate the radius to prevent to cross the topline.
+					/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
+					/*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
+					/*     整理有：                                                  */
+					/*          R = H/4 + W * W/(4 * H)                              */
+					iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
+				}
+				
+				// We minus one to let the graph close.
+				int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
+				CPoint objFirstCircle = CPoint(m_Start.x + (int)(iWidth/2), m_End.y - iCosofRadius);
+				CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+
+				pdc->Arc(objFirstCircleRect, 
+							CPoint(m_Start.x, m_End.y), 
+							CPoint(m_End.x, m_End.y));
+				
+				CPoint objSecondCircle = CPoint(m_Start.x + (int)(iWidth/2), m_End.y + iCosofRadius);
+				CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
+				pdc->Arc(objSecondCircleRect, 
+							CPoint(m_End.x, m_End.y), 
+							CPoint(m_Start.x, m_End.y));
+			}
+		}
+		// m_End on the west and north of m_Start
+		else
+		{
+			pdc->MoveTo(m_End);
+			pdc->LineTo(CPoint(m_End.x, m_Start.y));
+			pdc->LineTo(m_Start);
+			pdc->LineTo(CPoint(m_Start.x, m_End.y));
+			
+			int iWidth =0, iHeight = 0;
+			iWidth  = m_Start.x - m_End.x;
+			iHeight = m_Start.y - m_End.y;
+			int  iRadius =  (int)(iWidth * sqrt(2) / 2);
+			int  iArcHeight = iRadius - (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2));
+
+			if(iHeight > 0)
+			{
+				if(iArcHeight > iHeight/2)
+				{
+					// We have to recalculate the radius to prevent to cross the topline.
+					/* 令圆弧高度为图元高度的一半。根据上面的计算，有：              */
+					/*          H/2 = ArcHeight = R - sqrt(R * R - (W/2) * (W/2))    */
+					/*     整理有：                                                  */
+					/*          R = H/4 + W * W/(4 * H)                              */
+					iRadius = iHeight / 4 + iWidth * iWidth/(4 * iHeight);
+				}
+				
+				// We minus one to let the graph close.
+				int iCosofRadius = (int)sqrt(iRadius * iRadius - (iWidth/2) * (iWidth/2)) - 1;
+				CPoint objFirstCircle = CPoint(m_End.x + (int)(iWidth/2), m_End.y - iCosofRadius);
+				CRect objFirstCircleRect = CRect(CPoint(objFirstCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objFirstCircle + CPoint(iRadius, iRadius)));
+
+				pdc->Arc(objFirstCircleRect, 
+							CPoint(m_End.x, m_End.y), 
+							CPoint(m_Start.x, m_End.y));
+				
+				CPoint objSecondCircle = CPoint(m_End.x + (int)(iWidth/2), m_End.y + iCosofRadius);
+				CRect objSecondCircleRect = CRect(CPoint(objSecondCircle - CPoint(iRadius, iRadius)), 
+										CPoint(objSecondCircle + CPoint(iRadius, iRadius)));
+				pdc->Arc(objSecondCircleRect, 
+							CPoint(m_Start.x, m_End.y), 
+							CPoint(m_End.x, m_End.y));
+			}
+		}
 	}
 	if(m_IsMark)
 	{

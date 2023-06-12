@@ -10,8 +10,8 @@
 #define ID_DIAMOND                      32773
 #define ID_PARALLELOGRAM                32774
 #define ID_GENERICLINE                  32775
-#define ID_ARROWHEAD                    32776
-#define ID_CONTROLFLOW                  32777
+#define ID_ARROW_LINE                   32776
+#define ID_BROKEN_LINE                  32777
 #define ID_START                        32778
 #define ID_END                          32779
 #define ID_SAVEIMAGE                    32780
@@ -25,12 +25,12 @@
 #define ID_TOOLBAR_END                  32789
 #define ID_TOOLBAR_SEARCH               32792
 #define ID_TOOLBAR_NEXT                 32794
-#define ID_TOOLBAR_FLOWCONTROL          32795
+#define ID_TOOLBAR_BROKEN_LINE          32795
 #define ID_TOOLBAR_STOP                 32796
 #define ID_TOOLBAR_RECTANGLE            32797
 #define ID_TOOLBAR_ELLIPSE              32801
 #define ID_TOOLBAR_GENERICLINE          32807
-#define ID_TOOLBAR_ARROWHEAD            32808
+#define ID_TOOLBAR_ARROW_LINE           32808
 #define ID_TOOLBAR_POLYGONAL_LINE       32810
 #define ID_TOOLBAR_ROUNDHEAD_RECTANGLE  32811
 #define ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE 32813

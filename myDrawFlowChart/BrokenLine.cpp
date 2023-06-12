@@ -1,10 +1,10 @@
-// ControlFlow.cpp: implementation of the CControlFlow class.
+// BrokenLine.cpp: implementation of the CBrokenLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "ControlFlow.h"
+#include "BrokenLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,9 +15,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CControlFlow, CObject, 1)
+// IMPLEMENT_SERIAL(CBrokenLine, CObject, 1)
 
-CControlFlow::CControlFlow()
+CBrokenLine::CBrokenLine()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
@@ -35,17 +35,17 @@ CControlFlow::CControlFlow()
 	m_iNextConnPointIdx = -1;
 }
 
-CControlFlow::~CControlFlow()
+CBrokenLine::~CBrokenLine()
 {
 
 }
 
 
-void CControlFlow::Draw( CDC *pdc )
+void CBrokenLine::Draw( CDC *pdc )
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CControlFlow::Draw");
+	// printAllPoints("CBrokenLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	if(pStart != NULL)
 	{
@@ -55,8 +55,8 @@ void CControlFlow::Draw( CDC *pdc )
 	CPen pe, *pOldPen;
 	if(m_IsMark)
 	{
-        pe.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色）
-        pOldPen=pdc-> SelectObject(&pe);     //把画笔选入DC，并保存原来画笔
+        pe.CreatePen(PS_SOLID,1,RGB(255,0,0));      //初始化画笔（红色）
+		pOldPen=pdc->SelectObject(&pe);				//把画笔选入DC，并保存原来画笔
 	}
 
 	for(int i = 1; i < m_Points.size(); i++)
@@ -74,11 +74,11 @@ void CControlFlow::Draw( CDC *pdc )
 	DrawSelectBorderArea(pdc);
 }
 
-void CControlFlow::DrawFocus(CDC *pdc)
+void CBrokenLine::DrawFocus(CDC *pdc)
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CControlFlow::DrawFocus");
+	// printAllPoints("CBrokenLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
@@ -88,7 +88,7 @@ void CControlFlow::DrawFocus(CDC *pdc)
 }
 
 #define DRAW_FRAME
-void CControlFlow::DrawSelectBorderArea( CDC *pdc )
+void CBrokenLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -137,7 +137,7 @@ void CControlFlow::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CControlFlow::Move(int cx, int cy)
+void CBrokenLine::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -147,74 +147,74 @@ void CControlFlow::Move(int cx, int cy)
 	}
 }
 
-void CControlFlow::AdjustSize(CPoint &pt)
+void CBrokenLine::AdjustSize(CPoint &pt)
 {
-	// printAllPoints("CControlFlow::AdjustSize Before");
+	// printAllPoints("CBrokenLine::AdjustSize Before");
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
 	}
-	// printAllPoints("CControlFlow::AdjustSize");
+	// printAllPoints("CBrokenLine::AdjustSize");
 }
 
-void CControlFlow::SetStartPoint(CPoint &pt)
+void CBrokenLine::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.size() <= 0) return;
 
-	// printAllPoints("CControlFlow::SetStartPoint Before");
+	// printAllPoints("CBrokenLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
-	// printAllPoints("CControlFlow::SetStartPoint");
+	// printAllPoints("CBrokenLine::SetStartPoint");
 }
 
-void CControlFlow::SetEndPoint(CPoint &pt)
+void CBrokenLine::SetEndPoint(CPoint &pt)
 {
 	CAdjustPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) Before");
+		// printAllPoints("CBrokenLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
-		// printAllPoints("CControlFlow::SetEndPoint(NotCreateEnd) After");
+		// printAllPoints("CBrokenLine::SetEndPoint(NotCreateEnd) After");
 	}
 	else
 	{
-		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) Before");
+		// printAllPoints("CBrokenLine::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
 		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CControlFlow::SetEndPoint(CreateEnd) After");
+		// printAllPoints("CBrokenLine::SetEndPoint(CreateEnd) After");
 	}
 }
 
 
-void CControlFlow::SetLastPoint( CPoint &pt )
+void CBrokenLine::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
 	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
-	// printAllPoints("CControlFlow::SetLastPoint");
+	// printAllPoints("CBrokenLine::SetLastPoint");
 
 }
 
-void CControlFlow::GetStartPoint(CPoint &pt)
+void CBrokenLine::GetStartPoint(CPoint &pt)
 {
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
-void CControlFlow::GetEndPoint(CPoint &pt)
+void CBrokenLine::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
-void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
+void CBrokenLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -233,7 +233,7 @@ void CControlFlow::SetPreviousGraph(CGraph *previousGraph)
 	}
 }
 
-void CControlFlow::SetNextgraph(CGraph *nextGraph)
+void CBrokenLine::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -252,31 +252,31 @@ void CControlFlow::SetNextgraph(CGraph *nextGraph)
 	}
 }
 
-CGraph* CControlFlow::GetPreviousGraph()
+CGraph* CBrokenLine::GetPreviousGraph()
 {
 	return m_Previous;
 }
 
-CGraph* CControlFlow::GetNextgraph()
+CGraph* CBrokenLine::GetNextgraph()
 {
 	return m_Next;
 }
 
-bool CControlFlow::IsEditable()
+bool CBrokenLine::IsEditable()
 {
 	return false;
 }
 
-bool CControlFlow::IsControlFlow()
+bool CBrokenLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CControlFlow::IsIn(CPoint &pt)
+bool CBrokenLine::IsIn(CPoint &pt)
 {
 	if(m_Points.size() < 1) return false;
 
-	// printAllPoints("CControlFlow::IsIn Before");
+	// printAllPoints("CBrokenLine::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		CAdjustPoint *connPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
@@ -289,7 +289,7 @@ bool CControlFlow::IsIn(CPoint &pt)
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CControlFlow::IsIn After");
+	// printAllPoints("CBrokenLine::IsIn After");
 
 	bool flag = false;
 	CPoint points[4];
@@ -335,7 +335,7 @@ bool CControlFlow::IsIn(CPoint &pt)
 	return flag;
 }
 
-bool CControlFlow::IsOn(CPoint &pt)
+bool CBrokenLine::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -351,7 +351,7 @@ bool CControlFlow::IsOn(CPoint &pt)
 	return false;
 }
 
-double CControlFlow::GetDistance(int x1, int y1, int x2,int y2)
+double CBrokenLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -361,7 +361,7 @@ double CControlFlow::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CControlFlow::DrawArrow( CDC *pdc )
+void CBrokenLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < 2) return;
 
@@ -401,7 +401,7 @@ void CControlFlow::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CControlFlow::SaveParamsToJSON(cJSON * objJSON)
+void CBrokenLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -458,7 +458,7 @@ void CControlFlow::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CControlFlow::LoadOnePointFromJSON(cJSON * objPoint)
+void CBrokenLine::LoadOnePointFromJSON(cJSON * objPoint)
 {
 	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
 	CPoint point;
@@ -486,7 +486,7 @@ void CControlFlow::LoadOnePointFromJSON(cJSON * objPoint)
 	m_Points.push_back(pAdjustPoint);
 }
 
-void CControlFlow::LoadParamsFromJSON(cJSON * objJSON)
+void CBrokenLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	m_Points.clear();
 	cJSON *child = objJSON->child;

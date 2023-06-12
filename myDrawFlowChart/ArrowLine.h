@@ -1,9 +1,9 @@
-// Arrowhead.h: interface for the CArrowhead class.
+// ArrowLine.h: interface for the CArrowLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_ARROWHEAD_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)
-#define AFX_ARROWHEAD_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_
+#if !defined(AFX_ARROWLINE_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)
+#define AFX_ARROWLINE_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,13 +12,13 @@
 #include "Graph.h"
 #include <math.h>
 
-class CArrowhead : public CGraph  
+class CArrowLine : public CGraph  
 {
-//		DECLARE_SERIAL(CArrowhead)
+//		DECLARE_SERIAL(CArrowLine)
 public:
-	CArrowhead();
-	virtual ~CArrowhead();
-	CString GetTypeName() { return CString("CArrowhead"); }
+	CArrowLine();
+	virtual ~CArrowLine();
+	CString GetTypeName() { return CString("CArrowLine"); }
 
 public:
 	void Draw(CDC *pdc);
@@ -60,4 +60,4 @@ private:
 
 };
 
-#endif // !defined(AFX_ARROWHEAD_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)
+#endif // !defined(AFX_ARROWLINE_H__0A10386A_F44B_4094_AC09_9C14E020B35D__INCLUDED_)

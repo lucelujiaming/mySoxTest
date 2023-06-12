@@ -11,8 +11,8 @@
 #include "Diamond.h"
 #include "Parallelogram.h"
 #include "GenericLine.h"
-#include "Arrowhead.h"
-#include "ControlFlow.h"
+#include "ArrowLine.h"
+#include "BrokenLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -511,9 +511,9 @@ void CGraphManager::CancelMarkPath()
 				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}
-		case Arrowhead: 
+		case ArrowLine: 
 			{
-				objGraph = new CArrowhead();
+				objGraph = new CArrowLine();
 				m_Graphs.InsertAt(0, objGraph, 1);
 				break;
 			}

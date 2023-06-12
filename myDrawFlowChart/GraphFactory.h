@@ -28,7 +28,7 @@ public:
 	CGraph* CreateCustomRoundRectangle();
 	CGraph* CreateLadder();
 	CGraph* CreateHexagon();
-	CGraph* CreateControlFlow();		// NotNeed
+	CGraph* CreateBrokenLine();			// NotNeed
 	CGraph* CreateLine();				// NotNeed
 	CGraph* CreateArrowLine();			// NotNeed
 	CGraph* CreatePolygonalLine();		// NotNeed

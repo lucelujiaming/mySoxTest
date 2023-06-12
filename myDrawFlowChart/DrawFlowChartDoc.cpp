@@ -154,10 +154,6 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateParallelogram(), child);
                 }
-				else if(strcmp(child->string, "CLine") == 0)
-                {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateLine(), child);
-                }
 				else if(strcmp(child->string, "CArrowLine") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateArrowLine(), child);
@@ -166,9 +162,9 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreatePolygonalLine(), child);
                 }
-				else if(strcmp(child->string, "CControlFlow") == 0)
+				else if(strcmp(child->string, "CBrokenLine") == 0)
                 {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateControlFlow(), child);
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateBrokenLine(), child);
                 }
 				else if(strcmp(child->string, "CStart") == 0)
                 {   
@@ -181,10 +177,6 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 				else if(strcmp(child->string, "CGenericLine") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateLine(), child);
-                }
-				else if(strcmp(child->string, "CArrowhead") == 0)
-                {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateArrowLine(), child);
                 }
 				else 
 				{

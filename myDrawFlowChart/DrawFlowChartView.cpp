@@ -37,11 +37,11 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_DIAMOND, OnCreateDiamond)
 	ON_COMMAND(ID_PARALLELOGRAM, OnCreateDealParallelogram)
 	ON_COMMAND(ID_GENERICLINE, OnCreateGenericLine)
-	ON_COMMAND(ID_ARROWHEAD, OnCreateArrowhead)
+	ON_COMMAND(ID_ARROW_LINE, OnCreateArrowLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE, OnCreatePolygonalLine)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_KEYDOWN()
-	ON_COMMAND(ID_CONTROLFLOW, OnCreateControlFlow)
+	ON_COMMAND(ID_BROKEN_LINE, OnCreateBrokenLine)
 	ON_COMMAND(ID_START, OnCreateStart)
 	ON_COMMAND(ID_END, OnCreateEnd)
 	ON_COMMAND(ID_SAVE_BMP, OnSaveBmp)
@@ -49,8 +49,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_MARK_PATH, OnMarkPath)
 	ON_COMMAND(ID_STOP_MARK, OnStopMark)
 	ON_COMMAND(ID_TOOLBAR_END, OnToolbarEnd)
-	ON_COMMAND(ID_TOOLBAR_FLOWCONTROL, OnToolbarFlowcontrol)
-	ON_COMMAND(ID_TOOLBAR_ARROWHEAD,   OnToolbarArrowHead)
+	ON_COMMAND(ID_TOOLBAR_BROKEN_LINE, OnToolbarBrokenLine)
+	ON_COMMAND(ID_TOOLBAR_ARROW_LINE,   OnToolbarArrowLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
 	ON_COMMAND(ID_TOOLBAR_DIAMOND, OnToolbarDiamond)
@@ -742,7 +742,7 @@ void CDrawFlowChartView::OnCreateGenericLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateLine());
 }
 
-void CDrawFlowChartView::OnCreateArrowhead() 
+void CDrawFlowChartView::OnCreateArrowLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -756,7 +756,7 @@ void CDrawFlowChartView::OnCreateArrowhead()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.ArrowLine );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArrowLine());
 }
 
@@ -774,11 +774,11 @@ void CDrawFlowChartView::OnCreatePolygonalLine()
 	}
 
 	m_IsControlFlow = false;
-	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Arrowhead );
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.PolygonalLine );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePolygonalLine());
 }
 
-void CDrawFlowChartView::OnCreateControlFlow() 
+void CDrawFlowChartView::OnCreateBrokenLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -792,8 +792,8 @@ void CDrawFlowChartView::OnCreateControlFlow()
 	}
 
 	m_IsControlFlow = true;
-	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.ControlFlow );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateControlFlow());
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.BrokenLine );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBrokenLine());
 }
 
 void CDrawFlowChartView::OnCreateStart() 
@@ -818,16 +818,16 @@ void CDrawFlowChartView::OnToolbarEnd()
 	OnCreateEnd();
 }
 
-void CDrawFlowChartView::OnToolbarFlowcontrol() 
+void CDrawFlowChartView::OnToolbarBrokenLine() 
 {
 	// TODO: Add your command handler code here
-	OnCreateControlFlow();
+	OnCreateBrokenLine();
 }
 
-void CDrawFlowChartView::OnToolbarArrowHead() 
+void CDrawFlowChartView::OnToolbarArrowLine() 
 {
 	// TODO: Add your command handler code here
-	OnCreateArrowhead();
+	OnCreateArrowLine();
 }
 
 void CDrawFlowChartView::OnToolbarPolygonalLine() 

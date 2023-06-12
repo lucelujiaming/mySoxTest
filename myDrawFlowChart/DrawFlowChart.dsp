@@ -94,11 +94,11 @@ SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Arrowhead.cpp
+SOURCE=.\ArrowLine.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ControlFlow.cpp
+SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
 
@@ -236,11 +236,11 @@ SOURCE=.\AdjustPoint.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Arrowhead.h
+SOURCE=.\ArrowLine.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ControlFlow.h
+SOURCE=.\BrokenLine.h
 # End Source File
 # Begin Source File
 

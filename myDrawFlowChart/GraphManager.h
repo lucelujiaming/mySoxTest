@@ -51,7 +51,7 @@ private:
 	void CheckLinkGraph(CGraph* graph);
 
 public:
-	//static enum GRAPH_TYPE{Rectangle, Ellipse, Diamond, DealParallelogram, GenericLine, Arrowhead, ControlFlow};
+	//static enum GRAPH_TYPE{Rectangle, Ellipse, Diamond, DealParallelogram, GenericLine, ArrowLine, ControlFlow};
 //private:
 	std::vector<CGraph *> m_Graphs;
 	int m_FocusID;

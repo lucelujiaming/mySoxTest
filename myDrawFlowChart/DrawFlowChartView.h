@@ -82,11 +82,11 @@ protected:
 	afx_msg void OnCreateDiamond();
 	afx_msg void OnCreateDealParallelogram();
 	afx_msg void OnCreateGenericLine();
-	afx_msg void OnCreateArrowhead();
+	afx_msg void OnCreateArrowLine();
 	afx_msg void OnCreatePolygonalLine();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnCreateControlFlow();
+	afx_msg void OnCreateBrokenLine();
 	afx_msg void OnCreateStart();
 	afx_msg void OnCreateEnd();
 	afx_msg void OnSaveBmp();
@@ -94,8 +94,8 @@ protected:
 	afx_msg void OnMarkPath();
 	afx_msg void OnStopMark();
 	afx_msg void OnToolbarEnd();
-	afx_msg void OnToolbarFlowcontrol();
-	afx_msg void OnToolbarArrowHead();
+	afx_msg void OnToolbarBrokenLine();
+	afx_msg void OnToolbarArrowLine();
 	afx_msg void OnToolbarPolygonalLine();
 	afx_msg void OnToolbarGenericLine();
 	afx_msg void OnToolbarDiamond();

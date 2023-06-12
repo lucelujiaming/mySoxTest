@@ -1,9 +1,9 @@
-// ControlFlow.h: interface for the CControlFlow class.
+// BrokenLine.h: interface for the CBrokenLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_CONTROLFLOW_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
-#define AFX_CONTROLFLOW_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_
+#if !defined(AFX_BROKENLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
+#define AFX_BROKENLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -13,14 +13,14 @@
 #include "AdjustPoint.h"
 #include <math.h>
 
-class CControlFlow : public CGraph  
+class CBrokenLine : public CGraph  
 {
-//		DECLARE_SERIAL(CControlFlow)
+//		DECLARE_SERIAL(CBrokenLine)
 
 public:
-	CControlFlow();
-	virtual ~CControlFlow();
-	CString GetTypeName() { return CString("CControlFlow"); }
+	CBrokenLine();
+	virtual ~CBrokenLine();
+	CString GetTypeName() { return CString("CBrokenLine"); }
 
 public:
 	void Draw( CDC *pdc );
@@ -66,4 +66,4 @@ private:
 //	CGraph* m_Next;
 };
 
-#endif // !defined(AFX_CONTROLFLOW_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
+#endif // !defined(AFX_BROKENLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)

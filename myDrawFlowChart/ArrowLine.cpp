@@ -1,10 +1,10 @@
-// Arrowhead.cpp: implementation of the CArrowhead class.
+// ArrowLine.cpp: implementation of the CArrowLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "Arrowhead.h"
+#include "ArrowLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,9 +15,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CArrowhead, CObject, 1)
+// IMPLEMENT_SERIAL(CArrowLine, CObject, 1)
 
-CArrowhead::CArrowhead()
+CArrowLine::CArrowLine()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -33,12 +33,12 @@ CArrowhead::CArrowhead()
 	m_iNextConnPointIdx = -1;
 }
 
-CArrowhead::~CArrowhead()
+CArrowLine::~CArrowLine()
 {
 
 }
 
-void CArrowhead::Draw( CDC *pdc )
+void CArrowLine::Draw( CDC *pdc )
 {
 	AdjustFocusPoint();
 
@@ -61,7 +61,7 @@ void CArrowhead::Draw( CDC *pdc )
 	DrawSelectBorderArea(pdc);
 }
 
-void CArrowhead::DrawFocus( CDC *pdc )
+void CArrowLine::DrawFocus( CDC *pdc )
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.size(); i++)
@@ -72,7 +72,7 @@ void CArrowhead::DrawFocus( CDC *pdc )
 }
 
 #define DRAW_FRAME
-void CArrowhead::DrawSelectBorderArea( CDC *pdc )
+void CArrowLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -107,13 +107,13 @@ void CArrowhead::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CArrowhead::Move( int cx, int cy )
+void CArrowLine::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
-void CArrowhead::AdjustSize( CPoint &pt )
+void CArrowLine::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -132,7 +132,7 @@ void CArrowhead::AdjustSize( CPoint &pt )
 	}
 }
 
-void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
+void CArrowLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
@@ -146,7 +146,7 @@ void CArrowhead::SetPreviousGraph(CGraph *previousGraph)
 		m_Previous = NULL;
 	}
 }
-void CArrowhead::SetNextgraph(CGraph *nextGraph)
+void CArrowLine::SetNextgraph(CGraph *nextGraph)
 {
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[1];
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
@@ -160,27 +160,27 @@ void CArrowhead::SetNextgraph(CGraph *nextGraph)
 		m_Next = NULL;
 	}
 }
-CGraph* CArrowhead::GetPreviousGraph()
+CGraph* CArrowLine::GetPreviousGraph()
 {
 	//return m_Next;
 	return m_Previous;
 }
-CGraph* CArrowhead::GetNextgraph()
+CGraph* CArrowLine::GetNextgraph()
 {
 	//return m_Previous;
 	return m_Next;
 }
 
-bool CArrowhead::IsEditable()
+bool CArrowLine::IsEditable()
 {
 	return false;
 }
-bool CArrowhead::IsControlFlow()
+bool CArrowLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CArrowhead::IsIn( CPoint &pt )
+bool CArrowLine::IsIn( CPoint &pt )
 {
 	bool flag = false;
 
@@ -219,7 +219,7 @@ bool CArrowhead::IsIn( CPoint &pt )
 	return flag;
 }
 
-bool CArrowhead::IsOn( CPoint &pt )
+bool CArrowLine::IsOn( CPoint &pt )
 {
 	bool flag = false;
 	CAdjustPoint *connPoint = NULL;
@@ -237,12 +237,12 @@ bool CArrowhead::IsOn( CPoint &pt )
 	return flag;
 }
 
-int CArrowhead::GetAdjustPoint()
+int CArrowLine::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
 
-double CArrowhead::GetDistance(int x1, int y1, int x2,int y2)
+double CArrowLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -252,7 +252,7 @@ double CArrowhead::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CArrowhead::DrawArrow( CDC *pdc )
+void CArrowLine::DrawArrow( CDC *pdc )
 {
 	int flSx = m_Start.x;
 	int flSy = m_Start.y;
@@ -282,7 +282,7 @@ void CArrowhead::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-int CArrowhead::IsConnectOn(CAdjustPoint *pt)
+int CArrowLine::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_LINE_MAX; i++)
@@ -297,7 +297,7 @@ int CArrowhead::IsConnectOn(CAdjustPoint *pt)
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
-void CArrowhead::AdjustFocusPoint()
+void CArrowLine::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_LINE_START];
@@ -311,7 +311,7 @@ void CArrowhead::AdjustFocusPoint()
 	}
 }
 
-void CArrowhead::SaveParamsToJSON(cJSON * objJSON)
+void CArrowLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -362,7 +362,7 @@ void CArrowhead::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CArrowhead::LoadParamsFromJSON(cJSON * objJSON)
+void CArrowLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

@@ -18,9 +18,9 @@
 #include "Diamond.h"
 #include "Parallelogram.h"
 #include "GenericLine.h"
-#include "Arrowhead.h"
+#include "ArrowLine.h"
 #include "PolygonalLine.h"
-#include "ControlFlow.h"
+#include "BrokenLine.h"
 #include "Start.h"
 #include "End.h"
 
@@ -94,9 +94,9 @@ CGraph* CGraphFactory::CreateHexagon()
 	return new CHexagon();
 }
 
-CGraph* CGraphFactory::CreateControlFlow()
+CGraph* CGraphFactory::CreateBrokenLine()
 {
-	return new CControlFlow();
+	return new CBrokenLine();
 }
 
 CGraph* CGraphFactory::CreateLine()
@@ -106,7 +106,7 @@ CGraph* CGraphFactory::CreateLine()
 
 CGraph* CGraphFactory::CreateArrowLine()
 {
-	return new CArrowhead();
+	return new CArrowLine();
 }
 
 CGraph* CGraphFactory::CreatePolygonalLine()

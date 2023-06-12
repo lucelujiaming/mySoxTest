@@ -98,6 +98,10 @@ SOURCE=.\ArrowLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BezierLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
@@ -237,6 +241,10 @@ SOURCE=.\AdjustPoint.h
 # Begin Source File
 
 SOURCE=.\ArrowLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BezierLine.h
 # End Source File
 # Begin Source File
 

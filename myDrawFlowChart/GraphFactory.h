@@ -31,6 +31,7 @@ public:
 	CGraph* CreateBrokenLine();			// NotNeed
 	CGraph* CreateLine();				// NotNeed
 	CGraph* CreateArrowLine();			// NotNeed
+	CGraph* CreateBezierLine();			// NotNeed
 	CGraph* CreatePolygonalLine();		// NotNeed
 	CGraph* CreateEllipse();			// Adjusted
 	CGraph* CreateStart();				// NotNeed

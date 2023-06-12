@@ -1,10 +1,10 @@
-// BrokenLine.cpp: implementation of the CBrokenLine class.
+// BezierLine.cpp: implementation of the CBezierLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "BrokenLine.h"
+#include "BezierLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,9 +15,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CBrokenLine, CObject, 1)
+// IMPLEMENT_SERIAL(CBezierLine, CObject, 1)
 
-CBrokenLine::CBrokenLine()
+CBezierLine::CBezierLine()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
@@ -35,16 +35,16 @@ CBrokenLine::CBrokenLine()
 	m_iNextConnPointIdx = -1;
 }
 
-CBrokenLine::~CBrokenLine()
+CBezierLine::~CBezierLine()
 {
 
 }
 
-void CBrokenLine::Draw( CDC *pdc )
+void CBezierLine::Draw( CDC *pdc )
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CBrokenLine::Draw");
+	// printAllPoints("CBezierLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	if(pStart != NULL)
 	{
@@ -58,11 +58,16 @@ void CBrokenLine::Draw( CDC *pdc )
 		pOldPen=pdc->SelectObject(&pe);				//把画笔选入DC，并保存原来画笔
 	}
 
-	for(int i = 1; i < m_Points.size(); i++)
+	POINT * pointBezier = (POINT *)malloc(sizeof(POINT) * m_Points.size());
+	int iPointsSize = m_Points.size();
+	for(int i = 0; i < iPointsSize; i++)
 	{
 		CAdjustPoint *pNext = (CAdjustPoint*)m_Points[i];
+		pointBezier[i] = pNext->GetPoint();
 		pdc->LineTo(pNext->GetPoint());
 	}
+	// PolyBezier:point数组大小必须是4
+	pdc->PolyBezier(pointBezier, iPointsSize);
 
 	if(m_IsMark)
 	{
@@ -73,11 +78,11 @@ void CBrokenLine::Draw( CDC *pdc )
 	DrawSelectBorderArea(pdc);
 }
 
-void CBrokenLine::DrawFocus(CDC *pdc)
+void CBezierLine::DrawFocus(CDC *pdc)
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CBrokenLine::DrawFocus");
+	// printAllPoints("CBezierLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
@@ -87,7 +92,7 @@ void CBrokenLine::DrawFocus(CDC *pdc)
 }
 
 #define DRAW_FRAME
-void CBrokenLine::DrawSelectBorderArea( CDC *pdc )
+void CBezierLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -136,7 +141,7 @@ void CBrokenLine::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CBrokenLine::Move(int cx, int cy)
+void CBezierLine::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -146,74 +151,78 @@ void CBrokenLine::Move(int cx, int cy)
 	}
 }
 
-void CBrokenLine::AdjustSize(CPoint &pt)
+void CBezierLine::AdjustSize(CPoint &pt)
 {
-	// printAllPoints("CBrokenLine::AdjustSize Before");
+	// printAllPoints("CBezierLine::AdjustSize Before");
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
 	}
-	// printAllPoints("CBrokenLine::AdjustSize");
+	// printAllPoints("CBezierLine::AdjustSize");
 }
 
-void CBrokenLine::SetStartPoint(CPoint &pt)
+void CBezierLine::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.size() <= 0) return;
 
-	// printAllPoints("CBrokenLine::SetStartPoint Before");
+	// printAllPoints("CBezierLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
-	// printAllPoints("CBrokenLine::SetStartPoint");
+	// printAllPoints("CBezierLine::SetStartPoint");
 }
 
-void CBrokenLine::SetEndPoint(CPoint &pt)
+void CBezierLine::SetEndPoint(CPoint &pt)
 {
 	CAdjustPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CBrokenLine::SetEndPoint(NotCreateEnd) Before");
+		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
-		// printAllPoints("CBrokenLine::SetEndPoint(NotCreateEnd) After");
+		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) After");
+		if (m_Points.size() == 4)
+		{
+			m_IsCreateEnd = true;
+		}
 	}
 	else
 	{
-		// printAllPoints("CBrokenLine::SetEndPoint(CreateEnd) Before");
+		// printAllPoints("CBezierLine::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
 		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CBrokenLine::SetEndPoint(CreateEnd) After");
+		// printAllPoints("CBezierLine::SetEndPoint(CreateEnd) After");
 	}
 }
 
 
-void CBrokenLine::SetLastPoint( CPoint &pt )
+void CBezierLine::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
 	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
-	// printAllPoints("CBrokenLine::SetLastPoint");
+	// printAllPoints("CBezierLine::SetLastPoint");
 
 }
 
-void CBrokenLine::GetStartPoint(CPoint &pt)
+void CBezierLine::GetStartPoint(CPoint &pt)
 {
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
-void CBrokenLine::GetEndPoint(CPoint &pt)
+void CBezierLine::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
-void CBrokenLine::SetPreviousGraph(CGraph *previousGraph)
+void CBezierLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -232,7 +241,7 @@ void CBrokenLine::SetPreviousGraph(CGraph *previousGraph)
 	}
 }
 
-void CBrokenLine::SetNextgraph(CGraph *nextGraph)
+void CBezierLine::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -251,31 +260,31 @@ void CBrokenLine::SetNextgraph(CGraph *nextGraph)
 	}
 }
 
-CGraph* CBrokenLine::GetPreviousGraph()
+CGraph* CBezierLine::GetPreviousGraph()
 {
 	return m_Previous;
 }
 
-CGraph* CBrokenLine::GetNextgraph()
+CGraph* CBezierLine::GetNextgraph()
 {
 	return m_Next;
 }
 
-bool CBrokenLine::IsEditable()
+bool CBezierLine::IsEditable()
 {
 	return false;
 }
 
-bool CBrokenLine::IsControlFlow()
+bool CBezierLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CBrokenLine::IsIn(CPoint &pt)
+bool CBezierLine::IsIn(CPoint &pt)
 {
 	if(m_Points.size() < 1) return false;
 
-	// printAllPoints("CBrokenLine::IsIn Before");
+	// printAllPoints("CBezierLine::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		CAdjustPoint *connPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
@@ -288,7 +297,7 @@ bool CBrokenLine::IsIn(CPoint &pt)
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CBrokenLine::IsIn After");
+	// printAllPoints("CBezierLine::IsIn After");
 
 	bool flag = false;
 	CPoint points[4];
@@ -334,7 +343,7 @@ bool CBrokenLine::IsIn(CPoint &pt)
 	return flag;
 }
 
-bool CBrokenLine::IsOn(CPoint &pt)
+bool CBezierLine::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -350,7 +359,7 @@ bool CBrokenLine::IsOn(CPoint &pt)
 	return false;
 }
 
-double CBrokenLine::GetDistance(int x1, int y1, int x2,int y2)
+double CBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -360,7 +369,7 @@ double CBrokenLine::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CBrokenLine::DrawArrow( CDC *pdc )
+void CBezierLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < 2) return;
 
@@ -400,7 +409,7 @@ void CBrokenLine::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CBrokenLine::SaveParamsToJSON(cJSON * objJSON)
+void CBezierLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -457,7 +466,7 @@ void CBrokenLine::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CBrokenLine::LoadOnePointFromJSON(cJSON * objPoint)
+void CBezierLine::LoadOnePointFromJSON(cJSON * objPoint)
 {
 	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
 	CPoint point;
@@ -485,7 +494,7 @@ void CBrokenLine::LoadOnePointFromJSON(cJSON * objPoint)
 	m_Points.push_back(pAdjustPoint);
 }
 
-void CBrokenLine::LoadParamsFromJSON(cJSON * objJSON)
+void CBezierLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	m_Points.clear();
 	cJSON *child = objJSON->child;

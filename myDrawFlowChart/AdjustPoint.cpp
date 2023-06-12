@@ -94,4 +94,26 @@ void CAdjustPoint::SaveParamsToJSON(cJSON * objJSON)
 
 void CAdjustPoint::LoadParamsFromJSON(cJSON * objJSON)
 {
+	CPoint point;
+	cJSON *child = objJSON->child;
+    while(child)
+    {  
+        switch ((child->type)&255)
+        {  
+        case cJSON_Number:    
+            {   
+				if(strcmp(child->string, "x") == 0)
+				{   
+					point.x = (int)child->valueint;
+				}
+				else if(strcmp(child->string, "y") == 0)
+				{   
+					point.y = (int)child->valueint;
+				}
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
+	SetPoint(point);
 }

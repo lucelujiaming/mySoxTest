@@ -340,9 +340,23 @@ void CArrowhead::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
 	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
 	// Save PreviousConnPoint and NextConnPoint
-	cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", GetPreviousGraph()->getGraphSeq());
+	if (m_Previous)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", m_Previous->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", -1);
+	}
 	cJSON_AddNumberToObject(jsonGraph, "PreviousConnPointIdx", m_iPreviousConnPointIdx);
-	cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", GetNextgraph()->getGraphSeq());
+	if (m_Next)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", m_Next->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", -1);
+	}
 	cJSON_AddNumberToObject(jsonGraph, "NextConnPointIdx", m_iNextConnPointIdx);
 	// End of save PreviousConnPoint and NextConnPoint
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
@@ -350,4 +364,102 @@ void CArrowhead::SaveParamsToJSON(cJSON * objJSON)
 
 void CArrowhead::LoadParamsFromJSON(cJSON * objJSON)
 {
+	cJSON *child = objJSON->child;
+    while(child)
+    {   
+        switch ((child->type)&255)
+        {   
+        case cJSON_True:    
+            TRACE("cJSON_True"); 
+			break;
+        case cJSON_Number:    
+            {   
+                if(strcmp(child->string, "GraphSeq") == 0)
+                {   
+					setGraphSeq((int)child->valueint);
+                }
+				else if(strcmp(child->string, "PreviousGraphSeq") == 0)
+                {   
+					m_iPreviousGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "PreviousConnPointIdx") == 0)
+                {   
+					m_iPreviousConnPointIdx = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextGraphSeq") == 0)
+                {   
+					m_iNextGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextConnPointIdx") == 0)
+                {   
+					m_iNextConnPointIdx = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "currentAdjustPoint") == 0)
+                {   
+					m_AdjustPoint = (int)child->valueint;
+                }
+            }   
+            break;
+        case cJSON_String: 
+            TRACE("cJSON_String\n"); 
+            {   
+                if(strcmp(child->string, "Text") == 0)
+                {   
+                    m_text = CString(child->valuestring);
+                }
+            }    
+            break;
+        case cJSON_Array:
+            TRACE("cJSON_Array\n"); 
+            break;
+        case cJSON_Object:  
+            TRACE("cJSON_Object\n"); 
+            {   
+                if(strcmp(child->string, "Start") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_Start.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_Start.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+				else if(strcmp(child->string, "End") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Number:    
+							if(strcmp(grandChild->string, "x") == 0)
+							{   
+								m_End.x = (int)grandChild->valueint;
+							}
+							else if(strcmp(grandChild->string, "y") == 0)
+							{   
+								m_End.y = (int)grandChild->valueint;
+							}
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
 }

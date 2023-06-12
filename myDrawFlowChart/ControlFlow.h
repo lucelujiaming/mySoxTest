@@ -33,7 +33,10 @@ public:
 
 	void SaveParamsToJSON(cJSON * objJSON);
 	void LoadParamsFromJSON(cJSON * objJSON);
+private:
+	void LoadOnePointFromJSON(cJSON * objJSON);
 
+public:
 	void SetStartPoint( CPoint &pt );
 	void SetEndPoint( CPoint &pt );
 	void GetStartPoint(CPoint &pt);

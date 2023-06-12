@@ -412,7 +412,7 @@ void CControlFlow::SaveParamsToJSON(cJSON * objJSON)
 //	{
 //		ar>>m_FocusPoint>>m_IsCreateEnd;
 //		ar>>m_iPreviousConnPointIdx>>m_iNextConnPointIdx;
-//	}
+//	}	
 	cJSON * jsonGraph = cJSON_CreateObject();
 	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
 	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
@@ -421,14 +421,146 @@ void CControlFlow::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddNumberToObject(jsonGraph, "IsCreateEnd", m_IsCreateEnd);
 
 	// Save PreviousConnPoint and NextConnPoint
-	cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", GetPreviousGraph()->getGraphSeq());
+	if (m_Previous)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", m_Previous->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "PreviousGraphSeq", -1);
+	}
 	cJSON_AddNumberToObject(jsonGraph, "PreviousConnPointIdx", m_iPreviousConnPointIdx);
-	cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", GetNextgraph()->getGraphSeq());
+	if (m_Next)
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", m_Next->getGraphSeq());
+	}
+	else
+	{
+		cJSON_AddNumberToObject(jsonGraph, "NextGraphSeq", -1);
+	}
 	cJSON_AddNumberToObject(jsonGraph, "NextConnPointIdx", m_iNextConnPointIdx);
 	// End of save PreviousConnPoint and NextConnPoint
+
+	// m_Points.Serialize(ar);
+	cJSON * jsonPointList = cJSON_CreateObject();
+	for(int i = 0; i < m_Points.size(); i++)
+	{
+		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
+		CPoint connStart = pConnPoint->GetPoint();
+		cJSON * jsonPoint = cJSON_CreateObject();
+		cJSON_AddNumberToObject(jsonPoint, "idx", i);
+		cJSON_AddNumberToObject(jsonPoint, "x", connStart.x);
+		cJSON_AddNumberToObject(jsonPoint, "y", connStart.y);
+		cJSON_AddItemToObject(jsonPointList, GetTypeName(), jsonPoint);
+	}
+	cJSON_AddItemToObject(jsonGraph, "PointList", jsonPointList);
+	// End of m_Points.Serialize(ar);
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
+}
+
+void CControlFlow::LoadOnePointFromJSON(cJSON * objPoint)
+{
+	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
+	CPoint point;
+	cJSON *child = objPoint->child;
+    while(child)
+    {  
+        switch ((child->type)&255)
+        {  
+        case cJSON_Number:    
+            {   
+				if(strcmp(child->string, "x") == 0)
+				{   
+					point.x = (int)child->valueint;
+				}
+				else if(strcmp(child->string, "y") == 0)
+				{   
+					point.y = (int)child->valueint;
+				}
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
+	pAdjustPoint->SetPoint(point);
+	m_Points.push_back(pAdjustPoint);
 }
 
 void CControlFlow::LoadParamsFromJSON(cJSON * objJSON)
 {
+	m_Points.clear();
+	cJSON *child = objJSON->child;
+    while(child)
+    {   
+        switch ((child->type)&255)
+        {   
+        case cJSON_True:    
+            TRACE("cJSON_True"); 
+			break;
+        case cJSON_Number:    
+            {   
+                if(strcmp(child->string, "GraphSeq") == 0)
+                {   
+					setGraphSeq((int)child->valueint);
+                }
+				else if(strcmp(child->string, "PreviousGraphSeq") == 0)
+                {   
+					m_iPreviousGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "PreviousConnPointIdx") == 0)
+                {   
+					m_iPreviousConnPointIdx = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextGraphSeq") == 0)
+                {   
+					m_iNextGraphSeq = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "NextConnPointIdx") == 0)
+                {   
+					m_iNextConnPointIdx = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "FocusPoint") == 0)
+                {   
+					m_FocusPoint = (int)child->valueint;
+                }
+				else if(strcmp(child->string, "IsCreateEnd") == 0)
+                {   
+					m_IsCreateEnd = (int)child->valueint;
+                }
+            }   
+            break;
+        case cJSON_String: 
+            TRACE("cJSON_String\n"); 
+            {   
+                if(strcmp(child->string, "Text") == 0)
+                {   
+                    m_text = CString(child->valuestring);
+                }
+            }    
+            break;
+        case cJSON_Array:
+            TRACE("cJSON_Array\n"); 
+            break;
+        case cJSON_Object:  
+            TRACE("cJSON_Object\n"); 
+            {   
+                if(strcmp(child->string, "PointList") == 0)
+                {   
+					cJSON *grandChild = child->child;
+					while(grandChild)
+					{
+						switch ((grandChild->type)&255)
+						{   
+						case cJSON_Object:  
+							LoadOnePointFromJSON(grandChild);
+							break;
+						}
+						grandChild = grandChild->next ;
+					}
+                }
+            }   
+            break;
+        }   
+        child = child->next ;
+    }
 }

@@ -39,6 +39,7 @@
 #define ID_TOOLBAR_DOCUMENT             32817
 #define ID_TOOLBAR_LADDER               32818
 #define ID_TOOLBAR_CYLINDER             32824
+#define ID_TOOLBAR_BEZIER_LINE          32832
 
 // Next default values for new objects
 // 
@@ -46,7 +47,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_COMMAND_VALUE         32825
+#define _APS_NEXT_COMMAND_VALUE         32833
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

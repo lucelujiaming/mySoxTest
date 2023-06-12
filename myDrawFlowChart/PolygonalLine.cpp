@@ -253,6 +253,29 @@ void CPolygonalLine::DrawSelectBorderArea( CDC *pdc )
 		
 		TRACE("m_iBendTimes == 2\r\n");
 	}
+	else if(m_iBendTimes == 0)
+	{
+		CPoint points[4];
+		int marginX = 0;
+		int marginY = 0;
+		if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
+		{
+			marginX = ADJUSTPOINT_POSITIVE_X_MARGIN;
+		}
+		else
+		{
+			marginY = ADJUSTPOINT_POSITIVE_Y_MARGIN;
+		}
+
+		CPoint marginXY = CPoint(marginX, marginY);
+		points[0] = m_Start - marginXY;
+		points[1] = m_Start + marginXY;
+		points[2] = m_End + marginXY;
+		points[3] = m_End - marginXY;
+			
+		pdc->SelectObject(&greenPen);
+		pdc->Polygon(points, 4);
+	}
 	
 	pdc->SelectObject(oldpen);
 	pdc->SelectObject(oldbrush);
@@ -306,11 +329,17 @@ void CPolygonalLine::SetPreviousGraph(CGraph *previousGraph)
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[CCONNECTPOINT_POLYGONALLINE_START];
 	int iConnPoint = previousGraph->IsConnectOn(pStart);
 	if(iConnPoint >= 0)
-	{
-		m_Previous = previousGraph;
-		printInfomation("CPolygonalLine::SetPreviousGraph Before");
-		m_iPreviousConnPointIdx = iConnPoint;
-		printInfomation("CPolygonalLine::SetPreviousGraph After");
+	{  
+		if((iConnPoint == CCONNECTPOINT_RECT_MIDDLE_TOP)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_RIGHT)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_BOTTOM)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_LEFT))
+		{
+			m_Previous = previousGraph;
+			printInfomation("CPolygonalLine::SetPreviousGraph Before");
+			m_iPreviousConnPointIdx = iConnPoint;
+			printInfomation("CPolygonalLine::SetPreviousGraph After");
+		}
 	}
 	else if(m_Previous == previousGraph)
 	{
@@ -323,10 +352,16 @@ void CPolygonalLine::SetNextgraph(CGraph *nextGraph)
 	int iConnPoint = nextGraph->IsConnectOn(pEnd);
 	if(iConnPoint >= 0)
 	{
-		m_Next = nextGraph;
-		printInfomation("CPolygonalLine::SetNextgraph Before");
-		m_iNextConnPointIdx = iConnPoint;
-		printInfomation("CPolygonalLine::SetNextgraph After");
+		if((iConnPoint == CCONNECTPOINT_RECT_MIDDLE_TOP)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_RIGHT)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_BOTTOM)
+			||(iConnPoint == CCONNECTPOINT_RECT_MIDDLE_LEFT))
+		{
+			m_Next = nextGraph;
+			printInfomation("CPolygonalLine::SetNextgraph Before");
+			m_iNextConnPointIdx = iConnPoint;
+			printInfomation("CPolygonalLine::SetNextgraph After");
+		}
 	}
 	else if(m_Next == nextGraph)
 	{
@@ -473,6 +508,35 @@ bool CPolygonalLine::IsIn( CPoint &pt )
 		
 		TRACE("m_iBendTimes == 2\r\n");
 	}
+	else if(m_iBendTimes == 0)
+	{
+		CPoint points[4];
+		int marginX = 0;
+		int marginY = 0;
+		if(abs(m_End.x - m_Start.x) > abs(m_End.y - m_Start.y))
+		{
+			marginX = ADJUSTPOINT_POSITIVE_X_MARGIN;
+		}
+		else
+		{
+			marginY = ADJUSTPOINT_POSITIVE_Y_MARGIN;
+		}
+
+		CPoint marginXY = CPoint(marginX, marginY);
+		points[0] = m_Start - marginXY;
+		points[1] = m_Start + marginXY;
+		points[2] = m_End + marginXY;
+		points[3] = m_End - marginXY;
+			
+		CRgn cr;
+		BOOL bRet = cr.CreatePolygonRgn(points, 4, ALTERNATE);
+		if(bRet && cr.PtInRegion( pt ))
+		{
+			flag = true;
+			m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+		}
+		return flag;
+	}
 	else 
 	{
 		CString strStatusBar;
@@ -520,8 +584,18 @@ double CPolygonalLine::GetDistance(int x1, int y1, int x2,int y2)
 
 void CPolygonalLine::DrawArrow( CDC *pdc )
 {
-	int flSx = m_Start.x;
-	int flSy = m_Start.y;
+	int flSx = 0;
+	int flSy = 0;
+	if(m_iBendTimes > 0)
+	{
+		flSx = m_EndStub.ptPosition.x;
+		flSy = m_EndStub.ptPosition.y;
+	}
+	else 
+	{
+		flSx = m_Start.x;
+		flSy = m_Start.y;
+	}
 	int flEx = m_End.x;
 	int flEy = m_End.y;
 	double flLength = 10;

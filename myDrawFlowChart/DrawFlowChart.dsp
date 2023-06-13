@@ -151,15 +151,7 @@ SOURCE=.\End.cpp
 # Begin Source File
 
 SOURCE=.\flowchart_cJSON.cpp
-
-!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
-
 # SUBTRACT CPP /YX /Yc /Yu
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 

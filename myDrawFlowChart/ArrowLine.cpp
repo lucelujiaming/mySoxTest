@@ -38,7 +38,7 @@ CArrowLine::~CArrowLine()
 
 }
 
-void CArrowLine::Draw( CDC *pdc )
+void CArrowLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -58,7 +58,10 @@ void CArrowLine::Draw( CDC *pdc )
 	}
 
 	DrawArrow(pdc);
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CArrowLine::DrawFocus( CDC *pdc )

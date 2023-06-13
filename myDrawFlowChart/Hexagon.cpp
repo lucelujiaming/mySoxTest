@@ -36,7 +36,7 @@ CHexagon::~CHexagon()
 
 }
 
-void CHexagon::Draw( CDC *pdc )
+void CHexagon::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 	CPoint points[6];

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "DrawFlowChart.h"
 
+#include "MainFrm.h"
 #include "DrawFlowChartDoc.h"
 #include "DrawFlowChartView.h"
 
@@ -116,8 +117,9 @@ void CDrawFlowChartView::OnDraw(CDC* pDC)
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	// TODO: add draw code for native data here
-
-	pDoc->m_GraphManager.DrawAll( pDC );
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	BOOL bShowSelectBorder = pMain->m_bShowSelectBorder;
+	pDoc->m_GraphManager.DrawAll( pDC, bShowSelectBorder );
 }
 
 /////////////////////////////////////////////////////////////////////////////

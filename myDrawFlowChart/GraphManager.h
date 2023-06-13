@@ -20,7 +20,7 @@ public:
 	virtual ~CGraphManager();
 
 public:
-	void DrawAll(CDC *pdc);
+	void DrawAll(CDC *pdc, BOOL bShowSelectBorder = TRUE);
 	void DeleteAll() { m_Graphs.clear(); }
 	void DeleteFocusGraph();
 	void DeleteGraphAt(int ID);

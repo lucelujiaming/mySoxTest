@@ -42,7 +42,7 @@ CParallelogram::~CParallelogram()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个多边形和上面的文字。                         */
 /************************************************************************/
-void CParallelogram::Draw( CDC *pdc )
+void CParallelogram::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

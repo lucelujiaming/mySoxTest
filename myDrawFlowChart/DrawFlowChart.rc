@@ -156,6 +156,7 @@ BEGIN
     BEGIN
         MENUITEM "工具栏(&T)",                  ID_VIEW_TOOLBAR
         MENUITEM "状态栏(&S)",                  ID_VIEW_STATUS_BAR
+        MENUITEM "显示选择区",                  ID_VIEW_SELECT_BORDER
     END
     POPUP "帮助(&H)"
     BEGIN

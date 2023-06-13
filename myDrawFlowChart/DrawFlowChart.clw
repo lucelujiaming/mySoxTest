@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=CDrawFlowChartDoc
+LastClass=CMainFrame
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "DrawFlowChart.h"
@@ -15,9 +15,9 @@ Class3=CDrawFlowChartView
 Class4=CMainFrame
 
 ResourceCount=2
-Resource1=IDD_ABOUTBOX
+Resource1=IDR_MAINFRAME
 Class5=CAboutDlg
-Resource2=IDR_MAINFRAME
+Resource2=IDD_ABOUTBOX
 
 [CLS:CDrawFlowChartApp]
 Type=0
@@ -51,7 +51,7 @@ ImplementationFile=MainFrm.cpp
 Filter=T
 BaseClass=CFrameWnd
 VirtualFilter=fWC
-LastObject=ID_TOOLBAR_STOP
+LastObject=ID_VIEW_SELECT_BORDER
 
 
 
@@ -91,20 +91,21 @@ Command13=ID_EDIT_COPY
 Command14=ID_EDIT_PASTE
 Command15=ID_VIEW_TOOLBAR
 Command16=ID_VIEW_STATUS_BAR
-Command17=ID_APP_ABOUT
-Command18=ID_START
-Command19=ID_END
-Command20=ID_RECTANGLE
-Command21=ID_ELLIPSE
-Command22=ID_DIAMOND
-Command23=ID_PARALLELOGRAM
-Command24=ID_BROKEN_LINE
-Command25=ID_GENERICLINE
-Command26=ID_ARROW_LINE
-Command27=ID_SEARCH_PATH
-Command28=ID_MARK_PATH
-Command29=ID_STOP_MARK
-CommandCount=29
+Command17=ID_VIEW_SELECT_BORDER
+Command18=ID_APP_ABOUT
+Command19=ID_START
+Command20=ID_END
+Command21=ID_RECTANGLE
+Command22=ID_ELLIPSE
+Command23=ID_DIAMOND
+Command24=ID_PARALLELOGRAM
+Command25=ID_BROKEN_LINE
+Command26=ID_GENERICLINE
+Command27=ID_ARROW_LINE
+Command28=ID_SEARCH_PATH
+Command29=ID_MARK_PATH
+Command30=ID_STOP_MARK
+CommandCount=30
 
 [ACL:IDR_MAINFRAME]
 Type=1

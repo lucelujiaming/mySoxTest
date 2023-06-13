@@ -36,7 +36,7 @@ CDiamond::~CDiamond()
 
 }
 
-void CDiamond::Draw( CDC *pdc )
+void CDiamond::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 	CPoint points[4];

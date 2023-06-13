@@ -36,7 +36,7 @@ CGraphManager::~CGraphManager()
 /************************************************************************/
 /* 功能：绘制操作                                                       */
 /************************************************************************/
-void CGraphManager::DrawAll( CDC *pdc )
+void CGraphManager::DrawAll( CDC *pdc, BOOL bShowSelectBorder )
 {
 	/*for(int i = GetGraphSum(); i > 0; i--)
 	{
@@ -51,7 +51,7 @@ void CGraphManager::DrawAll( CDC *pdc )
 	for(int i = 0; i < GetGraphSum(); i++)
 	{
 		// 调用每一个图形对象的Draw函数
-		GetGraphAt(i)->Draw(pdc);
+		GetGraphAt(i)->Draw(pdc, bShowSelectBorder);
 		//if(GetGraphAt(i)->IsControlFlow())
 			//CheckLinkGraph(GetGraphAt(i));
 	}
@@ -62,7 +62,7 @@ void CGraphManager::DrawAll( CDC *pdc )
 	if(focusGraph != NULL)
 	{
 		// 还要按照选中的情况进行绘制。包括绘制一个虚线框和绿色连接点。
-		focusGraph->Draw(pdc);
+		focusGraph->Draw(pdc, bShowSelectBorder);
 		focusGraph->DrawFocus(pdc);
 	}
 }

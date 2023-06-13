@@ -27,12 +27,15 @@ CGenericLine::~CGenericLine()
 
 }
 
-void CGenericLine::Draw( CDC *pdc )
+void CGenericLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	pdc->MoveTo(m_Start);
 	pdc->LineTo(m_End);
 
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CGenericLine::DrawFocus( CDC *pdc )

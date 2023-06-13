@@ -20,6 +20,8 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	//{{AFX_MSG_MAP(CMainFrame)
 	ON_WM_CREATE()
+	ON_COMMAND(ID_VIEW_SELECT_BORDER, OnViewSelectBorder)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SELECT_BORDER, OnUpdateViewSelectBorder)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -37,7 +39,7 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
-	
+	m_bShowSelectBorder = TRUE;
 }
 
 CMainFrame::~CMainFrame()
@@ -103,3 +105,16 @@ void CMainFrame::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame message handlers
 
+
+void CMainFrame::OnViewSelectBorder() 
+{
+	// TODO: Add your command handler code here
+	m_bShowSelectBorder = !m_bShowSelectBorder;
+	Invalidate(TRUE);
+}
+
+void CMainFrame::OnUpdateViewSelectBorder(CCmdUI* pCmdUI) 
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(m_bShowSelectBorder);
+}

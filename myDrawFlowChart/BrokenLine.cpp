@@ -40,7 +40,7 @@ CBrokenLine::~CBrokenLine()
 
 }
 
-void CBrokenLine::Draw( CDC *pdc )
+void CBrokenLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < 2) return;
 
@@ -70,7 +70,10 @@ void CBrokenLine::Draw( CDC *pdc )
 	}
 
 	DrawArrow(pdc);
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CBrokenLine::DrawFocus(CDC *pdc)

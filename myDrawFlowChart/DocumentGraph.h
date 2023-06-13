@@ -52,7 +52,7 @@ public:
 	CString GetTypeName() { return CString("CDocumentGraph"); }
 
 public:
-	void Draw( CDC *pdc );
+	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );

@@ -27,7 +27,7 @@ CConnectPoint::~CConnectPoint()
 
 }
 
-void CConnectPoint::Draw(CDC *pdc)
+void CConnectPoint::Draw(CDC *pdc, BOOL bShowSelectBorder)
 {
 	CBrush brush(RGB(0,255,0));
 	CBrush* oldbrush = pdc->SelectObject(&brush);

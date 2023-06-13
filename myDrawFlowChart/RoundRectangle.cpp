@@ -41,7 +41,7 @@ CRoundRectangle::~CRoundRectangle()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CRoundRectangle::Draw( CDC *pdc )
+void CRoundRectangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

@@ -40,7 +40,7 @@ CEllipse::~CEllipse()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CEllipse::Draw( CDC *pdc )
+void CEllipse::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

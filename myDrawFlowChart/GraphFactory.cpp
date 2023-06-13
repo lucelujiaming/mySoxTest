@@ -21,6 +21,7 @@
 #include "ArrowLine.h"
 #include "PolygonalLine.h"
 #include "BezierLine.h"
+#include "ArcLine.h"
 #include "BrokenLine.h"
 #include "Start.h"
 #include "End.h"
@@ -113,6 +114,11 @@ CGraph* CGraphFactory::CreateArrowLine()
 CGraph* CGraphFactory::CreateBezierLine()
 {
 	return new CBezierLine();
+}
+
+CGraph* CGraphFactory::CreateArcLine()
+{
+	return new CArcLine();
 }
 
 CGraph* CGraphFactory::CreatePolygonalLine()

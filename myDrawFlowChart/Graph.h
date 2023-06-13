@@ -68,7 +68,7 @@ public:
 	// 设置该图元是否被标记
 	virtual void SetIsMark(bool isMark);
 
-	virtual void Draw(CDC *pdc) = 0;
+	virtual void Draw(CDC *pdc, BOOL bShowSelectBorder = TRUE) = 0;
 	virtual void DrawFocus(CDC *pdc) = 0;
 	virtual void Move(int cx, int cy) = 0;
 	// 调整图元大小

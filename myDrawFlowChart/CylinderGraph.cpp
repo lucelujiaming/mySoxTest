@@ -41,7 +41,7 @@ CCylinderGraph::~CCylinderGraph()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CCylinderGraph::Draw( CDC *pdc )
+void CCylinderGraph::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

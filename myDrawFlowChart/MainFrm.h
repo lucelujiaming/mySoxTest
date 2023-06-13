@@ -44,8 +44,12 @@ protected:  // control bar embedded members
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnViewSelectBorder();
+	afx_msg void OnUpdateViewSelectBorder(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	BOOL  m_bShowSelectBorder;
 };
 
 /////////////////////////////////////////////////////////////////////////////

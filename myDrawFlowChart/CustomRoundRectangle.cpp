@@ -40,7 +40,7 @@ CCustomRoundRectangle::~CCustomRoundRectangle()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CCustomRoundRectangle::Draw( CDC *pdc )
+void CCustomRoundRectangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

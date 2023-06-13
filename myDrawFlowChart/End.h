@@ -24,7 +24,7 @@ public:
     bool IsEditable();
 	bool IsIn(CPoint &pt);
 
-	void Draw(CDC *pdc);
+	void Draw(CDC *pdc, BOOL bShowSelectBorder = TRUE);
 	void DrawFocus(CDC *pdc);
 	void Move(int cx, int cy);
 	

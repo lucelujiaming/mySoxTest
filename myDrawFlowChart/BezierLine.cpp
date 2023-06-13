@@ -40,7 +40,7 @@ CBezierLine::~CBezierLine()
 
 }
 
-void CBezierLine::Draw( CDC *pdc )
+void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
 
@@ -85,7 +85,10 @@ void CBezierLine::Draw( CDC *pdc )
 	}
 
 	DrawArrow(pdc);
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CBezierLine::DrawFocus(CDC *pdc)

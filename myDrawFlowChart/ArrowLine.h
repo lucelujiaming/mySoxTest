@@ -21,7 +21,7 @@ public:
 	CString GetTypeName() { return CString("CArrowLine"); }
 
 public:
-	void Draw(CDC *pdc);
+	void Draw(CDC *pdc, BOOL bShowSelectBorder = TRUE);
 	void DrawFocus(CDC *pdc);
 
 	void DrawSelectBorderArea( CDC *pdc );

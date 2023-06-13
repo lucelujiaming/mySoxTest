@@ -39,7 +39,7 @@ CPolygonalLine::~CPolygonalLine()
 
 }
 
-void CPolygonalLine::Draw( CDC *pdc )
+void CPolygonalLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	// printInfomation("Draw");
 	AdjustFocusPoint();
@@ -72,7 +72,10 @@ void CPolygonalLine::Draw( CDC *pdc )
 
 	DrawArrow(pdc);
 
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CPolygonalLine::printInfomation(CString strCaption)

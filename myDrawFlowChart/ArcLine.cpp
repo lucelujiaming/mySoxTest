@@ -134,7 +134,7 @@ POINT CArcLine::calcTangentPosition(POINT center, POINT point, BOOL iDirection)
 	return tangentPos;
 }
 
-void CArcLine::Draw( CDC *pdc )
+void CArcLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
 		return;
@@ -203,7 +203,10 @@ void CArcLine::Draw( CDC *pdc )
 
 	CPoint pointLast = calcTangentPosition(pointCenter, m_Points[m_Points.size()-1]->GetPoint(), bDrection);
 	DrawArrow(pdc, pointLast);
-	DrawSelectBorderArea(pdc);
+	if (bShowSelectBorder)
+	{
+		DrawSelectBorderArea(pdc);
+	}
 }
 
 void CArcLine::DrawFocus(CDC *pdc)

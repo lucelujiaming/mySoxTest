@@ -42,7 +42,7 @@ CLadder::~CLadder()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个多边形和上面的文字。                         */
 /************************************************************************/
-void CLadder::Draw( CDC *pdc )
+void CLadder::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

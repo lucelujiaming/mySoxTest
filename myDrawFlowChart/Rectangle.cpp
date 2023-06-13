@@ -40,7 +40,7 @@ CRectangle::~CRectangle()
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个矩形和上面的文字。                         */
 /************************************************************************/
-void CRectangle::Draw( CDC *pdc )
+void CRectangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 

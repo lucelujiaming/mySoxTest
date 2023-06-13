@@ -42,7 +42,7 @@ CBezierLine::~CBezierLine()
 
 void CBezierLine::Draw( CDC *pdc )
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
 
 	// printAllPoints("CBezierLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -60,14 +60,34 @@ void CBezierLine::Draw( CDC *pdc )
 
 	POINT * pointBezier = (POINT *)malloc(sizeof(POINT) * m_Points.size());
 	int iPointsSize = m_Points.size();
-	for(int i = 0; i < iPointsSize; i++)
-	{
-		CAdjustPoint *pNext = (CAdjustPoint*)m_Points[i];
-		pointBezier[i] = pNext->GetPoint();
-		pdc->LineTo(pNext->GetPoint());
-	}
+	int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
+
+	CAdjustPoint *pNext = NULL;
+	pNext = (CAdjustPoint*)m_Points[0];
+	pointBezier[0] = pNext->GetPoint();
+	pNext = (CAdjustPoint*)m_Points[1];
+	pointBezier[1] = pNext->GetPoint();
+	pNext = (CAdjustPoint*)m_Points[2];
+	pointBezier[2] = pNext->GetPoint();
+	pNext = (CAdjustPoint*)m_Points[3];
+	pointBezier[3] = pNext->GetPoint();
 	// PolyBezier:point数组大小必须是4
-	pdc->PolyBezier(pointBezier, iPointsSize);
+	pdc->PolyBezier(pointBezier, 4);
+
+	for(int j = 1; j < iBezierNum; j++)
+	{
+		pNext = (CAdjustPoint*)m_Points[j * 4 - 1];
+		pointBezier[0] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * 4 + 0];
+		pointBezier[1] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * 4 + 1];
+		pointBezier[2] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * 4 + 2];
+		pointBezier[3] = pNext->GetPoint();
+		// PolyBezier:point数组大小必须是4
+		pdc->PolyBezier(pointBezier, 4);
+
+	}
 
 	if(m_IsMark)
 	{
@@ -183,10 +203,12 @@ void CBezierLine::SetEndPoint(CPoint &pt)
 		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
 		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) After");
-		if (m_Points.size() == 4)
-		{
-			m_IsCreateEnd = true;
-		}
+
+//		// PolyBezier的point数组大小必须是4
+//		if (m_Points.size() == BEZIERLINE_POINTS_COUNT)
+//		{
+//			m_IsCreateEnd = true;
+//		}
 	}
 	else
 	{
@@ -371,8 +393,8 @@ double CBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 
 void CBezierLine::DrawArrow( CDC *pdc )
 {
-	if(m_Points.size() < 2) return;
-
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();
 	int flSx = Start.x;
@@ -386,7 +408,7 @@ void CBezierLine::DrawArrow( CDC *pdc )
 
 	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
 	{
-		TRACE("GetDistance == 0");
+		TRACE("GetDistance == 0\r\n");
 		return;
 	}
 

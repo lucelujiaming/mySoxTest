@@ -1,10 +1,10 @@
-// BezierLine.cpp: implementation of the CBezierLine class.
+// ArcLine.cpp: implementation of the CArcLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "BezierLine.h"
+#include "ArcLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,9 +15,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CBezierLine, CObject, 1)
+// IMPLEMENT_SERIAL(CArcLine, CObject, 1)
 
-CBezierLine::CBezierLine()
+CArcLine::CArcLine()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
@@ -35,16 +35,111 @@ CBezierLine::CBezierLine()
 	m_iNextConnPointIdx = -1;
 }
 
-CBezierLine::~CBezierLine()
+CArcLine::~CArcLine()
 {
 
 }
 
-void CBezierLine::Draw( CDC *pdc )
+/************************************************************************/
+/* 已知三点为（x1，y1)、（x2，y2)，（x3，y3)，求三点形成的圆的坐标，    */
+/* 可以设求得的圆的原点为（X，Y），半径为R。这样可以得到方程组：        */
+/* 		(x1-X)^2-(y1-Y)^2=R2      (1)式                                 */
+/* 		(x2-X)^2-(y2-Y)^2=R2      (2)式                                 */
+/* 		(x3-X)^2-(y3-Y)^2=R2      (3)式                                 */
+/*                                                                      */
+/* 由上述方程组可以得到：                                               */
+/*      2(x1-x2)X +2(y1-y2)Y= x1^2-x2^2+y1^2-y2^2        (5)式          */
+/*      2(x1-x3)X +2(y1-y3)Y= x1^2-x3^2+y1^2-y3^2        (6)式          */
+/*                                                                      */
+/* 此时，设：                                                           */
+/*      A = x1-x2      B = y1-y2     C = x1-x3     D = y1-y3            */
+/*      E = (x1^2-x2^2+y1^2-y2^2)/2                                     */
+/*      F = (x1^2-x3^2+y1^2-y3^2)/2                                     */
+/* 得到方程组：                                                         */
+/*      AX+BY = E                                                       */
+/*      CX+DY = F                                                       */
+/* 求解，得到                                                           */
+/*      X = -(DE-BF) / (BC-AD)                                          */
+/*      Y = -(AF-CE) / (BC-AD)                                          */
+/************************************************************************/
+POINT CArcLine::calcCircleCenterByThreePoints(POINT first, POINT second, POINT third)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	POINT center;
+	int A = first.x - second.x;
+	int B = first.y - second.y;
+	int C = first.x - third.x;
+	int D = first.y - third.y;
+	int E = (first.x * first.x - second.x * second.x + first.y * first.y - second.y * second.y)/2;
+	int F = (first.x * first.x - third.x * third.x + first.y * first.y - third.y * third.y)/2;
+	if(B * C != D * A)
+	{ 
+		center.x = (B * F - D * E) / (B * C - D * A);
+		center.y = (C * E - A * F) / (B * C - D * A);
+	}
+	else
+	{
+		center.x = center.y = -1;
 
-	// printAllPoints("CBezierLine::Draw");
+	}
+	return center;
+}
+
+/************************************************************************/
+/* 得到了圆心的坐标位置，也就得到了圆的半径计算公式                     */
+/*     R = sqrt((x1-X) * (x1-X) + (y1-Y) * (y1-Y));                     */
+/************************************************************************/
+int CArcLine::calcRadiusByCenterAndOnePoint(POINT center, POINT point)
+{
+	return sqrt((point.x - center.x) * (point.x - center.x) 
+				+ (point.y - center.y) * (point.y - center.y));
+}
+
+// 绘图方向
+// 获取绘制圆弧的方向  如果iResult大于0为顺时针，小于0为逆时针。
+// 设向量A = ( x1, y1 )，B = ( x2, y2 )
+// |A×B| = x1*y2 - x2*y1 = |A|×|B|×sin(向量A到B的夹角)
+// 所以这个值的正负也就是A到B旋转角sin值的正负
+// 顺时针旋转角度0~180，sin>0
+// 顺时针旋转角度180~360或者说逆时针旋转0~180，sin<0
+// 这里方向为 A->B->C 
+// |AB| = (B.x - A.x, B.y - A.y)
+// |BC| = (C.x - B.x, C.y - B.y)
+// |B.x - A.x  C.x - B.x|
+// |B.y - A.y  C.y - B.y|  交叉相乘然后相减
+// (B.x - A.x) * (C.y - B.y) - (B.y - A.y) * (C.x - B.x) = |AB| * |BC| * sin(angle)
+BOOL CArcLine::calcArcDrection(POINT first, POINT second, POINT third)
+{
+	float fRet = (second.x - first.x) * (third.y - second.y) - (second.y - first.y) * (third.x - second.x);
+	return fRet > 0;
+}
+
+POINT CArcLine::calcTangentPosition(POINT center, POINT point, BOOL iDirection)
+{
+	int iSwapValue;
+	CPoint tangentPos;
+	tangentPos = CPoint(center) - CPoint(point);
+	if (iDirection)
+	{
+		iSwapValue   = tangentPos.x;
+		tangentPos.x = -1 * tangentPos.y;
+		tangentPos.y = iSwapValue;
+	}
+	else
+	{
+		iSwapValue   = tangentPos.x;
+		tangentPos.x = tangentPos.y;
+		tangentPos.y = -1 * iSwapValue;
+	}
+	tangentPos = CPoint(point) + tangentPos;
+	return tangentPos;
+}
+
+void CArcLine::Draw( CDC *pdc )
+{
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
+		return;
+
+	// printAllPoints("CArcLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	if(pStart != NULL)
 	{
@@ -58,25 +153,47 @@ void CBezierLine::Draw( CDC *pdc )
 		pOldPen=pdc->SelectObject(&pe);				//把画笔选入DC，并保存原来画笔
 	}
 
-	POINT * pointBezier = (POINT *)malloc(sizeof(POINT) * BEZIERLINE_POINTS_COUNT);
+//	for(int i = 1; i < m_Points.size(); i++)
+//	{
+//		CAdjustPoint *pNext = (CAdjustPoint*)m_Points[i];
+//		pdc->LineTo(pNext->GetPoint());
+//	}
+
+	POINT * pointArc = (POINT *)malloc(sizeof(POINT) * ARCLINE_POINTS_COUNT);
 	int iPointsSize = m_Points.size();
-	int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
+	int iArcNum  = (iPointsSize - 1)/(ARCLINE_POINTS_COUNT - 1);
 
 	CAdjustPoint *pNext = NULL;
-
-	for(int j = 0; j < iBezierNum; j++)
+	POINT pointCenter;
+	int   iRadius;
+	BOOL bDrection;
+	for(int j = 0; j < iArcNum; j++)
 	{
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1)];
-		pointBezier[0] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
-		pointBezier[1] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 2];
-		pointBezier[2] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 3];
-		pointBezier[3] = pNext->GetPoint();
-		// PolyBezier:point数组大小必须是4
-		pdc->PolyBezier(pointBezier, BEZIERLINE_POINTS_COUNT);
+		pNext = (CAdjustPoint*)m_Points[j * (ARCLINE_POINTS_COUNT - 1)];
+		pointArc[0] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (ARCLINE_POINTS_COUNT - 1) + 1];
+		pointArc[1] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (ARCLINE_POINTS_COUNT - 1) + 2];
+		pointArc[2] = pNext->GetPoint();
+		
+		pointCenter = calcCircleCenterByThreePoints(
+						pointArc[0], pointArc[1], pointArc[2]);
+		iRadius = calcRadiusByCenterAndOnePoint(pointCenter, pointArc[0]);
 
+		CRect objCircleRect = CRect(CPoint(pointCenter.x - iRadius, pointCenter.y - iRadius), 
+								CPoint(pointCenter.x + iRadius, pointCenter.y + iRadius));
+
+		bDrection = calcArcDrection(
+						pointArc[0], pointArc[1], pointArc[2]);
+		if (bDrection)
+		{
+			pdc->Arc(objCircleRect, pointArc[2], pointArc[0]);
+		}
+		else
+		{
+			pdc->Arc(objCircleRect, pointArc[0], pointArc[2]);
+		}
+		// pdc->Ellipse(objCircleRect);
 	}
 
 	if(m_IsMark)
@@ -84,15 +201,16 @@ void CBezierLine::Draw( CDC *pdc )
 		pdc->SelectObject(pOldPen);
 	}
 
-	DrawArrow(pdc);
+	CPoint pointLast = calcTangentPosition(pointCenter, m_Points[m_Points.size()-1]->GetPoint(), bDrection);
+	DrawArrow(pdc, pointLast);
 	DrawSelectBorderArea(pdc);
 }
 
-void CBezierLine::DrawFocus(CDC *pdc)
+void CArcLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) return;
 
-	// printAllPoints("CBezierLine::DrawFocus");
+	// printAllPoints("CArcLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
@@ -102,7 +220,7 @@ void CBezierLine::DrawFocus(CDC *pdc)
 }
 
 #define DRAW_FRAME
-void CBezierLine::DrawSelectBorderArea( CDC *pdc )
+void CArcLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -151,7 +269,7 @@ void CBezierLine::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CBezierLine::Move(int cx, int cy)
+void CArcLine::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -161,38 +279,38 @@ void CBezierLine::Move(int cx, int cy)
 	}
 }
 
-void CBezierLine::AdjustSize(CPoint &pt)
+void CArcLine::AdjustSize(CPoint &pt)
 {
-	// printAllPoints("CBezierLine::AdjustSize Before");
+	// printAllPoints("CArcLine::AdjustSize Before");
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
 	}
-	// printAllPoints("CBezierLine::AdjustSize");
+	// printAllPoints("CArcLine::AdjustSize");
 }
 
-void CBezierLine::SetStartPoint(CPoint &pt)
+void CArcLine::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.size() <= 0) return;
 
-	// printAllPoints("CBezierLine::SetStartPoint Before");
+	// printAllPoints("CArcLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
-	// printAllPoints("CBezierLine::SetStartPoint");
+	// printAllPoints("CArcLine::SetStartPoint");
 }
 
-void CBezierLine::SetEndPoint(CPoint &pt)
+void CArcLine::SetEndPoint(CPoint &pt)
 {
 	CAdjustPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) Before");
+		// printAllPoints("CArcLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
-		// printAllPoints("CBezierLine::SetEndPoint(NotCreateEnd) After");
+		// printAllPoints("CArcLine::SetEndPoint(NotCreateEnd) After");
 
 //		// PolyBezier的point数组大小必须是4
 //		if (m_Points.size() == BEZIERLINE_POINTS_COUNT)
@@ -202,39 +320,39 @@ void CBezierLine::SetEndPoint(CPoint &pt)
 	}
 	else
 	{
-		// printAllPoints("CBezierLine::SetEndPoint(CreateEnd) Before");
+		// printAllPoints("CArcLine::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
 		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CBezierLine::SetEndPoint(CreateEnd) After");
+		// printAllPoints("CArcLine::SetEndPoint(CreateEnd) After");
 	}
 }
 
 
-void CBezierLine::SetLastPoint( CPoint &pt )
+void CArcLine::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
 	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
-	// printAllPoints("CBezierLine::SetLastPoint");
+	// printAllPoints("CArcLine::SetLastPoint");
 
 }
 
-void CBezierLine::GetStartPoint(CPoint &pt)
+void CArcLine::GetStartPoint(CPoint &pt)
 {
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
-void CBezierLine::GetEndPoint(CPoint &pt)
+void CArcLine::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
-void CBezierLine::SetPreviousGraph(CGraph *previousGraph)
+void CArcLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -253,7 +371,7 @@ void CBezierLine::SetPreviousGraph(CGraph *previousGraph)
 	}
 }
 
-void CBezierLine::SetNextgraph(CGraph *nextGraph)
+void CArcLine::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -272,31 +390,31 @@ void CBezierLine::SetNextgraph(CGraph *nextGraph)
 	}
 }
 
-CGraph* CBezierLine::GetPreviousGraph()
+CGraph* CArcLine::GetPreviousGraph()
 {
 	return m_Previous;
 }
 
-CGraph* CBezierLine::GetNextgraph()
+CGraph* CArcLine::GetNextgraph()
 {
 	return m_Next;
 }
 
-bool CBezierLine::IsEditable()
+bool CArcLine::IsEditable()
 {
 	return false;
 }
 
-bool CBezierLine::IsControlFlow()
+bool CArcLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CBezierLine::IsIn(CPoint &pt)
+bool CArcLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return false;
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) return false;
 
-	// printAllPoints("CBezierLine::IsIn Before");
+	// printAllPoints("CArcLine::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		int iPointsSize = m_Points.size();
@@ -305,8 +423,8 @@ bool CBezierLine::IsIn(CPoint &pt)
 		delete connPoint;
 		
 		iPointsSize = m_Points.size();
-		int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
-		int iPointCount = iBezierNum * (BEZIERLINE_POINTS_COUNT - 1) + 1;
+		int iBezierNum  = (iPointsSize - 1)/(ARCLINE_POINTS_COUNT - 1);
+		int iPointCount = iBezierNum * (ARCLINE_POINTS_COUNT - 1) + 1;
 		int iPopNumber  = iPointsSize - iPointCount;
 		for (int i = 0; i < iPopNumber; i++)
 		{
@@ -322,7 +440,7 @@ bool CBezierLine::IsIn(CPoint &pt)
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CBezierLine::IsIn After");
+	// printAllPoints("CArcLine::IsIn After");
 
 	bool flag = false;
 	CPoint points[4];
@@ -368,7 +486,7 @@ bool CBezierLine::IsIn(CPoint &pt)
 	return flag;
 }
 
-bool CBezierLine::IsOn(CPoint &pt)
+bool CArcLine::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -384,7 +502,7 @@ bool CBezierLine::IsOn(CPoint &pt)
 	return false;
 }
 
-double CBezierLine::GetDistance(int x1, int y1, int x2,int y2)
+double CArcLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -394,18 +512,18 @@ double CBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CBezierLine::DrawArrow( CDC *pdc )
+void CArcLine::DrawArrow( CDC *pdc, CPoint pointLast )
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
 		return;
-	else if ((m_Points.size() - 1) % (BEZIERLINE_POINTS_COUNT - 1) != 0)
+	else if ((m_Points.size() - 1) % (ARCLINE_POINTS_COUNT - 1) != 0)
 		return;
 	
-	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
-	CPoint Start = pArrowPoint->GetPoint();
+	// CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
+	CPoint Start = pointLast;
 	int flSx = Start.x;
 	int flSy = Start.y;
-	pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
+	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	CPoint End = pArrowPoint->GetPoint();
 	int flEx = End.x;
 	int flEy = End.y;
@@ -437,7 +555,7 @@ void CBezierLine::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CBezierLine::SaveParamsToJSON(cJSON * objJSON)
+void CArcLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -494,7 +612,7 @@ void CBezierLine::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CBezierLine::LoadOnePointFromJSON(cJSON * objPoint)
+void CArcLine::LoadOnePointFromJSON(cJSON * objPoint)
 {
 	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
 	CPoint point;
@@ -522,7 +640,7 @@ void CBezierLine::LoadOnePointFromJSON(cJSON * objPoint)
 	m_Points.push_back(pAdjustPoint);
 }
 
-void CBezierLine::LoadParamsFromJSON(cJSON * objJSON)
+void CArcLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	m_Points.clear();
 	cJSON *child = objJSON->child;

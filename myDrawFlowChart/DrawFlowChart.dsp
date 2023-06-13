@@ -94,6 +94,10 @@ SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ArcLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ArrowLine.cpp
 # End Source File
 # Begin Source File
@@ -237,6 +241,10 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\AdjustPoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArcLine.h
 # End Source File
 # Begin Source File
 

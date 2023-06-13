@@ -84,6 +84,7 @@ protected:
 	afx_msg void OnCreateGenericLine();
 	afx_msg void OnCreateArrowLine();
 	afx_msg void OnCreateBezierLine();
+	afx_msg void OnCreateArcLine();
 	afx_msg void OnCreatePolygonalLine();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -98,6 +99,7 @@ protected:
 	afx_msg void OnToolbarBrokenLine();
 	afx_msg void OnToolbarArrowLine();
 	afx_msg void OnToolbarBezierLine();
+	afx_msg void OnToolbarArcLine();
 	afx_msg void OnToolbarPolygonalLine();
 	afx_msg void OnToolbarGenericLine();
 	afx_msg void OnToolbarDiamond();

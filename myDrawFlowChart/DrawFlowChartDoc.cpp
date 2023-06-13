@@ -162,6 +162,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateBezierLine(), child);
                 }
+				else if(strcmp(child->string, "CArcLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateArcLine(), child);
+                }
 				else if(strcmp(child->string, "CPolygonalLine") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreatePolygonalLine(), child);

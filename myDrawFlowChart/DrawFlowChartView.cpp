@@ -38,7 +38,6 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_PARALLELOGRAM, OnCreateDealParallelogram)
 	ON_COMMAND(ID_GENERICLINE, OnCreateGenericLine)
 	ON_COMMAND(ID_ARROW_LINE, OnCreateArrowLine)
-	ON_COMMAND(ID_TOOLBAR_BEZIER_LINE, OnCreateBezierLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE, OnCreatePolygonalLine)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_KEYDOWN()
@@ -53,6 +52,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_BROKEN_LINE, OnToolbarBrokenLine)
 	ON_COMMAND(ID_TOOLBAR_ARROW_LINE,   OnToolbarArrowLine)
 	ON_COMMAND(ID_TOOLBAR_BEZIER_LINE,   OnToolbarBezierLine)
+	ON_COMMAND(ID_TOOLBAR_ARC_LINE,      OnToolbarArcLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
 	ON_COMMAND(ID_TOOLBAR_DIAMOND, OnToolbarDiamond)
@@ -780,6 +780,24 @@ void CDrawFlowChartView::OnCreateBezierLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBezierLine());
 }
 
+void CDrawFlowChartView::OnCreateArcLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = true;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.BezierLine );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateArcLine());
+}
+
 void CDrawFlowChartView::OnCreatePolygonalLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -848,6 +866,12 @@ void CDrawFlowChartView::OnToolbarBezierLine()
 {
 	// TODO: Add your command handler code here
 	OnCreateBezierLine();
+}
+
+void CDrawFlowChartView::OnToolbarArcLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateArcLine();
 }
 
 void CDrawFlowChartView::OnToolbarArrowLine() 

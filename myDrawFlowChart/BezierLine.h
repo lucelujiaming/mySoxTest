@@ -13,6 +13,8 @@
 #include "AdjustPoint.h"
 #include <math.h>
 
+#define BEZIERLINE_POINTS_COUNT            4    // PolyBezier的point数组大小必须是4
+
 class CBezierLine : public CGraph  
 {
 //		DECLARE_SERIAL(CBezierLine)

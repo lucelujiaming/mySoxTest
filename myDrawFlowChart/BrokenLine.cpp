@@ -377,7 +377,7 @@ void CBrokenLine::DrawArrow( CDC *pdc )
 
 	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
 	{
-		TRACE("GetDistance == 0");
+		TRACE("GetDistance == 0\r\n");
 		return;
 	}
 

@@ -33,6 +33,7 @@ public:
 	CGraph* CreateArrowLine();			// NotNeed
 	CGraph* CreateBezierLine();			// NotNeed
 	CGraph* CreateCustomBezierLine();	// NotNeed
+	CGraph* CreateCubicSplineLine();	// NotNeed
 	CGraph* CreateArcLine();			// NotNeed	
 	CGraph* CreatePolygonalLine();		// NotNeed
 	CGraph* CreateEllipse();			// Adjusted

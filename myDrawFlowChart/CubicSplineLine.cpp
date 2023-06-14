@@ -1,11 +1,11 @@
-// CustomBezierLine.cpp: implementation of the CCustomBezierLine class.
+// CubicSplineLine.cpp: implementation of the CCubicSplineLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 
 #include "DrawFlowChart.h"
-#include "CustomBezierLine.h"
+#include "CubicSplineLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -16,9 +16,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CCustomBezierLine, CObject, 1)
+// IMPLEMENT_SERIAL(CCubicSplineLine, CObject, 1)
 
-CCustomBezierLine::CCustomBezierLine()
+CCubicSplineLine::CCubicSplineLine()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
@@ -34,75 +34,106 @@ CCustomBezierLine::CCustomBezierLine()
 	m_End = CPoint(0, 0);
 	m_iPreviousConnPointIdx = -1;
 	m_iNextConnPointIdx = -1;
-	
-	m_iBezierFunctionTimes = BEZIERLINE_QUADRATIC;
-
 }
 
-CCustomBezierLine::~CCustomBezierLine()
+CCubicSplineLine::~CCubicSplineLine()
 {
 }
 
-void CCustomBezierLine::DrawBezier(CDC*pDC)
+void CCubicSplineLine::DrawDataPoint(CDC*pDC, int n)
 {
-	pDC->MoveTo(ROUND(m_objBezierCurveControlPoint[0].x), 
-		ROUND(m_objBezierCurveControlPoint[0].y));
-	double tStep = 0.01;//参数步长
-	for(double t = 0.0;t <= 1.0;t = t + tStep)
+	CBrush NewBrush,*pOldBrush;//加粗型值点
+	NewBrush.CreateSolidBrush(RGB(0,0,0));
+	pOldBrush=pDC->SelectObject(&NewBrush);
+	for(int i=1;i<n;i++)
 	{
-		double x = 0.0;
-		double y = 0.0;
-		for(int i = 0; i <= m_iBezierFunctionTimes; i++)
-		{
-			x+=m_objBezierCurveControlPoint[i].x 
-				* Cni(m_iBezierFunctionTimes, i) * pow(t, i) 
-				* pow(1 - t, m_iBezierFunctionTimes - i);
-			y+=m_objBezierCurveControlPoint[i].y 
-				* Cni(m_iBezierFunctionTimes, i) * pow(t, i) 
-				* pow(1 - t, m_iBezierFunctionTimes - i);
-		}
-		pDC->LineTo(ROUND(x), ROUND(y));
+		pDC->Ellipse(ROUND(m_objCubicSplineControlPoint[i].x - 5),
+					 ROUND(m_objCubicSplineControlPoint[i].y - 5),
+					 ROUND(m_objCubicSplineControlPoint[i].x + 5),
+					 ROUND(m_objCubicSplineControlPoint[i].y + 5));
 	}
-	// Connect breakpoint.
-	pDC->LineTo(m_objBezierCurveControlPoint[m_iBezierFunctionTimes].x, 
-				m_objBezierCurveControlPoint[m_iBezierFunctionTimes].y);
+	pDC->SelectObject(pOldBrush);
 }
 
-int CCustomBezierLine::Cni(const int&n,const int&i)
+void CCubicSplineLine::DrawCubicSpline(CDC*pDC, int n)//绘制三次样条线
 {
-	return (Factorial(n)/(Factorial(i)*Factorial(n-i)));
-}
-
-int CCustomBezierLine::Factorial(int n)
-{
-	int factorial;
-	if(n==0||n==1)
-		factorial=1;
-	else
-		factorial=n*Factorial(n-1);
-	return factorial;
-}
-
-void CCustomBezierLine::DrawControlPolygon(CDC*pDC)
-{
-	pDC->MoveTo(ROUND(m_objBezierCurveControlPoint[0].x), 
-					ROUND(m_objBezierCurveControlPoint[0].y));
-	for(int i=0; i <= m_iBezierFunctionTimes; i++)
+// 	int n=6;
+	const int dim=7;//二维数组维数
+	double b1=10,bn=-10;//给出起点和终点的一阶导数
+	double h[dim],lambda[dim],mu[dim],D[dim];//四个数组
+	double l[dim],m[dim],u[dim];//追赶法参数
+	double M[dim],K[dim];//追赶法过渡矩阵
+	double a[dim],b[dim],c[dim],d[dim];//函数的系数
+	for(int i=1;i<n;i++)//计算hi=xi+1-xi
 	{
-		pDC->LineTo(ROUND(m_objBezierCurveControlPoint[i].x), 
-			        ROUND(m_objBezierCurveControlPoint[i].y));
-		pDC->Ellipse(ROUND(m_objBezierCurveControlPoint[i].x) - 5,
-			         ROUND(m_objBezierCurveControlPoint[i].y) - 5,
-					 ROUND(m_objBezierCurveControlPoint[i].x) + 5,
-					 ROUND(m_objBezierCurveControlPoint[i].y) + 5);
+		h[i]=m_objCubicSplineControlPoint[i+1].x - m_objCubicSplineControlPoint[i].x;
 	}
+	for(i=2;i<n;i++)
+	{
+		lambda[i]=h[i-1]/(h[i-1]+h[i]);
+		mu[i]=h[i]/(h[i-1]+h[i]);
+		D[i]= 6/ (h[i-1]+h[i])
+				*((m_objCubicSplineControlPoint[i+1].y-m_objCubicSplineControlPoint[i].y)/
+				   h[i]-(m_objCubicSplineControlPoint[i].y-m_objCubicSplineControlPoint[i-1].y)/h[i-1]);//计算Di
+	}
+	D[1]=6*((m_objCubicSplineControlPoint[2].y-m_objCubicSplineControlPoint[1].y)/h[1]-b1)/h[1];//夹持端的D[1]
+	D[n]=6*(bn-(m_objCubicSplineControlPoint[n].y-m_objCubicSplineControlPoint[n-1].y)/h[n-1])/h[n-1];//夹持端的D[n]
+	mu[1]=1;
+	lambda[n]=1;
+	//追赶法求解三弯矩方程
+	l[1]=2;
+	u[1]=mu[1]/l[1];
+	for(i=2;i<=n;i++)
+	{
+		m[i]=lambda[i];
+		l[i]=2-m[i]*u[i-1];
+		u[i]=mu[i]/l[i];
+	}
+	K[1]=D[1]/l[1];//解LK=D方程
+	for(i=2;i<=n;i++)
+	{
+		K[i]=(D[i]-m[i]*K[i-1])/l[i];
+	}
+	M[n]=K[n];//解UM=K
+   for(i=n-1;i>=1;i--)
+   {
+	   M[i]=K[i]-u[i]*M[i+1];
+   }
+   //计算三次样条函数的系数
+   for(i=1;i<n;i++)
+   {
+	   a[i]=m_objCubicSplineControlPoint[i].y;
+	   b[i]=(m_objCubicSplineControlPoint[i+1].y-m_objCubicSplineControlPoint[i].y)/h[i]-h[i]*(M[i]/3+M[i+1]/6);
+	   c[i]=M[i]/2;
+	   d[i]=(M[i+1]-M[i])/(6*h[i]);
+   }
+   pDC->MoveTo(ROUND(m_objCubicSplineControlPoint[1].x), 
+	           ROUND(m_objCubicSplineControlPoint[1].y));
+   double xStep=0.5;//当前步长
+   double x,y;//当前点
+   for(i=1;i<n;i++)//循环访问每个节点
+   {
+	   for(x = m_objCubicSplineControlPoint[i].x; 
+	       x < m_objCubicSplineControlPoint[i+1].x; x += xStep)//按照步长xStep进行计算
+	   { 
+		   y=a[i] + b[i] * (x-m_objCubicSplineControlPoint[i].x) 
+				  + c[i] * (x-m_objCubicSplineControlPoint[i].x) 
+						 * (x-m_objCubicSplineControlPoint[i].x)
+			      + d[i] * (x-m_objCubicSplineControlPoint[i].x) 
+				         * (x-m_objCubicSplineControlPoint[i].x)
+						 * (x-m_objCubicSplineControlPoint[i].x);
+		   pDC->LineTo(ROUND(x),ROUND(y));//绘制样条曲线
+	   }
+   }
 }
 
-void CCustomBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
-{
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
 
-	// printAllPoints("CCustomBezierLine::Draw");
+
+void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
+{
+	if(m_Points.size() < 2) return;
+
+	// printAllPoints("CCubicSplineLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	CPoint ptStart = pStart->GetPoint();
 	if(pStart != NULL)
@@ -116,42 +147,30 @@ void CCustomBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
         pe.CreatePen(PS_SOLID,1,RGB(255,0,0));      //初始化画笔（红色）
 		pOldPen=pdc->SelectObject(&pe);				//把画笔选入DC，并保存原来画笔
 	}
+//	这个值是从1开始的。
+//	P[1].x=-340,P[1].y=-200;//读入型值点，按照横坐标从小到大排序
+//	P[2].x=-150,P[2].y=0;
+//	P[3].x=0,P[3].y=-50;
+//	P[4].x=100,P[4].y=-100;
+//	P[5].x=250,P[5].y=-100;
+//	P[6].x=350,P[6].y=-50;
 
-	POINT * pointBezier = (POINT *)malloc(sizeof(POINT) * BEZIERLINE_POINTS_COUNT);
 	int iPointsSize = m_Points.size();
-	int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
-
 	CAdjustPoint *pNext = NULL;
 
-	for(int j = 0; j < iBezierNum; j++)
+	for(int j = 0; j < iPointsSize; j++)
 	{
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1)];
-		pointBezier[0] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
-		pointBezier[1] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 2];
-		pointBezier[2] = pNext->GetPoint();
-		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 3];
-		pointBezier[3] = pNext->GetPoint();
-
-		m_objBezierCurveControlPoint[0].x = pointBezier[0].x;
-		m_objBezierCurveControlPoint[0].y = pointBezier[0].y;
-		m_objBezierCurveControlPoint[1].x = pointBezier[1].x;
-		m_objBezierCurveControlPoint[1].y = pointBezier[1].y;
-		m_objBezierCurveControlPoint[2].x = pointBezier[2].x;
-		m_objBezierCurveControlPoint[2].y = pointBezier[2].y;
-		m_objBezierCurveControlPoint[3].x = pointBezier[3].x;
-		m_objBezierCurveControlPoint[3].y = pointBezier[3].y;
-
-		if (bShowSelectBorder)
-		{
-			DrawControlPolygon(pdc);
-		}
-		DrawBezier(pdc);
+		pNext = (CAdjustPoint*)m_Points[j];
+		m_objCubicSplineControlPoint[j + 1].x = pNext->GetPoint().x;
+		m_objCubicSplineControlPoint[j + 1].y = pNext->GetPoint().y;
 	}
-	free(pointBezier);
 
-
+	if (bShowSelectBorder)
+	{
+		DrawDataPoint(pdc, iPointsSize + 1);
+	}
+	DrawCubicSpline(pdc, iPointsSize + 1);
+	
 	if(m_IsMark)
 	{
 		pdc->SelectObject(pOldPen);
@@ -164,11 +183,11 @@ void CCustomBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	}
 }
 
-void CCustomBezierLine::DrawFocus(CDC *pdc)
+void CCubicSplineLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CCustomBezierLine::DrawFocus");
+	// printAllPoints("CCubicSplineLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
@@ -178,7 +197,7 @@ void CCustomBezierLine::DrawFocus(CDC *pdc)
 }
 
 #define DRAW_FRAME
-void CCustomBezierLine::DrawSelectBorderArea( CDC *pdc )
+void CCubicSplineLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -227,7 +246,7 @@ void CCustomBezierLine::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CCustomBezierLine::Move(int cx, int cy)
+void CCubicSplineLine::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -237,38 +256,38 @@ void CCustomBezierLine::Move(int cx, int cy)
 	}
 }
 
-void CCustomBezierLine::AdjustSize(CPoint &pt)
+void CCubicSplineLine::AdjustSize(CPoint &pt)
 {
-	// printAllPoints("CCustomBezierLine::AdjustSize Before");
+	// printAllPoints("CCubicSplineLine::AdjustSize Before");
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
 	}
-	// printAllPoints("CCustomBezierLine::AdjustSize");
+	// printAllPoints("CCubicSplineLine::AdjustSize");
 }
 
-void CCustomBezierLine::SetStartPoint(CPoint &pt)
+void CCubicSplineLine::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.size() <= 0) return;
 
-	// printAllPoints("CCustomBezierLine::SetStartPoint Before");
+	// printAllPoints("CCubicSplineLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
-	// printAllPoints("CCustomBezierLine::SetStartPoint");
+	// printAllPoints("CCubicSplineLine::SetStartPoint");
 }
 
-void CCustomBezierLine::SetEndPoint(CPoint &pt)
+void CCubicSplineLine::SetEndPoint(CPoint &pt)
 {
 	CAdjustPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CCustomBezierLine::SetEndPoint(NotCreateEnd) Before");
+		// printAllPoints("CCubicSplineLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
-		// printAllPoints("CCustomBezierLine::SetEndPoint(NotCreateEnd) After");
+		// printAllPoints("CCubicSplineLine::SetEndPoint(NotCreateEnd) After");
 
 //		// PolyBezier的point数组大小必须是4
 //		if (m_Points.size() == BEZIERLINE_POINTS_COUNT)
@@ -278,39 +297,39 @@ void CCustomBezierLine::SetEndPoint(CPoint &pt)
 	}
 	else
 	{
-		// printAllPoints("CCustomBezierLine::SetEndPoint(CreateEnd) Before");
+		// printAllPoints("CCubicSplineLine::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
 		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CCustomBezierLine::SetEndPoint(CreateEnd) After");
+		// printAllPoints("CCubicSplineLine::SetEndPoint(CreateEnd) After");
 	}
 }
 
 
-void CCustomBezierLine::SetLastPoint( CPoint &pt )
+void CCubicSplineLine::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
 	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
-	// printAllPoints("CCustomBezierLine::SetLastPoint");
+	// printAllPoints("CCubicSplineLine::SetLastPoint");
 
 }
 
-void CCustomBezierLine::GetStartPoint(CPoint &pt)
+void CCubicSplineLine::GetStartPoint(CPoint &pt)
 {
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
-void CCustomBezierLine::GetEndPoint(CPoint &pt)
+void CCubicSplineLine::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
-void CCustomBezierLine::SetPreviousGraph(CGraph *previousGraph)
+void CCubicSplineLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -329,7 +348,7 @@ void CCustomBezierLine::SetPreviousGraph(CGraph *previousGraph)
 	}
 }
 
-void CCustomBezierLine::SetNextgraph(CGraph *nextGraph)
+void CCubicSplineLine::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -348,49 +367,38 @@ void CCustomBezierLine::SetNextgraph(CGraph *nextGraph)
 	}
 }
 
-CGraph* CCustomBezierLine::GetPreviousGraph()
+CGraph* CCubicSplineLine::GetPreviousGraph()
 {
 	return m_Previous;
 }
 
-CGraph* CCustomBezierLine::GetNextgraph()
+CGraph* CCubicSplineLine::GetNextgraph()
 {
 	return m_Next;
 }
 
-bool CCustomBezierLine::IsEditable()
+bool CCubicSplineLine::IsEditable()
 {
 	return false;
 }
 
-bool CCustomBezierLine::IsControlFlow()
+bool CCubicSplineLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CCustomBezierLine::IsIn(CPoint &pt)
+bool CCubicSplineLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return false;
+	if(m_Points.size() < 2) return false;
 
-	// printAllPoints("CCustomBezierLine::IsIn Before");
+	// printAllPoints("CCubicSplineLine::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		int iPointsSize = m_Points.size();
 		CAdjustPoint *connPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		m_Points.pop_back();
 		delete connPoint;
-		
-		iPointsSize = m_Points.size();
-		int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
-		int iPointCount = iBezierNum * (BEZIERLINE_POINTS_COUNT - 1) + 1;
-		int iPopNumber  = iPointsSize - iPointCount;
-		for (int i = 0; i < iPopNumber; i++)
-		{
-			connPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
-			m_Points.pop_back();
-			delete connPoint;
-		}
-		
+				
 		m_IsCreateEnd = true;
 		// m_Start和m_End对于折线来说，好像没有用。
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -398,7 +406,7 @@ bool CCustomBezierLine::IsIn(CPoint &pt)
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CCustomBezierLine::IsIn After");
+	// printAllPoints("CCubicSplineLine::IsIn After");
 
 	bool flag = false;
 	CPoint points[4];
@@ -444,7 +452,7 @@ bool CCustomBezierLine::IsIn(CPoint &pt)
 	return flag;
 }
 
-bool CCustomBezierLine::IsOn(CPoint &pt)
+bool CCubicSplineLine::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -460,7 +468,7 @@ bool CCustomBezierLine::IsOn(CPoint &pt)
 	return false;
 }
 
-double CCustomBezierLine::GetDistance(int x1, int y1, int x2,int y2)
+double CCubicSplineLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -470,11 +478,9 @@ double CCustomBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CCustomBezierLine::DrawArrow( CDC *pdc )
+void CCubicSplineLine::DrawArrow( CDC *pdc )
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
-		return;
-	else if ((m_Points.size() - 1) % (BEZIERLINE_POINTS_COUNT - 1) != 0)
+	if(m_Points.size() < 2) 
 		return;
 	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
@@ -513,7 +519,7 @@ void CCustomBezierLine::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CCustomBezierLine::SaveParamsToJSON(cJSON * objJSON)
+void CCubicSplineLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -570,7 +576,7 @@ void CCustomBezierLine::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CCustomBezierLine::LoadOnePointFromJSON(cJSON * objPoint)
+void CCubicSplineLine::LoadOnePointFromJSON(cJSON * objPoint)
 {
 	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
 	CPoint point;
@@ -598,7 +604,7 @@ void CCustomBezierLine::LoadOnePointFromJSON(cJSON * objPoint)
 	m_Points.push_back(pAdjustPoint);
 }
 
-void CCustomBezierLine::LoadParamsFromJSON(cJSON * objJSON)
+void CCubicSplineLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	m_Points.clear();
 	cJSON *child = objJSON->child;

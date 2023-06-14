@@ -110,6 +110,10 @@ SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CubicSplineLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CustomBezierLine.cpp
 # End Source File
 # Begin Source File
@@ -195,6 +199,10 @@ SOURCE=.\OrthogonalWire.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\P2.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Parallelogram.cpp
 # End Source File
 # Begin Source File
@@ -253,6 +261,10 @@ SOURCE=.\BezierLine.h
 # Begin Source File
 
 SOURCE=.\BrokenLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CubicSplineLine.h
 # End Source File
 # Begin Source File
 
@@ -333,6 +345,10 @@ SOURCE=.\MainFrm.h
 # Begin Source File
 
 SOURCE=.\OrthogonalWire.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\P2.h
 # End Source File
 # Begin Source File
 

@@ -166,6 +166,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateCustomBezierLine(), child);
                 }
+				else if(strcmp(child->string, "CCubicSplineLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateCubicSplineLine(), child);
+                }
 				else if(strcmp(child->string, "CArcLine") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateArcLine(), child);

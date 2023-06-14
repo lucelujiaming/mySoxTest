@@ -85,6 +85,7 @@ protected:
 	afx_msg void OnCreateBezierLine();
 	afx_msg void OnCreateCustomBezierLine();
 	afx_msg void OnCreateCubicSplineLine();
+	afx_msg void OnCreateQuadraticSplineLine();
 	afx_msg void OnCreateArcLine();
 	afx_msg void OnCreateArrowLine();
 	afx_msg void OnCreatePolygonalLine();
@@ -103,6 +104,7 @@ protected:
 	afx_msg void OnToolbarBezierLine();
 	afx_msg void OnToolbarCustomBezierLine();
 	afx_msg void OnToolbarCubicSplineLine();
+	afx_msg void OnToolbarQuadraticSplineLine();
 	afx_msg void OnToolbarArcLine();
 	afx_msg void OnToolbarPolygonalLine();
 	afx_msg void OnToolbarGenericLine();

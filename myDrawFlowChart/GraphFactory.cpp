@@ -23,6 +23,7 @@
 #include "BezierLine.h"
 #include "CustomBezierLine.h"
 #include "CubicSplineLine.h"
+#include "QuadraticSplineLine.h"
 #include "ArcLine.h"
 #include "BrokenLine.h"
 #include "Start.h"
@@ -126,6 +127,11 @@ CGraph* CGraphFactory::CreateCustomBezierLine()
 CGraph* CGraphFactory::CreateCubicSplineLine()
 {
 	return new CCubicSplineLine();
+}
+
+CGraph* CGraphFactory::CreateQuadraticSplineLine()
+{
+	return new CQuadraticSplineLine();
 }
 
 CGraph* CGraphFactory::CreateArcLine()

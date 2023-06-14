@@ -1,11 +1,11 @@
-// CubicSplineLine.cpp: implementation of the CCubicSplineLine class.
+// QuadraticSplineLine.cpp: implementation of the CQuadraticSplineLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 
 #include "DrawFlowChart.h"
-#include "CubicSplineLine.h"
+#include "QuadraticSplineLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -16,9 +16,9 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CCubicSplineLine, CObject, 1)
+// IMPLEMENT_SERIAL(CQuadraticSplineLine, CObject, 1)
 
-CCubicSplineLine::CCubicSplineLine()
+CQuadraticSplineLine::CQuadraticSplineLine()
 {
 	CAdjustPoint *pStart = new CAdjustPoint();
 	pStart->SetPoint(CPoint(0, 0));
@@ -36,104 +36,141 @@ CCubicSplineLine::CCubicSplineLine()
 	m_iNextConnPointIdx = -1;
 }
 
-CCubicSplineLine::~CCubicSplineLine()
+CQuadraticSplineLine::~CQuadraticSplineLine()
 {
 }
 
-void CCubicSplineLine::DrawDataPoint(CDC*pDC, int n)
+/*----------------------------------------------------
+input   : t, i, k分别为参数值，支撑区间左端节点的下标，曲线次数
+function: 计算第i个k次B样条基函数值
+-----------------------------------------------------*/
+double CQuadraticSplineLine::BasicFunctionValue(double t, int i, int k)
 {
-	CBrush NewBrush,*pOldBrush;//加粗型值点
+	//次数为0时的基函数值
+	if(k==0)
+	{
+		if(t>=m_doubleKnots[i]&&t<m_doubleKnots[i+1])
+			return 1.0;
+		else 
+			return 0.0;
+	}
+
+	//次数不为0时的基函数计算
+	double value1, value2, value;
+	if(k>0)
+	{
+		//节点矢量位于定义域之外
+		if(t<m_doubleKnots[i]||t>m_doubleKnots[i+k+1])
+			return 0.0;
+
+		//节点矢量位于定义域之外
+		else
+		{
+			double coff1, coff2;    //系数
+			double denominator=0.0; //分母
+
+			//递推公式第一项
+			denominator=m_doubleKnots[i+k]-m_doubleKnots[i];
+			if(denominator==0.0)
+				coff1=0.0;                  //重节点分母为0
+			else
+				coff1=(t-m_doubleKnots[i])/denominator;
+
+			//递推公式第二项
+			denominator=m_doubleKnots[i+k+1]-m_doubleKnots[i+1];
+			if(denominator==0.0)
+				coff2=0.0;                  //重节点分母为0
+			else
+				coff2=(m_doubleKnots[i+k+1]-t)/denominator;
+
+			//递推公式第一、二项的值
+			value1=coff1*BasicFunctionValue(t,i,k-1);
+			value2=coff2*BasicFunctionValue(t,i+1,k-1);
+
+			value=value1+value2;
+		}
+	}
+	return value;
+}
+
+/*----------------------------------------------------
+input   : 
+function: 绘制曲线
+-----------------------------------------------------*/
+void CQuadraticSplineLine::DrawCurve(CDC*pDC, int iNum)
+{
+	//绘制控制点
+	// DrawControlPoint(pDC, iNum);
+
+	//创建并选取画笔
+	CPen NewPen, *pOldPen;
+	NewPen.CreatePen(PS_SOLID,2,RGB(0,0,255));
+	pOldPen=pDC->SelectObject(&NewPen);
+
+	//等距取参数点计算值
+	double tStep=0.01;
+	for(double t=0.0; t<=1.0; t+=tStep)
+	{
+		CP2 p(0,0);//离散点
+		for(int i=0; i<=m_iCOntrolPointNumMinusOne; i++)
+		{
+			double BValue=BasicFunctionValue(t, i, m_iCurveTimes);
+			p = p + m_objQuadraticSplineControlPoint[i]*BValue;
+		}
+		if(t==0)
+			pDC->MoveTo(ROUND(p.x), ROUND(p.y));
+		else
+			pDC->LineTo(ROUND(p.x), ROUND(p.y));
+	}
+
+	//还原画笔，删除创建的画笔
+	pDC->SelectObject(pOldPen);	
+	NewPen.DeleteObject();      
+}
+
+/*----------------------------------------------------
+input   : 
+function: 绘制控制点
+-----------------------------------------------------*/
+void CQuadraticSplineLine::DrawControlPoint(CDC*pDC, int iNum)
+{
+	//初始化画笔
+	CPen NewPen,*pOldPen;
+	NewPen.CreatePen(PS_SOLID,3,RGB(0,0,0));
+	pOldPen=pDC->SelectObject(&NewPen);
+
+	//初始化画刷
+	CBrush NewBrush,*pOldBrush;
 	NewBrush.CreateSolidBrush(RGB(0,0,0));
 	pOldBrush=pDC->SelectObject(&NewBrush);
-	for(int i=1;i<n;i++)
+
+	//加粗控制点
+	for(int i=0;i<=m_iCOntrolPointNumMinusOne;i++)
 	{
-		pDC->Ellipse(ROUND(m_objCubicSplineControlPoint[i].x - 5),
-					 ROUND(m_objCubicSplineControlPoint[i].y - 5),
-					 ROUND(m_objCubicSplineControlPoint[i].x + 5),
-					 ROUND(m_objCubicSplineControlPoint[i].y + 5));
+		if(0==i)
+		{
+			pDC->MoveTo(ROUND(m_objQuadraticSplineControlPoint[i].x),ROUND(m_objQuadraticSplineControlPoint[i].y));
+			pDC->Ellipse(ROUND(m_objQuadraticSplineControlPoint[i].x)-5,ROUND(m_objQuadraticSplineControlPoint[i].y)-5,ROUND(m_objQuadraticSplineControlPoint[i].x)+5,ROUND(m_objQuadraticSplineControlPoint[i].y)+5);
+		}
+		else
+		{
+			pDC->LineTo(ROUND(m_objQuadraticSplineControlPoint[i].x),ROUND(m_objQuadraticSplineControlPoint[i].y));
+			pDC->Ellipse(ROUND(m_objQuadraticSplineControlPoint[i].x)-5,ROUND(m_objQuadraticSplineControlPoint[i].y)-5,ROUND(m_objQuadraticSplineControlPoint[i].x)+5,ROUND(m_objQuadraticSplineControlPoint[i].y)+5);
+		}
 	}
+
+	//还原画笔画刷
 	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+	NewPen.DeleteObject(); 
+	NewBrush.DeleteObject(); 
 }
 
-void CCubicSplineLine::DrawCubicSpline(CDC*pDC, int n)//绘制三次样条线
-{
-// 	int n=6;
-	const int dim=7;//二维数组维数
-	double b1=10,bn=-10;//给出起点和终点的一阶导数
-	double h[dim],lambda[dim],mu[dim],D[dim];//四个数组
-	double l[dim],m[dim],u[dim];//追赶法参数
-	double M[dim],K[dim];//追赶法过渡矩阵
-	double a[dim],b[dim],c[dim],d[dim];//函数的系数
-	for(int i=1;i<n;i++)//计算hi=xi+1-xi
-	{
-		h[i]=m_objCubicSplineControlPoint[i+1].x - m_objCubicSplineControlPoint[i].x;
-	}
-	for(i=2;i<n;i++)
-	{
-		lambda[i]=h[i-1]/(h[i-1]+h[i]);
-		mu[i]=h[i]/(h[i-1]+h[i]);
-		D[i]= 6/ (h[i-1]+h[i])
-				*((m_objCubicSplineControlPoint[i+1].y-m_objCubicSplineControlPoint[i].y)/
-				   h[i]-(m_objCubicSplineControlPoint[i].y-m_objCubicSplineControlPoint[i-1].y)/h[i-1]);//计算Di
-	}
-	D[1]=6*((m_objCubicSplineControlPoint[2].y-m_objCubicSplineControlPoint[1].y)/h[1]-b1)/h[1];//夹持端的D[1]
-	D[n]=6*(bn-(m_objCubicSplineControlPoint[n].y-m_objCubicSplineControlPoint[n-1].y)/h[n-1])/h[n-1];//夹持端的D[n]
-	mu[1]=1;
-	lambda[n]=1;
-	//追赶法求解三弯矩方程
-	l[1]=2;
-	u[1]=mu[1]/l[1];
-	for(i=2;i<=n;i++)
-	{
-		m[i]=lambda[i];
-		l[i]=2-m[i]*u[i-1];
-		u[i]=mu[i]/l[i];
-	}
-	K[1]=D[1]/l[1];//解LK=D方程
-	for(i=2;i<=n;i++)
-	{
-		K[i]=(D[i]-m[i]*K[i-1])/l[i];
-	}
-	M[n]=K[n];//解UM=K
-   for(i=n-1;i>=1;i--)
-   {
-	   M[i]=K[i]-u[i]*M[i+1];
-   }
-   //计算三次样条函数的系数
-   for(i=1;i<n;i++)
-   {
-	   a[i]=m_objCubicSplineControlPoint[i].y;
-	   b[i]=(m_objCubicSplineControlPoint[i+1].y-m_objCubicSplineControlPoint[i].y)/h[i]-h[i]*(M[i]/3+M[i+1]/6);
-	   c[i]=M[i]/2;
-	   d[i]=(M[i+1]-M[i])/(6*h[i]);
-   }
-   pDC->MoveTo(ROUND(m_objCubicSplineControlPoint[1].x), 
-	           ROUND(m_objCubicSplineControlPoint[1].y));
-   double xStep=0.5;//当前步长
-   double x,y;//当前点
-   for(i=1;i<n;i++)//循环访问每个节点
-   {
-	   for(x = m_objCubicSplineControlPoint[i].x; 
-	       x < m_objCubicSplineControlPoint[i+1].x; x += xStep)//按照步长xStep进行计算
-	   { 
-		   y=a[i] + b[i] * (x-m_objCubicSplineControlPoint[i].x) 
-				  + c[i] * (x-m_objCubicSplineControlPoint[i].x) 
-						 * (x-m_objCubicSplineControlPoint[i].x)
-			      + d[i] * (x-m_objCubicSplineControlPoint[i].x) 
-				         * (x-m_objCubicSplineControlPoint[i].x)
-						 * (x-m_objCubicSplineControlPoint[i].x);
-		   pDC->LineTo(ROUND(x),ROUND(y));//绘制样条曲线
-	   }
-   }
-}
-
-
-
-void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CQuadraticSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CCubicSplineLine::Draw");
+	// printAllPoints("CQuadraticSplineLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	CPoint ptStart = pStart->GetPoint();
 	if(pStart != NULL)
@@ -147,31 +184,40 @@ void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
         pe.CreatePen(PS_SOLID,1,RGB(255,0,0));      //初始化画笔（红色）
 		pOldPen=pdc->SelectObject(&pe);				//把画笔选入DC，并保存原来画笔
 	}
-//	这个值是从1开始的。
-//	P[1].x=-340,P[1].y=-200;//读入型值点，按照横坐标从小到大排序
-//	P[2].x=-150,P[2].y=0;
-//	P[3].x=0,P[3].y=-50;
-//	P[4].x=100,P[4].y=-100;
-//	P[5].x=250,P[5].y=-100;
-//	P[6].x=350,P[6].y=-50;
-
 	int iPointsSize = m_Points.size();
+
+	m_iCOntrolPointNumMinusOne=iPointsSize - 1, m_iCurveTimes=2;
+
+	//节点初始化
+	m_doubleKnots[0]=-0.5, m_doubleKnots[1]=-0.25,m_doubleKnots[2]=0.0;
+	m_doubleKnots[3]=0.25, m_doubleKnots[4]=0.5,  m_doubleKnots[5]=0.75;
+	m_doubleKnots[6]=1.0,  m_doubleKnots[7]=1.25, m_doubleKnots[8]= 1.5;
+
+//	//控制点初始化
+//	P[0].x=-460,  P[0].y=-49;
+//	P[1].x=-355,  P[1].y=204;
+//	P[2].x= -63,  P[2].y=241;
+//	P[3].x= 66,   P[3].y=-117;
+//	P[4].x= 264,  P[4].y=-101;
+//	P[5].x= 400,  P[5].y=208;
+
+	
 	CAdjustPoint *pNext = NULL;
 
-	m_objCubicSplineControlPoint = (POINT *)malloc(sizeof(POINT) * (iPointsSize + 1));
+	m_objQuadraticSplineControlPoint = new CP2[iPointsSize];
 	for(int j = 0; j < iPointsSize; j++)
 	{
 		pNext = (CAdjustPoint*)m_Points[j];
-		m_objCubicSplineControlPoint[j + 1].x = pNext->GetPoint().x;
-		m_objCubicSplineControlPoint[j + 1].y = pNext->GetPoint().y;
+		m_objQuadraticSplineControlPoint[j].x = pNext->GetPoint().x;
+		m_objQuadraticSplineControlPoint[j].y = pNext->GetPoint().y;
 	}
 
 	if (bShowSelectBorder)
 	{
-		DrawDataPoint(pdc, iPointsSize + 1);
+		DrawControlPoint(pdc, iPointsSize);
 	}
-	DrawCubicSpline(pdc, iPointsSize + 1);
-	free(m_objCubicSplineControlPoint);
+	DrawCurve(pdc, iPointsSize);
+	delete[] m_objQuadraticSplineControlPoint;
 	
 	if(m_IsMark)
 	{
@@ -185,11 +231,11 @@ void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	}
 }
 
-void CCubicSplineLine::DrawFocus(CDC *pdc)
+void CQuadraticSplineLine::DrawFocus(CDC *pdc)
 {
 	if(m_Points.size() < 2) return;
 
-	// printAllPoints("CCubicSplineLine::DrawFocus");
+	// printAllPoints("CQuadraticSplineLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
@@ -199,7 +245,7 @@ void CCubicSplineLine::DrawFocus(CDC *pdc)
 }
 
 #define DRAW_FRAME
-void CCubicSplineLine::DrawSelectBorderArea( CDC *pdc )
+void CQuadraticSplineLine::DrawSelectBorderArea( CDC *pdc )
 {
 #ifdef DRAW_FRAME
 	// 画笔为虚线，线宽为1，颜色为紫色。
@@ -248,7 +294,7 @@ void CCubicSplineLine::DrawSelectBorderArea( CDC *pdc )
 #endif
 }
 
-void CCubicSplineLine::Move(int cx, int cy)
+void CQuadraticSplineLine::Move(int cx, int cy)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -258,38 +304,38 @@ void CCubicSplineLine::Move(int cx, int cy)
 	}
 }
 
-void CCubicSplineLine::AdjustSize(CPoint &pt)
+void CQuadraticSplineLine::AdjustSize(CPoint &pt)
 {
-	// printAllPoints("CCubicSplineLine::AdjustSize Before");
+	// printAllPoints("CQuadraticSplineLine::AdjustSize Before");
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
 		pFocusConnPoint->SetPoint(pt);
 	}
-	// printAllPoints("CCubicSplineLine::AdjustSize");
+	// printAllPoints("CQuadraticSplineLine::AdjustSize");
 }
 
-void CCubicSplineLine::SetStartPoint(CPoint &pt)
+void CQuadraticSplineLine::SetStartPoint(CPoint &pt)
 {
 	if(m_Points.size() <= 0) return;
 
-	// printAllPoints("CCubicSplineLine::SetStartPoint Before");
+	// printAllPoints("CQuadraticSplineLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pStart->SetPoint(pt);
-	// printAllPoints("CCubicSplineLine::SetStartPoint");
+	// printAllPoints("CQuadraticSplineLine::SetStartPoint");
 }
 
-void CCubicSplineLine::SetEndPoint(CPoint &pt)
+void CQuadraticSplineLine::SetEndPoint(CPoint &pt)
 {
 	CAdjustPoint *pNewPoint;
 	if(!m_IsCreateEnd)
 	{
 		pNewPoint = new CAdjustPoint();
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CCubicSplineLine::SetEndPoint(NotCreateEnd) Before");
+		// printAllPoints("CQuadraticSplineLine::SetEndPoint(NotCreateEnd) Before");
 		m_Points.insert(m_Points.end(), pNewPoint);
-		// printAllPoints("CCubicSplineLine::SetEndPoint(NotCreateEnd) After");
+		// printAllPoints("CQuadraticSplineLine::SetEndPoint(NotCreateEnd) After");
 
 //		// PolyBezier的point数组大小必须是4
 //		if (m_Points.size() == BEZIERLINE_POINTS_COUNT)
@@ -299,39 +345,39 @@ void CCubicSplineLine::SetEndPoint(CPoint &pt)
 	}
 	else
 	{
-		// printAllPoints("CCubicSplineLine::SetEndPoint(CreateEnd) Before");
+		// printAllPoints("CQuadraticSplineLine::SetEndPoint(CreateEnd) Before");
 		// p = (CAdjustPoint*)m_Points.GetAt(0);
 		pNewPoint = (CAdjustPoint*)m_Points[m_Points.size()-1];
 		pNewPoint->SetPoint(pt);
-		// printAllPoints("CCubicSplineLine::SetEndPoint(CreateEnd) After");
+		// printAllPoints("CQuadraticSplineLine::SetEndPoint(CreateEnd) After");
 	}
 }
 
 
-void CCubicSplineLine::SetLastPoint( CPoint &pt )
+void CQuadraticSplineLine::SetLastPoint( CPoint &pt )
 {
 	CAdjustPoint *pLast;
 	pLast = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pLast->SetPoint(pt);
-	// printAllPoints("CCubicSplineLine::SetLastPoint");
+	// printAllPoints("CQuadraticSplineLine::SetLastPoint");
 
 }
 
-void CCubicSplineLine::GetStartPoint(CPoint &pt)
+void CQuadraticSplineLine::GetStartPoint(CPoint &pt)
 {
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
 	pt = pStart->GetPoint();
 }
 
-void CCubicSplineLine::GetEndPoint(CPoint &pt)
+void CQuadraticSplineLine::GetEndPoint(CPoint &pt)
 {
 	// CAdjustPoint *pEnd = (CAdjustPoint*)m_Points.GetAt(0);
 	CAdjustPoint *pEnd = (CAdjustPoint*)m_Points[m_Points.size()-1];
 	pt = pEnd->GetPoint();
 }
 
-void CCubicSplineLine::SetPreviousGraph(CGraph *previousGraph)
+void CQuadraticSplineLine::SetPreviousGraph(CGraph *previousGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -350,7 +396,7 @@ void CCubicSplineLine::SetPreviousGraph(CGraph *previousGraph)
 	}
 }
 
-void CCubicSplineLine::SetNextgraph(CGraph *nextGraph)
+void CQuadraticSplineLine::SetNextgraph(CGraph *nextGraph)
 {
 	if(m_IsCreateEnd)
 	{
@@ -369,31 +415,31 @@ void CCubicSplineLine::SetNextgraph(CGraph *nextGraph)
 	}
 }
 
-CGraph* CCubicSplineLine::GetPreviousGraph()
+CGraph* CQuadraticSplineLine::GetPreviousGraph()
 {
 	return m_Previous;
 }
 
-CGraph* CCubicSplineLine::GetNextgraph()
+CGraph* CQuadraticSplineLine::GetNextgraph()
 {
 	return m_Next;
 }
 
-bool CCubicSplineLine::IsEditable()
+bool CQuadraticSplineLine::IsEditable()
 {
 	return false;
 }
 
-bool CCubicSplineLine::IsControlFlow()
+bool CQuadraticSplineLine::IsControlFlow()
 {
 	return true;
 }
 
-bool CCubicSplineLine::IsIn(CPoint &pt)
+bool CQuadraticSplineLine::IsIn(CPoint &pt)
 {
 	if(m_Points.size() < 2) return false;
 
-	// printAllPoints("CCubicSplineLine::IsIn Before");
+	// printAllPoints("CQuadraticSplineLine::IsIn Before");
 	if(!m_IsCreateEnd)
 	{
 		int iPointsSize = m_Points.size();
@@ -408,7 +454,7 @@ bool CCubicSplineLine::IsIn(CPoint &pt)
 		// connPoint = (CAdjustPoint*)m_Points.GetAt(0);
 		// m_End = connPoint->GetPoint();
 	}
-	// printAllPoints("CCubicSplineLine::IsIn After");
+	// printAllPoints("CQuadraticSplineLine::IsIn After");
 
 	bool flag = false;
 	CPoint points[4];
@@ -454,7 +500,7 @@ bool CCubicSplineLine::IsIn(CPoint &pt)
 	return flag;
 }
 
-bool CCubicSplineLine::IsOn(CPoint &pt)
+bool CQuadraticSplineLine::IsOn(CPoint &pt)
 {
 	for(int i = 0; i < m_Points.size(); i++)
 	{
@@ -470,7 +516,7 @@ bool CCubicSplineLine::IsOn(CPoint &pt)
 	return false;
 }
 
-double CCubicSplineLine::GetDistance(int x1, int y1, int x2,int y2)
+double CQuadraticSplineLine::GetDistance(int x1, int y1, int x2,int y2)
 {
 	double distance = 0;
 
@@ -480,7 +526,7 @@ double CCubicSplineLine::GetDistance(int x1, int y1, int x2,int y2)
 	return distance;
 }
 
-void CCubicSplineLine::DrawArrow( CDC *pdc )
+void CQuadraticSplineLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < 2) 
 		return;
@@ -521,7 +567,7 @@ void CCubicSplineLine::DrawArrow( CDC *pdc )
 	pdc->SelectObject(oldBrush);
 }
 
-void CCubicSplineLine::SaveParamsToJSON(cJSON * objJSON)
+void CQuadraticSplineLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -578,7 +624,7 @@ void CCubicSplineLine::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CCubicSplineLine::LoadOnePointFromJSON(cJSON * objPoint)
+void CQuadraticSplineLine::LoadOnePointFromJSON(cJSON * objPoint)
 {
 	CAdjustPoint *pAdjustPoint = new CAdjustPoint();
 	CPoint point;
@@ -606,7 +652,7 @@ void CCubicSplineLine::LoadOnePointFromJSON(cJSON * objPoint)
 	m_Points.push_back(pAdjustPoint);
 }
 
-void CCubicSplineLine::LoadParamsFromJSON(cJSON * objJSON)
+void CQuadraticSplineLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	m_Points.clear();
 	cJSON *child = objJSON->child;

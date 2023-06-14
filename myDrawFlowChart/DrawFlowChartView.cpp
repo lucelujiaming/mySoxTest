@@ -54,7 +54,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ARROW_LINE,   OnToolbarArrowLine)
 	ON_COMMAND(ID_TOOLBAR_BEZIERLINE,   OnToolbarBezierLine)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_BEZIERLINE,   OnToolbarCustomBezierLine)
-	ON_COMMAND(ID_TOOLBAR_CUBICSPLINELINE,     OnToolbarCubicSplineLine)
+	ON_COMMAND(ID_TOOLBAR_CUBIC_SPLINELINE,     OnToolbarCubicSplineLine)
+	ON_COMMAND(ID_TOOLBAR_QUADRATIC_SPLINELINE,     OnToolbarQuadraticSplineLine)
 	ON_COMMAND(ID_TOOLBAR_ARC_LINE,      OnToolbarArcLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
@@ -821,6 +822,24 @@ void CDrawFlowChartView::OnCreateCubicSplineLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicSplineLine());
 }
 
+void CDrawFlowChartView::OnCreateQuadraticSplineLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = true;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.BezierLine );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateQuadraticSplineLine());
+}
+
 void CDrawFlowChartView::OnCreateArcLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -919,6 +938,12 @@ void CDrawFlowChartView::OnToolbarCubicSplineLine()
 {
 	// TODO: Add your command handler code here
 	OnCreateCubicSplineLine();
+}
+
+void CDrawFlowChartView::OnToolbarQuadraticSplineLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateQuadraticSplineLine();
 }
 
 void CDrawFlowChartView::OnToolbarArcLine() 

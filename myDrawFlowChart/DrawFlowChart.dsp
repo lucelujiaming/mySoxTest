@@ -219,6 +219,10 @@ SOURCE=.\PolygonalLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\QuadraticSplineLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Rectangle.cpp
 # End Source File
 # Begin Source File
@@ -365,6 +369,10 @@ SOURCE=.\PathManager.h
 # Begin Source File
 
 SOURCE=.\PolygonalLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\QuadraticSplineLine.h
 # End Source File
 # Begin Source File
 

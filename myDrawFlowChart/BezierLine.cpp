@@ -40,6 +40,18 @@ CBezierLine::~CBezierLine()
 
 }
 
+/************************************************************************/
+/* 其实贝塞尔曲线的平滑拼接非常简单。首先已知一个贝塞尔曲线由四点控制。 */
+/* 我们只需要让前一个曲线的第三点和第四点与后一个曲线的第一点和第二点   */
+/* 这三点共线即可。因为对于两条连续的贝塞尔曲线来说，前一个曲线的第四   */
+/* 点就是后一个曲线的第一点，两个点本来就是同一个点。                   */
+/* 这就是这个函数的逻辑。即重新设定第3K + 1个调整点，来实现平滑。       */
+/************************************************************************/
+void CBezierLine::smoothBezierLine()
+{
+	
+}
+
 void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
@@ -66,6 +78,16 @@ void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 	for(int j = 0; j < iBezierNum; j++)
 	{
+#ifdef USE_POLYBEZIERTO
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
+		pointBezier[0] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 2];
+		pointBezier[1] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 3];
+		pointBezier[2] = pNext->GetPoint();
+		// PolyBezierTo:point数组大小必须是3
+		pdc->PolyBezierTo(pointBezier, BEZIERLINE_POINTS_COUNT - 1);
+#else
 		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1)];
 		pointBezier[0] = pNext->GetPoint();
 		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
@@ -76,8 +98,9 @@ void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 		pointBezier[3] = pNext->GetPoint();
 		// PolyBezier:point数组大小必须是4
 		pdc->PolyBezier(pointBezier, BEZIERLINE_POINTS_COUNT);
-
+#endif
 	}
+	free(pointBezier);
 
 	if(m_IsMark)
 	{

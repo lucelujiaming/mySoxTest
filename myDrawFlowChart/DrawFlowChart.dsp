@@ -110,6 +110,10 @@ SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CustomBezierLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CustomRoundRectangle.cpp
 # End Source File
 # Begin Source File
@@ -249,6 +253,10 @@ SOURCE=.\BezierLine.h
 # Begin Source File
 
 SOURCE=.\BrokenLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CustomBezierLine.h
 # End Source File
 # Begin Source File
 

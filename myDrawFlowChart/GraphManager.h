@@ -47,6 +47,7 @@ public:
 	void SaveToJSON(cJSON * objJSON);
 	void LoadFromJSON(cJSON * objJSON);
 
+	void setSCreenSize(int iCXX, int iCYY);
 private:
 	void CheckLinkGraph(CGraph* graph);
 

@@ -11,16 +11,16 @@
 
 #include "Graph.h"
 
-class CGraphFactory  
+class CGraphFactory
 {
 public:
 	CGraphFactory();
 	virtual ~CGraphFactory();
 
 public:
-	CGraph* CreateDiamond();       // Adjusted
+	CGraph* CreateDiamond();
 	CGraph* CreateParallelogram();
-	CGraph* CreateRectangle();          // Adjusted
+	CGraph* CreateRectangle();
 	CGraph* CreateRoundHeadRectangle();
 	CGraph* CreateRoundRectangle();
 	CGraph* CreateCylinderGraph();
@@ -28,17 +28,18 @@ public:
 	CGraph* CreateCustomRoundRectangle();
 	CGraph* CreateLadder();
 	CGraph* CreateHexagon();
-	CGraph* CreateBrokenLine();			// NotNeed
-	CGraph* CreateLine();				// NotNeed
-	CGraph* CreateArrowLine();			// NotNeed
-	CGraph* CreateBezierLine();			// NotNeed
-	CGraph* CreateCustomBezierLine();	// NotNeed
-	CGraph* CreateCubicSplineLine();	// NotNeed
-	CGraph* CreateArcLine();			// NotNeed	
-	CGraph* CreatePolygonalLine();		// NotNeed
-	CGraph* CreateEllipse();			// Adjusted
-	CGraph* CreateStart();				// NotNeed
-	CGraph* CreateEnd();				// NotNeed
+	CGraph* CreateBrokenLine();
+	CGraph* CreateLine();
+	CGraph* CreateArrowLine();
+	CGraph* CreateBezierLine();
+	CGraph* CreateCustomBezierLine();
+	CGraph* CreateCubicSplineLine();
+	CGraph* CreateQuadraticSplineLine();
+	CGraph* CreateArcLine();
+	CGraph* CreatePolygonalLine();
+	CGraph* CreateEllipse();
+	CGraph* CreateStart();
+	CGraph* CreateEnd();
 
 };
 

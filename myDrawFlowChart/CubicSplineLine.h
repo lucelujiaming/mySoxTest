@@ -1,9 +1,9 @@
-// CustomBezierLine.h: interface for the CCustomBezierLine class.
+// CubicSplineLine.h: interface for the CCubicSplineLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_CUSTOMBEZIERLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
-#define AFX_CUSTOMBEZIERLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_
+#if !defined(AFX_CUBICSPLINELINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
+#define AFX_CUBICSPLINELINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -16,17 +16,16 @@
 
 #define ROUND(h) int((h)+0.5)//定义四舍五入
 
-#define BEZIERLINE_POINTS_COUNT            4    // PolyBezier的point数组大小必须是4
 #define BEZIERLINE_QUADRATIC               3    // 三次函数
 
-class CCustomBezierLine : public CGraph  
+class CCubicSplineLine : public CGraph  
 {
-//		DECLARE_SERIAL(CCustomBezierLine)
+//		DECLARE_SERIAL(CCubicSplineLine)
 
 public:
-	CCustomBezierLine();
-	virtual ~CCustomBezierLine();
-	CString GetTypeName() { return CString("CCustomBezierLine"); }
+	CCubicSplineLine();
+	virtual ~CCubicSplineLine();
+	CString GetTypeName() { return CString("CCubicSplineLine"); }
 
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
@@ -64,13 +63,10 @@ private:
 	void DrawArrow( CDC *pdc );
 
 private:
-	int m_iBezierFunctionTimes ;//曲线的次数
-	CP2 m_objBezierCurveControlPoint[100];//曲线的控制点数组
-
-	void DrawBezier(CDC*pDC);                             // 绘制Bezier曲线
-	int Cni(const int& iFunctionTimes,const int&iPower);  // 计算C_ni
-	int Factorial(int iTimes);                            // 计算阶乘
-	void DrawControlPolygon(CDC*pDC);                     // 绘制控制多边形
+	POINT m_objCubicSplineControlPoint[7];
+	void ReadPoint(void);
+	void DrawDataPoint(CDC*pDC, int n);
+	void DrawCubicSpline(CDC*pDC, int n);
 
 private:
 	//CObArray m_Points;
@@ -81,4 +77,4 @@ private:
 //	CGraph* m_Next;
 };
 
-#endif // !defined(AFX_CUSTOMBEZIERLINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)
+#endif // !defined(AFX_CUBICSPLINELINE_H__780ECDA0_093A_460B_95A0_4172D5F78CB3__INCLUDED_)

@@ -362,6 +362,15 @@ void CGraphManager::LoadFromJSON(cJSON * objJSON)
 	return ;
 }
 
+void CGraphManager::setSCreenSize(int iCXX, int iCYY)
+{
+	for(int i = 0; i < GetGraphSum(); i++)
+	{
+		// 调用每一个图形对象的Draw函数
+		GetGraphAt(i)->setSCreenSize(iCXX, iCXX);
+	}
+}
+
 /************************************************************************/
 /* 功能：路径处理。                                                     */
 /************************************************************************/

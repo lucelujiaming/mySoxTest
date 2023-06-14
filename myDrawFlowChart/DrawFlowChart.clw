@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=CMainFrame
+LastClass=CDrawFlowChartView
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "DrawFlowChart.h"
@@ -15,9 +15,9 @@ Class3=CDrawFlowChartView
 Class4=CMainFrame
 
 ResourceCount=2
-Resource1=IDR_MAINFRAME
+Resource1=IDD_ABOUTBOX
 Class5=CAboutDlg
-Resource2=IDD_ABOUTBOX
+Resource2=IDR_MAINFRAME
 
 [CLS:CDrawFlowChartApp]
 Type=0
@@ -51,7 +51,7 @@ ImplementationFile=MainFrm.cpp
 Filter=T
 BaseClass=CFrameWnd
 VirtualFilter=fWC
-LastObject=ID_VIEW_SELECT_BORDER
+LastObject=CMainFrame
 
 
 
@@ -153,11 +153,12 @@ Command21=ID_TOOLBAR_BROKEN_LINE
 Command22=ID_TOOLBAR_POLYGONAL_LINE
 Command23=ID_TOOLBAR_GENERICLINE
 Command24=ID_TOOLBAR_BEZIER_LINE
-Command25=ID_TOOLBAR_ARC_LINE
-Command26=ID_TOOLBAR_ARROW_LINE
-Command27=ID_TOOLBAR_SEARCH
-Command28=ID_TOOLBAR_NEXT
-Command29=ID_TOOLBAR_STOP
-Command30=ID_APP_ABOUT
-CommandCount=30
+Command25=ID_TOOLBAR_CUSTOM_BEZIERLINE
+Command26=ID_TOOLBAR_ARC_LINE
+Command27=ID_TOOLBAR_ARROW_LINE
+Command28=ID_TOOLBAR_SEARCH
+Command29=ID_TOOLBAR_NEXT
+Command30=ID_TOOLBAR_STOP
+Command31=ID_APP_ABOUT
+CommandCount=31
 

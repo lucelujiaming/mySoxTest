@@ -95,6 +95,9 @@ public:
 	
 	int  getGraphSeq() { return m_iGraphSeq ; }
 	void setGraphSeq(int iGraphSeq) { m_iGraphSeq = iGraphSeq; }
+	
+	void setSCreenSize(int iCXX, int iCYY) { m_ScreenX = iCXX, m_ScreenY = iCYY; }
+
 public:
 	bool m_IsMark; // 是否标记
 	CString m_text; // 描述文字
@@ -106,6 +109,9 @@ public:
 	int     m_iPreviousConnPointIdx ;
 	int     m_iNextGraphSeq ;
 	int     m_iNextConnPointIdx ;
+
+	int   m_ScreenX;
+	int   m_ScreenY;
 
 protected:
 	CPoint m_Start; // 开始点

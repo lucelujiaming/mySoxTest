@@ -52,7 +52,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_END, OnToolbarEnd)
 	ON_COMMAND(ID_TOOLBAR_BROKEN_LINE, OnToolbarBrokenLine)
 	ON_COMMAND(ID_TOOLBAR_ARROW_LINE,   OnToolbarArrowLine)
-	ON_COMMAND(ID_TOOLBAR_BEZIER_LINE,   OnToolbarBezierLine)
+	ON_COMMAND(ID_TOOLBAR_BEZIERLINE,   OnToolbarBezierLine)
+	ON_COMMAND(ID_TOOLBAR_CUSTOM_BEZIERLINE,   OnToolbarCustomBezierLine)
 	ON_COMMAND(ID_TOOLBAR_ARC_LINE,      OnToolbarArcLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
 	ON_COMMAND(ID_TOOLBAR_GENERICLINE, OnToolbarGenericLine)
@@ -63,15 +64,16 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_PARALLELOGRAM, OnToolbarParallelogram)
 	ON_COMMAND(ID_TOOLBAR_RECTANGLE, OnToolbarRectangle)
 	ON_COMMAND(ID_TOOLBAR_ROUNDHEAD_RECTANGLE, OnToolbarRoundHeadRectangle)
+	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
+	ON_COMMAND(ID_TOOLBAR_START, OnToolbarStart)
+	ON_COMMAND(ID_TOOLBAR_STOP, OnToolbarStop)
 	ON_COMMAND(ID_TOOLBAR_ROUNDRECTANGLE, OnCreateRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_CYLINDER, OnCreateCylinderGraph)
 	ON_COMMAND(ID_TOOLBAR_DOCUMENT, OnCreateDocumentGraph)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
-	ON_COMMAND(ID_TOOLBAR_SEARCH, OnToolbarSearch)
-	ON_COMMAND(ID_TOOLBAR_START, OnToolbarStart)
-	ON_COMMAND(ID_TOOLBAR_STOP, OnToolbarStop)
+	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
@@ -782,6 +784,24 @@ void CDrawFlowChartView::OnCreateBezierLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBezierLine());
 }
 
+void CDrawFlowChartView::OnCreateCustomBezierLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = true;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.BezierLine );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCustomBezierLine());
+}
+
 void CDrawFlowChartView::OnCreateArcLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -868,6 +888,12 @@ void CDrawFlowChartView::OnToolbarBezierLine()
 {
 	// TODO: Add your command handler code here
 	OnCreateBezierLine();
+}
+
+void CDrawFlowChartView::OnToolbarCustomBezierLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCustomBezierLine();
 }
 
 void CDrawFlowChartView::OnToolbarArcLine() 
@@ -982,4 +1008,13 @@ void CDrawFlowChartView::OnToolbarStop()
 {
 	// TODO: Add your command handler code here
 	OnStopMark();
+}
+
+void CDrawFlowChartView::OnSize(UINT nType, int cx, int cy) 
+{
+	CView::OnSize(nType, cx, cy);
+	
+	// TODO: Add your message handler code here
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	pDoc->m_GraphManager.setSCreenSize(cx, cy);
 }

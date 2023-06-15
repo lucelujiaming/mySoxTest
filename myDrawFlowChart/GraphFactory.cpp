@@ -28,6 +28,7 @@
 #include "BrokenLine.h"
 #include "Start.h"
 #include "End.h"
+#include "CubicBox.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -127,6 +128,11 @@ CGraph* CGraphFactory::CreateCustomBezierLine()
 CGraph* CGraphFactory::CreateCubicSplineLine()
 {
 	return new CCubicSplineLine();
+}
+
+CGraph* CGraphFactory::CreateCubicBox()
+{
+	return new CCubicBox();
 }
 
 CGraph* CGraphFactory::CreateQuadraticSplineLine()

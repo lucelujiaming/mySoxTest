@@ -7,6 +7,7 @@
 #include "MainFrm.h"
 #include "DrawFlowChartDoc.h"
 #include "DrawFlowChartView.h"
+#include "CubicBox.h"
 
 #include <math.h>
 
@@ -53,8 +54,9 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_BROKEN_LINE, OnToolbarBrokenLine)
 	ON_COMMAND(ID_TOOLBAR_ARROW_LINE,   OnToolbarArrowLine)
 	ON_COMMAND(ID_TOOLBAR_BEZIERLINE,   OnToolbarBezierLine)
-	ON_COMMAND(ID_TOOLBAR_CUSTOM_BEZIERLINE,   OnToolbarCustomBezierLine)
+	ON_COMMAND(ID_TOOLBAR_CUSTOM_BEZIERLINE,    OnToolbarCustomBezierLine)
 	ON_COMMAND(ID_TOOLBAR_CUBIC_SPLINELINE,     OnToolbarCubicSplineLine)
+	ON_COMMAND(ID_TOOLBAR_CUBIC_BOX,			OnToolbarCubicBox)
 	ON_COMMAND(ID_TOOLBAR_QUADRATIC_SPLINELINE,     OnToolbarQuadraticSplineLine)
 	ON_COMMAND(ID_TOOLBAR_ARC_LINE,      OnToolbarArcLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
@@ -415,12 +417,54 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	// TODO: Add your message handler code here and/or call default
 	switch(nChar)
 	{
-	    case VK_DELETE:
+	case VK_DELETE:
+		{
+			pDoc->m_GraphManager.DeleteFocusGraph();
+			Invalidate();
+			break;
+		}
+	case VK_UP:
+		{
+			CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
-				pDoc->m_GraphManager.DeleteFocusGraph();
+				((CCubicBox *)focusGraph)->upBox();
 				Invalidate();
-				break;
 			}
+		}
+		break;
+	case VK_DOWN:
+		{
+			CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
+			{
+				((CCubicBox *)focusGraph)->downBox();
+				Invalidate();
+			}
+		}
+		break;
+	case VK_LEFT:
+		{
+			CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
+			{
+				((CCubicBox *)focusGraph)->leftBox();
+				Invalidate();
+			}
+		}
+		break;
+	case VK_RIGHT:
+		{
+			CGraph* focusGraph = pDoc->m_GraphManager.GetFocusGraph();
+			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
+			{
+				((CCubicBox *)focusGraph)->rightBox();
+				Invalidate();
+			}
+		}
+		break;
+	default:
+		break;
 	}
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -822,6 +866,14 @@ void CDrawFlowChartView::OnCreateCubicSplineLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicSplineLine());
 }
 
+void CDrawFlowChartView::OnCreateCubicBox() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicBox());
+	Invalidate();
+}
+
 void CDrawFlowChartView::OnCreateQuadraticSplineLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -938,6 +990,12 @@ void CDrawFlowChartView::OnToolbarCubicSplineLine()
 {
 	// TODO: Add your command handler code here
 	OnCreateCubicSplineLine();
+}
+
+void CDrawFlowChartView::OnToolbarCubicBox() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCubicBox();
 }
 
 void CDrawFlowChartView::OnToolbarQuadraticSplineLine() 

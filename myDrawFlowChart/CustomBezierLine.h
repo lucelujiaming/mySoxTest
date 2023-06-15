@@ -37,6 +37,8 @@ public:
 	void Move( int cx, int cy );
 	void AdjustSize( CPoint &pt );
 
+	void smoothBezierLine();
+
 	void SaveParamsToJSON(cJSON * objJSON);
 	void LoadParamsFromJSON(cJSON * objJSON);
 private:

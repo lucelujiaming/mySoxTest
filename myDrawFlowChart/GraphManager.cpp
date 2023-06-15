@@ -13,6 +13,8 @@
 #include "GenericLine.h"
 #include "ArrowLine.h"
 #include "BrokenLine.h"
+#include "BezierLine.h"
+#include "CustomBezierLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -332,6 +334,22 @@ void CGraphManager::CheckAllLinkGraph()
 					}
 				}
 			}
+		}
+	}
+}
+
+void CGraphManager::SmoothAllBreizerLink()
+{
+	for(int i = 0; i < GetGraphSum(); i++)
+	{
+		CGraph* objGraph = GetGraphAt(i);
+		if(objGraph->GetTypeName() == "CBezierLine")
+		{
+			((CBezierLine *)objGraph)->smoothBezierLine();
+		}
+		else if(objGraph->GetTypeName() == "CCustomBezierLine")
+		{
+			((CCustomBezierLine *)objGraph)->smoothBezierLine();
 		}
 	}
 }

@@ -186,12 +186,13 @@ void CQuadraticSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	}
 	int iPointsSize = m_Points.size();
 
-	m_iCOntrolPointNumMinusOne=iPointsSize - 1, m_iCurveTimes=2;
+	m_iCOntrolPointNumMinusOne=iPointsSize - 1, m_iCurveTimes=3;
 
 	//节点初始化
 	m_doubleKnots[0]=-0.5, m_doubleKnots[1]=-0.25,m_doubleKnots[2]=0.0;
 	m_doubleKnots[3]=0.25, m_doubleKnots[4]=0.5,  m_doubleKnots[5]=0.75;
 	m_doubleKnots[6]=1.0,  m_doubleKnots[7]=1.25, m_doubleKnots[8]= 1.5;
+	// m_doubleKnots[9]=2.0,  m_doubleKnots[10]=1.25, m_doubleKnots[11]= 1.5;
 
 //	//控制点初始化
 //	P[0].x=-460,  P[0].y=-49;
@@ -200,7 +201,6 @@ void CQuadraticSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 //	P[3].x= 66,   P[3].y=-117;
 //	P[4].x= 264,  P[4].y=-101;
 //	P[5].x= 400,  P[5].y=208;
-
 	
 	CAdjustPoint *pNext = NULL;
 

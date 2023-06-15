@@ -1,11 +1,11 @@
-// CubicBox.cpp: implementation of the CCubicBox class.
+// MeshSphere.cpp: implementation of the CMeshSphere class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "MainFrm.h"
 #include "DrawFlowChart.h"
-#include "CubicBox.h"
+#include "MeshSphere.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -16,12 +16,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CCubicBox, CObject, 1)
+// IMPLEMENT_SERIAL(CMeshSphere, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。写死了起始点和结束点。还设定了连接点。               */
 /************************************************************************/
-CCubicBox::CCubicBox()
+CMeshSphere::CMeshSphere()
 {
 	m_text = "Cubic";
 	m_Start = CPoint(100, 100);
@@ -39,29 +39,40 @@ CCubicBox::CCubicBox()
 //	Beta=0;
 	ReadPoint();
 	ReadFacet();
-	tran.SetMatrix(P,8);
+	tran.SetMatrix(P,614);
 
 }
 
-CCubicBox::~CCubicBox()
+CMeshSphere::~CMeshSphere()
 {
 
 }
 
-void CCubicBox::ReadPoint(void)
+void CMeshSphere::ReadPoint(void)
 {
-	double a=20;//立方体边长为2a，中心点在几何体心
-	P[0].x=-a;P[0].y=-a;P[0].z=-a;//定义所有的点坐标，注意点要按照顺序进行赋值连接
-	P[1].x=+a;P[1].y=-a;P[1].z=-a;
-	P[2].x=+a;P[2].y=+a;P[2].z=-a;
-	P[3].x=-a;P[3].y=+a;P[3].z=-a;
-	P[4].x=-a;P[4].y=-a;P[4].z=+a;
-	P[5].x=+a;P[5].y=-a;P[5].z=+a;
-	P[6].x=+a;P[6].y=+a;P[6].z=+a;
-	P[7].x=-a;P[7].y=+a;P[7].z=+a;
+	int sAlpha=10,sBeta=10;//维度方向与经度方向的等分线
+	double sAlpha1,sBeta1,r=200;//r为球半径
+	N1=180/sAlpha,N2=360/sBeta;
+	P[0].x=0;//计算北极点坐标
+	P[0].y=r;
+	P[0].z=0;
+	for(int i=0;i<N1-1;i++)
+	{ 
+		sAlpha1=(i+1)*sAlpha*PI/180;
+		for(int j=0;j<N2;j++)
+		{
+			sBeta1=j*sBeta*PI/180;
+			P[i*N2+j+1].x=r*sin(sAlpha1)*sin(sBeta1);
+			P[i*N2+j+1].y=r*cos(sAlpha1);
+			P[i*N2+j+1].z=r*sin(sAlpha1)*cos(sBeta1);
+		}
+	}
+	P[(N1-1)*N2+1].x=0;//计算南极点坐标
+	P[(N1-1)*N2+1].y=-r;
+	P[(N1-1)*N2+1].z=0;
 }
 
-void CCubicBox::DoubleBuffer(CDC* pDC)//双缓冲
+void CMeshSphere::DoubleBuffer(CDC* pDC)//双缓冲
 {
 	CRect rect;//定义客户区矩形
 	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
@@ -88,39 +99,104 @@ void CCubicBox::DoubleBuffer(CDC* pDC)//双缓冲
 	memDC.DeleteDC();//删除memDC
 }
 
-void CCubicBox::DrawGraph(CDC* pDC, CPoint ptStart)//绘制立方体线框
+void CMeshSphere::DrawGraph(CDC* pDC, CPoint ptStart)//绘制立方体线框
 {
-	CPoint ScreenP[4];	
-	for(int nFacet=0;nFacet<6;nFacet++)//面循环
-	{		
-		for(int nPoint=0;nPoint<4;nPoint++)//顶点循环
+	CPoint Point3[3];//南北极顶点数
+	CPoint Point4[4];//球体顶点数
+	for(int i=0;i<N1;i++)
+	{
+		for(int j=0;j<N2;j++)
 		{
-			ScreenP[nPoint].x=P[F[nFacet].pIndex[nPoint]].x;
-			ScreenP[nPoint].y=P[F[nFacet].pIndex[nPoint]].y;
-			ScreenP[nPoint] += ptStart;
+			if(3==F[i][j].pNumber)//绘制三角形网格
+			{
+				for(int m=0;m<F[i][j].pNumber;m++)
+				{
+					Point3[m].x=ROUND(P[F[i][j].pIndex[m]].x);//正交投影
+					Point3[m].y=ROUND(P[F[i][j].pIndex[m]].y);
+					Point3[m] += ptStart;
+				}
+				pDC->MoveTo(Point3[0].x,Point3[0].y);
+				pDC->LineTo(Point3[1].x,Point3[1].y);
+				pDC->LineTo(Point3[2].x,Point3[2].y);
+				pDC->LineTo(Point3[0].x,Point3[0].y);
+			}
+			else//绘制四边形网格
+			{
+				for(int m=0;m<F[i][j].pNumber;m++)
+				{
+					Point4[m].x=ROUND(P[F[i][j].pIndex[m]].x);
+					Point4[m].y=ROUND(P[F[i][j].pIndex[m]].y);
+					Point4[m] += ptStart;
+				}
+				pDC->MoveTo(Point4[0].x,Point4[0].y);
+				pDC->LineTo(Point4[1].x,Point4[1].y);
+				pDC->LineTo(Point4[2].x,Point4[2].y);
+				pDC->LineTo(Point4[3].x,Point4[3].y);
+				pDC->LineTo(Point4[0].x,Point4[0].y);
+			}
 		}
-		pDC->MoveTo(ScreenP[0].x,ScreenP[0].y);
-		pDC->LineTo(ScreenP[1].x,ScreenP[1].y);
-		pDC->LineTo(ScreenP[2].x,ScreenP[2].y);
-		pDC->LineTo(ScreenP[3].x,ScreenP[3].y);
-		pDC->LineTo(ScreenP[0].x,ScreenP[0].y);//闭合多边形
 	}
 }
 
-void CCubicBox::ReadFacet(void)
+void CMeshSphere::ReadFacet(void)
 {
-	F[0].pIndex[0]=4;	F[0].pIndex[1]=5;	F[0].pIndex[2]=6;	F[0].pIndex[3]=7;//每个面按照序号最小顶点依次逆时针连接
-	F[1].pIndex[0]=0;	F[1].pIndex[1]=3;	F[1].pIndex[2]=2;	F[1].pIndex[3]=1;
-	F[2].pIndex[0]=0;	F[2].pIndex[1]=4;	F[2].pIndex[2]=7;	F[2].pIndex[3]=3;
-	F[3].pIndex[0]=1;	F[3].pIndex[1]=2;	F[3].pIndex[2]=6;	F[3].pIndex[3]=5;
-	F[4].pIndex[0]=2;	F[4].pIndex[1]=3;	F[4].pIndex[2]=7;	F[4].pIndex[3]=6;
-	F[5].pIndex[0]=0;	F[5].pIndex[1]=1;	F[5].pIndex[2]=5;	F[5].pIndex[3]=4;
+	for(int i=0;i<N2;i++)//构造北极三角网格
+	{
+		int tempi=i+1;
+		if(N2==tempi)
+			tempi=0;
+		int NorthIndex[3];
+		NorthIndex[0]=0;
+		NorthIndex[1]=i+1;
+		NorthIndex[2]=tempi+1;
+		for(int k=0;k<3;k++)
+		{
+			F[0][i].pIndex[k]=NorthIndex[k];
+			F[0][i].pNumber=3;
+		}
+	}
+	for( i=1;i<N1-1;i++)//构造球面四边形网格
+	{
+		for(int j=0;j<N2;j++)
+		{
+			int tempi=i+1;
+			int tempj=j+1;
+			if(tempj==N2)
+				tempj=0;
+			int BodyIndex[4];
+			BodyIndex[0]=(i-1)*N2+j+1;	
+			BodyIndex[1]=(tempi-1)*N2+j+1;
+			BodyIndex[2]=(tempi-1)*N2+tempj+1;
+			BodyIndex[3]=(i-1)*N2+tempj+1;
+			for(int k=0;k<4;k++)
+			{
+				F[i][j].pIndex[k]=BodyIndex[k];
+				F[i][j].pNumber=4;
+			}
+		}
+	}
+
+	for(int j=0;j<N2;j++)//构造南极三角形网格
+	{
+		int tempj=j+1;
+		if(N2==tempj)
+			tempj=0;
+		int SouthIndex[3];
+		SouthIndex[0]=(N1-2)*N2+j+1;
+		SouthIndex[1]=(N1-1)*N2+1;
+		SouthIndex[2]=(N1-2)*N2+tempj+1;
+		for(int k=0;k<3;k++)
+		{
+			F[N1-1][j].pIndex[k]=SouthIndex[k];
+			F[N1-1][j].pNumber=3;
+		}
+	}
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CCubicBox::Draw(CDC *pdc, BOOL bShowSelectBorder)
+void CMeshSphere::Draw(CDC *pdc, BOOL bShowSelectBorder)
 {
 	AdjustFocusPoint();
 
@@ -147,7 +223,7 @@ void CCubicBox::Draw(CDC *pdc, BOOL bShowSelectBorder)
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CCubicBox::DrawFocus(CDC *pdc)
+void CMeshSphere::DrawFocus(CDC *pdc)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < m_Points.size(); i++)
@@ -160,7 +236,7 @@ void CCubicBox::DrawFocus(CDC *pdc)
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CCubicBox::Move(int cx, int cy)
+void CMeshSphere::Move(int cx, int cy)
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -169,7 +245,7 @@ void CCubicBox::Move(int cx, int cy)
 /************************************************************************/
 /* 功能：判断是否可编辑。                                               */
 /************************************************************************/
-bool CCubicBox::IsEditable()
+bool CMeshSphere::IsEditable()
 {
 	return false;
 }
@@ -177,7 +253,7 @@ bool CCubicBox::IsEditable()
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CCubicBox::IsIn(CPoint &pt)
+bool CMeshSphere::IsIn(CPoint &pt)
 {
 	bool flag = false;
 	CRect rectStart = CRect( m_Start, m_End );
@@ -191,7 +267,7 @@ bool CCubicBox::IsIn(CPoint &pt)
 /************************************************************************/
 /* 功能： 判断是否在图元边界上。                                        */
 /************************************************************************/
-int CCubicBox::IsConnectOn(CAdjustPoint *pt)
+int CMeshSphere::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -209,7 +285,7 @@ int CCubicBox::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整连接点坐标。                         */
 /************************************************************************/
-void CCubicBox::AdjustFocusPoint()
+void CMeshSphere::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -239,7 +315,7 @@ void CCubicBox::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CCubicBox::SaveParamsToJSON(cJSON * objJSON)
+void CMeshSphere::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -269,7 +345,7 @@ void CCubicBox::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CCubicBox::LoadParamsFromJSON(cJSON * objJSON)
+void CMeshSphere::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

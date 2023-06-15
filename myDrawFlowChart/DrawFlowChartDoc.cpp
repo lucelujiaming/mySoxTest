@@ -174,6 +174,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateCubicBox(), child);
                 }
+				else if(strcmp(child->string, "CMeshSphere") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateMeshSphere(), child);
+                }
 				else if(strcmp(child->string, "CQuadraticSplineLine") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateQuadraticSplineLine(), child);

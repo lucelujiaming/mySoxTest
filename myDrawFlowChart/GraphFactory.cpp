@@ -29,6 +29,7 @@
 #include "Start.h"
 #include "End.h"
 #include "CubicBox.h"
+#include "MeshSphere.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -133,6 +134,11 @@ CGraph* CGraphFactory::CreateCubicSplineLine()
 CGraph* CGraphFactory::CreateCubicBox()
 {
 	return new CCubicBox();
+}
+
+CGraph* CGraphFactory::CreateMeshSphere()
+{
+	return new CMeshSphere();
 }
 
 CGraph* CGraphFactory::CreateQuadraticSplineLine()

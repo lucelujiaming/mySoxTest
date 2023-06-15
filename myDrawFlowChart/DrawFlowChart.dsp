@@ -203,6 +203,10 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MeshSphere.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\OrthogonalWire.cpp
 # End Source File
 # Begin Source File
@@ -369,6 +373,10 @@ SOURCE=.\LogFile.h
 # Begin Source File
 
 SOURCE=.\MainFrm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MeshSphere.h
 # End Source File
 # Begin Source File
 

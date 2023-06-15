@@ -8,6 +8,7 @@
 #include "DrawFlowChartDoc.h"
 #include "DrawFlowChartView.h"
 #include "CubicBox.h"
+#include "MeshSphere.h"
 
 #include <math.h>
 
@@ -57,6 +58,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_BEZIERLINE,    OnToolbarCustomBezierLine)
 	ON_COMMAND(ID_TOOLBAR_CUBIC_SPLINELINE,     OnToolbarCubicSplineLine)
 	ON_COMMAND(ID_TOOLBAR_CUBIC_BOX,			OnToolbarCubicBox)
+	ON_COMMAND(ID_TOOLBAR_MESH_SPHERE,			OnToolbarMeshSphere)
 	ON_COMMAND(ID_TOOLBAR_QUADRATIC_SPLINELINE,     OnToolbarQuadraticSplineLine)
 	ON_COMMAND(ID_TOOLBAR_ARC_LINE,      OnToolbarArcLine)
 	ON_COMMAND(ID_TOOLBAR_POLYGONAL_LINE,   OnToolbarPolygonalLine)
@@ -430,6 +432,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CCubicBox *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CMeshSphere")
+			{
+				((CMeshSphere *)focusGraph)->upBox();
+			}
 			else
 			{
 				pDoc->m_GraphManager.Move(0, -2);
@@ -443,6 +449,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CMeshSphere")
+			{
+				((CMeshSphere *)focusGraph)->downBox();
 			}
 			else
 			{
@@ -458,6 +468,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CCubicBox *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CMeshSphere")
+			{
+				((CMeshSphere *)focusGraph)->leftBox();
+			}
 			else
 			{
 				pDoc->m_GraphManager.Move(-2, 0);
@@ -471,6 +485,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CMeshSphere")
+			{
+				((CMeshSphere *)focusGraph)->rightBox();
 			}
 			else
 			{
@@ -890,6 +908,14 @@ void CDrawFlowChartView::OnCreateCubicBox()
 	Invalidate();
 }
 
+void CDrawFlowChartView::OnCreateMeshSphere() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMeshSphere());
+	Invalidate();
+}
+
 void CDrawFlowChartView::OnCreateQuadraticSplineLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1012,6 +1038,12 @@ void CDrawFlowChartView::OnToolbarCubicBox()
 {
 	// TODO: Add your command handler code here
 	OnCreateCubicBox();
+}
+
+void CDrawFlowChartView::OnToolbarMeshSphere() 
+{
+	// TODO: Add your command handler code here
+	OnCreateMeshSphere();
 }
 
 void CDrawFlowChartView::OnToolbarQuadraticSplineLine() 

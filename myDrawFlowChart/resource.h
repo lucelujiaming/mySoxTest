@@ -47,6 +47,7 @@
 #define ID_TOOLBAR_QUADRATIC_SPLINELINE 32841
 #define ID_EDIT_SMOOTH_BEZIERLINE       32842
 #define ID_TOOLBAR_CUBIC_BOX            32845
+#define ID_TOOLBAR_MESH_SPHERE          32847
 
 // Next default values for new objects
 // 
@@ -54,7 +55,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_COMMAND_VALUE         32846
+#define _APS_NEXT_COMMAND_VALUE         32848
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

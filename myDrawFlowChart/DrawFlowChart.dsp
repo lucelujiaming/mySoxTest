@@ -110,6 +110,10 @@ SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CubicBox.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CubicSplineLine.cpp
 # End Source File
 # Begin Source File
@@ -158,6 +162,10 @@ SOURCE=.\End.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Facet.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\flowchart_cJSON.cpp
 # SUBTRACT CPP /YX /Yc /Yu
 # End Source File
@@ -203,6 +211,10 @@ SOURCE=.\P2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\P3.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Parallelogram.cpp
 # End Source File
 # Begin Source File
@@ -242,6 +254,10 @@ SOURCE=.\Start.cpp
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
+# Begin Source File
+
+SOURCE=.\Transform3.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -265,6 +281,10 @@ SOURCE=.\BezierLine.h
 # Begin Source File
 
 SOURCE=.\BrokenLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CubicBox.h
 # End Source File
 # Begin Source File
 
@@ -312,6 +332,10 @@ SOURCE=.\End.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Facet.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\flowchart_cJSON.h
 # End Source File
 # Begin Source File
@@ -356,6 +380,10 @@ SOURCE=.\P2.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\P3.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Parallelogram.h
 # End Source File
 # Begin Source File
@@ -397,6 +425,10 @@ SOURCE=.\Start.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Transform3.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

@@ -34,6 +34,7 @@ public:
 	CGraph* CreateBezierLine();
 	CGraph* CreateCustomBezierLine();
 	CGraph* CreateCubicSplineLine();
+	CGraph* CreateCubicBox();
 	CGraph* CreateQuadraticSplineLine();
 	CGraph* CreateArcLine();
 	CGraph* CreatePolygonalLine();

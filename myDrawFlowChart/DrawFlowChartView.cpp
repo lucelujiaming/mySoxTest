@@ -429,8 +429,12 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->upBox();
-				Invalidate();
 			}
+			else
+			{
+				pDoc->m_GraphManager.Move(0, -2);
+			}
+			Invalidate();
 		}
 		break;
 	case VK_DOWN:
@@ -439,8 +443,12 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->downBox();
-				Invalidate();
 			}
+			else
+			{
+				pDoc->m_GraphManager.Move(0, 2);
+			}
+			Invalidate();
 		}
 		break;
 	case VK_LEFT:
@@ -449,8 +457,12 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->leftBox();
-				Invalidate();
 			}
+			else
+			{
+				pDoc->m_GraphManager.Move(-2, 0);
+			}
+			Invalidate();
 		}
 		break;
 	case VK_RIGHT:
@@ -459,8 +471,12 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if(focusGraph && focusGraph->GetTypeName() == "CCubicBox")
 			{
 				((CCubicBox *)focusGraph)->rightBox();
-				Invalidate();
 			}
+			else
+			{
+				pDoc->m_GraphManager.Move(2, 0);
+			}
+			Invalidate();
 		}
 		break;
 	default:

@@ -5,6 +5,7 @@
 #include "DrawFlowChart.h"
 
 #include "flowchart_cJSON.h"
+#include "MainFrm.h"
 #include "DrawFlowChartDoc.h"
 #include "DrawFlowChartView.h"
 
@@ -21,8 +22,7 @@ IMPLEMENT_DYNCREATE(CDrawFlowChartDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CDrawFlowChartDoc, CDocument)
 	//{{AFX_MSG_MAP(CDrawFlowChartDoc)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
+	ON_COMMAND(ID_EDIT_SMOOTH_BEZIERLINE, OnEditSmoothBezierline)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -252,4 +252,12 @@ void CDrawFlowChartDoc::saveJSONToFile(cJSON * objJSON, LPCTSTR lpszPathName)
     file.Close();
 	
 	free(pPrintPtr);
+}
+
+void CDrawFlowChartDoc::OnEditSmoothBezierline() 
+{
+	// TODO: Add your command handler code here
+	m_GraphManager.SmoothAllBreizerLink();
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	pMain->Invalidate();
 }

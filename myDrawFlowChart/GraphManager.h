@@ -48,6 +48,9 @@ public:
 	void LoadFromJSON(cJSON * objJSON);
 
 	void setSCreenSize(int iCXX, int iCYY);
+
+	void SmoothAllBreizerLink();
+
 private:
 	void CheckLinkGraph(CGraph* graph);
 

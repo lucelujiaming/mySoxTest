@@ -154,6 +154,7 @@ BEGIN
         MENUITEM "¼ôÇÐ(&T)\tCtrl+X",            ID_EDIT_CUT
         MENUITEM "¸´ÖÆ(&C)\tCtrl+C",            ID_EDIT_COPY
         MENUITEM "Õ³Ìù(&P)\tCtrl+V",            ID_EDIT_PASTE
+        MENUITEM "±´Èû¶ûÆ½»¬",                  ID_EDIT_SMOOTH_BEZIERLINE
     END
     POPUP "²é¿´(&V)"
     BEGIN

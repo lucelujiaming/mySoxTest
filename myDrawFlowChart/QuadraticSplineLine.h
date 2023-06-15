@@ -72,7 +72,7 @@ private:
 	 //绘制控制点
 	 void DrawControlPoint(CDC*pDC, int iNum);
 private:
-	double m_doubleKnots[9];	//定义节点矢量数组
+	double m_doubleKnots[100];	//定义节点矢量数组
 	int m_iCOntrolPointNumMinusOne;          //控制点个数减1
 	int m_iCurveTimes;          //次数
 	CP2 * m_objQuadraticSplineControlPoint;       //控制点坐标

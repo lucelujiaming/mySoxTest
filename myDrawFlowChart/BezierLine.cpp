@@ -49,7 +49,25 @@ CBezierLine::~CBezierLine()
 /************************************************************************/
 void CBezierLine::smoothBezierLine()
 {
-	
+	int iPointsSize = m_Points.size();
+	int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
+
+	CPoint pointAdjustGroup[3];
+	CPoint pointDiff;
+	CAdjustPoint *pNext = NULL;
+	for(int j = 1; j < iBezierNum; j++)
+	{
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) - 1];
+		pointAdjustGroup[0] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1)];
+		pointAdjustGroup[1] = pNext->GetPoint();
+		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
+		pointAdjustGroup[2] = pNext->GetPoint();
+		
+		pointDiff = pointAdjustGroup[1] - pointAdjustGroup[0];
+		pointAdjustGroup[2] = pointAdjustGroup[1] + pointDiff;
+		pNext->SetPoint(pointAdjustGroup[2]);
+	}
 }
 
 void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )

@@ -76,6 +76,7 @@ IDR_DRAWFLTYPE          ICON    DISCARDABLE     "res\\DrawFlowChartDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_TOOLBAR_GRAPHICS    BITMAP  DISCARDABLE     "res\\graphics.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -123,6 +124,15 @@ BEGIN
     BUTTON      ID_TOOLBAR_STOP
     SEPARATOR
     BUTTON      ID_APP_ABOUT
+END
+
+IDR_TOOLBAR_GRAPHICS TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_TOOLBAR_DDA_LINES
+    SEPARATOR
+    BUTTON      ID_TOOLBAR_BRESENHAM_DDALINES
+    BUTTON      ID_TOOLBAR_MIDDLE_LINES
+    BUTTON      ID_TOOLBAR_MIDDLE_CIRCLE
 END
 
 
@@ -445,7 +455,7 @@ BEGIN
     ID_TOOLBAR_CUBIC_SPLINELINE "创建三次样条曲线\n三次样条曲线"
     ID_TOOLBAR_QUADRATIC_SPLINELINE "创建二次样条曲线\n二次样条曲线"
     ID_TOOLBAR_CUBIC_BOX    "创建立方体\n立方体"
-    ID_TOOLBAR_MESH_SPHERE    "创建网格球体\n网格球体"
+    ID_TOOLBAR_MESH_SPHERE  "创建网格球体\n网格球体"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -454,6 +464,14 @@ BEGIN
     ID_TOOLBAR_DOCUMENT     "创建文档图标\n输入输出文档图标"
     ID_TOOLBAR_LADDER       "创建梯形图标\n输入输出梯形图标"
     ID_TOOLBAR_CYLINDER     "创建圆柱体图标\n输入输出圆柱体图标"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_TOOLBAR_DDA_LINES            "使用DDA算法创建线\nDDA算法线"
+    ID_TOOLBAR_BRESENHAM_DDALINES   "使用Bresenham算法创建线\nBresenham算法线"
+    ID_TOOLBAR_MIDDLE_LINES         "使用中点算法创建线\n中点算法线"
+    ID_TOOLBAR_MIDDLE_CIRCLE        "使用中点算法创建圆\n中点算法圆"
 END
 
 #endif    // Chinese (P.R.C.) resources

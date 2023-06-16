@@ -206,6 +206,23 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateLine(), child);
                 }
+				// 
+				else if(strcmp(child->string, "CDDALine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateDDALine(), child);
+                }
+				else if(strcmp(child->string, "CBresenhamLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateBresenhamLine(), child);
+                }
+				else if(strcmp(child->string, "CMiddleLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleLine(), child);
+                }
+				else if(strcmp(child->string, "CMiddleCircle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);
+                }
 				else 
 				{
 					TRACE("Unknown graph");

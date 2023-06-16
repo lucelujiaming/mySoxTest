@@ -30,6 +30,7 @@
 #include "End.h"
 #include "CubicBox.h"
 #include "MeshSphere.h"
+#include "DDALine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -170,3 +171,25 @@ CGraph* CGraphFactory::CreateEnd()
 {
 	return new CEnd();
 }
+
+//
+CGraph* CGraphFactory::CreateDDALine()
+{
+	return new CDDALine();
+}
+
+CGraph* CGraphFactory::CreateBresenhamLine()
+{
+	return new CEnd();
+}
+
+CGraph* CGraphFactory::CreateMiddleLine()
+{
+	return new CEnd();
+}
+
+CGraph* CGraphFactory::CreateMiddleCircle()
+{
+	return new CEnd();
+}
+//

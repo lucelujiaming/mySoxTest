@@ -127,6 +127,17 @@ protected:
 	afx_msg void OnToolbarSearch();
 	afx_msg void OnToolbarStart();
 	afx_msg void OnToolbarStop();
+	//
+	afx_msg void OnToolbarDDALine();
+	afx_msg void OnToolbarBresenhamLine();
+	afx_msg void OnToolbarMiddleLine();
+	afx_msg void OnToolbarMiddleCircle();
+	//
+	afx_msg void OnCreateDDALine();
+	afx_msg void OnCreateBresenhamLine();
+	afx_msg void OnCreateMiddleLine();
+	afx_msg void OnCreateMiddleCircle();
+	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

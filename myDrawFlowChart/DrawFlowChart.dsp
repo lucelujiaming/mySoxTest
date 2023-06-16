@@ -130,6 +130,10 @@ SOURCE=.\CylinderGraph.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DDALine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.cpp
 # End Source File
 # Begin Source File
@@ -308,6 +312,10 @@ SOURCE=.\CylinderGraph.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DDALine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.h
 # End Source File
 # Begin Source File
@@ -453,6 +461,10 @@ SOURCE=.\res\DrawFlowChart.rc2
 # Begin Source File
 
 SOURCE=.\res\DrawFlowChartDoc.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\graphics.bmp
 # End Source File
 # Begin Source File
 

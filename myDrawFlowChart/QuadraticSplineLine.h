@@ -14,8 +14,6 @@
 #include <math.h>
 #include"P2.h"
 
-#define ROUND(h) int((h)+0.5)//定义四舍五入
-
 #define BEZIERLINE_QUADRATIC               3    // 三次函数
 
 class CQuadraticSplineLine : public CGraph  

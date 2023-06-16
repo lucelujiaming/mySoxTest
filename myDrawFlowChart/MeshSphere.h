@@ -17,9 +17,6 @@
 #include "Transform3.h"
 #include"math.h"
 
-#define PI 3.1415926
-#define ROUND(d) int(d+0.5)
-
 class CMeshSphere : public CGraph  
 {
 //		DECLARE_SERIAL(CMeshSphere)

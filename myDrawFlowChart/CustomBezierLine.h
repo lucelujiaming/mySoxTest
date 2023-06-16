@@ -14,9 +14,8 @@
 #include <math.h>
 #include"P2.h"
 
-#define ROUND(h) int((h)+0.5)//定义四舍五入
-
 #define BEZIERLINE_POINTS_COUNT            4    // PolyBezier的point数组大小必须是4
+#define BEZIERLINE_SMOOTH_DEVIATION        3    // 平滑偏差
 #define BEZIERLINE_QUADRATIC               3    // 三次函数
 
 class CCustomBezierLine : public CGraph  

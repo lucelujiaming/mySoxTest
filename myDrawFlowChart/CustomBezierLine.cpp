@@ -13,6 +13,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+#define ROUND(h) int((h)+0.5)//定义四舍五入
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -112,7 +114,7 @@ void CCustomBezierLine::smoothBezierLine()
 	int iBezierNum  = (iPointsSize - 1)/(BEZIERLINE_POINTS_COUNT - 1);
 
 	CPoint pointAdjustGroup[3];
-	CPoint pointDiff;
+	CPoint point0To1Diff, point1To2Diff;
 	CAdjustPoint *pNext = NULL;
 	for(int j = 1; j < iBezierNum; j++)
 	{
@@ -123,8 +125,15 @@ void CCustomBezierLine::smoothBezierLine()
 		pNext = (CAdjustPoint*)m_Points[j * (BEZIERLINE_POINTS_COUNT - 1) + 1];
 		pointAdjustGroup[2] = pNext->GetPoint();
 		
-		pointDiff = pointAdjustGroup[1] - pointAdjustGroup[0];
-		pointAdjustGroup[2] = pointAdjustGroup[1] + pointDiff;
+		point0To1Diff = pointAdjustGroup[1] - pointAdjustGroup[0];
+		point1To2Diff = pointAdjustGroup[2] - pointAdjustGroup[0];
+		float slope0To1 = (float)point0To1Diff.y / (float)point0To1Diff.x;
+		float slope1To2 = (float)point1To2Diff.y / (float)point1To2Diff.x;
+
+		if(abs(slope0To1 - slope1To2) < BEZIERLINE_SMOOTH_DEVIATION)
+			continue;
+		
+		pointAdjustGroup[2] = pointAdjustGroup[1] + point0To1Diff;
 		pNext->SetPoint(pointAdjustGroup[2]);
 	}
 }
@@ -274,7 +283,22 @@ void CCustomBezierLine::AdjustSize(CPoint &pt)
 	CAdjustPoint *pFocusConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint];
 	if(pFocusConnPoint != NULL)
 	{
-		pFocusConnPoint->SetPoint(pt);
+		if((m_FocusPoint >0) && (m_FocusPoint % ((BEZIERLINE_POINTS_COUNT - 1)) == 0))
+		{
+			CPoint pointDiff = pt - pFocusConnPoint->GetPoint();
+			CAdjustPoint *pPrevConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint - 1];
+			CPoint newPoint = pPrevConnPoint->GetPoint() + pointDiff;
+			pPrevConnPoint->SetPoint(newPoint);
+			CAdjustPoint *pNextConnPoint = (CAdjustPoint*)m_Points[m_FocusPoint + 1];
+			newPoint = pNextConnPoint->GetPoint() + pointDiff;
+			pNextConnPoint->SetPoint(newPoint);
+			
+			pFocusConnPoint->SetPoint(pt);
+		}
+		else
+		{
+			pFocusConnPoint->SetPoint(pt);
+		}
 	}
 	// printAllPoints("CCustomBezierLine::AdjustSize");
 }

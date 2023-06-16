@@ -14,7 +14,7 @@
 #include <math.h>
 
 #define BEZIERLINE_POINTS_COUNT            4    // PolyBezier的point数组大小必须是4
-
+#define BEZIERLINE_SMOOTH_DEVIATION        3    // 平滑偏差
 class CBezierLine : public CGraph  
 {
 //		DECLARE_SERIAL(CBezierLine)

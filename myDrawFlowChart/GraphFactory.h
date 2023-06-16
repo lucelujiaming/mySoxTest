@@ -42,6 +42,11 @@ public:
 	CGraph* CreateEllipse();
 	CGraph* CreateStart();
 	CGraph* CreateEnd();
+	// 
+	CGraph* CreateDDALine();
+	CGraph* CreateBresenhamLine();
+	CGraph* CreateMiddleLine();
+	CGraph* CreateMiddleCircle();
 
 };
 

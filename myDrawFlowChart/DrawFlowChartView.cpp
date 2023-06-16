@@ -79,6 +79,12 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_CUSTOM_ROUNDRECTANGLE, OnCreateCustomRoundRectangle)
 	ON_COMMAND(ID_TOOLBAR_LADDER, OnCreateLadder)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
+	// 
+	ON_COMMAND(ID_TOOLBAR_DDA_LINES, OnToolbarDDALine)
+	ON_COMMAND(ID_TOOLBAR_BRESENHAM_DDALINES, OnToolbarBresenhamLine)
+	ON_COMMAND(ID_TOOLBAR_MIDDLE_LINES, OnToolbarMiddleLine)
+	ON_COMMAND(ID_TOOLBAR_MIDDLE_CIRCLE, OnToolbarMiddleCircle)
+	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 	// Standard printing commands
@@ -1004,6 +1010,44 @@ void CDrawFlowChartView::OnCreateEnd()
 	Invalidate();
 }
 
+void CDrawFlowChartView::OnCreateDDALine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateDDALine());
+	Invalidate();
+}
+
+void CDrawFlowChartView::OnCreateBresenhamLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBresenhamLine());
+	Invalidate();
+}
+
+void CDrawFlowChartView::OnCreateMiddleLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMiddleLine());
+	Invalidate();
+}
+
+void CDrawFlowChartView::OnCreateMiddleCircle() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMiddleCircle());
+	Invalidate();
+}
+
+void CDrawFlowChartView::OnToolbarStart() 
+{
+	// TODO: Add your command handler code here
+	OnCreateStart();
+}
+
 void CDrawFlowChartView::OnToolbarEnd() 
 {
 	// TODO: Add your command handler code here
@@ -1154,16 +1198,34 @@ void CDrawFlowChartView::OnToolbarSearch()
 	OnSearchPath();
 }
 
-void CDrawFlowChartView::OnToolbarStart() 
-{
-	// TODO: Add your command handler code here
-	OnCreateStart();
-}
-
 void CDrawFlowChartView::OnToolbarStop() 
 {
 	// TODO: Add your command handler code here
 	OnStopMark();
+}
+
+void CDrawFlowChartView::OnToolbarDDALine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateDDALine();
+}
+
+void CDrawFlowChartView::OnToolbarBresenhamLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateBresenhamLine();
+}
+
+void CDrawFlowChartView::OnToolbarMiddleLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateMiddleLine();
+}
+
+void CDrawFlowChartView::OnToolbarMiddleCircle() 
+{
+	// TODO: Add your command handler code here
+	OnCreateMiddleCircle();
 }
 
 void CDrawFlowChartView::OnSize(UINT nType, int cx, int cy) 

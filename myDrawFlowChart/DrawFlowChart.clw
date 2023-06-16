@@ -14,10 +14,11 @@ Class2=CDrawFlowChartDoc
 Class3=CDrawFlowChartView
 Class4=CMainFrame
 
-ResourceCount=2
-Resource1=IDR_MAINFRAME
+ResourceCount=3
+Resource1=IDR_TOOLBAR_GRAPHICS
 Class5=CAboutDlg
-Resource2=IDD_ABOUTBOX
+Resource2=IDR_MAINFRAME
+Resource3=IDD_ABOUTBOX
 
 [CLS:CDrawFlowChartApp]
 Type=0
@@ -166,4 +167,13 @@ Command33=ID_TOOLBAR_NEXT
 Command34=ID_TOOLBAR_STOP
 Command35=ID_APP_ABOUT
 CommandCount=35
+
+[TB:IDR_TOOLBAR_GRAPHICS]
+Type=1
+Class=?
+Command1=ID_BUTTON_DDA_LINES
+Command2=ID_BUTTON_BRESENHAM_DDALINES
+Command3=ID_BUTTON_MIDDLE_LINES
+Command4=ID_BUTTON_MIDDLE_CIRCLE
+CommandCount=4
 

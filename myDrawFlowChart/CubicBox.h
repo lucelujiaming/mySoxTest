@@ -19,24 +19,25 @@
 class CCubicBox : public CGraph  
 {
 //		DECLARE_SERIAL(CCubicBox)
-
 public:
 	CCubicBox();
 	virtual ~CCubicBox();
 	CString GetTypeName() { return CString("CCubicBox"); }
 
 public:
-    bool IsEditable();
-	bool IsIn(CPoint &pt);
+	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
+	void DrawFocus( CDC *pdc );
+	void Move( int cx, int cy );
+	void AdjustSize( CPoint &pt );
 
-	void Draw(CDC *pdc, BOOL bShowSelectBorder = TRUE);
-	void DrawFocus(CDC *pdc);
-	void Move(int cx, int cy);
-	
 	void SaveParamsToJSON(cJSON * objJSON);
 	void LoadParamsFromJSON(cJSON * objJSON);
 
+	bool IsIn( CPoint &pt );
+	bool IsOn( CPoint &pt );
 	int  IsConnectOn(CAdjustPoint *pt);
+
+	int GetAdjustPoint();
 
 public:
 	void upBox()    {  int Alpha=+2;	tran.RotateX(Alpha); }
@@ -45,6 +46,7 @@ public:
 	void rightBox() {  int Beta=+2;		tran.RotateY(Beta); }
 
 private:
+	void AdjustStartAndEnd();
 	void AdjustFocusPoint();
 
 	void ReadPoint(void);
@@ -53,6 +55,8 @@ private:
 	void DrawGraph(CDC* pDC, CPoint ptStart);
 
 private:
+	int m_AdjustPoint;
+	
 	CP3 P[8];//点表
 	CFacet F[6];//面表
 // 	double Alpha,Beta;//绕x轴旋转角α,绕y轴旋转角β

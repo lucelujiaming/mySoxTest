@@ -1,11 +1,11 @@
-// CubicBox.cpp: implementation of the CCubicBox class.
+// DDALine.cpp: implementation of the CDDALine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "MainFrm.h"
 #include "DrawFlowChart.h"
-#include "CubicBox.h"
+#include "DDALine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -16,12 +16,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CCubicBox, CObject, 1)
+// IMPLEMENT_SERIAL(CDDALine, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。写死了起始点和结束点。还设定了连接点。               */
 /************************************************************************/
-CCubicBox::CCubicBox()
+CDDALine::CDDALine()
 {
 	m_text = "Cubic";
 	m_Start = CPoint(100, 100);
@@ -36,92 +36,20 @@ CCubicBox::CCubicBox()
 	}
 
 		// TODO: add construction code here
-//	Alpha=0;
-//	Beta=0;
-	ReadPoint();
-	ReadFacet();
-	tran.SetMatrix(P,8);
 
 }
 
-CCubicBox::~CCubicBox()
+CDDALine::~CDDALine()
 {
 
 }
 
-void CCubicBox::ReadPoint(void)
-{
-	double a = m_End.x - m_Start.x;//立方体边长为2a，中心点在几何体心
-	P[0].x=-a;P[0].y=-a;P[0].z=-a;//定义所有的点坐标，注意点要按照顺序进行赋值连接
-	P[1].x=+a;P[1].y=-a;P[1].z=-a;
-	P[2].x=+a;P[2].y=+a;P[2].z=-a;
-	P[3].x=-a;P[3].y=+a;P[3].z=-a;
-	P[4].x=-a;P[4].y=-a;P[4].z=+a;
-	P[5].x=+a;P[5].y=-a;P[5].z=+a;
-	P[6].x=+a;P[6].y=+a;P[6].z=+a;
-	P[7].x=-a;P[7].y=+a;P[7].z=+a;
-}
 
-void CCubicBox::DoubleBuffer(CDC* pDC)//双缓冲
-{
-	CRect rect;//定义客户区矩形
-	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
-	pMain->GetClientRect(&rect);//获得客户区的大小
-	pDC->SetMapMode(MM_ANISOTROPIC);//pDC自定义坐标系
-	pDC->SetWindowExt(rect.Width(),rect.Height());//设置窗口范围
-	pDC->SetViewportExt(rect.Width(),-rect.Height());//设置视区范围,x轴水平向右，y轴垂直向上
-	pDC->SetViewportOrg(rect.Width()/2,rect.Height()/2);//客户区中心为原点
-	CDC memDC;//内存DC
-	memDC.CreateCompatibleDC(pDC);//创建一个与显示pDC兼容的内存memDC
-	CBitmap NewBitmap,*pOldBitmap;//内存中承载的临时位图 
-	NewBitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图 
-	pOldBitmap=memDC.SelectObject(&NewBitmap);//将兼容位图选入memDC 
-	memDC.FillSolidRect(rect,pDC->GetBkColor());//按原来背景填充客户区，否则是黑色
-	memDC.SetMapMode(MM_ANISOTROPIC);//memDC自定义坐标系
-	memDC.SetWindowExt(rect.Width(),rect.Height());
-	memDC.SetViewportExt(rect.Width(),-rect.Height());
-	memDC.SetViewportOrg(rect.Width()/2,rect.Height()/2);
-	rect.OffsetRect(-rect.Width()/2,-rect.Height()/2);
-	DrawGraph(&memDC, CPoint(0, 0));//向memDC绘制图形
-	pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),&memDC,-rect.Width()/2,-rect.Height()/2,SRCCOPY);//将内存memDC中的位图拷贝到显示pDC中
-	memDC.SelectObject(pOldBitmap);//恢复位图
-	NewBitmap.DeleteObject();//删除位图
-	memDC.DeleteDC();//删除memDC
-}
-
-void CCubicBox::DrawGraph(CDC* pDC, CPoint ptStart)//绘制立方体线框
-{
-	CPoint ScreenP[4];	
-	for(int nFacet=0;nFacet<6;nFacet++)//面循环
-	{		
-		for(int nPoint=0;nPoint<4;nPoint++)//顶点循环
-		{
-			ScreenP[nPoint].x=P[F[nFacet].pIndex[nPoint]].x;
-			ScreenP[nPoint].y=P[F[nFacet].pIndex[nPoint]].y;
-			ScreenP[nPoint] += ptStart;
-		}
-		pDC->MoveTo(ScreenP[0].x,ScreenP[0].y);
-		pDC->LineTo(ScreenP[1].x,ScreenP[1].y);
-		pDC->LineTo(ScreenP[2].x,ScreenP[2].y);
-		pDC->LineTo(ScreenP[3].x,ScreenP[3].y);
-		pDC->LineTo(ScreenP[0].x,ScreenP[0].y);//闭合多边形
-	}
-}
-
-void CCubicBox::ReadFacet(void)
-{
-	F[0].pIndex[0]=4;	F[0].pIndex[1]=5;	F[0].pIndex[2]=6;	F[0].pIndex[3]=7;//每个面按照序号最小顶点依次逆时针连接
-	F[1].pIndex[0]=0;	F[1].pIndex[1]=3;	F[1].pIndex[2]=2;	F[1].pIndex[3]=1;
-	F[2].pIndex[0]=0;	F[2].pIndex[1]=4;	F[2].pIndex[2]=7;	F[2].pIndex[3]=3;
-	F[3].pIndex[0]=1;	F[3].pIndex[1]=2;	F[3].pIndex[2]=6;	F[3].pIndex[3]=5;
-	F[4].pIndex[0]=2;	F[4].pIndex[1]=3;	F[4].pIndex[2]=7;	F[4].pIndex[3]=6;
-	F[5].pIndex[0]=0;	F[5].pIndex[1]=1;	F[5].pIndex[2]=5;	F[5].pIndex[3]=4;
-}
-
+#define ROUND(d) int(d + 0.5)
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
 /************************************************************************/
-void CCubicBox::Draw(CDC *pdc, BOOL bShowSelectBorder)
+void CDDALine::Draw(CDC *pdc, BOOL bShowSelectBorder)
 {
 	AdjustFocusPoint();
 
@@ -138,8 +66,30 @@ void CCubicBox::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	ptMiddle.y /= 2;
 	ptMiddle += m_Start;
 	
-	// ReadPoint();
-	DrawGraph(pdc, ptMiddle);
+	for (int nAngle = 0; nAngle < 360; nAngle += 5)
+	{
+		double r = m_End.x - m_Start.x;
+		double x = r * cos(nAngle * PI / 180);
+		double y = r * sin(nAngle * PI / 180);
+		// DDALine(pDC, CPoint(0, 0), CPoint(ROUND(x), ROUND(y)));//绘制直线
+		{
+			CPoint p0 = ptMiddle;
+			CPoint p1 = CPoint(ROUND(x), ROUND(y)) + ptMiddle;
+			
+			int dx = p1.x - p0.x;
+			int dy = p1.y - p0.y;
+			int epsl = max(abs(dx), abs(dy));//直线x或y方向位移的最大值
+			double StepX = double(dx) / epsl;
+			double StepY = double(dy) / epsl;
+			double x = p0.x, y = p0.y;
+			COLORREF crColor = RGB(0, 0, 0);
+			for(int i = 1; i <= epsl; i++)//起始值改为1
+			{
+				pdc->SetPixelV(ROUND(x), ROUND(y), crColor);
+				x += StepX,	y += StepY;
+			}
+		}
+	}
 
 	if(m_IsMark)
 		pdc->SelectObject(oldPen);
@@ -147,7 +97,7 @@ void CCubicBox::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 12), m_End+CPoint(-8, -12)), DT_CENTER);
 }
 
-void CCubicBox::DrawFocus( CDC *pdc )
+void CDDALine::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -169,13 +119,13 @@ void CCubicBox::DrawFocus( CDC *pdc )
 	}
 }
 
-void CCubicBox::Move( int cx, int cy )
+void CDDALine::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
-void CCubicBox::AdjustSize( CPoint &pt )
+void CDDALine::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -232,7 +182,7 @@ void CCubicBox::AdjustSize( CPoint &pt )
 	}
 }
 
-bool CCubicBox::IsIn( CPoint &pt )
+bool CDDALine::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -247,13 +197,13 @@ bool CCubicBox::IsIn( CPoint &pt )
 	}
 	else if (bRet == FALSE)
 	{
-		m_objLogFile.WriteLog("CCubicBox::m_Start/m_End = {(%d, %d), (%d, %d)}", 
+		m_objLogFile.WriteLog("CDDALine::m_Start/m_End = {(%d, %d), (%d, %d)}", 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
 }
 
-int CCubicBox::IsConnectOn(CAdjustPoint *pt)
+int CDDALine::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -262,14 +212,14 @@ int CCubicBox::IsConnectOn(CAdjustPoint *pt)
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-			printAllPoints("CCubicBox::IsConnectOn");
+			printAllPoints("CDDALine::IsConnectOn");
 			return i;
 		}
 	}
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
-bool CCubicBox::IsOn( CPoint &pt )
+bool CDDALine::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -297,7 +247,7 @@ bool CCubicBox::IsOn( CPoint &pt )
 	return flag;
 }
 
-void CCubicBox::AdjustStartAndEnd()
+void CDDALine::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -315,12 +265,12 @@ void CCubicBox::AdjustStartAndEnd()
 	}
 }
 
-int CCubicBox::GetAdjustPoint()
+int CDDALine::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
 
-void CCubicBox::AdjustFocusPoint()
+void CDDALine::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -347,7 +297,7 @@ void CCubicBox::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
-void CCubicBox::SaveParamsToJSON(cJSON * objJSON)
+void CDDALine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -377,7 +327,7 @@ void CCubicBox::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CCubicBox::LoadParamsFromJSON(cJSON * objJSON)
+void CDDALine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

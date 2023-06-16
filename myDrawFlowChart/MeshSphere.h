@@ -20,31 +20,58 @@
 class CMeshSphere : public CGraph  
 {
 //		DECLARE_SERIAL(CMeshSphere)
-
 public:
 	CMeshSphere();
 	virtual ~CMeshSphere();
 	CString GetTypeName() { return CString("CMeshSphere"); }
 
 public:
-    bool IsEditable();
-	bool IsIn(CPoint &pt);
+	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
+	void DrawFocus( CDC *pdc );
+	void Move( int cx, int cy );
+	void AdjustSize( CPoint &pt );
 
-	void Draw(CDC *pdc, BOOL bShowSelectBorder = TRUE);
-	void DrawFocus(CDC *pdc);
-	void Move(int cx, int cy);
-	
 	void SaveParamsToJSON(cJSON * objJSON);
 	void LoadParamsFromJSON(cJSON * objJSON);
 
+	bool IsIn( CPoint &pt );
+	bool IsOn( CPoint &pt );
 	int  IsConnectOn(CAdjustPoint *pt);
 
+	int GetAdjustPoint();
+
 public:
-	void upBox()    {  int Alpha=+2;	tran.RotateX(Alpha); }
-	void downBox()  {  int Alpha=-2;	tran.RotateX(Alpha); }
-	void leftBox()  {  int Beta=-2;  	tran.RotateY(Beta); }
-	void rightBox() {  int Beta=+2;		tran.RotateY(Beta); }
+	void upBox()    
+	{  
+		int Alpha=+2; 	
+		m_currentAlpha += 2;
+		m_currentAlpha = m_currentAlpha % 180;
+		tran.RotateX(Alpha); 
+	}
+	void downBox()  
+	{  
+		int Alpha=-2;
+		m_currentAlpha -= 2;
+		m_currentAlpha = m_currentAlpha % 180;
+		tran.RotateX(Alpha); 
+	}
+	void leftBox()  
+	{  
+		int Beta=-2; 
+		m_currentBeta -= 2;
+		m_currentBeta = m_currentBeta % 180;
+		tran.RotateY(Beta); 
+	}
+	void rightBox() 
+	{  
+		int Beta=+2;	
+		m_currentBeta += 2;
+		m_currentBeta = m_currentBeta % 180;	
+		tran.RotateY(Beta); 
+	}
+
 private:
+	void AdjustStartAndEnd();
 	void AdjustFocusPoint();
 
 	void ReadPoint(void);
@@ -53,11 +80,16 @@ private:
 	void DrawGraph(CDC* pDC, CPoint ptStart);
 
 private:
+	int m_AdjustPoint;
+	
 	CP3 P[614];//点表
 	CFacet F[18][36];//面表
 	int N1,N2;//经纬线的数木
 //	double Alpha,Beta;//绕x y轴旋转的角度
 	CTransform3 tran;//变换对象
+
+	int m_currentAlpha;
+	int m_currentBeta;
 
 	//CObArray m_Points;
 	CLogFile m_objLogFile;

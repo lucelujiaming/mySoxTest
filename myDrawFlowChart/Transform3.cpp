@@ -38,7 +38,7 @@ void CTransform3::RotateX(double beta)
 	Identity();
 	double rad=beta*PI/180;
 	T[1][1]=cos(rad);T[1][2]=-sin(rad);
-	T[2][1]=sin(rad);T[1][2]=cos(rad);
+	T[2][1]=sin(rad);T[2][2]=cos(rad);
 	MultiplyMatrix();
 }
 

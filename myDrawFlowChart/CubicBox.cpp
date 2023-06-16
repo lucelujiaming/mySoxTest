@@ -42,6 +42,8 @@ CCubicBox::CCubicBox()
 	ReadFacet();
 	tran.SetMatrix(P,8);
 
+	m_currentAlpha = 0;
+	m_currentBeta = 0;
 }
 
 CCubicBox::~CCubicBox()
@@ -229,7 +231,11 @@ void CCubicBox::AdjustSize( CPoint &pt )
 			m_Start.x = pt.x;
 			break;
 		}
-	}
+	}	
+	ReadPoint();
+	tran.SetMatrix(P,8);
+	tran.RotateX(m_currentAlpha); 
+	tran.RotateY(m_currentBeta); 
 }
 
 bool CCubicBox::IsIn( CPoint &pt )

@@ -29,6 +29,7 @@ CMeshSphere::CMeshSphere()
 	m_text = "Cubic";
 	m_Start = CPoint(100, 100);
 	m_End = CPoint(200, 145);
+	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -36,7 +37,7 @@ CMeshSphere::CMeshSphere()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-
+	
 		// TODO: add construction code here
 //	Alpha=0;
 //	Beta=0;
@@ -44,6 +45,8 @@ CMeshSphere::CMeshSphere()
 	ReadFacet();
 	tran.SetMatrix(P,614);
 
+	m_currentAlpha = 0;
+	m_currentBeta = 0;
 }
 
 CMeshSphere::~CMeshSphere()
@@ -54,7 +57,7 @@ CMeshSphere::~CMeshSphere()
 void CMeshSphere::ReadPoint(void)
 {
 	int sAlpha=10,sBeta=10;//维度方向与经度方向的等分线
-	double sAlpha1,sBeta1,r=200;//r为球半径
+	double sAlpha1,sBeta1,r=m_End.x - m_Start.x;//r为球半径
 	N1=180/sAlpha,N2=360/sBeta;
 	P[0].x=0;//计算北极点坐标
 	P[0].y=r;
@@ -215,20 +218,31 @@ void CMeshSphere::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	ptMiddle.x /= 2;
 	ptMiddle.y /= 2;
 	ptMiddle += m_Start;
+	
+	// ReadPoint();
 	DrawGraph(pdc, ptMiddle);
 
 	if(m_IsMark)
 		pdc->SelectObject(oldPen);
 
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(10, 15), m_End+CPoint(-8, -8)), DT_CENTER);
+	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 12), m_End+CPoint(-8, -12)), DT_CENTER);
 }
 
-/************************************************************************/
-/* 功能：选中绘制函数。绘制了连接点。                                   */
-/************************************************************************/
-void CMeshSphere::DrawFocus(CDC *pdc)
+void CMeshSphere::DrawFocus( CDC *pdc )
 {
+	// 画笔为虚线，线宽为1，颜色为黑色。
+	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
+	CBrush *pBrush=CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen* oldpen = pdc->SelectObject(&pen);
+	CBrush* oldbrush = pdc->SelectObject( pBrush );
+	// 画一个虚线框。
+	pdc->Rectangle( CRect(m_Start, m_End) );
+		
+	pdc->SelectObject(oldpen);
+	pdc->SelectObject(oldbrush);
+
 	CAdjustPoint *connPoint = NULL;
+	// 绘制RGB(0,255,0)的绿色连接点。四角处为圆形，围框中段为矩形。
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 	    connPoint = (CAdjustPoint *)m_Points[i];
@@ -236,58 +250,161 @@ void CMeshSphere::DrawFocus(CDC *pdc)
 	}
 }
 
-/************************************************************************/
-/* 功能： 移动处理函数。                                                */
-/************************************************************************/
-void CMeshSphere::Move(int cx, int cy)
+void CMeshSphere::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
-/************************************************************************/
-/* 功能：判断是否可编辑。                                               */
-/************************************************************************/
-bool CMeshSphere::IsEditable()
+void CMeshSphere::AdjustSize( CPoint &pt )
 {
-	return false;
+	switch(m_AdjustPoint)
+	{
+	// case 1:  // 左上角
+	case CCONNECTPOINT_RECT_LEFT_TOP:
+		{
+			m_Start = pt;
+			break;
+		}
+	// case 2:  // 左下角
+	case CCONNECTPOINT_RECT_LEFT_BOTTOM:
+		{
+			m_Start.x = pt.x;
+			m_End.y = pt.y;
+			break;
+		}
+	// case 3:  // 右上角
+	case CCONNECTPOINT_RECT_RIGHT_TOP:
+		{
+			m_Start.y = pt.y;
+			m_End.x = pt.x;
+			break;
+		}
+	// case 4:  // 右下角
+	case CCONNECTPOINT_RECT_RIGHT_BOTTOM:
+		{
+			m_End = pt;
+			break;
+		}
+	// case 5:
+	case CCONNECTPOINT_RECT_MIDDLE_TOP:
+		{
+			m_Start.y = pt.y;
+			break;
+		}
+	// case 6:
+	case CCONNECTPOINT_RECT_MIDDLE_RIGHT:
+		{
+			m_End.x = pt.x;
+			break;
+		}
+	// case 7:
+	case CCONNECTPOINT_RECT_MIDDLE_BOTTOM:
+		{
+			m_End.y = pt.y;
+			break;
+		}
+	// case 8:
+	case CCONNECTPOINT_RECT_MIDDLE_LEFT:
+		{
+			m_Start.x = pt.x;
+			break;
+		}
+	}	
+	ReadPoint();
+	tran.SetMatrix(P,614);
+	tran.RotateX(m_currentAlpha); 
+	tran.RotateY(m_currentBeta); 
 }
 
-/************************************************************************/
-/* 功能：判断是否在图元区域内。                                         */
-/************************************************************************/
-bool CMeshSphere::IsIn(CPoint &pt)
+bool CMeshSphere::IsIn( CPoint &pt )
 {
+	AdjustStartAndEnd();
+
 	bool flag = false;
-	CRect rectStart = CRect( m_Start, m_End );
-	if(rectStart.PtInRect( pt ))
+
+	CRgn cr;
+	BOOL bRet = cr.CreateEllipticRgn( m_Start.x, m_Start.y, m_End.x, m_End.y );
+	if(bRet && cr.PtInRegion( pt ))
 	{
 		flag = true;
+		m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
+	}
+	else if (bRet == FALSE)
+	{
+		m_objLogFile.WriteLog("CMeshSphere::m_Start/m_End = {(%d, %d), (%d, %d)}", 
+			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
 }
 
-/************************************************************************/
-/* 功能： 判断是否在图元边界上。                                        */
-/************************************************************************/
 int CMeshSphere::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-	    connPoint = (CAdjustPoint *)m_Points[i];
+		connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-		    return i;
+			printAllPoints("CMeshSphere::IsConnectOn");
+			return i;
 		}
 	}
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
-/************************************************************************/
-/* 功能：根据起始点和结束点坐标调整连接点坐标。                         */
-/************************************************************************/
+bool CMeshSphere::IsOn( CPoint &pt )
+{
+	AdjustStartAndEnd();
+
+	bool flag = false;
+	// CPoint startPoint = CPoint( m_Start.x, m_End.y );
+	// CPoint endPoint = CPoint(m_End.x, m_Start.y);
+
+	CAdjustPoint *connPoint = NULL;
+	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
+	{
+	    connPoint = (CAdjustPoint *)m_Points[i];
+		if(connPoint->IsOn(pt))
+		{
+			// if(i == CCONNECTPOINT_RECT_LEFT_BOTTOM || i == CCONNECTPOINT_RECT_RIGHT_TOP)
+			// {
+			//	m_Start = startPoint;
+			//	m_End = endPoint;
+			// }
+			m_AdjustPoint = i; // 1+i;
+		    flag = true;
+			break;
+		}
+	}
+
+	return flag;
+}
+
+void CMeshSphere::AdjustStartAndEnd()
+{
+	CPoint newStart, newEnd;
+	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
+	{
+		newEnd = m_Start;
+		m_Start = m_End;
+		m_End = newEnd;
+	}
+	else if(!((m_End.x > m_Start.x) && (m_End.y > m_Start.y)))
+	{
+		newStart = CPoint( m_End.x, m_Start.y );
+		newEnd   = CPoint( m_Start.x, m_End.y );
+		m_Start  = newStart;
+		m_End    = newEnd;
+	}
+}
+
+int CMeshSphere::GetAdjustPoint()
+{
+	return m_AdjustPoint;
+}
+
 void CMeshSphere::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
@@ -315,20 +432,16 @@ void CMeshSphere::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
-/************************************************************************/
-/* 功能：串行化操作。                                                   */
-/************************************************************************/
 void CMeshSphere::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
-//		ar<<m_Start<<m_End<<m_text;
+//		ar<<m_Start<<m_End<<m_text<<m_AdjustPoint;
 //	}
 //	else
 //	{
-//		ar>>m_Start>>m_End>>m_text;
+//		ar>>m_Start>>m_End>>m_text>>m_AdjustPoint;
 //	}
-
 	cJSON * jsonGraph = cJSON_CreateObject();
 	cJSON_AddStringToObject(jsonGraph, "Type", GetTypeName());
 	cJSON_AddNumberToObject(jsonGraph, "GraphSeq", getGraphSeq());
@@ -344,6 +457,7 @@ void CMeshSphere::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(jsonGraph, "End", jsonEnd);
 
 	cJSON_AddStringToObject(jsonGraph, "Text", m_text);
+	cJSON_AddNumberToObject(jsonGraph, "currentAdjustPoint", m_AdjustPoint);
 
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
@@ -363,6 +477,10 @@ void CMeshSphere::LoadParamsFromJSON(cJSON * objJSON)
                 if(strcmp(child->string, "GraphSeq") == 0)
                 {   
 					setGraphSeq((int)child->valueint);
+                }
+				else if(strcmp(child->string, "currentAdjustPoint") == 0)
+                {   
+                    m_AdjustPoint = (int)child->valueint;
                 }
             }   
             break;
@@ -428,4 +546,5 @@ void CMeshSphere::LoadParamsFromJSON(cJSON * objJSON)
         }   
         child = child->next ;
     }
+	AdjustFocusPoint();
 }

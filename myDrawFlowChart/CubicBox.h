@@ -40,10 +40,34 @@ public:
 	int GetAdjustPoint();
 
 public:
-	void upBox()    {  int Alpha=+2;	tran.RotateX(Alpha); }
-	void downBox()  {  int Alpha=-2;	tran.RotateX(Alpha); }
-	void leftBox()  {  int Beta=-2;  	tran.RotateY(Beta); }
-	void rightBox() {  int Beta=+2;		tran.RotateY(Beta); }
+	void upBox()    
+	{  
+		int Alpha=+2; 	
+		m_currentAlpha += 2;
+		m_currentAlpha = m_currentAlpha % 180;
+		tran.RotateX(Alpha); 
+	}
+	void downBox()  
+	{  
+		int Alpha=-2;
+		m_currentAlpha -= 2;
+		m_currentAlpha = m_currentAlpha % 180;
+		tran.RotateX(Alpha); 
+	}
+	void leftBox()  
+	{  
+		int Beta=-2; 
+		m_currentBeta -= 2;
+		m_currentBeta = m_currentBeta % 180;
+		tran.RotateY(Beta); 
+	}
+	void rightBox() 
+	{  
+		int Beta=+2;	
+		m_currentBeta += 2;
+		m_currentBeta = m_currentBeta % 180;	
+		tran.RotateY(Beta); 
+	}
 
 private:
 	void AdjustStartAndEnd();
@@ -61,6 +85,9 @@ private:
 	CFacet F[6];//面表
 // 	double Alpha,Beta;//绕x轴旋转角α,绕y轴旋转角β
 	CTransform3 tran;//变换对象
+
+	int m_currentAlpha;
+	int m_currentBeta;
 
 	//CObArray m_Points;
 	CLogFile m_objLogFile;

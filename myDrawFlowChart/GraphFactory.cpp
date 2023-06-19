@@ -31,6 +31,8 @@
 #include "CubicBox.h"
 #include "MeshSphere.h"
 #include "DDALine.h"
+#include "BresenhamLine.h"
+#include "MiddleCircle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -180,7 +182,7 @@ CGraph* CGraphFactory::CreateDDALine()
 
 CGraph* CGraphFactory::CreateBresenhamLine()
 {
-	return new CEnd();
+	return new CBresenhamLine();
 }
 
 CGraph* CGraphFactory::CreateMiddleLine()
@@ -190,6 +192,6 @@ CGraph* CGraphFactory::CreateMiddleLine()
 
 CGraph* CGraphFactory::CreateMiddleCircle()
 {
-	return new CEnd();
+	return new CMiddleCircle();
 }
 //

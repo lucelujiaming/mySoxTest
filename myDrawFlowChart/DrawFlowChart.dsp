@@ -106,6 +106,10 @@ SOURCE=.\BezierLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BresenhamLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
@@ -211,6 +215,10 @@ SOURCE=.\MeshSphere.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MiddleCircle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\OrthogonalWire.cpp
 # End Source File
 # Begin Source File
@@ -285,6 +293,10 @@ SOURCE=.\ArrowLine.h
 # Begin Source File
 
 SOURCE=.\BezierLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BresenhamLine.h
 # End Source File
 # Begin Source File
 
@@ -385,6 +397,10 @@ SOURCE=.\MainFrm.h
 # Begin Source File
 
 SOURCE=.\MeshSphere.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MiddleCircle.h
 # End Source File
 # Begin Source File
 

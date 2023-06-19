@@ -1,11 +1,10 @@
-// DDALine.cpp: implementation of the CDDALine class.
+// MiddleCircle.cpp: implementation of the CMiddleCircle class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "MainFrm.h"
 #include "DrawFlowChart.h"
-#include "DDALine.h"
+#include "MiddleCircle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -16,16 +15,13 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CDDALine, CObject, 1)
+// IMPLEMENT_SERIAL(CMiddleCircle, CObject, 1)
 
 /************************************************************************/
-/* 功能：建构函数。写死了起始点和结束点。还设定了连接点。               */
+/* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CDDALine::CDDALine()
+CMiddleCircle::CMiddleCircle()
 {
-	m_text = "Cubic";
-	m_Start = CPoint(100, 100);
-	m_End = CPoint(200, 145);
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
@@ -34,79 +30,70 @@ CDDALine::CDDALine()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-
-		// TODO: add construction code here
-
 }
 
-CDDALine::~CDDALine()
+CMiddleCircle::~CMiddleCircle()
 {
 
 }
 
-// 所谓的DDA算法，其实核心就是这个圆整操作。
-// 就是把一个坐标加上0.5以后取整。达到四舍五入的效果。
-#define ROUND(d) int(d + 0.5)
+void CMiddleCircle::MidPointCircle(CDC* pDC, int R)//定义中点画圆算法
+{
+	int e = 1 - R;
+	int x = 0, y = R;
+	for (x = 0; x <= y; x++)
+	{
+		CirclePoint(pDC, x, y);//调用八分法画圆算法
+		if (e < 0)
+			e += 2 * x + 3;
+		else
+		{
+			e += 2 * (x - y) + 5;
+			y--;
+		}
+	}
+}
+
+void CMiddleCircle::CirclePoint(CDC* pDC, int x, int y)//定义八分法画圆算法
+{
+	COLORREF  crClr = RGB(0, 0, 0);
+	pDC->SetPixelV(x + m_Start.x, y + m_Start.y, crClr);
+	pDC->SetPixelV(y + m_Start.x, x + m_Start.y, crClr);
+	pDC->SetPixelV(y + m_Start.x, -x + m_Start.y, crClr);
+	pDC->SetPixelV(x + m_Start.x, -y + m_Start.y, crClr);
+	pDC->SetPixelV(-x + m_Start.x, -y + m_Start.y, crClr);
+	pDC->SetPixelV(-y + m_Start.x, -x + m_Start.y, crClr);
+	pDC->SetPixelV(-y + m_Start.x, x + m_Start.y, crClr);
+	pDC->SetPixelV(-x + m_Start.x, y + m_Start.y, crClr);
+}
+
 /************************************************************************/
-/* 功能：绘制函数。绘制了一个圆角矩形和上面的文字。                     */
+/* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CDDALine::Draw(CDC *pdc, BOOL bShowSelectBorder)
+void CMiddleCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
-	CPen *oldPen, newPen;
+	CPen p, *pOldPen;     
 	if(m_IsMark)
 	{
-		newPen.CreatePen(PS_SOLID, 1, RGB(255,0,0));
-		oldPen = pdc->SelectObject(&newPen);
+        p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
+        pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-
-	// pdc->RoundRect(CRect(m_Start, m_End), CPoint(35, 35));
-	CPoint ptMiddle = m_End - m_Start;
-	ptMiddle.x /= 2;
-	ptMiddle.y /= 2;
-	ptMiddle += m_Start;
-	// 每隔5度绘制一条直线。
-	for (int nAngle = 0; nAngle < 360; nAngle += 5)
-	{
-		double r = m_End.x - m_Start.x;
-		// 计算当前角度下，每一个度数对应的坐标值。
-		double x = r * cos(nAngle * PI / 180);
-		double y = r * sin(nAngle * PI / 180);
-		// DDALine(pDC, CPoint(0, 0), CPoint(ROUND(x), ROUND(y)));//绘制直线
-		// 使用起始坐标和结束坐标的中点作为起始点。
-		CPoint p0 = ptMiddle;
-		// 计算结束点。
-		CPoint p1 = CPoint(ROUND(x), ROUND(y)) + ptMiddle;
-		// 计算X方向和Y方向的位移。
-		int dx = p1.x - p0.x;
-		int dy = p1.y - p0.y;
-		// 计算直线x或y方向位移的最大值。这行代码对应了书中提到的两种斜率的处理情况。
-		int epsl = max(abs(dx), abs(dy)); 
-		// 这里就对应了书上的(2-6)公式。也就是：
-		//    Xi+1 = Xi +- 1; Yi+1 = Yi +- k; 
-		// 和书上的(2-7)公式。也就是：
-		//    Xi+1 = Xi +- (1/k); Yi+1 = Yi +- 1; 
-		double StepX = double(dx) / epsl;
-		double StepY = double(dy) / epsl;
-		// 设定起始点
-		double xStart = p0.x, yStart = p0.y;
-		COLORREF crColor = RGB(0, 0, 0);
-		// 一个一个画点。
-		for(int i = 1; i <= epsl; i++)//起始值改为1
-		{
-			pdc->SetPixelV(ROUND(xStart), ROUND(yStart), crColor);
-			xStart += StepX,	yStart += StepY;
-		}
-	}
+	m_Radius = m_End.x - m_Start.x;
+	MidPointCircle(pdc, m_Radius);//调用圆的中点算法
 
 	if(m_IsMark)
-		pdc->SelectObject(oldPen);
-
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 12), m_End+CPoint(-8, -12)), DT_CENTER);
+	{
+		pdc->SelectObject(pOldPen);
+	}
+	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
-void CDDALine::DrawFocus( CDC *pdc )
+/************************************************************************/
+/* 功能：选中绘制函数。绘制了连接点。                                   */
+/************************************************************************/
+void CMiddleCircle::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -120,7 +107,6 @@ void CDDALine::DrawFocus( CDC *pdc )
 	pdc->SelectObject(oldbrush);
 
 	CAdjustPoint *connPoint = NULL;
-	// 绘制RGB(0,255,0)的绿色连接点。四角处为圆形，围框中段为矩形。
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 	    connPoint = (CAdjustPoint *)m_Points[i];
@@ -128,13 +114,20 @@ void CDDALine::DrawFocus( CDC *pdc )
 	}
 }
 
-void CDDALine::Move( int cx, int cy )
+/************************************************************************/
+/* 功能： 移动处理函数。                                                */
+/************************************************************************/
+void CMiddleCircle::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
 }
 
-void CDDALine::AdjustSize( CPoint &pt )
+/************************************************************************/
+/* 功能： 大小调整处理函数。                                            */
+/*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
+/************************************************************************/
+void CMiddleCircle::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -191,7 +184,10 @@ void CDDALine::AdjustSize( CPoint &pt )
 	}
 }
 
-bool CDDALine::IsIn( CPoint &pt )
+/************************************************************************/
+/* 功能：判断是否在图元区域内。                                         */
+/************************************************************************/
+bool CMiddleCircle::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -206,29 +202,34 @@ bool CDDALine::IsIn( CPoint &pt )
 	}
 	else if (bRet == FALSE)
 	{
-		m_objLogFile.WriteLog("CDDALine::m_Start/m_End = {(%d, %d), (%d, %d)}", 
+		printf("m_Start/m_End = {(%d, %d), (%d, %d)}", 
 			m_Start.x, m_Start.y, m_End.x, m_End.y);
 	}
 	return flag;
 }
 
-int CDDALine::IsConnectOn(CAdjustPoint *pt)
+/************************************************************************/
+/* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
+/************************************************************************/
+int CMiddleCircle::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
 	{
-		connPoint = (CAdjustPoint *)m_Points[i];
+	    connPoint = (CAdjustPoint *)m_Points[i];
 		if(connPoint->IsOn(pt->GetPoint()))
 		{
 			pt->SetPoint(connPoint->GetPoint());
-			printAllPoints("CDDALine::IsConnectOn");
-			return i;
+		    return i;
 		}
 	}
 	return CCONNECTPOINT_INVALID_OPTION;
 }
 
-bool CDDALine::IsOn( CPoint &pt )
+/************************************************************************/
+/* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
+/************************************************************************/
+bool CMiddleCircle::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -252,11 +253,13 @@ bool CDDALine::IsOn( CPoint &pt )
 			break;
 		}
 	}
-
 	return flag;
 }
 
-void CDDALine::AdjustStartAndEnd()
+/************************************************************************/
+/* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
+/************************************************************************/
+void CMiddleCircle::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -268,18 +271,21 @@ void CDDALine::AdjustStartAndEnd()
 	else if(!((m_End.x > m_Start.x) && (m_End.y > m_Start.y)))
 	{
 		newStart = CPoint( m_End.x, m_Start.y );
-		newEnd   = CPoint( m_Start.x, m_End.y );
-		m_Start  = newStart;
-		m_End    = newEnd;
+		newEnd = CPoint( m_Start.x, m_End.y );
+		m_Start = newStart;
+		m_End = newEnd;
 	}
 }
 
-int CDDALine::GetAdjustPoint()
+int CMiddleCircle::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
 
-void CDDALine::AdjustFocusPoint()
+/************************************************************************/
+/* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
+/************************************************************************/
+void CMiddleCircle::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -306,7 +312,10 @@ void CDDALine::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 }
 
-void CDDALine::SaveParamsToJSON(cJSON * objJSON)
+/************************************************************************/
+/* 功能：串行化操作。                                                   */
+/************************************************************************/
+void CMiddleCircle::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -336,7 +345,7 @@ void CDDALine::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CDDALine::LoadParamsFromJSON(cJSON * objJSON)
+void CMiddleCircle::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

@@ -32,6 +32,7 @@
 #include "MeshSphere.h"
 #include "DDALine.h"
 #include "BresenhamLine.h"
+#include "WuAntiLine.h"
 #include "MiddleCircle.h"
 
 #ifdef _DEBUG
@@ -185,9 +186,9 @@ CGraph* CGraphFactory::CreateBresenhamLine()
 	return new CBresenhamLine();
 }
 
-CGraph* CGraphFactory::CreateMiddleLine()
+CGraph* CGraphFactory::CreateWuAntiLine()
 {
-	return new CEnd();
+	return new CWuAntiLine();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

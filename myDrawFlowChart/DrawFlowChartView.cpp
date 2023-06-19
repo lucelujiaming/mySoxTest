@@ -83,7 +83,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_DDA_LINES, OnToolbarDDALine)
 	ON_COMMAND(ID_TOOLBAR_BRESENHAM_DDALINE, OnToolbarBresenhamLine)
 	ON_COMMAND(ID_TOOLBAR_MIDDLE_CIRCLE, OnToolbarMiddleCircle)
-	ON_COMMAND(ID_TOOLBAR_MIDDLE_LINES, OnToolbarMiddleLine)
+	ON_COMMAND(ID_TOOLBAR_WU_ANTI_LINE, OnToolbarWuAntiLine)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1036,11 +1036,21 @@ void CDrawFlowChartView::OnCreateBresenhamLine()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBresenhamLine());
 }
 
-void CDrawFlowChartView::OnCreateMiddleLine() 
+void CDrawFlowChartView::OnCreateWuAntiLine() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMiddleLine());
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateWuAntiLine());
 	Invalidate();
 }
 
@@ -1237,10 +1247,10 @@ void CDrawFlowChartView::OnToolbarBresenhamLine()
 	OnCreateBresenhamLine();
 }
 
-void CDrawFlowChartView::OnToolbarMiddleLine() 
+void CDrawFlowChartView::OnToolbarWuAntiLine() 
 {
 	// TODO: Add your command handler code here
-	OnCreateMiddleLine();
+	OnCreateWuAntiLine();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

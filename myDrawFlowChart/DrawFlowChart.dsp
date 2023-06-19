@@ -274,6 +274,10 @@ SOURCE=.\StdAfx.cpp
 
 SOURCE=.\Transform3.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\WuAntiLine.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -461,6 +465,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\Transform3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WuAntiLine.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

@@ -215,9 +215,9 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateBresenhamLine(), child);
                 }
-				else if(strcmp(child->string, "CMiddleLine") == 0)
+				else if(strcmp(child->string, "CWuAntiLine") == 0)
                 {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleLine(), child);
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateWuAntiLine(), child);
                 }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   

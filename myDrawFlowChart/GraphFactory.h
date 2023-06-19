@@ -45,7 +45,7 @@ public:
 	// 
 	CGraph* CreateDDALine();
 	CGraph* CreateBresenhamLine();
-	CGraph* CreateMiddleLine();
+	CGraph* CreateWuAntiLine();
 	CGraph* CreateMiddleCircle();
 
 };

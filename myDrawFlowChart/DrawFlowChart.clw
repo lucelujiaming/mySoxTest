@@ -15,10 +15,10 @@ Class3=CDrawFlowChartView
 Class4=CMainFrame
 
 ResourceCount=3
-Resource1=IDR_MAINFRAME
+Resource1=IDR_TOOLBAR_GRAPHICS
 Class5=CAboutDlg
-Resource2=IDD_ABOUTBOX
-Resource3=IDR_TOOLBAR_GRAPHICS
+Resource2=IDR_MAINFRAME
+Resource3=IDD_ABOUTBOX
 
 [CLS:CDrawFlowChartApp]
 Type=0
@@ -174,6 +174,6 @@ Class=?
 Command1=ID_TOOLBAR_DDA_LINES
 Command2=ID_TOOLBAR_BRESENHAM_DDALINE
 Command3=ID_TOOLBAR_MIDDLE_CIRCLE
-Command4=ID_TOOLBAR_MIDDLE_LINES
+Command4=ID_TOOLBAR_WU_ANTI_LINE
 CommandCount=4
 

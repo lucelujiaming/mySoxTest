@@ -52,7 +52,7 @@
 #define ID_TOOLBAR_DDA_LINES            32848
 #define ID_TOOLBAR_BRESENHAM_DDALINE    32849
 #define ID_TOOLBAR_MIDDLE_CIRCLE        32850
-#define ID_TOOLBAR_MIDDLE_LINES         32851
+#define ID_TOOLBAR_WU_ANTI_LINE         32851
 
 // Next default values for new objects
 // 

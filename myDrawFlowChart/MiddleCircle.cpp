@@ -43,11 +43,16 @@ void CMiddleCircle::MidPointCircle(CDC* pDC, int R)//定义中点画圆算法
 	int x = 0, y = R;
 	for (x = 0; x <= y; x++)
 	{
+		// 一次画出8个分象限的对应点。
 		CirclePoint(pDC, x, y);//调用八分法画圆算法
+		// 对应于公式(2 - 22)
 		if (e < 0)
+		{
 			e += 2 * x + 3;
+		}
 		else
 		{
+			// 对应于公式(2 - 23)
 			e += 2 * (x - y) + 5;
 			y--;
 		}
@@ -67,6 +72,57 @@ void CMiddleCircle::CirclePoint(CDC* pDC, int x, int y)//定义八分法画圆算法
 	pDC->SetPixelV(-x + m_Start.x, y + m_Start.y, crClr);
 }
 
+void CMiddleCircle::MidPointEllipse(CDC* pDC, int majorAxis, int minorAxis)//椭圆的中点算法
+{		
+	// 对应于公式(2 - 32)
+	double d1 = minorAxis * minorAxis + majorAxis * majorAxis * (-minorAxis + 0.25);
+	int x = 0, y = minorAxis;
+	while (minorAxis * minorAxis * (x + 1) < majorAxis * majorAxis * (y - 0.5))
+	{
+		EllipsePoint(pDC, x, y);
+		if (d1 < 0)
+		{
+			// 对应于公式(2 - 30)
+			d1 += minorAxis * minorAxis * (2 * x + 3);
+		}
+		else
+		{
+			// 对应于公式(2 - 31)
+			d1 += minorAxis * minorAxis * (2 * x + 3) + majorAxis * majorAxis * (-2 * y + 2);
+			y--;
+		}
+		x++;
+	}
+	// 对应于公式(2 - 33) 和 公式(2 - 38)
+	double d2 = minorAxis * minorAxis * (x + 0.5) * (x + 0.5) + majorAxis * majorAxis * (y - 1) * (y - 1)
+							- (double)majorAxis * majorAxis * minorAxis * minorAxis;
+	while (y >= 0)
+	{
+		EllipsePoint(pDC, x, y);
+		if (d2 < 0)
+		{
+			// 对应于公式(2 - 35)
+			d2 += minorAxis * minorAxis * (2 * x + 2) + majorAxis * majorAxis * (-2 * y + 3);
+			x++;
+		}
+		else
+		{
+			// 对应于公式(2 - 36)
+			d2 += majorAxis * majorAxis * (-2 * y + 3);
+		}
+		y--;
+	}
+}
+
+void CMiddleCircle::EllipsePoint(CDC* pDC, int x, int y)
+{
+	COLORREF crClr = RGB(0, 0, 0);
+	pDC->SetPixelV(x + m_End.x, y + m_End.y, crClr);
+	pDC->SetPixelV(x + m_End.x, -y + m_End.y, crClr);
+	pDC->SetPixelV(-x + m_End.x, -y + m_End.y, crClr);
+	pDC->SetPixelV(-x + m_End.x, y + m_End.y, crClr);
+}
+
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
@@ -82,6 +138,8 @@ void CMiddleCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	}
 	m_Radius = m_End.x - m_Start.x;
 	MidPointCircle(pdc, m_Radius);//调用圆的中点算法
+	
+	MidPointEllipse(pdc, 100, 30);//调用圆的中点算法
 
 	if(m_IsMark)
 	{

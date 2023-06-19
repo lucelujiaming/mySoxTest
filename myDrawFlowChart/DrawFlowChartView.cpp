@@ -81,9 +81,9 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_HEXAGON, OnCreateHexagon)
 	// 
 	ON_COMMAND(ID_TOOLBAR_DDA_LINES, OnToolbarDDALine)
-	ON_COMMAND(ID_TOOLBAR_BRESENHAM_DDALINES, OnToolbarBresenhamLine)
-	ON_COMMAND(ID_TOOLBAR_MIDDLE_LINES, OnToolbarMiddleLine)
+	ON_COMMAND(ID_TOOLBAR_BRESENHAM_DDALINE, OnToolbarBresenhamLine)
 	ON_COMMAND(ID_TOOLBAR_MIDDLE_CIRCLE, OnToolbarMiddleCircle)
+	ON_COMMAND(ID_TOOLBAR_MIDDLE_LINES, OnToolbarMiddleLine)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1022,8 +1022,18 @@ void CDrawFlowChartView::OnCreateBresenhamLine()
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.GenericLine );
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBresenhamLine());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateMiddleLine() 
@@ -1037,6 +1047,17 @@ void CDrawFlowChartView::OnCreateMiddleLine()
 void CDrawFlowChartView::OnCreateMiddleCircle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMiddleCircle());
 	Invalidate();

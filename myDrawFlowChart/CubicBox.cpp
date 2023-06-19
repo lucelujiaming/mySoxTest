@@ -38,12 +38,15 @@ CCubicBox::CCubicBox()
 		// TODO: add construction code here
 //	Alpha=0;
 //	Beta=0;
+	
 	ReadPoint();
 	ReadFacet();
 	tran.SetMatrix(P,8);
 
-	m_currentAlpha = 0;
-	m_currentBeta = 0;
+	m_currentAlpha = -14;
+	m_currentBeta = -18;
+	tran.RotateX(m_currentAlpha); 
+	tran.RotateY(m_currentBeta); 
 }
 
 CCubicBox::~CCubicBox()

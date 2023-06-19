@@ -88,7 +88,7 @@ private:
 
 	int m_currentAlpha;
 	int m_currentBeta;
-
+	
 	//CObArray m_Points;
 	CLogFile m_objLogFile;
 };

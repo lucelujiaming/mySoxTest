@@ -120,14 +120,23 @@ SOURCE=.\ColorPoint.cpp
 
 !ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
 
-# SUBTRACT CPP /YX /Yc /Yu
+# ADD CPP /Yu
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConnectPoint.cpp
+SOURCE=.\ColorTriangle.cpp
+
+!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
+
+# ADD CPP /Yu
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -273,6 +282,10 @@ SOURCE=.\QuadraticSplineLine.cpp
 # Begin Source File
 
 SOURCE=.\Rectangle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RGB.cpp
 # End Source File
 # Begin Source File
 
@@ -495,6 +508,10 @@ SOURCE=.\Rectangle.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RGB.h
 # End Source File
 # Begin Source File
 

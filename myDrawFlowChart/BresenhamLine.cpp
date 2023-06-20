@@ -52,15 +52,22 @@ void CBresenhamLine::OldBresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//整型Brese
 /************************************************************************/
 /* 这个算法的思想是这样的。我们首先假设dx > dy，                        */
 /* 那么为了绘制从P0到P1的直线，我们首先肯定是要在X方向进行累加。        */
-/* 而计算下一个点的位置。在DDA算法中，我们使用ROUND进行判断，           */
-/* 也就是判断斜率是否大于0.5。相当于是判断dx/dy是否大于0.5。            */
-/* 那么就相当于判断2 * dx / dy是否大于1。也就是2 * dx是否大于dy。       */
-/* 之后就是Bresenham比较巧妙的地方。就是首先设e的初值为-dx。            */
-/* 之后对于e进行累加。如果X方向的累加值比Y方向的大，                    */
-/* 就往X方向移动，否则就往Y方向移动。 反之dy > dx，其实也是一样的。     */
-/* 只需要修改累加方向即可。                                             */
+/* 而计算下一个点的位置。在DDA算法中，我们使用ROUND进行四舍五入。       */
+/************************************************************************/
+/* 而Bresenham算法的原理与之类似。 我们首先假设dx > dy，                */ 
+/* 首先设定e的初值为-dx。作为不存在的-1轮的残留误差。                   */ 
+/* 这个理论上为-dy也是可以的。但是因为dx > dy，我们需要优先在X方向累加。*/ 
+/* 所以设定e的初值为-dx。                                               */ 
+/* 因为e的初值为-dx。因此上首先在X方向上进行累加。因为是四舍五入，      */ 
+/* 那就意味着误差增加了2 * dy。如果这个时候，我们在Y方向上不累加。      */
+/* 而那这个误差就会保留到下一轮。而如果我们在Y方向上累加。              */
+/* 那就意味着误差减少了2 * dx。                                         */
 /* 说的更形象一点就是，本来绘制斜线就是绘制一个台阶折线的过程。         */
 /* 这些算法绕来绕去其实都是一个目的，就是通过累加在直线上下来回跳跃。   */
+/************************************************************************/
+/* 之后是代码实现中一个巧妙的地方。就是如果X方向的累加值比Y方向的大，   */
+/* 就往X方向移动，否则就往Y方向移动。 反之dy > dx，其实也是一样的。     */
+/* 只需要修改累加方向即可。且累加方向可以为负。由signX和signY控制。     */
 /************************************************************************/
 void CBresenhamLine::BresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//通用整数Bresenham算法
 {
@@ -92,7 +99,7 @@ void CBresenhamLine::BresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//通用整数Bres
 		// 否则在Y方向上进行累加。
 		else
 			y += signY;
-		// 沿递增方向每递增一个单位，误差累加2 * dy。
+		// 我们沿递增方向每递增一个单位，误差累加2 * dy。
 		e += 2 * dy;
 		// 当误差大于零。
 		if (e >= 0)
@@ -102,7 +109,7 @@ void CBresenhamLine::BresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//通用整数Bres
 				y += signY;
 			else
 				x += signX;
-			// 并且更新误差为前一个误差减去2 * dx。
+			// 我们沿递增方向的垂直方向每递增一个单位，误差减去2 * dx。
 			e -= 2 * dx;
 		}
 	}
@@ -120,6 +127,18 @@ void CBresenhamLine::CDCLine(CDC* pDC, CPoint P0, CPoint P1)//CDC类成员函数绘图
 
 // 这个函数有点问题。没有考虑到累加方向和是否需要交换递增方向。
 // 下面的修改参照了BresenhamLine函数。
+/************************************************************************/
+/* 这个算法的思想其实还是没有脱离这两个原则。即：                       */
+/*     每一步。无论如何，我们都会沿递增方向每递增一个单位，             */
+/*     这会导致误差累加2 * dy。                                         */
+/*     当误差大于零的时候，我们沿递增方向的垂直方向递增一个单位，       */
+/*     这会导致误差减去2 * dx。                                         */
+/************************************************************************/
+/* 中点算法综合这两种情况，同时做了反向。就是：                         */
+/*     每一步。无论如何，我们都会沿递增方向递增一个单位，               */
+/*     如果上一轮的误差小于零，则本轮会同时减少2 * dy和增加2 * dx。     */
+/*     如果上一轮的误差大于零，则本轮只会减少2 * dy。                   */
+/************************************************************************/
 void CBresenhamLine::MidPointLine(CDC* pDC, CPoint P0, CPoint P1)//定义中点算法
 {
 	bool bInterchange = false;
@@ -142,7 +161,9 @@ void CBresenhamLine::MidPointLine(CDC* pDC, CPoint P0, CPoint P1)//定义中点算法
 	}
 	
 	int e = dx - 2 * dy;
+	// 如果上一轮的误差小于零，则本轮会同时减少2 * dy和增加2 * dx。
 	int incrUp = 2 * dx - 2 * dy;
+	// 如果上一轮的误差大于零，则本轮只会减少2 * dy。
 	int incrDown = -2 * dy;
 	
 	int x = P0.x, y = P0.y;
@@ -151,38 +172,32 @@ void CBresenhamLine::MidPointLine(CDC* pDC, CPoint P0, CPoint P1)//定义中点算法
 		for (int i = 1; i <= dx; i++)
 		{
 			pDC->SetPixelV(x, y, crClr);
+			// 每一步。无论如何，我们都会沿递增方向递增一个单位，
 			// 如果没有交换递增方向，那么在X方向上进行累加。
 			if (bInterchange == false)
 				x += signX;
 			// 否则在Y方向上进行累加。
 			else
 				y += signY;
-			// 当误差大于零。
+			// 如果上一轮的误差小于零，则本轮会同时减少2 * dy和增加2 * dx。
 			if (e < 0)
 			{
 				// 在递增方向上递增。否则就不递增。
 				if (bInterchange == false)
 				{
 					y += signY;
-					// 更新误差
-					e += incrUp * signX;
 				}
 				else
 				{
 					x += signX;
-					e += incrUp * signX;
 				}
+				// 更新误差
+				e += incrUp * signX;
 			}
+			// 如果上一轮的误差大于零，则本轮只会减少2 * dy。
 			else
 			{
-				if (bInterchange == false)
-				{
-					e += incrDown * signX;
-				}
-				else
-				{
-					e += incrDown * signX;
-				}
+				e += incrDown * signX;
 			}
 		}
 	}
@@ -252,7 +267,7 @@ void CBresenhamLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 //		CDCLine(pdc, m_End, P1);//调用CDC类成员函数绘图
 //	}
 	
-// 这个函数有点问题。
+	// 这个函数原来有点问题。被我改写了。
  	MidPointLine(pdc, m_Start, m_End);//调用中点算法
 
 	if (bShowSelectBorder)

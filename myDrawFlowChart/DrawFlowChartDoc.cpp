@@ -219,6 +219,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateWuAntiLine(), child);
                 }
+				else if(strcmp(child->string, "CFlatColorTriangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateFlatColorTriangle(), child);
+                }
+				else if(strcmp(child->string, "CSmoothColorTriangle") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateSmoothColorTriangle(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

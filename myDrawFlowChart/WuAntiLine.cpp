@@ -100,6 +100,9 @@ void CWuAntiLine::WuAntiLine(CDC* pDC, CPoint P0, CPoint P1)
 	double pixelDepth = 0.0;
 	for (int x = P0.x, y = P0.y; x < P1.x; x++)
 	{
+		// Wu反走样算法是用两个相邻像素共同表示理想直线上的一个点。
+		// 根据两个像素到理想直线的距离调节亮度，使绘制出来直线在视觉上消除锯齿。
+		// 说白了其实画了两条直线，只是颜色的设置使你看着还是一条线。
 		pDC->SetPixelV(x, y, RGB(pixelDepth * 255, pixelDepth * 255, pixelDepth * 255));
 		pDC->SetPixelV(x, y + 1, RGB((1 - pixelDepth) * 255, (1 - pixelDepth) * 255, (1 - pixelDepth) * 255));
 		pixelDepth += k;

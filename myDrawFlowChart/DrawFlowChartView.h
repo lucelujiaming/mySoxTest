@@ -132,10 +132,14 @@ protected:
 	afx_msg void OnToolbarBresenhamLine();
 	afx_msg void OnToolbarMiddleCircle();
 	afx_msg void OnToolbarWuAntiLine();
+	afx_msg void OnToolbarFlatColorTriangle();
+	afx_msg void OnToolbarSmoothColorTriangle();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
 	afx_msg void OnCreateWuAntiLine();
+	afx_msg void OnCreateFlatColorTriangle();
+	afx_msg void OnCreateSmoothColorTriangle();
 	afx_msg void OnCreateMiddleCircle();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);

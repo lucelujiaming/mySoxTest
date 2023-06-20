@@ -46,6 +46,8 @@ public:
 	CGraph* CreateDDALine();
 	CGraph* CreateBresenhamLine();
 	CGraph* CreateWuAntiLine();
+	CGraph* CreateFlatColorTriangle();
+	CGraph* CreateSmoothColorTriangle();
 	CGraph* CreateMiddleCircle();
 
 };

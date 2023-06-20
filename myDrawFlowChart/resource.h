@@ -52,7 +52,9 @@
 #define ID_TOOLBAR_DDA_LINES            32848
 #define ID_TOOLBAR_BRESENHAM_DDALINE    32849
 #define ID_TOOLBAR_MIDDLE_CIRCLE        32850
-#define ID_TOOLBAR_WU_ANTI_LINE         32851
+#define ID_TOOLBAR_WU_ANTILINE          32851
+#define ID_TOOLBAR_FLATCOLOR_TRIANGLE   32853
+#define ID_TOOLBAR_SMOOTHCOLOR_TRIANGLE 32854
 
 // Next default values for new objects
 // 
@@ -60,7 +62,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         32852
+#define _APS_NEXT_COMMAND_VALUE         32855
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

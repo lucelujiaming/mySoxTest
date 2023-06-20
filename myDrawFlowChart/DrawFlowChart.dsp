@@ -90,6 +90,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\ActiveEdgeTable.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
@@ -111,6 +115,14 @@ SOURCE=.\BresenhamLine.cpp
 # Begin Source File
 
 SOURCE=.\BrokenLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BucketTable.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BucketTableFill.cpp
 # End Source File
 # Begin Source File
 
@@ -185,6 +197,10 @@ SOURCE=.\DrawFlowChartDoc.cpp
 # Begin Source File
 
 SOURCE=.\DrawFlowChartView.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EdgeTableFillPolygon.cpp
 # End Source File
 # Begin Source File
 
@@ -335,6 +351,10 @@ SOURCE=.\WuAntiLine.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\ActiveEdgeTable.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\AdjustPoint.h
 # End Source File
 # Begin Source File
@@ -356,6 +376,14 @@ SOURCE=.\BresenhamLine.h
 # Begin Source File
 
 SOURCE=.\BrokenLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BucketTable.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BucketTableFill.h
 # End Source File
 # Begin Source File
 
@@ -408,6 +436,10 @@ SOURCE=.\DrawFlowChartDoc.h
 # Begin Source File
 
 SOURCE=.\DrawFlowChartView.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\EdgeTableFillPolygon.h
 # End Source File
 # Begin Source File
 

@@ -49,6 +49,7 @@ public:
 	CGraph* CreateFlatColorTriangle();
 	CGraph* CreateSmoothColorTriangle();
 	CGraph* CreateMiddleCircle();
+	CGraph* CreateEdgeTableFillPolygon();
 
 };
 

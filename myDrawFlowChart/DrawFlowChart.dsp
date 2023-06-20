@@ -114,6 +114,23 @@ SOURCE=.\BrokenLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorPoint.cpp
+
+!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ConnectPoint.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CubicBox.cpp
 # End Source File
 # Begin Source File
@@ -171,6 +188,10 @@ SOURCE=.\End.cpp
 # Begin Source File
 
 SOURCE=.\Facet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FlatColorTriangle.cpp
 # End Source File
 # Begin Source File
 
@@ -263,6 +284,10 @@ SOURCE=.\RoundRectangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SmoothColorTriangle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.cpp
 # End Source File
 # Begin Source File
@@ -273,6 +298,19 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\Transform3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Triangle.cpp
+
+!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -305,6 +343,14 @@ SOURCE=.\BresenhamLine.h
 # Begin Source File
 
 SOURCE=.\BrokenLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorPoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorTriangle.h
 # End Source File
 # Begin Source File
 
@@ -361,6 +407,10 @@ SOURCE=.\End.h
 # Begin Source File
 
 SOURCE=.\Facet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FlatColorTriangle.h
 # End Source File
 # Begin Source File
 
@@ -456,6 +506,10 @@ SOURCE=.\RoundRectangle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SmoothColorTriangle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.h
 # End Source File
 # Begin Source File
@@ -465,6 +519,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\Transform3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Triangle.h
 # End Source File
 # Begin Source File
 

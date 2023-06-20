@@ -1,0 +1,141 @@
+Loaded 'APP01.EXE', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\kernel32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\KernelBase.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\gdi32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\win32u.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\gdi32full.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\msvcp_win.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\ucrtbase.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\MSVCRTD.DLL', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\MFC42D.DLL', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\user32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\user32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\MFCO42D.DLL', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\imm32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\MFC42LOC.DLL', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\advapi32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\msvcrt.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\sechost.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\rpcrt4.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\uxtheme.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\combase.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\msctf.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\oleaut32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\TextShaping.dll', no matching symbolic information found.
+Loaded 'C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\kernel.appcore.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\bcryptprimitives.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\TextInputFramework.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\CoreMessaging.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\CoreUIComponents.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\ws2_32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\SHCore.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\ntmarta.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\WinTypes.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\WinTypes.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\WinTypes.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\ole32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\clbcatq.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\SogouTSF.ime', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\shell32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\version.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\msimg32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\windows.storage.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\wldp.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\shlwapi.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\SogouPY.ime', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\SogouPY.ime', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\oleacc.dll', no matching symbolic information found.
+Loaded 'D:\Program Files (x86)\SogouInput\Components\PicFace\1.1.0.2073\PicFace.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\comdlg32.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\profapi.dll', no matching symbolic information found.
+Loaded 'D:\Program Files (x86)\SogouInput\12.3.0.6426\Resource.dll', no matching symbolic information found.
+Loaded 'D:\Program Files (x86)\SogouInput\12.3.0.6426\Resource.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\dwmapi.dll', no matching symbolic information found.
+Loaded 'C:\Windows\SysWOW64\psapi.dll', no matching symbolic information found.
+The thread 0x3D84 has exited with code 0 (0x0).
+The thread 0x154C has exited with code 0 (0x0).
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [403, 4]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [401, 10]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [399, 17]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [396, 34]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [395, 42]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [393, 53]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [391, 64]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [389, 76]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [388, 91]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [388, 113]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [388, 137]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 163]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 185]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [386, 199]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [386, 211]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 219]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 225]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 228]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [387, 230]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [388, 230]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [390, 230]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [391, 230]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [392, 229]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [392, 228]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [394, 227]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [394, 226]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [395, 226]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [397, 224]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [399, 223]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [401, 221]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [402, 221]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [403, 220]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [404, 219]), 
+(CControlFlow::SetStartPoint) - m_Points have 1 points which includes (0 - [404, 218]), 
+(CControlFlow::SetEndPoint(NotCreateEnd)) - m_Points have 2 points which includes (0 - [404, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [405, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [406, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [407, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [415, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [423, 218]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [431, 220]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [440, 221]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [449, 222]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [459, 224]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [472, 226]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [491, 229]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [515, 233]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [541, 239]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [568, 244]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [594, 250]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [616, 256]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [632, 260]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [646, 265]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [658, 269]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [667, 273]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [673, 275]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [675, 277]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [676, 277]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [678, 279]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [679, 281]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [680, 281]), (1 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 2 points which includes (0 - [680, 282]), (1 - [404, 218]), 
+(CControlFlow::SetEndPoint(NotCreateEnd)) - m_Points have 3 points which includes (0 - [680, 282]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [603, 330]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [598, 333]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [595, 335]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [594, 336]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [591, 337]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [590, 338]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [589, 339]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [587, 340]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [586, 340]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [585, 340]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [585, 341]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [584, 341]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 3 points which includes (0 - [583, 341]), (1 - [680, 282]), (2 - [404, 218]), 
+(CControlFlow::SetEndPoint(NotCreateEnd)) - m_Points have 4 points which includes (0 - [583, 341]), (1 - [680, 282]), (2 - [583, 341]), (3 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 4 points which includes (0 - [585, 340]), (1 - [680, 282]), (2 - [583, 341]), (3 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 4 points which includes (0 - [586, 339]), (1 - [680, 282]), (2 - [583, 341]), (3 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 4 points which includes (0 - [586, 338]), (1 - [680, 282]), (2 - [583, 341]), (3 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 4 points which includes (0 - [587, 338]), (1 - [680, 282]), (2 - [583, 341]), (3 - [404, 218]), 
+(CControlFlow::SetEndPoint(NotCreateEnd)) - m_Points have 5 points which includes (0 - [587, 338]), (1 - [680, 282]), (2 - [583, 341]), (3 - [587, 338]), (4 - [404, 218]), 
+(CControlFlow::SetStartPoint) - m_Points have 5 points which includes (0 - [588, 338]), (1 - [680, 282]), (2 - [583, 341]), (3 - [587, 338]), (4 - [404, 218]), 
+(CControlFlow::IsIn) - m_Points have 4 points which includes (0 - [588, 338]), (1 - [680, 282]), (2 - [583, 341]), (3 - [587, 338]), 

@@ -1,10 +1,11 @@
-// MiddleCircle.cpp: implementation of the CMiddleCircle class.
+// FlatColorTriangle.cpp: implementation of the CFlatColorTriangle class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "MiddleCircle.h"
+#include "FlatColorTriangle.h"
+#include"Triangle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,12 +16,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CMiddleCircle, CObject, 1)
+// IMPLEMENT_SERIAL(CFlatColorTriangle, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CMiddleCircle::CMiddleCircle()
+CFlatColorTriangle::CFlatColorTriangle()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -32,105 +33,26 @@ CMiddleCircle::CMiddleCircle()
 	}
 }
 
-CMiddleCircle::~CMiddleCircle()
+CFlatColorTriangle::~CFlatColorTriangle()
 {
 
 }
 
-/************************************************************************/
-/* 只要搞清楚了中点算法。这个算法就比较简单了。                         */
-/* 只不过是根据圆计算偏移而已。                                         */
-/************************************************************************/
-void CMiddleCircle::MidPointCircle(CDC* pDC, int R)//定义中点画圆算法
+
+void CFlatColorTriangle::DrawObject(CDC* pDC)
 {
-	int e = 1 - R;
-	int x = 0, y = R;
-	for (x = 0; x <= y; x++)
-	{
-		// 一次画出8个分象限的对应点。
-		CirclePoint(pDC, x, y);//调用八分法画圆算法
-		// 对应于公式(2 - 22)
-		if (e < 0)
-		{
-			e += 2 * x + 3;
-		}
-		else
-		{
-			// 对应于公式(2 - 23)
-			e += 2 * (x - y) + 5;
-			y--;
-		}
-	}
+	CPoint P0(m_End.x, m_Start.y);
+	CPoint P1(m_Start.x, m_End.y);
+	CPoint P2((m_Start.x + m_End.x)/2, m_End.y);
+	CTriangle triangle(P0, P1, P2);//构造三角形
+	triangle.Fill(pDC);//填充三角形
 }
 
-void CMiddleCircle::CirclePoint(CDC* pDC, int x, int y)//定义八分法画圆算法
-{
-	COLORREF  crClr = RGB(0, 0, 0);
-	pDC->SetPixelV(x + m_Start.x, y + m_Start.y, crClr);
-	pDC->SetPixelV(y + m_Start.x, x + m_Start.y, crClr);
-	pDC->SetPixelV(y + m_Start.x, -x + m_Start.y, crClr);
-	pDC->SetPixelV(x + m_Start.x, -y + m_Start.y, crClr);
-	pDC->SetPixelV(-x + m_Start.x, -y + m_Start.y, crClr);
-	pDC->SetPixelV(-y + m_Start.x, -x + m_Start.y, crClr);
-	pDC->SetPixelV(-y + m_Start.x, x + m_Start.y, crClr);
-	pDC->SetPixelV(-x + m_Start.x, y + m_Start.y, crClr);
-}
-
-void CMiddleCircle::MidPointEllipse(CDC* pDC, int majorAxis, int minorAxis)//椭圆的中点算法
-{		
-	// 对应于公式(2 - 32)
-	double d1 = minorAxis * minorAxis + majorAxis * majorAxis * (-minorAxis + 0.25);
-	int x = 0, y = minorAxis;
-	while (minorAxis * minorAxis * (x + 1) < majorAxis * majorAxis * (y - 0.5))
-	{
-		EllipsePoint(pDC, x, y);
-		if (d1 < 0)
-		{
-			// 对应于公式(2 - 30)
-			d1 += minorAxis * minorAxis * (2 * x + 3);
-		}
-		else
-		{
-			// 对应于公式(2 - 31)
-			d1 += minorAxis * minorAxis * (2 * x + 3) + majorAxis * majorAxis * (-2 * y + 2);
-			y--;
-		}
-		x++;
-	}
-	// 对应于公式(2 - 33) 和 公式(2 - 38)
-	double d2 = minorAxis * minorAxis * (x + 0.5) * (x + 0.5) + majorAxis * majorAxis * (y - 1) * (y - 1)
-							- (double)majorAxis * majorAxis * minorAxis * minorAxis;
-	while (y >= 0)
-	{
-		EllipsePoint(pDC, x, y);
-		if (d2 < 0)
-		{
-			// 对应于公式(2 - 35)
-			d2 += minorAxis * minorAxis * (2 * x + 2) + majorAxis * majorAxis * (-2 * y + 3);
-			x++;
-		}
-		else
-		{
-			// 对应于公式(2 - 36)
-			d2 += majorAxis * majorAxis * (-2 * y + 3);
-		}
-		y--;
-	}
-}
-
-void CMiddleCircle::EllipsePoint(CDC* pDC, int x, int y)
-{
-	COLORREF crClr = RGB(0, 0, 0);
-	pDC->SetPixelV(x + m_End.x, y + m_End.y, crClr);
-	pDC->SetPixelV(x + m_End.x, -y + m_End.y, crClr);
-	pDC->SetPixelV(-x + m_End.x, -y + m_End.y, crClr);
-	pDC->SetPixelV(-x + m_End.x, y + m_End.y, crClr);
-}
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CMiddleCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CFlatColorTriangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -140,10 +62,8 @@ void CMiddleCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	m_Radius = m_End.x - m_Start.x;
-	MidPointCircle(pdc, m_Radius);//调用圆的中点算法
-	
-	MidPointEllipse(pdc, 100, 30);//调用圆的中点算法
+
+	DrawObject(pdc);
 
 	if(m_IsMark)
 	{
@@ -155,7 +75,7 @@ void CMiddleCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CMiddleCircle::DrawFocus( CDC *pdc )
+void CFlatColorTriangle::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -179,7 +99,7 @@ void CMiddleCircle::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CMiddleCircle::Move( int cx, int cy )
+void CFlatColorTriangle::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -189,7 +109,7 @@ void CMiddleCircle::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CMiddleCircle::AdjustSize( CPoint &pt )
+void CFlatColorTriangle::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -249,7 +169,7 @@ void CMiddleCircle::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CMiddleCircle::IsIn( CPoint &pt )
+bool CFlatColorTriangle::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -273,7 +193,7 @@ bool CMiddleCircle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CMiddleCircle::IsConnectOn(CAdjustPoint *pt)
+int CFlatColorTriangle::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -291,7 +211,7 @@ int CMiddleCircle::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CMiddleCircle::IsOn( CPoint &pt )
+bool CFlatColorTriangle::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -321,7 +241,7 @@ bool CMiddleCircle::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CMiddleCircle::AdjustStartAndEnd()
+void CFlatColorTriangle::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -339,7 +259,7 @@ void CMiddleCircle::AdjustStartAndEnd()
 	}
 }
 
-int CMiddleCircle::GetAdjustPoint()
+int CFlatColorTriangle::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -347,7 +267,7 @@ int CMiddleCircle::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CMiddleCircle::AdjustFocusPoint()
+void CFlatColorTriangle::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -377,7 +297,7 @@ void CMiddleCircle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CMiddleCircle::SaveParamsToJSON(cJSON * objJSON)
+void CFlatColorTriangle::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -407,7 +327,7 @@ void CMiddleCircle::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CMiddleCircle::LoadParamsFromJSON(cJSON * objJSON)
+void CFlatColorTriangle::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

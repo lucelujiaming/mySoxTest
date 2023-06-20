@@ -83,7 +83,9 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_DDA_LINES, OnToolbarDDALine)
 	ON_COMMAND(ID_TOOLBAR_BRESENHAM_DDALINE, OnToolbarBresenhamLine)
 	ON_COMMAND(ID_TOOLBAR_MIDDLE_CIRCLE, OnToolbarMiddleCircle)
-	ON_COMMAND(ID_TOOLBAR_WU_ANTI_LINE, OnToolbarWuAntiLine)
+	ON_COMMAND(ID_TOOLBAR_WU_ANTILINE, OnToolbarWuAntiLine)
+	ON_COMMAND(ID_TOOLBAR_FLATCOLOR_TRIANGLE, OnToolbarFlatColorTriangle)
+	ON_COMMAND(ID_TOOLBAR_SMOOTHCOLOR_TRIANGLE, OnToolbarSmoothColorTriangle)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1054,6 +1056,42 @@ void CDrawFlowChartView::OnCreateWuAntiLine()
 	Invalidate();
 }
 
+void CDrawFlowChartView::OnCreateFlatColorTriangle() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateFlatColorTriangle());
+}
+
+void CDrawFlowChartView::OnCreateSmoothColorTriangle() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateSmoothColorTriangle());
+}
+
 void CDrawFlowChartView::OnCreateMiddleCircle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1251,6 +1289,18 @@ void CDrawFlowChartView::OnToolbarWuAntiLine()
 {
 	// TODO: Add your command handler code here
 	OnCreateWuAntiLine();
+}
+
+void CDrawFlowChartView::OnToolbarFlatColorTriangle() 
+{
+	// TODO: Add your command handler code here
+	OnCreateFlatColorTriangle();
+}
+
+void CDrawFlowChartView::OnToolbarSmoothColorTriangle() 
+{
+	// TODO: Add your command handler code here
+	OnCreateSmoothColorTriangle();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

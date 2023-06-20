@@ -34,6 +34,8 @@
 #include "BresenhamLine.h"
 #include "WuAntiLine.h"
 #include "MiddleCircle.h"
+#include "FlatColorTriangle.h"
+#include "SmoothColorTriangle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -189,6 +191,16 @@ CGraph* CGraphFactory::CreateBresenhamLine()
 CGraph* CGraphFactory::CreateWuAntiLine()
 {
 	return new CWuAntiLine();
+}
+
+CGraph* CGraphFactory::CreateFlatColorTriangle()
+{
+	return new CFlatColorTriangle();
+}
+
+CGraph* CGraphFactory::CreateSmoothColorTriangle()
+{
+	return new CSmoothColorTriangle();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

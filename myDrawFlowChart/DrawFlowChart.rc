@@ -137,6 +137,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_EDGETABLE_FILL_POLYGON
     BUTTON      ID_TOOLBAR_EDGE_FILL_POLYGON
     BUTTON      ID_TOOLBAR_FENCE_FILL_POLYGON
+    BUTTON      ID_TOOLBAR_SCANLINE_FILL_POLYGON
 END
 
 
@@ -482,7 +483,7 @@ BEGIN
                             "使用有效边表填充多边形\n有效边边表填充多边形"
     ID_TOOLBAR_EDGE_FILL_POLYGON "使用边填充多边形\n边填充多边形"
     ID_TOOLBAR_FENCE_FILL_POLYGON "使用栅栏填充多边形\n栅栏填充多边形"
-	
+    ID_TOOLBAR_SCANLINE_FILL_POLYGON "使用扫描线种子填充多边形\n扫描线种子填充多边形"
 END
 
 #endif    // Chinese (P.R.C.) resources

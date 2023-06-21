@@ -1,10 +1,10 @@
-// EdgeFillPolygon.cpp: implementation of the CEdgeFillPolygon class.
+// FenceFillPolygon.cpp: implementation of the CFenceFillPolygon class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "EdgeFillPolygon.h"
+#include "FenceFillPolygon.h"
 #include "SmoothFillTriangle.h"
 
 #ifdef _DEBUG
@@ -17,12 +17,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CEdgeFillPolygon, CObject, 1)
+// IMPLEMENT_SERIAL(CFenceFillPolygon, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CEdgeFillPolygon::CEdgeFillPolygon()
+CFenceFillPolygon::CFenceFillPolygon()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -36,21 +36,21 @@ CEdgeFillPolygon::CEdgeFillPolygon()
 	fillClr = RGB(0, 0, 0);//前景色
 }
 
-CEdgeFillPolygon::~CEdgeFillPolygon()
+CFenceFillPolygon::~CFenceFillPolygon()
 {
 
 }
 
-void CEdgeFillPolygon::ReadPoint(void)//顶点表
+void CFenceFillPolygon::ReadPoint(void)//顶点表
 {
 	CRGB color = CRGB(1, 0, 0);
-	P[0].x = 5, P[0].y = 10, P[0].c = color;
-	P[1].x = -15; P[1].y = 30, P[1].c = color;
-	P[2].x = -25; P[2].y = 5, P[2].c = color;
-	P[3].x = -15; P[3].y = -25, P[3].c = color;
-	P[4].x = 0;    P[4].y = -5, P[4].c = color;
-	P[5].x = 10;  P[5].y = -25, P[5].c = color;
-	P[6].x = 30;  P[6].y = 15, P[6].c = color;
+	P[0].x = 50, P[0].y = 100, P[0].c = color;
+	P[1].x = -150; P[1].y = 300, P[1].c = color;
+	P[2].x = -250; P[2].y = 50, P[2].c = color;
+	P[3].x = -150; P[3].y = -250, P[3].c = color;
+	P[4].x = 0;    P[4].y = -50, P[4].c = color;
+	P[5].x = 100;  P[5].y = -250, P[5].c = color;
+	P[6].x = 300;  P[6].y = 150, P[6].c = color;
 
 	P[0].x += m_Start.x, P[0].y += m_Start.y; 
 	P[1].x += m_Start.x, P[1].y += m_Start.y; 
@@ -61,23 +61,11 @@ void CEdgeFillPolygon::ReadPoint(void)//顶点表
 	P[6].x += m_Start.x, P[6].y += m_Start.y; 
 }
 
-void CEdgeFillPolygon::DrawObject(CDC* pDC)
+
+void CFenceFillPolygon::DrawObject(CDC* pDC)
 {
-	xMin = xMax = P[0].x;
-	yMin = yMax = P[0].y;
-	for (int i = 0; i < 7; i++)//计算多边形包围盒
-	{
-		if (P[i].x > xMax)
-			xMax = P[i].x;
-		if (P[i].x < xMin)
-			xMin = P[i].x;
-		if (P[i].y > yMax)
-			yMax = P[i].y;
-		if (P[i].y < yMin)
-			yMin = P[i].y;
-	}
 	CColorPoint t;
-	for (i = 0; i < 7; i++)//绘制多边形
+	for (int i = 0; i < 7; i++)//绘制多边形
 	{
 		if (0 == i)
 		{
@@ -88,14 +76,14 @@ void CEdgeFillPolygon::DrawObject(CDC* pDC)
 			pDC->LineTo(P[i].x, P[i].y);
 	}
 	pDC->LineTo(t.x, t.y);//闭合多边形
-	pDC->MoveTo(xMin, yMin);//绘制包围盒
-	pDC->LineTo(xMax, yMin);
-	pDC->LineTo(xMax, yMax);
-	pDC->LineTo(xMin, yMax);
-	pDC->LineTo(xMin, yMin);
+	CPen greenPen(PS_SOLID, 3, RGB(0, 255, 0));
+	CPen* pOldPen = pDC->SelectObject(&greenPen);
+	pDC->MoveTo(P[4].x, P[1].y);//绘制栅栏
+	pDC->LineTo(P[4].x, P[3].y);
+	pDC->SelectObject(pOldPen);
 }
 
-void CEdgeFillPolygon::EdgeFill(CDC* pDC)
+void CFenceFillPolygon::EdgeFill(CDC* pDC)
 {
 	int ymin, ymax;//边的最小y值与最大y值
 	double x_ymin, m;//x_ymin为边低端的x坐标，m为斜率的倒数
@@ -115,16 +103,23 @@ void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 			ymax = P[i].y;
 			x_ymin = P[j].x;
 		}
-		for (int y = ymin; y < ymax; y++) // 沿每一条边循环扫描线
+		for (int y = ymin; y < ymax; y += 10)//沿每一条边循环扫描线
 		{
-			for (int x = ROUND(x_ymin); x < xMax; x++)//对每一条扫描线与边的交点的右侧像素循环
+			for (int x = ROUND(x_ymin); x <= P[4].x; x++)
 			{
-				if (fillClr == pDC->GetPixel(x, y)) // 如果是填充色
-					pDC->SetPixelV(x, y, backClr);  // 置为背景色
+				if (fillClr == pDC->GetPixel(x, y))//如果是填充色
+					pDC->SetPixelV(x, y, backClr);//置为背景色
 				else
-					pDC->SetPixelV(x, y, fillClr);  // 置为填充色
+					pDC->SetPixelV(x, y, fillClr);//置为填充色
 			}
-			x_ymin += m;                            // 计算下一条扫描线的x起点坐标
+			for (x = ROUND(P[4].x); x < ROUND(x_ymin); x++)
+			{
+				if (fillClr == pDC->GetPixel(x, y))//如果是填充色
+					pDC->SetPixelV(x, y, backClr);//置为背景色
+				else
+					pDC->SetPixelV(x, y, fillClr);//置为填充色
+			}
+			x_ymin += 10 * m;//计算下一条扫描线的x起点坐标
 		}
 	}
 }
@@ -132,7 +127,7 @@ void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CEdgeFillPolygon::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CFenceFillPolygon::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -156,7 +151,7 @@ void CEdgeFillPolygon::Draw( CDC *pdc, BOOL bShowSelectBorder )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CEdgeFillPolygon::DrawFocus( CDC *pdc )
+void CFenceFillPolygon::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -180,7 +175,7 @@ void CEdgeFillPolygon::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CEdgeFillPolygon::Move( int cx, int cy )
+void CFenceFillPolygon::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -190,7 +185,7 @@ void CEdgeFillPolygon::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CEdgeFillPolygon::AdjustSize( CPoint &pt )
+void CFenceFillPolygon::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -250,7 +245,7 @@ void CEdgeFillPolygon::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CEdgeFillPolygon::IsIn( CPoint &pt )
+bool CFenceFillPolygon::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -274,7 +269,7 @@ bool CEdgeFillPolygon::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CEdgeFillPolygon::IsConnectOn(CAdjustPoint *pt)
+int CFenceFillPolygon::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -292,7 +287,7 @@ int CEdgeFillPolygon::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CEdgeFillPolygon::IsOn( CPoint &pt )
+bool CFenceFillPolygon::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -322,7 +317,7 @@ bool CEdgeFillPolygon::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CEdgeFillPolygon::AdjustStartAndEnd()
+void CFenceFillPolygon::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -340,7 +335,7 @@ void CEdgeFillPolygon::AdjustStartAndEnd()
 	}
 }
 
-int CEdgeFillPolygon::GetAdjustPoint()
+int CFenceFillPolygon::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -348,7 +343,7 @@ int CEdgeFillPolygon::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CEdgeFillPolygon::AdjustFocusPoint()
+void CFenceFillPolygon::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -378,7 +373,7 @@ void CEdgeFillPolygon::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CEdgeFillPolygon::SaveParamsToJSON(cJSON * objJSON)
+void CFenceFillPolygon::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -408,7 +403,7 @@ void CEdgeFillPolygon::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CEdgeFillPolygon::LoadParamsFromJSON(cJSON * objJSON)
+void CFenceFillPolygon::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

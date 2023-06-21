@@ -207,6 +207,10 @@ SOURCE=.\Facet.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FenceFillPolygon.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FlatColorTriangle.cpp
 # End Source File
 # Begin Source File
@@ -438,6 +442,10 @@ SOURCE=.\End.h
 # Begin Source File
 
 SOURCE=.\Facet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FenceFillPolygon.h
 # End Source File
 # Begin Source File
 

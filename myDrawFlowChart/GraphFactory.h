@@ -51,6 +51,7 @@ public:
 	CGraph* CreateMiddleCircle();
 	CGraph* CreateEdgeTableFillPolygon();
 	CGraph* CreateEdgeFillPolygon();
+	CGraph* CreateFenceFillPolygon();
 
 };
 

@@ -308,6 +308,10 @@ SOURCE=.\RGB.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RotatePentagram.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\RoundHeadRectangle.cpp
 # End Source File
 # Begin Source File
@@ -334,6 +338,10 @@ SOURCE=.\Start.cpp
 
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\Transform2.cpp
 # End Source File
 # Begin Source File
 
@@ -557,6 +565,10 @@ SOURCE=.\RGB.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RotatePentagram.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RoundHeadRectangle.h
 # End Source File
 # Begin Source File
@@ -582,6 +594,10 @@ SOURCE=.\Start.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Transform2.h
 # End Source File
 # Begin Source File
 

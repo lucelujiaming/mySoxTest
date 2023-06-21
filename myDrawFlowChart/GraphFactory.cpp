@@ -38,6 +38,7 @@
 #include "SmoothColorTriangle.h"
 #include "EdgeTableFillPolygon.h"
 #include "EdgeFillPolygon.h"
+#include "FenceFillPolygon.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -213,6 +214,11 @@ CGraph* CGraphFactory::CreateEdgeTableFillPolygon()
 CGraph* CGraphFactory::CreateEdgeFillPolygon()
 {
 	return new CEdgeFillPolygon();
+}
+
+CGraph* CGraphFactory::CreateFenceFillPolygon()
+{
+	return new CFenceFillPolygon();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

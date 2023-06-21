@@ -139,19 +139,6 @@ SOURCE=.\ColorPoint.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorTriangle.cpp
-
-!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
-
-# ADD CPP /Yu
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\CubicBox.cpp
 # End Source File
 # Begin Source File
@@ -200,6 +187,10 @@ SOURCE=.\DrawFlowChartView.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\EdgeFillPolygon.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\EdgeTableFillPolygon.cpp
 # End Source File
 # Begin Source File
@@ -217,6 +208,10 @@ SOURCE=.\Facet.cpp
 # Begin Source File
 
 SOURCE=.\FlatColorTriangle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FlatFillTriangle.cpp
 # End Source File
 # Begin Source File
 
@@ -317,6 +312,10 @@ SOURCE=.\SmoothColorTriangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SmoothFillTriangle.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.cpp
 # End Source File
 # Begin Source File
@@ -327,19 +326,6 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\Transform3.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Triangle.cpp
-
-!IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "DrawFlowChart - Win32 Debug"
-
-# SUBTRACT CPP /YX /Yc /Yu
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -391,10 +377,6 @@ SOURCE=.\ColorPoint.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorTriangle.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\CubicBox.h
 # End Source File
 # Begin Source File
@@ -439,6 +421,10 @@ SOURCE=.\DrawFlowChartView.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\EdgeFillPolygon.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EdgeTableFillPolygon.h
 # End Source File
 # Begin Source File
@@ -456,6 +442,10 @@ SOURCE=.\Facet.h
 # Begin Source File
 
 SOURCE=.\FlatColorTriangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FlatFillTriangle.h
 # End Source File
 # Begin Source File
 
@@ -559,6 +549,10 @@ SOURCE=.\SmoothColorTriangle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SmoothFillTriangle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.h
 # End Source File
 # Begin Source File
@@ -568,10 +562,6 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\Transform3.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Triangle.h
 # End Source File
 # Begin Source File
 

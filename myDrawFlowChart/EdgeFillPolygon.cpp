@@ -1,10 +1,10 @@
-// SmoothColorTriangle.cpp: implementation of the CSmoothColorTriangle class.
+// EdgeFillPolygon.cpp: implementation of the CEdgeFillPolygon class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "SmoothColorTriangle.h"
+#include "EdgeFillPolygon.h"
 #include "SmoothFillTriangle.h"
 
 #ifdef _DEBUG
@@ -12,16 +12,17 @@
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
+#define ROUND(d) int(d + 0.5)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CSmoothColorTriangle, CObject, 1)
+// IMPLEMENT_SERIAL(CEdgeFillPolygon, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CSmoothColorTriangle::CSmoothColorTriangle()
+CEdgeFillPolygon::CEdgeFillPolygon()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -31,28 +32,107 @@ CSmoothColorTriangle::CSmoothColorTriangle()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
+	backClr = RGB(255, 255, 255);//背景色
+	fillClr = RGB(0, 0, 0);//前景色
 }
 
-CSmoothColorTriangle::~CSmoothColorTriangle()
+CEdgeFillPolygon::~CEdgeFillPolygon()
 {
 
 }
 
-
-void CSmoothColorTriangle::DrawObject(CDC* pDC)
+void CEdgeFillPolygon::ReadPoint(void)//顶点表
 {
-	CColorPoint P0(m_End.x, m_Start.y, CRGB(1, 0, 0));	
-	CColorPoint P1(m_Start.x, m_End.y, CRGB(0, 1, 0));
-	CColorPoint P2((m_Start.x + m_End.x)/2, m_End.y, CRGB(0, 0, 1));
-	CSmoothFillTriangle smoothFillTriangle(P0, P1, P2);//构造三角形
-	smoothFillTriangle.Fill(pDC);//填充三角形
+	CRGB color = CRGB(1, 0, 0);
+	P[0].x = 5, P[0].y = 10, P[0].c = color;
+	P[1].x = -15; P[1].y = 30, P[1].c = color;
+	P[2].x = -25; P[2].y = 5, P[2].c = color;
+	P[3].x = -15; P[3].y = -25, P[3].c = color;
+	P[4].x = 0;    P[4].y = -5, P[4].c = color;
+	P[5].x = 10;  P[5].y = -25, P[5].c = color;
+	P[6].x = 30;  P[6].y = 15, P[6].c = color;
+
+	P[0].x += m_Start.x, P[0].y += m_Start.y; 
+	P[1].x += m_Start.x, P[1].y += m_Start.y; 
+	P[2].x += m_Start.x, P[2].y += m_Start.y; 
+	P[3].x += m_Start.x, P[3].y += m_Start.y; 
+	P[4].x += m_Start.x, P[4].y += m_Start.y; 
+	P[5].x += m_Start.x, P[5].y += m_Start.y; 
+	P[6].x += m_Start.x, P[6].y += m_Start.y; 
 }
 
+void CEdgeFillPolygon::DrawObject(CDC* pDC)
+{
+	xMin = xMax = P[0].x;
+	yMin = yMax = P[0].y;
+	for (int i = 0; i < 7; i++)//计算多边形包围盒
+	{
+		if (P[i].x > xMax)
+			xMax = P[i].x;
+		if (P[i].x < xMin)
+			xMin = P[i].x;
+		if (P[i].y > yMax)
+			yMax = P[i].y;
+		if (P[i].y < yMin)
+			yMin = P[i].y;
+	}
+	CColorPoint t;
+	for (i = 0; i < 7; i++)//绘制多边形
+	{
+		if (0 == i)
+		{
+			pDC->MoveTo(P[i].x, P[i].y);
+			t = P[i];
+		}
+		else
+			pDC->LineTo(P[i].x, P[i].y);
+	}
+	pDC->LineTo(t.x, t.y);//闭合多边形
+	pDC->MoveTo(xMin, yMin);//绘制包围盒
+	pDC->LineTo(xMax, yMin);
+	pDC->LineTo(xMax, yMax);
+	pDC->LineTo(xMin, yMax);
+	pDC->LineTo(xMin, yMin);
+}
+
+void CEdgeFillPolygon::EdgeFill(CDC* pDC)
+{
+	int ymin, ymax;//边的最小y值与最大y值
+	double x_ymin, m;//x_ymin为边低端的x坐标，m为斜率的倒数
+	for (int i = 0; i < 7; i++)//循环多边形所有边
+	{
+		int j = (i + 1) % 7;
+		m = double(P[i].x - P[j].x) / (P[i].y - P[j].y);//计算1/k
+		if (P[i].y < P[j].y)//得到每条边y的最大值与最小值
+		{
+			ymin = P[i].y;
+			ymax = P[j].y;
+			x_ymin = P[i].x;//得到x|ymin
+		}
+		else
+		{
+			ymin = P[j].y;
+			ymax = P[i].y;
+			x_ymin = P[j].x;
+		}
+		for (int y = ymin; y < ymax; y++)//沿每一条边循环扫描线
+		{
+			for (int x = ROUND(x_ymin); x < xMax; x++)//对每一条扫描线与边的交点的右侧像素循环
+			{
+				if (fillClr == pDC->GetPixel(x, y))//如果是填充色
+					pDC->SetPixelV(x, y, backClr);//置为背景色
+				else
+					pDC->SetPixelV(x, y, fillClr);//置为填充色
+			}
+			x_ymin += m;//计算下一条扫描线的x起点坐标
+		}
+	}
+}
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CSmoothColorTriangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CEdgeFillPolygon::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -62,8 +142,9 @@ void CSmoothColorTriangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-
+	ReadPoint();
 	DrawObject(pdc);
+	EdgeFill(pdc);
 
 	if(m_IsMark)
 	{
@@ -75,7 +156,7 @@ void CSmoothColorTriangle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CSmoothColorTriangle::DrawFocus( CDC *pdc )
+void CEdgeFillPolygon::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -99,7 +180,7 @@ void CSmoothColorTriangle::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CSmoothColorTriangle::Move( int cx, int cy )
+void CEdgeFillPolygon::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -109,7 +190,7 @@ void CSmoothColorTriangle::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CSmoothColorTriangle::AdjustSize( CPoint &pt )
+void CEdgeFillPolygon::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -169,7 +250,7 @@ void CSmoothColorTriangle::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CSmoothColorTriangle::IsIn( CPoint &pt )
+bool CEdgeFillPolygon::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -193,7 +274,7 @@ bool CSmoothColorTriangle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CSmoothColorTriangle::IsConnectOn(CAdjustPoint *pt)
+int CEdgeFillPolygon::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -211,7 +292,7 @@ int CSmoothColorTriangle::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CSmoothColorTriangle::IsOn( CPoint &pt )
+bool CEdgeFillPolygon::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -241,7 +322,7 @@ bool CSmoothColorTriangle::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CSmoothColorTriangle::AdjustStartAndEnd()
+void CEdgeFillPolygon::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -259,7 +340,7 @@ void CSmoothColorTriangle::AdjustStartAndEnd()
 	}
 }
 
-int CSmoothColorTriangle::GetAdjustPoint()
+int CEdgeFillPolygon::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -267,7 +348,7 @@ int CSmoothColorTriangle::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CSmoothColorTriangle::AdjustFocusPoint()
+void CEdgeFillPolygon::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -297,7 +378,7 @@ void CSmoothColorTriangle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CSmoothColorTriangle::SaveParamsToJSON(cJSON * objJSON)
+void CEdgeFillPolygon::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -327,7 +408,7 @@ void CSmoothColorTriangle::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CSmoothColorTriangle::LoadParamsFromJSON(cJSON * objJSON)
+void CEdgeFillPolygon::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

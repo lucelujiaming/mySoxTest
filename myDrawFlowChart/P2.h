@@ -9,7 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#pragma once
 //为了避免按照x和y方向进行重复运算，重载运算对象
 class CP2
 {

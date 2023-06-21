@@ -231,6 +231,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateEdgeTableFillPolygon(), child);
                 }
+				else if(strcmp(child->string, "CEdgeFillPolygon") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateEdgeFillPolygon(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

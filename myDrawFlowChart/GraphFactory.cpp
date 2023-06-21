@@ -40,6 +40,7 @@
 #include "EdgeFillPolygon.h"
 #include "FenceFillPolygon.h"
 #include "ScanLineFillPolygon.h"
+#include "RotatePentagram.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -225,6 +226,11 @@ CGraph* CGraphFactory::CreateFenceFillPolygon()
 CGraph* CGraphFactory::CreateScanLineFillPolygon()
 {
 	return new CScanLineFillPolygon();
+}
+
+CGraph* CGraphFactory::CreateRotatePentagram()
+{
+	return new CRotatePentagram();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

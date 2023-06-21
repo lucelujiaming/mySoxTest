@@ -139,6 +139,10 @@ SOURCE=.\ColorPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorStack.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CubicBox.cpp
 # End Source File
 # Begin Source File
@@ -312,6 +316,10 @@ SOURCE=.\RoundRectangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScanLineFillPolygon.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SmoothColorTriangle.cpp
 # End Source File
 # Begin Source File
@@ -378,6 +386,10 @@ SOURCE=.\BucketTableFill.h
 # Begin Source File
 
 SOURCE=.\ColorPoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorStack.h
 # End Source File
 # Begin Source File
 
@@ -550,6 +562,10 @@ SOURCE=.\RoundHeadRectangle.h
 # Begin Source File
 
 SOURCE=.\RoundRectangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScanLineFillPolygon.h
 # End Source File
 # Begin Source File
 

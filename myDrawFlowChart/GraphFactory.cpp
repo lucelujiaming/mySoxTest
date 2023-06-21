@@ -39,6 +39,7 @@
 #include "EdgeTableFillPolygon.h"
 #include "EdgeFillPolygon.h"
 #include "FenceFillPolygon.h"
+#include "ScanLineFillPolygon.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -219,6 +220,11 @@ CGraph* CGraphFactory::CreateEdgeFillPolygon()
 CGraph* CGraphFactory::CreateFenceFillPolygon()
 {
 	return new CFenceFillPolygon();
+}
+
+CGraph* CGraphFactory::CreateScanLineFillPolygon()
+{
+	return new CScanLineFillPolygon();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

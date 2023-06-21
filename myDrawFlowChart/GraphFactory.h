@@ -52,6 +52,7 @@ public:
 	CGraph* CreateEdgeTableFillPolygon();
 	CGraph* CreateEdgeFillPolygon();
 	CGraph* CreateFenceFillPolygon();
+	CGraph* CreateScanLineFillPolygon();
 
 };
 

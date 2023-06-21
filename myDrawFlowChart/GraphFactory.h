@@ -53,6 +53,7 @@ public:
 	CGraph* CreateEdgeFillPolygon();
 	CGraph* CreateFenceFillPolygon();
 	CGraph* CreateScanLineFillPolygon();
+	CGraph* CreateRotatePentagram();
 
 };
 

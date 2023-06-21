@@ -90,6 +90,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_EDGE_FILL_POLYGON, OnToolbarEdgeFillPolygon)
 	ON_COMMAND(ID_TOOLBAR_FENCE_FILL_POLYGON, OnToolbarFenceFillPolygon)
 	ON_COMMAND(ID_TOOLBAR_SCANLINE_FILL_POLYGON, OnToolbarScanLineFillPolygon)
+	ON_COMMAND(ID_TOOLBAR_ROTATE_PENTAGRAM, OnToolbarRotatePentagram)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1168,6 +1169,24 @@ void CDrawFlowChartView::OnCreateScanLineFillPolygon()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateScanLineFillPolygon());
 }
 
+void CDrawFlowChartView::OnCreateRotatePentagram() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRotatePentagram());
+}
+
 void CDrawFlowChartView::OnCreateMiddleCircle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1401,6 +1420,12 @@ void CDrawFlowChartView::OnToolbarScanLineFillPolygon()
 {
 	// TODO: Add your command handler code here
 	OnCreateScanLineFillPolygon();
+}
+
+void CDrawFlowChartView::OnToolbarRotatePentagram() 
+{
+	// TODO: Add your command handler code here
+	OnCreateRotatePentagram();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

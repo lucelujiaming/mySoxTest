@@ -243,6 +243,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateScanLineFillPolygon(), child);
                 }
+				else if(strcmp(child->string, "CRotatePentagram") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateRotatePentagram(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

@@ -135,6 +135,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_FLATCOLOR_TRIANGLE
     BUTTON      ID_TOOLBAR_SMOOTHCOLOR_TRIANGLE
     BUTTON      ID_TOOLBAR_EDGETABLE_FILL_POLYGON
+    BUTTON      ID_TOOLBAR_EDGE_FILL_POLYGON
 END
 
 
@@ -476,7 +477,8 @@ BEGIN
     ID_TOOLBAR_WU_ANTILINE  "使用WU反走样算法创建线\n反走样线"
     ID_TOOLBAR_FLATCOLOR_TRIANGLE "使用平面着色填充三角形\n平面着色三角形"
     ID_TOOLBAR_SMOOTHCOLOR_TRIANGLE "使用光滑着色填充三角形\n光滑着色三角形"
-    ID_TOOLBAR_EDGETABLE_FILL_POLYGON "使用边表填充多边形\n边表填充三角形"
+    ID_TOOLBAR_EDGETABLE_FILL_POLYGON "使用有效边表填充多边形\n有效边边表填充多边形"
+    ID_TOOLBAR_EDGE_FILL_POLYGON      "使用边填充多边形\n边填充多边形"
 END
 
 #endif    // Chinese (P.R.C.) resources

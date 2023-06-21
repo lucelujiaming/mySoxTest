@@ -50,6 +50,7 @@ public:
 	CGraph* CreateSmoothColorTriangle();
 	CGraph* CreateMiddleCircle();
 	CGraph* CreateEdgeTableFillPolygon();
+	CGraph* CreateEdgeFillPolygon();
 
 };
 

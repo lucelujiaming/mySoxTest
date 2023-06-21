@@ -1,4 +1,9 @@
+#if !defined(AFX_RGB_RECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)
+#define AFX_RGB_RECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_
+
+#if _MSC_VER > 1000
 #pragma once
+#endif // _MSC_VER > 1000
 
 class CRGB
 {
@@ -18,4 +23,7 @@ public:
 	double green;//绿色分量
 	double blue;//蓝色分量
 };
+
+#endif // !defined(AFX_RGB_RECTANGLE_H__76897764_98F1_4E75_89FD_8F2A42BC6344__INCLUDED_)
+
 

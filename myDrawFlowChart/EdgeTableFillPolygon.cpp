@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "DrawFlowChart.h"
 #include "EdgeTableFillPolygon.h"
-#include"ColorTriangle.h"
+#include "SmoothFillTriangle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -41,13 +41,13 @@ CEdgeTableFillPolygon::~CEdgeTableFillPolygon()
 void CEdgeTableFillPolygon::ReadPoint(void)//¶¥µã±í
 {
 	CRGB color = CRGB(1, 0, 0);
-	P[0].x = 50, P[0].y = 100, P[0].c = color;
-	P[1].x = -150; P[1].y = 300, P[1].c = color;
-	P[2].x = -250; P[2].y = 50, P[2].c = color;
-	P[3].x = -150; P[3].y = -250, P[3].c = color;
-	P[4].x = 0;    P[4].y = -50, P[4].c = color;
-	P[5].x = 100;  P[5].y = -250, P[5].c = color;
-	P[6].x = 300;  P[6].y = 150, P[6].c = color;
+	P[0].x = 5, P[0].y = 10, P[0].c = color;
+	P[1].x = -15; P[1].y = 30, P[1].c = color;
+	P[2].x = -25; P[2].y = 5, P[2].c = color;
+	P[3].x = -15; P[3].y = -25, P[3].c = color;
+	P[4].x = 0;    P[4].y = -5, P[4].c = color;
+	P[5].x = 10;  P[5].y = -25, P[5].c = color;
+	P[6].x = 30;  P[6].y = 15, P[6].c = color;
 
 	P[0].x += m_Start.x, P[0].y += m_Start.y; 
 	P[1].x += m_Start.x, P[1].y += m_Start.y; 

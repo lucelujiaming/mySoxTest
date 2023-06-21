@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "DrawFlowChart.h"
 #include "FlatColorTriangle.h"
-#include"Triangle.h"
+#include"FlatFillTriangle.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -38,13 +38,13 @@ CFlatColorTriangle::~CFlatColorTriangle()
 
 }
 
-
+// 着色逻辑在CFlatFillTriangle::Fill中。
 void CFlatColorTriangle::DrawObject(CDC* pDC)
 {
 	CPoint P0(m_End.x, m_Start.y);
 	CPoint P1(m_Start.x, m_End.y);
 	CPoint P2((m_Start.x + m_End.x)/2, m_End.y);
-	CTriangle triangle(P0, P1, P2);//构造三角形
+	CFlatFillTriangle triangle(P0, P1, P2);//构造三角形
 	triangle.Fill(pDC);//填充三角形
 }
 

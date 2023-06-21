@@ -135,6 +135,7 @@ protected:
 	afx_msg void OnToolbarFlatColorTriangle();
 	afx_msg void OnToolbarSmoothColorTriangle();
 	afx_msg void OnToolbarEdgeTableFillPolygon();
+	afx_msg void OnToolbarEdgeFillPolygon();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -143,6 +144,7 @@ protected:
 	afx_msg void OnCreateFlatColorTriangle();
 	afx_msg void OnCreateSmoothColorTriangle();
 	afx_msg void OnCreateEdgeTableFillPolygon();
+	afx_msg void OnCreateEdgeFillPolygon();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

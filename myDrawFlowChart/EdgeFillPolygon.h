@@ -27,9 +27,9 @@ public:
 	void EdgeFill(CDC* pDC);//填充图形
 
 protected:
-	CColorPoint P[7];//浮点型点表
-	int xMin, xMax, yMin, yMax;//包围盒的坐标
-	COLORREF fillClr, backClr;//填充色与背景色
+	CColorPoint m_P[7];                   // 浮点型点表
+	int m_xMin, m_xMax, m_yMin, m_yMax;   // 包围盒的坐标
+	COLORREF m_fillClr, m_backClr;        // 填充色与背景色
 
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );

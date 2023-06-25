@@ -64,8 +64,14 @@ void CEdgeTableFillPolygon::DrawObject(CDC* pDC)
 		P[i].c = P[i].c;
 	CBucketTableFill* pFill = new CBucketTableFill;//动态分配内存 
 	pFill->SetPoint(P, 7);//初始化Fill对象
+	TRACE("Before CreateBucketTable\r\n");
+	pFill->printAllBucketTable();
 	pFill->CreateBucketTable();//建立桶表
+	TRACE("Before CreateEdgeTable\r\n");
+	pFill->printAllBucketTable();
 	pFill->CreateEdgeTable();//建立边表
+	TRACE("Before FillPolygon\r\n");
+	pFill->printAllBucketTable();
 	pFill->FillPolygon(pDC);//填充多边形
 	delete pFill;//撤销内存
 }

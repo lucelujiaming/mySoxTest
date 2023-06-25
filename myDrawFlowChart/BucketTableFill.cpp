@@ -41,6 +41,7 @@ void CBucketTableFill::SetPoint(CColorPoint* p, int n)
 
 /************************************************************************/
 /* 2. 创建桶表                                                          */
+/* (1) 桶表是一个按照扫描线顺序管理边出现情况的一个数据结构。           */
 /************************************************************************/
 void CBucketTableFill::CreateBucketTable(void)
 {
@@ -61,7 +62,7 @@ void CBucketTableFill::CreateBucketTable(void)
 		if(m_PolygonPoints[i].y > yMax)
 			yMax = m_PolygonPoints[i].y; // 扫描线的最大值		
 	}
-	// 根据最小和最大扫描线
+	// 根据最小和最大扫描线创建桶链表。链表长度为最大扫描线数。
 	for(int y = yMin; y <= yMax; y++)
 	{
 		if(yMin == y) // 如果是扫描线的最小值
@@ -91,7 +92,13 @@ void CBucketTableFill::CreateBucketTable(void)
 	}
 }
 
-// 3. 创建边表
+/************************************************************************/
+/* 3. 创建边表                                                          */
+/*    为了确定在哪条扫描线上插入新边，我们需要构造一个边表。            */
+/*    用以存放扫描线线上多边形各边出现的信息。                          */
+/*    因为水平边的1/k为无穷大，而且水平边本身就是扫描线，               */
+/*    因此上这个创建边表函数中，我们不予考虑。                          */
+/************************************************************************/
 void CBucketTableFill::CreateEdgeTable(void)
 {
 	CBucketTable*      pCurrentBucketTable;
@@ -100,10 +107,11 @@ void CBucketTableFill::CreateEdgeTable(void)
 	for(int i = 0;i < m_nPointNumber;i++)
 	{
 		pCurrentBucketTable = m_pHeadBucketTable;
-		// 当前边的下一个顶点，因为我们在SetPoint中传入的店是排好序的。
+		// 当前边的下一个顶点，因为我们在SetPoint中传入的点是排好序的。
 		// 也就是可以一个一个从头到尾连成一个多边形的。
 		// 因此上，P[i]和P[j]点对必然构成一个边。
 		int j = (i + 1) % m_nPointNumber; 
+		// (2) 将每条边的信息链入与该边最小y坐标(ymin)相对应的桶处。
 		// 如果边的终点比起点高
 		if(m_PolygonPoints[i].y < m_PolygonPoints[j].y) 
 		{
@@ -178,20 +186,73 @@ void CBucketTableFill::CreateEdgeTable(void)
 	}
 }
 
-// 4. 填充多边形
+void CBucketTableFill::printActiveEdgeTable(CActiveEdgeTable*  pEdge)
+{
+	while(NULL != pEdge)
+	{
+		TRACE("\t x = %0.2f, yMax = %d, m = %0.2f, pStart=(%d, %d), pEnd=(%d, %d) \r\n", 
+			pEdge->x, pEdge->yMax, pEdge->m, 
+			pEdge->pStart.x, pEdge->pStart.y,pEdge->pEnd.x, pEdge->pEnd.y);
+		pEdge = pEdge->pNext;
+	}
+}
+
+void CBucketTableFill::printOneBucketTableElement(CBucketTable* pHeadBucketTableElement)
+{
+	CActiveEdgeTable* pT1 = NULL;
+	TRACE("ScanLine = %d \r\n", pHeadBucketTableElement->ScanLine);
+	pT1 = pHeadBucketTableElement->m_pEdgeTable;
+	while(NULL != pT1)
+	{
+		TRACE("\t x = %0.2f, yMax = %d, m = %0.2f, pStart=(%d, %d), pEnd=(%d, %d) \r\n", 
+			pT1->x, pT1->yMax, pT1->m, 
+			pT1->pStart.x, pT1->pStart.y,pT1->pEnd.x, pT1->pEnd.y);
+		pT1 = pT1->pNext;
+	}
+}
+
+void CBucketTableFill::printAllBucketTable()
+{
+	CActiveEdgeTable* pT1 = NULL;
+	CBucketTable*      pCurrentBucketTable;
+	for(pCurrentBucketTable = m_pHeadBucketTable; 
+	    pCurrentBucketTable != NULL;
+		pCurrentBucketTable = pCurrentBucketTable->pNext)
+	{
+		TRACE("ScanLine = %d \r\n", pCurrentBucketTable->ScanLine);
+		pT1 = pCurrentBucketTable->m_pEdgeTable;
+		while(NULL != pT1)
+		{
+			TRACE("\t x = %0.2f, yMax = %d, m = %0.2f, pStart=(%d, %d), pEnd=(%d, %d) \r\n", 
+				pT1->x, pT1->yMax, pT1->m, 
+				pT1->pStart.x, pT1->pStart.y,pT1->pEnd.x, pT1->pEnd.y);
+			pT1 = pT1->pNext;
+		}
+	}
+}
+
+/************************************************************************/
+/* 4. 填充多边形                                                        */
+/*    这个函数比较复杂。包含下面几个步骤。                              */
+/************************************************************************/
 void CBucketTableFill::FillPolygon(CDC* pDC)
 {
+	int iSeq = 0;
 	CActiveEdgeTable*  pEdge;
 	CActiveEdgeTable*  pCurrentEdge; 
 	CBucketTable*      pCurrentBucketTable;
 	CActiveEdgeTable* pT1 = NULL, *pT2 = NULL;
 	m_pHeadEdge = NULL;
-	// 遍历整个桶表。
+	// printAllBucketTable();
+	// 1. 遍历整个桶表。
 	for(pCurrentBucketTable = m_pHeadBucketTable; 
 	    pCurrentBucketTable != NULL;
 		pCurrentBucketTable = pCurrentBucketTable->pNext)
 	{
-		// 遍历每一个桶表元素的活动边表。
+	//	TRACE("iSeq = %d\r\n", iSeq++);
+	//	TRACE("Before AddEdgeTable\r\n");
+	//	printActiveEdgeTable(m_pHeadEdge);
+		// 2. 把当前桶表元素的活动边表复制一份到m_pHeadEdge里面。
 		for(pCurrentEdge = pCurrentBucketTable->m_pEdgeTable;
 		    pCurrentEdge != NULL;pCurrentEdge = pCurrentEdge->pNext)
 		{
@@ -205,13 +266,22 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 			// 当前桶表中所有元素的活动边表加入到全局活动边表中。
 			AddEdgeTable(pEdge);
 		}
-		// 对所有的活动边进行排序。按照x坐标从小到大排序。
+	//	TRACE("After AddEdgeTable\r\n");
+	//	printActiveEdgeTable(m_pHeadEdge);
+		// 3. 对所有的活动边进行排序。按照x坐标从小到大排序。
+		//    (3) 对于每一条边按照x|ymin坐标递增的顺序存放。
 		SortEdgeTable();
+	//	TRACE("After SortEdgeTable\r\n");
+	//	printActiveEdgeTable(m_pHeadEdge);
 		// 取出排序后的活动边表。
 		pT1 = m_pHeadEdge;
 		if(NULL == pT1)
 			return;
-		// 删除位于当前桶表元素对应的扫描线下方的活动边。
+		// 4. 下面我们需要删除所有的位于当前桶表元素对应的扫描线下方的活动边。
+		//    分为三步：
+		//    4.1. 删除活动边链表开头的位于当前桶表元素对应的扫描线下方的活动边。
+		//         因为活动边是按照x|ymin坐标递增的顺序存放。
+		//         这个循环最后得到的是位于扫描线上方的第一条边。
 		while(pCurrentBucketTable->ScanLine >= pT1->yMax)//下闭上开
 		{
 			// 从左到右查找。如果活动边位于当前桶表元素对应的扫描线上方。
@@ -224,14 +294,16 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 			if(NULL == m_pHeadEdge)
 				return;
 		}
-		// 代码执行到这里，我们找到了一条位于当前桶表元素对应的扫描线下方的边。
+		// 代码执行到这里，我们找到了一条位于当前桶表元素对应的扫描线上方的边pT1。
+		// 4.2. 我们让pT2指向pT1，让pT1指向下一条边。
 		if(NULL != pT1->pNext)
 		{
-			pT2 = pT1;
 			// 找到这条边的下一个边。
+			pT2 = pT1;
+			// pT1继续向后寻找下一边。
 			pT1 = pT2->pNext;
 		}
-		// 从这条边开始，删除位于当前桶表元素对应的扫描线下方的活动边。
+		// 4.3. 从这条边开始，删除后续所有的位于当前桶表元素对应的扫描线下方的活动边。
 		while(NULL != pT1)
 		{
 			if(pCurrentBucketTable->ScanLine >= pT1->yMax)//下闭上开
@@ -247,8 +319,9 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 				pT1 = pT2->pNext;
 			}
 		}
-		// 代码执行到这里，我们删除了所有的无关的边。
-		// 下面就可以根据活动边信息进行填充了。
+		// 4.4. 代码执行到这里，我们扫描完了所有的活动边。
+		//      删除了所有位于当前桶表元素对应的扫描线下方的活动边。
+		// 5. 下面就可以根据这些活动边信息进行填充了。
 
 		// 内外测试标志，初始值为假，表示位于跨度外部。
 		BOOL bInside = FALSE;
@@ -256,7 +329,7 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 		int xLeft, xRight;
 		for(pT1 = m_pHeadEdge;pT1 != NULL;pT1 = pT1->pNext)
 		{
-			// 如果在外部，遇到一条边以后，变成内部。
+			// 5.1. 如果在外部，遇到一条边以后，变成内部。
 			if(FALSE == bInside)
 			{
 				// 记录下跨度的起点坐标
@@ -264,7 +337,7 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 				// 变成内部。
 				bInside = TRUE;
 			}
-			// 如果在内部，遇到一条边以后，变成外部。
+			// 5.2. 如果在内部，遇到一条边以后，变成外部。
 			else
 			{
 				// 记录下跨度的终点坐标

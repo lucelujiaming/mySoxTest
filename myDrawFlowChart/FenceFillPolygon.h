@@ -23,7 +23,7 @@ public:
 
 public:
 	void ReadPoint(void);//读入顶点表
-	void DrawObject(CDC* pDC);//绘制图形线框
+	void DrawObject(CDC* pDC);//绘制多边形和栅栏
 	void EdgeFill(CDC* pDC);//填充图形
 
 protected:

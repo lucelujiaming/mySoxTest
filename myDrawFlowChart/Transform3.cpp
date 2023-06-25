@@ -16,6 +16,8 @@ void CTransform3::SetMatrix(CP3*P,int ptNumber)
 	this->P=P;
 	this->ptNumber=ptNumber;
 }
+
+// µ•Œªæÿ’Û
 void CTransform3::Identity()
 {
 	T[0][0]=1.0;T[0][1]=0;T[0][2]=0;T[0][3]=0;

@@ -14,99 +14,184 @@ CTransform2::~CTransform2(void)
 
 }
 
-void CTransform2::SetMatrix(CP2* P,int ptNumber)
+void CTransform2::SetMatrix(CP2* pointVertex,int iPointNumber)
 {
-	this->P = P;
-	this->ptNumber = ptNumber;
+	this->m_pointVertex = pointVertex;
+	this->m_iPointNumber = m_iPointNumber;
 }
 
-void CTransform2::Identity(void)//单位矩阵
+// 单位矩阵
+void CTransform2::Identity(void) 
 {
-	M[0][0] = 1.0, M[0][1] = 0.0, M[0][2] = 0.0;
-	M[1][0] = 0.0, M[1][1] = 1.0, M[1][2] = 0.0;
-	M[2][0] = 0.0, M[2][1] = 0.0, M[2][2] = 1.0;
+	m_matrixTransform[0][0] = 1.0, m_matrixTransform[0][1] = 0.0, m_matrixTransform[0][2] = 0.0;
+	m_matrixTransform[1][0] = 0.0, m_matrixTransform[1][1] = 1.0, m_matrixTransform[1][2] = 0.0;
+	m_matrixTransform[2][0] = 0.0, m_matrixTransform[2][1] = 0.0, m_matrixTransform[2][2] = 1.0;
 }
 
-void CTransform2::Translate(double tx, double ty)//平移变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M1对图形进行平移变换。                          */
+/*     | a b e |             | e |                                      */
+/* M = | c d f |        M1 = | f |                                      */
+/*     | p q s |                                                        */
+/* 因此上，二维平移变换矩阵为：                                         */
+/*     | 1 0 Tx |                                                       */
+/* M = | 0 1 Ty |                                                       */
+/*     | 0 0  1 |                                                       */
+/************************************************************************/
+void CTransform2::Translate(double dTx, double dTy)//平移变换矩阵
 {
 	Identity();
-	M[0][2] = tx; 
-	M[1][2] = ty; 
+	m_matrixTransform[0][2] = dTx; 
+	m_matrixTransform[1][2] = dTy; 
 	MultiplyMatrix();	
 }
 
-void CTransform2::Scale(double sx, double sy)//比例变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行比例变换。。                        */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上，二维比例变换矩阵为：                                         */
+/*     | Sx  0 0 |                                                      */
+/* M = |  0 Sy 0 |                                                      */
+/*     |  0  0 1 |                                                      */
+/************************************************************************/
+void CTransform2::Scale(double dSx, double dSy)//比例变换矩阵
 {
 	Identity();
-	M[0][0] = sx; 
-	M[1][1] = sy; 
+	m_matrixTransform[0][0] = dSx; 
+	m_matrixTransform[1][1] = dSy; 
 	MultiplyMatrix();	
 }
 
-void CTransform2::Scale(double sx,double sy, CP2 p)//相对于任意点的比例变换矩阵
+/************************************************************************/
+/* 相对于任意点的比例变换矩阵的变换方法为：                             */
+/* 首先把矩阵移动到该点。之后进行比例变换。之后再移动回去。             */
+/************************************************************************/
+void CTransform2::Scale(double sx,double sy, CP2 pointDirection) 
 {
-	Translate(-p.x, -p.y);
+	Translate(-pointDirection.x, -pointDirection.y);
 	Scale(sx, sy);
-	Translate(p.x, p.y);	
+	Translate(pointDirection.x, pointDirection.y);	
 }
 
-void CTransform2::Rotate(double beta)//旋转变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行旋转变换。                          */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上，二维旋转变换矩阵为：                                         */
+/*     | cos(beta) -sin(beta) 0 |                                       */
+/* M = | sin(beta)  cos(beta) 0 |                                       */
+/*     |        0          0  1 |                                       */
+/************************************************************************/
+void CTransform2::Rotate(double beta) // 旋转变换矩阵
 {
 	Identity();
-	M[0][0] = cos(beta * PI/180), M[0][1] =-sin(beta * PI/180);
-	M[1][0] = sin(beta * PI/180), M[1][1] = cos(beta * PI/180);
+	m_matrixTransform[0][0] = cos(beta * PI/180), m_matrixTransform[0][1] =-sin(beta * PI/180);
+	m_matrixTransform[1][0] = sin(beta * PI/180), m_matrixTransform[1][1] = cos(beta * PI/180);
 	MultiplyMatrix();	
 }
 
-void CTransform2::Rotate(double beta, CP2 p)//相对于任意点的旋转变换矩阵
+/************************************************************************/
+/* 相对于任意点的旋转变换矩阵的变换方法为：                             */
+/* 首先把矩阵移动到该点。之后进行旋转变换。之后再移动回去。             */
+/************************************************************************/
+void CTransform2::Rotate(double beta, CP2 pointDirection)
 {
-	Translate(-p.x, -p.y);
+	Translate(-pointDirection.x, -pointDirection.y);
 	Rotate(beta);
-	Translate(p.x, p.y);	
+	Translate(pointDirection.x, pointDirection.y);	
 }
 
-void CTransform2::ReflectOrg(void)//原点反射变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行反射变换。                          */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上，原点反射变换矩阵为：                                         */
+/*     | -1  0 0 |                                                      */
+/* M = |  0 -1 0 |                                                      */
+/*     |  0  0 1 |                                                      */
+/************************************************************************/
+void CTransform2::ReflectOrg(void) // 原点反射变换矩阵
 {
 	Identity();
-	M[0][0] = -1;
-	M[1][1] = -1;
+	m_matrixTransform[0][0] = -1;
+	m_matrixTransform[1][1] = -1;
 	MultiplyMatrix();
 }
 
-void CTransform2::ReflectX(void)//X轴反射变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行反射变换。                          */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上， X轴反射变换矩阵为：                                         */
+/*     |  1  0 0 |                                                      */
+/* M = |  0 -1 0 |                                                      */
+/*     |  0  0 1 |                                                      */
+/************************************************************************/
+void CTransform2::ReflectX(void) // X轴反射变换矩阵
 {
 	Identity();
-	M[0][0] =  1;
-	M[1][1] = -1;
+	m_matrixTransform[0][0] =  1;
+	m_matrixTransform[1][1] = -1;
 	MultiplyMatrix();	
 }
 
-void CTransform2::ReflectY(void)//Y轴反射变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行反射变换。                          */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上， Y轴反射变换矩阵为：                                         */
+/*     | -1  0 0 |                                                      */
+/* M = |  0  1 0 |                                                      */
+/*     |  0  0 1 |                                                      */
+/************************************************************************/
+void CTransform2::ReflectY(void) // Y轴反射变换矩阵
 {
 	Identity();
-	M[0][0]=-1;
-	M[1][1]=1;
+	m_matrixTransform[0][0]=-1;
+	m_matrixTransform[1][1]=1;
 	MultiplyMatrix();	
 }
 
-void CTransform2::Shear(double b,double c)//错切变换矩阵
+/************************************************************************/
+/* 二维变换矩阵为M。其中M0对图形进行错切变换。                          */
+/*     | a b e |             | a b |                                    */
+/* M = | c d f |        M0 = | c d |                                    */
+/*     | p q s |                                                        */
+/* 因此上， 错切变换矩阵为：                                            */
+/*     | 1 b 0 |                                                        */
+/* M = | c 1 0 |                                                        */
+/*     | 0 0 1 |                                                        */
+/************************************************************************/
+void CTransform2::Shear(double b,double c) // 错切变换矩阵
 {
 	Identity();
-	M[0][1]=b;
-	M[1][0]=c;
+	m_matrixTransform[0][1]=b;
+	m_matrixTransform[1][0]=c;
 	MultiplyMatrix();	
 }
 
-void CTransform2::MultiplyMatrix(void)//矩阵相乘
+void CTransform2::MultiplyMatrix(void) // 矩阵相乘
 {
-	CP2* PTemp = new CP2[ptNumber];
-	for(int i = 0;i < ptNumber;i++)
-		PTemp[i] = P[i];
-	for( i = 0;i < ptNumber;i++)
+	CP2* pointReplica = new CP2[m_iPointNumber];
+	for(int i = 0;i < m_iPointNumber;i++)
+		pointReplica[i] = m_pointVertex[i];
+	for( i = 0;i < m_iPointNumber;i++)
 	{
-		P[i].x = M[0][0] * PTemp[i].x + M[0][1] * PTemp[i].y + M[0][2] * PTemp[i].w;
-		P[i].y = M[1][0] * PTemp[i].x + M[1][1] * PTemp[i].y + M[1][2] * PTemp[i].w;
-		P[i].w = M[2][0] * PTemp[i].x + M[2][1] * PTemp[i].y + M[2][2] * PTemp[i].w;
+		m_pointVertex[i].x = m_matrixTransform[0][0] * pointReplica[i].x 
+						   + m_matrixTransform[0][1] * pointReplica[i].y 
+						   + m_matrixTransform[0][2] * pointReplica[i].w;
+		m_pointVertex[i].y = m_matrixTransform[1][0] * pointReplica[i].x 
+						   + m_matrixTransform[1][1] * pointReplica[i].y 
+						   + m_matrixTransform[1][2] * pointReplica[i].w;
+		m_pointVertex[i].w = m_matrixTransform[2][0] * pointReplica[i].x 
+						   + m_matrixTransform[2][1] * pointReplica[i].y 
+						   + m_matrixTransform[2][2] * pointReplica[i].w;
 	}
-	delete []PTemp;
+	delete []pointReplica;
 }

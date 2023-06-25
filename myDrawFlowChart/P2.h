@@ -28,7 +28,7 @@ public:
 public:
 	double x;
 	double y;
-	// 
+	// 对于二维齐次点来说，w为缩放系数。
 	double w;
 };
 

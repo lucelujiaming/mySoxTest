@@ -32,8 +32,8 @@ CEdgeFillPolygon::CEdgeFillPolygon()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	backClr = RGB(255, 255, 255);//背景色
-	fillClr = RGB(0, 0, 0);//前景色
+	m_backClr = RGB(255, 255, 255);//背景色
+	m_fillClr = RGB(0, 0, 0);//前景色
 }
 
 CEdgeFillPolygon::~CEdgeFillPolygon()
@@ -44,57 +44,83 @@ CEdgeFillPolygon::~CEdgeFillPolygon()
 void CEdgeFillPolygon::ReadPoint(void)//顶点表
 {
 	CRGB color = CRGB(1, 0, 0);
-	P[0].x = 5, P[0].y = 10, P[0].c = color;
-	P[1].x = -15; P[1].y = 30, P[1].c = color;
-	P[2].x = -25; P[2].y = 5, P[2].c = color;
-	P[3].x = -15; P[3].y = -25, P[3].c = color;
-	P[4].x = 0;    P[4].y = -5, P[4].c = color;
-	P[5].x = 10;  P[5].y = -25, P[5].c = color;
-	P[6].x = 30;  P[6].y = 15, P[6].c = color;
+	m_P[0].x = 5,    m_P[0].y = 10,  m_P[0].c = color;
+	m_P[1].x = -15;  m_P[1].y = 30,  m_P[1].c = color;
+	m_P[2].x = -25;  m_P[2].y = 5,   m_P[2].c = color;
+	m_P[3].x = -15;  m_P[3].y = -25, m_P[3].c = color;
+	m_P[4].x = 0;    m_P[4].y = -5,  m_P[4].c = color;
+	m_P[5].x = 10;   m_P[5].y = -25, m_P[5].c = color;
+	m_P[6].x = 30;   m_P[6].y = 15,  m_P[6].c = color;
 
-	P[0].x += m_Start.x, P[0].y += m_Start.y; 
-	P[1].x += m_Start.x, P[1].y += m_Start.y; 
-	P[2].x += m_Start.x, P[2].y += m_Start.y; 
-	P[3].x += m_Start.x, P[3].y += m_Start.y; 
-	P[4].x += m_Start.x, P[4].y += m_Start.y; 
-	P[5].x += m_Start.x, P[5].y += m_Start.y; 
-	P[6].x += m_Start.x, P[6].y += m_Start.y; 
+	m_P[0].x += m_Start.x, m_P[0].y += m_Start.y; 
+	m_P[1].x += m_Start.x, m_P[1].y += m_Start.y; 
+	m_P[2].x += m_Start.x, m_P[2].y += m_Start.y; 
+	m_P[3].x += m_Start.x, m_P[3].y += m_Start.y; 
+	m_P[4].x += m_Start.x, m_P[4].y += m_Start.y; 
+	m_P[5].x += m_Start.x, m_P[5].y += m_Start.y; 
+	m_P[6].x += m_Start.x, m_P[6].y += m_Start.y; 
 }
 
+/************************************************************************/
+/* 绘制ReadPoint给出的多边形。同时绘制一个矩形把这个多边形包裹在里面。  */
+/* 这个矩形给出在绘制这个多边形过程中，XY的取值范围。                   */
+/* 这样我们就用不着操作矩形外面的像素了。可以提高效率。                 */
+/************************************************************************/
 void CEdgeFillPolygon::DrawObject(CDC* pDC)
 {
-	xMin = xMax = P[0].x;
-	yMin = yMax = P[0].y;
-	for (int i = 0; i < 7; i++)//计算多边形包围盒
+	m_xMin = m_xMax = m_P[0].x;
+	m_yMin = m_yMax = m_P[0].y;
+	// 1. 计算包裹这个多边形的矩形包围盒的坐标。
+	//    其实就是找出来多边形的所有顶点的XY坐标的最大值和最小值。
+	for (int i = 0; i < 7; i++)
 	{
-		if (P[i].x > xMax)
-			xMax = P[i].x;
-		if (P[i].x < xMin)
-			xMin = P[i].x;
-		if (P[i].y > yMax)
-			yMax = P[i].y;
-		if (P[i].y < yMin)
-			yMin = P[i].y;
+		if (m_P[i].x > m_xMax)
+			m_xMax = m_P[i].x;
+		if (m_P[i].x < m_xMin)
+			m_xMin = m_P[i].x;
+		if (m_P[i].y > m_yMax)
+			m_yMax = m_P[i].y;
+		if (m_P[i].y < m_yMin)
+			m_yMin = m_P[i].y;
 	}
 	CColorPoint t;
-	for (i = 0; i < 7; i++)//绘制多边形
+	// 2. 绘制多边形
+	for (i = 0; i < 7; i++)
 	{
 		if (0 == i)
 		{
-			pDC->MoveTo(P[i].x, P[i].y);
-			t = P[i];
+			pDC->MoveTo(m_P[i].x, m_P[i].y);
+			t = m_P[i];
 		}
 		else
-			pDC->LineTo(P[i].x, P[i].y);
+			pDC->LineTo(m_P[i].x, m_P[i].y);
 	}
 	pDC->LineTo(t.x, t.y);//闭合多边形
-	pDC->MoveTo(xMin, yMin);//绘制包围盒
-	pDC->LineTo(xMax, yMin);
-	pDC->LineTo(xMax, yMax);
-	pDC->LineTo(xMin, yMax);
-	pDC->LineTo(xMin, yMin);
+	
+	// 3. 绘制包裹这个多边形的矩形包围盒
+	pDC->MoveTo(m_xMin, m_yMin);
+	pDC->LineTo(m_xMax, m_yMin);
+	pDC->LineTo(m_xMax, m_yMax);
+	pDC->LineTo(m_xMin, m_yMax);
+	pDC->LineTo(m_xMin, m_yMin);
 }
 
+/************************************************************************/
+/* 这个函数实现了边填充算法。这个算法的前提是填充色和背景色互为补色。   */
+/* 因为对一个像素两次取补会恢复为原色。产生负负得正的效果。             */
+/* 这就是这个算法能够工作的关键。                                       */
+/************************************************************************/
+/* 有了上面的预设前提。这个算法的原理就变得非常简单，                   */
+/* 假设多边形有两个边一个在左侧，称为左侧边。一个在右侧，称为右侧边。   */
+/* 首先填充左侧边右面的全部像素。这时除了多边形内部以外，               */
+/* 右侧边的右侧也被填充。之后填充右侧边右面的全部像素。                 */
+/* 结果就是右侧边的右侧被填充了两次。                                   */
+/* 因为填充色和背景色互为补色，使用填充色进行两次填充的结果就是         */
+/* 右侧边的右侧被填充成了背景色。                                       */
+/* 因为对一个像素两次取补会恢复为原色。类似于负负得正的效果。           */
+/* 之后从前面的两个边的情况可以推广到多边的情况。                       */
+/* 这就是这个边填充算法的原理。                                         */
+/************************************************************************/
 void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 {
 	int ymin, ymax;//边的最小y值与最大y值
@@ -102,27 +128,29 @@ void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 	for (int i = 0; i < 7; i++)//循环多边形所有边
 	{
 		int j = (i + 1) % 7;
-		m = double(P[i].x - P[j].x) / (P[i].y - P[j].y);//计算1/k
-		if (P[i].y < P[j].y)//得到每条边y的最大值与最小值
+		m = double(m_P[i].x - m_P[j].x) / (m_P[i].y - m_P[j].y); // 计算1/k
+		if (m_P[i].y < m_P[j].y)//得到每条边y的最大值与最小值
 		{
-			ymin = P[i].y;
-			ymax = P[j].y;
-			x_ymin = P[i].x;//得到x|ymin
+			ymin   = m_P[i].y;
+			ymax   = m_P[j].y;
+			x_ymin = m_P[i].x;//得到x|ymin
 		}
 		else
 		{
-			ymin = P[j].y;
-			ymax = P[i].y;
-			x_ymin = P[j].x;
+			ymin   = m_P[j].y;
+			ymax   = m_P[i].y;
+			x_ymin = m_P[j].x;
 		}
 		for (int y = ymin; y < ymax; y++) // 沿每一条边循环扫描线
 		{
-			for (int x = ROUND(x_ymin); x < xMax; x++)//对每一条扫描线与边的交点的右侧像素循环
+			// 对每一条扫描线与边的交点的右侧像素循环
+			// 这个读写像素操作应该可以替换成为画线操作。
+			for (int x = ROUND(x_ymin); x < m_xMax; x++)
 			{
-				if (fillClr == pDC->GetPixel(x, y)) // 如果是填充色
-					pDC->SetPixelV(x, y, backClr);  // 置为背景色
-				else
-					pDC->SetPixelV(x, y, fillClr);  // 置为填充色
+				if (m_fillClr == pDC->GetPixel(x, y)) // 如果原来是填充色
+					pDC->SetPixelV(x, y, m_backClr);  // 置为背景色
+				else                                // 如果原来是背景色
+					pDC->SetPixelV(x, y, m_fillClr);  // 置为填充色
 			}
 			x_ymin += m;                            // 计算下一条扫描线的x起点坐标
 		}
@@ -130,7 +158,7 @@ void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 }
 
 /************************************************************************/
-/* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
+/* 功能：绘制函数。                                                     */
 /************************************************************************/
 void CEdgeFillPolygon::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {

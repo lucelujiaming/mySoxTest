@@ -34,6 +34,10 @@ public:
 	void CreateBucketTable(void);                     // 2. 创建桶表
 	void CreateEdgeTable(void);                       // 3. 创建边表
 	void FillPolygon(CDC* pDC);                       // 4. 填充多边形
+public:
+	void printActiveEdgeTable(CActiveEdgeTable*  pEdge);
+	void printOneBucketTableElement(CBucketTable* pHeadBucketTableElement);
+	void printAllBucketTable();
 private:
 	void AddEdgeTable(CActiveEdgeTable* pNewEdge);     // 合并边表
 	void SortEdgeTable(void);                          // 边表排序

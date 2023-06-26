@@ -17,7 +17,7 @@ CTransform2::~CTransform2(void)
 void CTransform2::SetMatrix(CP2* pointVertex,int iPointNumber)
 {
 	this->m_pointVertex = pointVertex;
-	this->m_iPointNumber = m_iPointNumber;
+	this->m_iPointNumber = iPointNumber;
 }
 
 // µ¥Î»¾ØÕó

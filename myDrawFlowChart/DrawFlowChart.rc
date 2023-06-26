@@ -139,6 +139,9 @@ BEGIN
     BUTTON      ID_TOOLBAR_FENCE_FILL_POLYGON
     BUTTON      ID_TOOLBAR_SCANLINE_FILL_POLYGON
     BUTTON      ID_TOOLBAR_ROTATE_PENTAGRAM
+    BUTTON      ID_TOOLBAR_COHENSUTHERLAND_CLIP_LINE
+    BUTTON      ID_TOOLBAR_MIDPOINT_DIVID_LINE
+    BUTTON      ID_TOOLBAR_LIANGBARSKY_CLIP_LINE
 END
 
 
@@ -486,8 +489,11 @@ BEGIN
     ID_TOOLBAR_FENCE_FILL_POLYGON "使用栅栏填充多边形\n栅栏填充多边形"
     ID_TOOLBAR_SCANLINE_FILL_POLYGON 
                             "使用扫描线种子填充多边形\n扫描线种子填充多边形"
-    ID_TOOLBAR_ROTATE_PENTAGRAM 
-                            "旋转五角星\n旋转五角星"
+    ID_TOOLBAR_ROTATE_PENTAGRAM "旋转五角星\n旋转五角星"
+    ID_TOOLBAR_COHENSUTHERLAND_CLIP_LINE 
+                            "使用Cohen-Sutherland裁剪直线\nCohen-Sutherland裁直线"
+    ID_TOOLBAR_MIDPOINT_DIVID_LINE "使用中点算法裁剪直线\n中点算法裁直线"
+    ID_TOOLBAR_LIANGBARSKY_CLIP_LINE "使用LiangBarsky算法裁剪直线\nLiangBarsky算法裁直线"
 END
 
 #endif    // Chinese (P.R.C.) resources

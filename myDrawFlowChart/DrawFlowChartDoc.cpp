@@ -247,6 +247,18 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateRotatePentagram(), child);
                 }
+				else if(strcmp(child->string, "CCohenSutherlandClipLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateCohenSutherlandClipLine(), child);
+                }
+				else if(strcmp(child->string, "CMidPointDividLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateMidPointDividLine(), child);
+                }
+				else if(strcmp(child->string, "CLiangBarskyClipLine") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateLiangBarskyClipLine(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

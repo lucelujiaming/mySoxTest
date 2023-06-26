@@ -1,10 +1,10 @@
-// RotatePentagram.cpp: implementation of the CRotatePentagram class.
+// LiangBarskyClipLine.cpp: implementation of the CLiangBarskyClipLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RotatePentagram.h"
+#include "LiangBarskyClipLine.h"
 #include "math.h"
 
 #ifdef _DEBUG
@@ -12,20 +12,28 @@
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-#define ROUND(d) int(d + 0.5)//四舍五入
-#define PI 3.1415926
+
+
+#define AREA_LEFT   0X1   //代表:0001
+#define AREA_RIGHT  0X2   //代表:0010
+#define AREA_BOTTOM 0X4   //代表:0100
+#define AREA_TOP    0X8   //代表:1000
+
+#define WXL   -300
+#define WYB   -100
+#define WXR    300
+#define WYT    100
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CRotatePentagram, CObject, 1)
+// IMPLEMENT_SERIAL(CLiangBarskyClipLine, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRotatePentagram::CRotatePentagram()
+CLiangBarskyClipLine::CLiangBarskyClipLine()
 {
-	m_IsMark = false;
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
@@ -34,40 +42,79 @@ CRotatePentagram::CRotatePentagram()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	int nRadius = 150;
-	// CP2 CenterPoint = CP2(0, -200);
-	CP2 CenterPoint = CP2(0, 0);
-	SetParameter(nRadius, CenterPoint);
-	transform.SetMatrix(m_pointVertex, 5);
-	m_currentAlpha = 0;
 }
 
-CRotatePentagram::~CRotatePentagram()
+CLiangBarskyClipLine::~CLiangBarskyClipLine()
 {
 
 }
 
-void CRotatePentagram::SetParameter(int nRadius, CP2 CenterPoint)
+BOOL CLiangBarskyClipLine::LBLineClip(void)//Liang-Barsky裁剪函数
 {
-	r = nRadius;
-	cPoint = CenterPoint;
-}
-
-void CRotatePentagram::ReadPoint(void)//顶点表
-{
-	double Theta = 2 * PI / 5;//θ为等分角
-	double Alpha = PI / 2 - Theta;//α为起始角,用于调整图案起始方位
-	for (int i = 0; i < 5; i++)//计算等分点坐标
+	double tmax, tmin, dx, dy;
+	dx = P1.x - P0.x, dy = P1.y - P0.y;
+	tmax = 0.0, tmin = 1.0;
+	//窗口边界的左、右、下、上顺序裁剪直线
+	if (ClipTest(-dx, P0.x - m_Start.x, tmax, tmin))//n＝1,左边界u1＝－△x，v1＝x0－wxl
 	{
-		m_pointVertex[i].x = cPoint.x + r * cos(i * Theta + Alpha);
-		m_pointVertex[i].y = cPoint.y + r * sin(i * Theta + Alpha);
+		if (ClipTest(dx, m_End.x - P0.x, tmax, tmin))//n＝2，右边界u2＝△x，v2＝wxr－x0
+		{
+			if (ClipTest(-dy, P0.y - m_Start.y, tmax, tmin))//n＝3，下边界u3＝－△y，v3＝y0-wyb
+			{
+				if (ClipTest(dy, m_End.y - P0.y, tmax, tmin))//n＝4，上边界u4＝△y，v4＝wyt-y0
+				{
+					if (tmin < 1)//判断直线的终点
+					{
+						P1.x = P0.x + tmin * dx;//重新计算直线终点坐标
+						P1.y = P0.y + tmin * dy;//x＝x0＋t(x1－x0)格式
+					}
+					if (tmax > 0)//判断直线的起点
+					{
+						P0.x = P0.x + tmax * dx;//重新计算直线起点坐标
+						P0.y = P0.y + tmax * dy;//x＝x0＋t(x1－x0)格式
+					}
+					return TRUE;
+				}
+			}
+		}
 	}
+	return FALSE;
+}
+
+BOOL CLiangBarskyClipLine::ClipTest(double p, double q, double &tmax, double &tmin)//裁剪测试函数
+{
+	double t;
+	BOOL ReturnValue = TRUE;
+	if (p < 0)//直线段从窗口边界的不可见侧到可见侧,计算起点处的tmax
+	{
+		t = q / p;
+		if (t > tmin)
+			ReturnValue = FALSE;
+		else if (t > tmax)
+			tmax = t;
+	}
+	else
+	{
+		if (p > 0)//直线段从窗口边界的可见侧到不可见侧，计算终点处的tmin
+		{
+			t = q / p;
+			if (t < tmax)
+				ReturnValue = FALSE;
+			else if (t < tmin)
+				tmin = t;
+		}
+		else//平行于窗口边界的直线
+			if (q < 0)//直线段在窗口外可直接删除
+				ReturnValue = FALSE;
+	}
+	return(ReturnValue);
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
+#define ClipLine_DIFF     40
+void CLiangBarskyClipLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -77,20 +124,11 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	ReadPoint();
-	transform.Rotate(m_currentAlpha); 
 
-	CP2 P[5];//顶点坐标
-	for (int i = 0; i < 5; i++)//计算等分点坐标
-	{
-		P[i].x = m_pointVertex[i].x + m_Start.x, P[i].y += m_pointVertex[i].y + m_Start.y; 
-	}
-	pdc->MoveTo(ROUND(P[0].x), ROUND(P[0].y));
-	pdc->LineTo(ROUND(P[2].x), ROUND(P[2].y));
-	pdc->LineTo(ROUND(P[4].x), ROUND(P[4].y));
-	pdc->LineTo(ROUND(P[1].x), ROUND(P[1].y));
-	pdc->LineTo(ROUND(P[3].x), ROUND(P[3].y));
-	pdc->LineTo(ROUND(P[0].x), ROUND(P[0].y));
+	pdc->Rectangle( CRect(m_Start, m_End) );
+	LBLineClip();
+	pdc->MoveTo(P0.x, P0.y);
+	pdc->LineTo(P1.x, P1.y);
 
 	if(m_IsMark)
 	{
@@ -102,7 +140,7 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRotatePentagram::DrawFocus( CDC *pdc )
+void CLiangBarskyClipLine::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -126,7 +164,7 @@ void CRotatePentagram::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRotatePentagram::Move( int cx, int cy )
+void CLiangBarskyClipLine::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -136,7 +174,7 @@ void CRotatePentagram::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRotatePentagram::AdjustSize( CPoint &pt )
+void CLiangBarskyClipLine::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -196,7 +234,7 @@ void CRotatePentagram::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRotatePentagram::IsIn( CPoint &pt )
+bool CLiangBarskyClipLine::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -220,7 +258,7 @@ bool CRotatePentagram::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
+int CLiangBarskyClipLine::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -238,7 +276,7 @@ int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRotatePentagram::IsOn( CPoint &pt )
+bool CLiangBarskyClipLine::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -268,7 +306,7 @@ bool CRotatePentagram::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRotatePentagram::AdjustStartAndEnd()
+void CLiangBarskyClipLine::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -286,7 +324,7 @@ void CRotatePentagram::AdjustStartAndEnd()
 	}
 }
 
-int CRotatePentagram::GetAdjustPoint()
+int CLiangBarskyClipLine::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -294,7 +332,7 @@ int CRotatePentagram::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRotatePentagram::AdjustFocusPoint()
+void CLiangBarskyClipLine::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -319,12 +357,15 @@ void CRotatePentagram::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_LEFT];
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
+	
+	P0 = CPoint(m_Start.x, m_End.y + ClipLine_DIFF);
+	P1 = CPoint(m_End.x, m_Start.y - ClipLine_DIFF);
 }
 
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
+void CLiangBarskyClipLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -354,7 +395,7 @@ void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CRotatePentagram::LoadParamsFromJSON(cJSON * objJSON)
+void CLiangBarskyClipLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

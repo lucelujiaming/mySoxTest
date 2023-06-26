@@ -126,6 +126,10 @@ SOURCE=.\BucketTableFill.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CohenSutherlandClipLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorPoint.cpp
 
 !IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
@@ -252,6 +256,10 @@ SOURCE=.\Ladder.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\LiangBarskyClipLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\LogFile.cpp
 # End Source File
 # Begin Source File
@@ -265,6 +273,10 @@ SOURCE=.\MeshSphere.cpp
 # Begin Source File
 
 SOURCE=.\MiddleCircle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MidPointDividLine.cpp
 # End Source File
 # Begin Source File
 
@@ -393,6 +405,10 @@ SOURCE=.\BucketTableFill.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CohenSutherlandClipLine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorPoint.h
 # End Source File
 # Begin Source File
@@ -505,6 +521,10 @@ SOURCE=.\Ladder.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\LiangBarskyClipLine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\LogFile.h
 # End Source File
 # Begin Source File
@@ -518,6 +538,10 @@ SOURCE=.\MeshSphere.h
 # Begin Source File
 
 SOURCE=.\MiddleCircle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MidPointDividLine.h
 # End Source File
 # Begin Source File
 

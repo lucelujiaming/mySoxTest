@@ -9,6 +9,7 @@
 #include "DrawFlowChartView.h"
 #include "CubicBox.h"
 #include "MeshSphere.h"
+#include "RotatePentagram.h"
 
 #include <math.h>
 
@@ -91,6 +92,9 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_FENCE_FILL_POLYGON, OnToolbarFenceFillPolygon)
 	ON_COMMAND(ID_TOOLBAR_SCANLINE_FILL_POLYGON, OnToolbarScanLineFillPolygon)
 	ON_COMMAND(ID_TOOLBAR_ROTATE_PENTAGRAM, OnToolbarRotatePentagram)
+	ON_COMMAND(ID_TOOLBAR_COHENSUTHERLAND_CLIP_LINE, OnToolbarCohenSutherlandClipLine)
+	ON_COMMAND(ID_TOOLBAR_MIDPOINT_DIVID_LINE, OnToolbarMidPointDividLine)
+	ON_COMMAND(ID_TOOLBAR_LIANGBARSKY_CLIP_LINE, OnToolbarLiangBarskyClipLine)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -485,6 +489,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CMeshSphere *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CRotatePentagram")
+			{
+				((CRotatePentagram *)focusGraph)->leftBox();
+			}
 			else
 			{
 				pDoc->m_GraphManager.Move(-2, 0);
@@ -502,6 +510,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CMeshSphere")
 			{
 				((CMeshSphere *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CRotatePentagram")
+			{
+				((CRotatePentagram *)focusGraph)->rightBox();
 			}
 			else
 			{
@@ -1187,6 +1199,60 @@ void CDrawFlowChartView::OnCreateRotatePentagram()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRotatePentagram());
 }
 
+void CDrawFlowChartView::OnCreateCohenSutherlandClipLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCohenSutherlandClipLine());
+}
+
+void CDrawFlowChartView::OnCreateMidPointDividLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMidPointDividLine());
+}
+
+void CDrawFlowChartView::OnCreateLiangBarskyClipLine() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateLiangBarskyClipLine());
+}
+
 void CDrawFlowChartView::OnCreateMiddleCircle() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1426,6 +1492,24 @@ void CDrawFlowChartView::OnToolbarRotatePentagram()
 {
 	// TODO: Add your command handler code here
 	OnCreateRotatePentagram();
+}
+
+void CDrawFlowChartView::OnToolbarCohenSutherlandClipLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCohenSutherlandClipLine();
+}
+
+void CDrawFlowChartView::OnToolbarMidPointDividLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateMidPointDividLine();
+}
+
+void CDrawFlowChartView::OnToolbarLiangBarskyClipLine() 
+{
+	// TODO: Add your command handler code here
+	OnCreateLiangBarskyClipLine();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

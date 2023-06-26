@@ -12,6 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "P2.h"
+#include "Transform2.h"
 
 class CRotatePentagram : public CGraph  
 {
@@ -26,9 +27,12 @@ public:
 	void SetParameter(int nRadius, CP2 CenterPoint);//设置参数
 	
 protected:
-	CP2 P[5];//顶点坐标
+	CP2 m_pointVertex[5];//顶点坐标
 	int r;//外接圆半径
 	CP2 cPoint;//中心点
+	CTransform2 transform;//变换对象
+
+	int m_currentAlpha;
 
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
@@ -45,6 +49,22 @@ public:
 
 	int GetAdjustPoint();
 
+public:
+	void leftBox()  
+	{  
+		int Alpha=-2;
+		m_currentAlpha -= 2;
+		m_currentAlpha = m_currentAlpha % 360;
+		transform.Rotate(Alpha); 
+	}
+	void rightBox() 
+	{  
+		int Alpha=+2; 	
+		m_currentAlpha += 2;
+		m_currentAlpha = m_currentAlpha % 360;
+		transform.Rotate(Alpha); 
+	}
+	
 private:
 	void AdjustStartAndEnd();
 	void AdjustFocusPoint();

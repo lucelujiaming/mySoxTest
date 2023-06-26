@@ -41,6 +41,9 @@
 #include "FenceFillPolygon.h"
 #include "ScanLineFillPolygon.h"
 #include "RotatePentagram.h"
+#include "CohenSutherlandClipLine.h"
+#include "MidPointDividLine.h"
+#include "LiangBarskyClipLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -231,6 +234,21 @@ CGraph* CGraphFactory::CreateScanLineFillPolygon()
 CGraph* CGraphFactory::CreateRotatePentagram()
 {
 	return new CRotatePentagram();
+}
+
+CGraph* CGraphFactory::CreateCohenSutherlandClipLine()
+{
+	return new CCohenSutherlandClipLine();
+}
+
+CGraph* CGraphFactory::CreateMidPointDividLine()
+{
+	return new CMidPointDividLine();
+}
+
+CGraph* CGraphFactory::CreateLiangBarskyClipLine()
+{
+	return new CLiangBarskyClipLine();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

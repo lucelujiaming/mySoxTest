@@ -139,6 +139,9 @@ protected:
 	afx_msg void OnToolbarFenceFillPolygon();
 	afx_msg void OnToolbarScanLineFillPolygon();
 	afx_msg void OnToolbarRotatePentagram();
+	afx_msg void OnToolbarCohenSutherlandClipLine();
+	afx_msg void OnToolbarMidPointDividLine();
+	afx_msg void OnToolbarLiangBarskyClipLine();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -151,6 +154,9 @@ protected:
 	afx_msg void OnCreateFenceFillPolygon();
 	afx_msg void OnCreateScanLineFillPolygon();
 	afx_msg void OnCreateRotatePentagram();
+	afx_msg void OnCreateCohenSutherlandClipLine();
+	afx_msg void OnCreateMidPointDividLine();
+	afx_msg void OnCreateLiangBarskyClipLine();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

@@ -1,31 +1,33 @@
-// RotatePentagram.cpp: implementation of the CRotatePentagram class.
+// CohenSutherlandClipLine.cpp: implementation of the CCohenSutherlandClipLine class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RotatePentagram.h"
-#include "math.h"
+#include "CohenSutherlandClipLine.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-#define ROUND(d) int(d + 0.5)//四舍五入
-#define PI 3.1415926
+
+
+#define AREA_LEFT   0X1   //代表:0001
+#define AREA_RIGHT  0X2   //代表:0010
+#define AREA_BOTTOM 0X4   //代表:0100
+#define AREA_TOP    0X8   //代表:1000
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CRotatePentagram, CObject, 1)
+// IMPLEMENT_SERIAL(CCohenSutherlandClipLine, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRotatePentagram::CRotatePentagram()
+CCohenSutherlandClipLine::CCohenSutherlandClipLine()
 {
-	m_IsMark = false;
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
@@ -34,40 +36,75 @@ CRotatePentagram::CRotatePentagram()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	int nRadius = 150;
-	// CP2 CenterPoint = CP2(0, -200);
-	CP2 CenterPoint = CP2(0, 0);
-	SetParameter(nRadius, CenterPoint);
-	transform.SetMatrix(m_pointVertex, 5);
-	m_currentAlpha = 0;
 }
 
-CRotatePentagram::~CRotatePentagram()
+CCohenSutherlandClipLine::~CCohenSutherlandClipLine()
 {
 
 }
 
-void CRotatePentagram::SetParameter(int nRadius, CP2 CenterPoint)
+void CCohenSutherlandClipLine::CohenSutherlandClip(void)//Cohen-Sutherland算法
 {
-	r = nRadius;
-	cPoint = CenterPoint;
-}
-
-void CRotatePentagram::ReadPoint(void)//顶点表
-{
-	double Theta = 2 * PI / 5;//θ为等分角
-	double Alpha = PI / 2 - Theta;//α为起始角,用于调整图案起始方位
-	for (int i = 0; i < 5; i++)//计算等分点坐标
+	Encode(P0), Encode(P1);//直线起点、终点编码
+	CAreaPoint Intersection;//边与直线的交点
+	while (P0.areaCode != 0 || P1.areaCode != 0)//处理至少一个顶点在窗口之外的情况
 	{
-		m_pointVertex[i].x = cPoint.x + r * cos(i * Theta + Alpha);
-		m_pointVertex[i].y = cPoint.y + r * sin(i * Theta + Alpha);
-	}
+		if ((P0.areaCode & P1.areaCode) != 0)//简弃之
+		{
+			return;
+		}
+		if (0 == P0.areaCode)// 交换P0和P1确保P0位于窗口之外
+		{
+			CAreaPoint Temp;
+			Temp = P0;
+			P0 = P1;
+			P1 = Temp;
+		}
+		UINT OutCode = P0.areaCode;
+		//窗口边界按左、右、下、上的顺序裁剪直线段
+		if (OutCode & AREA_LEFT)//P0点位于窗口的左侧
+		{
+			Intersection.x = m_Start.x;//计算交点y坐标
+			Intersection.y = (Intersection.x - P0.x) * (P1.y - P0.y) / (P1.x - P0.x) + P0.y;
+		}
+		else if (OutCode & AREA_RIGHT)//P0点位于窗口的右侧
+		{
+			Intersection.x = m_End.x;//计算交点y坐标
+			Intersection.y = (Intersection.x - P0.x) * (P1.y - P0.y) / (P1.x - P0.x) + P0.y;
+		}
+		else if (OutCode & AREA_BOTTOM)//P0点位于窗口的下侧
+		{
+			Intersection.y = m_Start.y;//计算交点x坐标
+			Intersection.x = (Intersection.y - P0.y) * (P1.x - P0.x) / (P1.y - P0.y) + P0.x;
+		}
+		else if (OutCode & AREA_TOP)//P0点位于窗口的上侧
+		{
+			Intersection.y = m_End.y;//计算交点x坐标
+			Intersection.x = (Intersection.y - P0.y) * (P1.x - P0.x) / (P1.y - P0.y) + P0.x;
+		}
+		Encode(Intersection);
+		P0 = Intersection;
+	}	
+}
+
+void CCohenSutherlandClipLine::Encode(CAreaPoint &pt)//端点编码函数
+{
+	pt.areaCode = 0;
+	if (pt.x < m_Start.x)
+		pt.areaCode = pt.areaCode | AREA_LEFT;
+	else if (pt.x > m_End.x)
+		pt.areaCode = pt.areaCode | AREA_RIGHT;
+	if (pt.y < m_Start.y)
+		pt.areaCode = pt.areaCode | AREA_BOTTOM;
+	else if (pt.y > m_End.y)
+		pt.areaCode = pt.areaCode | AREA_TOP;
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
+#define ClipLine_DIFF     40
+void CCohenSutherlandClipLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -77,20 +114,11 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	ReadPoint();
-	transform.Rotate(m_currentAlpha); 
 
-	CP2 P[5];//顶点坐标
-	for (int i = 0; i < 5; i++)//计算等分点坐标
-	{
-		P[i].x = m_pointVertex[i].x + m_Start.x, P[i].y += m_pointVertex[i].y + m_Start.y; 
-	}
-	pdc->MoveTo(ROUND(P[0].x), ROUND(P[0].y));
-	pdc->LineTo(ROUND(P[2].x), ROUND(P[2].y));
-	pdc->LineTo(ROUND(P[4].x), ROUND(P[4].y));
-	pdc->LineTo(ROUND(P[1].x), ROUND(P[1].y));
-	pdc->LineTo(ROUND(P[3].x), ROUND(P[3].y));
-	pdc->LineTo(ROUND(P[0].x), ROUND(P[0].y));
+	pdc->Rectangle( CRect(m_Start, m_End) );
+	CohenSutherlandClip();
+	pdc->MoveTo(P0.x, P0.y);
+	pdc->LineTo(P1.x, P1.y);
 
 	if(m_IsMark)
 	{
@@ -102,7 +130,7 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRotatePentagram::DrawFocus( CDC *pdc )
+void CCohenSutherlandClipLine::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -126,7 +154,7 @@ void CRotatePentagram::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRotatePentagram::Move( int cx, int cy )
+void CCohenSutherlandClipLine::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -136,7 +164,7 @@ void CRotatePentagram::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRotatePentagram::AdjustSize( CPoint &pt )
+void CCohenSutherlandClipLine::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -196,7 +224,7 @@ void CRotatePentagram::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRotatePentagram::IsIn( CPoint &pt )
+bool CCohenSutherlandClipLine::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -220,7 +248,7 @@ bool CRotatePentagram::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
+int CCohenSutherlandClipLine::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -238,7 +266,7 @@ int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRotatePentagram::IsOn( CPoint &pt )
+bool CCohenSutherlandClipLine::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -268,7 +296,7 @@ bool CRotatePentagram::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRotatePentagram::AdjustStartAndEnd()
+void CCohenSutherlandClipLine::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -286,7 +314,7 @@ void CRotatePentagram::AdjustStartAndEnd()
 	}
 }
 
-int CRotatePentagram::GetAdjustPoint()
+int CCohenSutherlandClipLine::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -294,7 +322,7 @@ int CRotatePentagram::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRotatePentagram::AdjustFocusPoint()
+void CCohenSutherlandClipLine::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -319,12 +347,15 @@ void CRotatePentagram::AdjustFocusPoint()
 	connPoint->SetPoint(CPoint( (m_Start.x+m_End.x)/2, m_End.y ));
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_LEFT];
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
+	
+	P0 = CAreaPoint(m_Start.x, m_End.y + ClipLine_DIFF);
+	P1 = CAreaPoint(m_End.x, m_Start.y - ClipLine_DIFF);
 }
 
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
+void CCohenSutherlandClipLine::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -354,7 +385,7 @@ void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CRotatePentagram::LoadParamsFromJSON(cJSON * objJSON)
+void CCohenSutherlandClipLine::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

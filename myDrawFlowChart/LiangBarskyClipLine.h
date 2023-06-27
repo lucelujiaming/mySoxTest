@@ -21,8 +21,10 @@ public:
 	CString GetTypeName() { return CString("CLiangBarskyClipLine"); }
 
 public:
-	BOOL LBLineClip(void);//裁剪函数
-	BOOL ClipTest(double p, double q, double &tmax, double &tmin);//裁剪测试函数
+	// Liang-Barsky裁剪函数
+	BOOL LBLineClip(void); 
+	// 计算裁剪位置的线段比例。
+	BOOL calcSegmentRatio(double p, double q, double &tmax, double &tmin);
 protected:
 	// int Wxl, Wxr, Wyt, Wyb;
 	CPoint P0, P1;//直线的起点和终点

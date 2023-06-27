@@ -12,12 +12,6 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
-#define AREA_LEFT   0X1   //代表:0001
-#define AREA_RIGHT  0X2   //代表:0010
-#define AREA_BOTTOM 0X4   //代表:0100
-#define AREA_TOP    0X8   //代表:1000
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -43,17 +37,90 @@ CCohenSutherlandClipLine::~CCohenSutherlandClipLine()
 
 }
 
-void CCohenSutherlandClipLine::CohenSutherlandClip(void)//Cohen-Sutherland算法
+#define AREA_LEFT   0X1   // 代表:0001
+#define AREA_RIGHT  0X2   // 代表:0010
+#define AREA_BOTTOM 0X4   // 代表:0100
+#define AREA_TOP    0X8   // 代表:1000
+
+/************************************************************************/
+/* 端点编码函数                                                         */
+/* 裁剪窗口有四条边界。将屏幕分为可见侧和不可见侧。                     */
+/* 可以用一个比特位表示。                                               */
+/* 四条边界就可以用四个比特位标识。                                     */
+/* 我们使用第0个比特位标识左边界。定义为AREA_LEFT。定义如上。           */
+/* 我们使用第1个比特位标识右边界。定义为AREA_RIGHT。定义如上。          */
+/* 我们使用第2个比特位标识下边界。定义为AREA_BOTTOM。定义如上。         */
+/* 我们使用第3个比特位标识上边界。定义为AREA_TOP。定义如上。            */
+/* 四条边界把整个屏幕分为9个区域。                                      */
+/* 我们需要裁剪的直线的坐标必然位于这9个区域中。                        */
+/* 当然，4个比特位是可以表示16种情况的。但是却被用来描述9个区域。       */
+/* 因为这里有一些情况是不会出现，                                       */
+/* 例如一个点不可能同时处于边界的左侧和右侧。                           */
+/* 也就是类似于：0011,1100这种值是不会出现。                            */
+/* 下面这个函数就是为一个坐标点设定区域码的。                           */
+/************************************************************************/
+void CCohenSutherlandClipLine::Encode(CAreaPoint &pt)
 {
-	Encode(P0), Encode(P1);//直线起点、终点编码
-	CAreaPoint Intersection;//边与直线的交点
-	while (P0.areaCode != 0 || P1.areaCode != 0)//处理至少一个顶点在窗口之外的情况
+	pt.areaCode = 0;
+	if (pt.x < m_Start.x)
+		pt.areaCode = pt.areaCode | AREA_LEFT;
+	else if (pt.x > m_End.x)
+		pt.areaCode = pt.areaCode | AREA_RIGHT;
+	if (pt.y < m_Start.y)
+		pt.areaCode = pt.areaCode | AREA_BOTTOM;
+	else if (pt.y > m_End.y)
+		pt.areaCode = pt.areaCode | AREA_TOP;
+}
+
+/************************************************************************/
+/* Cohen-Sutherland裁剪算法步骤如下：                                   */
+/* 1. 对于需要裁剪直线的两个坐标点进行区域编码。                        */
+/* 2. 如果直线两个坐标点的编码都是0。                                   */
+/*    说明两个坐标点都在边界内。不需要裁剪。                            */
+/* 3. 如果直线两个坐标点的编码求与不为0。                               */
+/*    说明两个坐标点位于同一个边界外区域内。                            */
+/*    因为只有这样，相应区域的比特位，才会同时为1。                     */
+/*    此时直接舍弃即可，也不需要裁剪。                                  */
+/* 4. 如果两个坐标不满足上面的两种情况。那么就需要裁剪了。              */
+/*    4.1 我们首先处理第一个坐标。这里有一个技巧。                      */
+/*        就是直线的第一个坐标点有可能位于边界内。                      */
+/*        因此上，如果发生这种情况，我们需要交换两个坐标点。            */
+/*        保证我们处理的第一个坐标点位于边界外。                        */
+/*    4.2 接着我们按左、右、下、上的顺序裁剪直线段。                    */
+/*        也就是说，如果一个坐标点位于边界外的右下角。                  */
+/*        那么首先我们把它裁剪到右边界的边界延长线上。                  */
+/*        之后，在下一轮循环中，把它裁剪到下边界上面。                  */
+/*        当然，如果如果一个坐标点位于边界外的右侧。                    */
+/*        则只需一轮循环就可以完成裁剪。                                */
+/*  5. 我们对于裁剪后的坐标再次进行区域编码。之后作为第一个坐标。       */
+/*     因为我们在4.1中始终保证处理的是第一个坐标点。                    */
+/*  6. 之后回到第2步。因为我们每一轮循环都会使用一个边界进行一次裁剪。  */
+/*     因此上，如果一个点位于边界内，另一个点位于右下角，               */
+/*     那么两轮循环就可以让两个坐标的点编码都是0。                      */
+/*     而如果，一个点位于边界内，另一个点位于右侧，那么一轮循环即可。   */
+/*     以此类推，只需最多四轮循环，                                     */
+/*     也就是一个点位于左上角，一个点位于右下角，就可以完成裁剪。       */
+/************************************************************************/
+void CCohenSutherlandClipLine::CohenSutherlandClip(void)//
+{
+	// 1. 对于需要裁剪直线的两个坐标点进行区域编码。 
+	Encode(P0), Encode(P1);   // 对于直线起点、终点进行编码，给出区域码。
+	CAreaPoint Intersection;  // 边与直线的交点
+	// 处理至少一个顶点在窗口之外的情况
+	// 2. 如果直线两个坐标点的编码都是0。说明两个坐标点都在边界内。不需要裁剪。
+	while (P0.areaCode != 0 || P1.areaCode != 0)
 	{
-		if ((P0.areaCode & P1.areaCode) != 0)//简弃之
+		// 3. 如果直线两个坐标点的编码求与不为0。
+		//    说明两个坐标点位于同一个边界外区域内。
+		//    此时直接舍弃即可，也不需要裁剪。
+		if ((P0.areaCode & P1.areaCode) != 0)// 简弃之
 		{
 			return;
 		}
-		if (0 == P0.areaCode)// 交换P0和P1确保P0位于窗口之外
+		// 4.1 这里有一个技巧。就是直线的第一个坐标点有可能位于边界内。
+		//     因此上，如果发生这种情况，我们需要交换两个坐标点。  
+		//     保证我们处理的第一个坐标点位于边界外。
+		if (0 == P0.areaCode) // 交换P0和P1确保P0位于窗口之外
 		{
 			CAreaPoint Temp;
 			Temp = P0;
@@ -61,7 +128,7 @@ void CCohenSutherlandClipLine::CohenSutherlandClip(void)//Cohen-Sutherland算法
 			P1 = Temp;
 		}
 		UINT OutCode = P0.areaCode;
-		//窗口边界按左、右、下、上的顺序裁剪直线段
+		// 4.2 窗口边界按左、右、下、上的顺序裁剪直线段
 		if (OutCode & AREA_LEFT)//P0点位于窗口的左侧
 		{
 			Intersection.x = m_Start.x;//计算交点y坐标
@@ -82,28 +149,15 @@ void CCohenSutherlandClipLine::CohenSutherlandClip(void)//Cohen-Sutherland算法
 			Intersection.y = m_End.y;//计算交点x坐标
 			Intersection.x = (Intersection.y - P0.y) * (P1.x - P0.x) / (P1.y - P0.y) + P0.x;
 		}
+		// 5. 我们对于裁剪后的坐标再次进行区域编码。之后作为第一个坐标。
 		Encode(Intersection);
 		P0 = Intersection;
 	}	
 }
 
-void CCohenSutherlandClipLine::Encode(CAreaPoint &pt)//端点编码函数
-{
-	pt.areaCode = 0;
-	if (pt.x < m_Start.x)
-		pt.areaCode = pt.areaCode | AREA_LEFT;
-	else if (pt.x > m_End.x)
-		pt.areaCode = pt.areaCode | AREA_RIGHT;
-	if (pt.y < m_Start.y)
-		pt.areaCode = pt.areaCode | AREA_BOTTOM;
-	else if (pt.y > m_End.y)
-		pt.areaCode = pt.areaCode | AREA_TOP;
-}
-
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-#define ClipLine_DIFF     40
 void CCohenSutherlandClipLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
@@ -322,6 +376,7 @@ int CCohenSutherlandClipLine::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
+#define CLIPLINE_DIFF     40
 void CCohenSutherlandClipLine::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
@@ -348,8 +403,8 @@ void CCohenSutherlandClipLine::AdjustFocusPoint()
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_MIDDLE_LEFT];
 	connPoint->SetPoint(CPoint( m_Start.x, (m_Start.y+m_End.y)/2 ));
 	
-	P0 = CAreaPoint(m_Start.x, m_End.y + ClipLine_DIFF);
-	P1 = CAreaPoint(m_End.x, m_Start.y - ClipLine_DIFF);
+	P0 = CAreaPoint(m_Start.x - CLIPLINE_DIFF, m_End.y   + CLIPLINE_DIFF);
+	P1 = CAreaPoint(m_End.x   + CLIPLINE_DIFF, m_Start.y - CLIPLINE_DIFF);
 }
 
 /************************************************************************/

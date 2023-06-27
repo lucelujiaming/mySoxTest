@@ -49,11 +49,22 @@ CMidPointDividLine::~CMidPointDividLine()
 
 }
 
-void CMidPointDividLine::MidPointDivider(void)//中点分割算法
+/************************************************************************/
+/* 功能：中点分割算法                                                   */
+/*       这个算法的整体结构和对于区域码的使用方法                       */
+/*       和Cohen-Sutherland裁剪算法差不多。                             */
+/*       唯一的区别就是进行裁剪的方法。                                 */
+/*       Cohen-Sutherland裁剪算法是计算边界和直线的交点。               */
+/*       而中点分割算法使用的是取中点，通过二分逼近的方法来找到交点。   */
+/*       这个算法看起来很傻，但是对于硬件来说，                         */
+/*       因为其取中点的速度非常快。处理速度反而更快。                   */
+/************************************************************************/
+void CMidPointDividLine::MidPointDivider(void)
 {
-	Encode(P0), Encode(P1);//直线起点、终点编码
-	CEnhanceAreaPoint Intersection;//边与直线的交点
-	while (P0.areaCode != 0 || P1.areaCode != 0)//处理至少一个顶点在窗口之外的情况
+	Encode(P0), Encode(P1);         // 直线起点、终点编码
+	CEnhanceAreaPoint Intersection; // 边与直线的交点
+	// 处理至少一个顶点在窗口之外的情况
+	while (P0.areaCode != 0 || P1.areaCode != 0) 
 	{
 		if ((P0.areaCode & P1.areaCode) != 0)//简弃之
 			return;
@@ -64,9 +75,9 @@ void CMidPointDividLine::MidPointDivider(void)//中点分割算法
 			P0 = P1;
 			P1 = Temp;
 		}
-		CEnhanceAreaPoint p0 = P0, p1 = P1, pm;//直线端点坐标
-		pm = (p0 + p1) / 2, Encode(pm);//中点坐标
-		while (fabs(pm.x - p0.x) > 1e-4 || fabs(pm.y - p0.y) > 1e-4)//判断算法结束
+		CEnhanceAreaPoint p0 = P0, p1 = P1, pm; // 直线端点坐标
+		pm = (p0 + p1) / 2, Encode(pm);         // 中点坐标
+		while (fabs(pm.x - p0.x) > 1e-4 || fabs(pm.y - p0.y) > 1e-4) // 判断算法结束
 		{
 			if ((p0.areaCode & pm.areaCode) != 0)
 				p0 = pm;
@@ -79,7 +90,11 @@ void CMidPointDividLine::MidPointDivider(void)//中点分割算法
 	}
 }
 
-void CMidPointDividLine::Encode(CEnhanceAreaPoint &pt)//端点编码函数
+/************************************************************************/
+/* 功能：端点编码函数                                                   */
+/*       这个函数和CCohenSutherlandClipLine::Encode的逻辑相同。         */
+/************************************************************************/
+void CMidPointDividLine::Encode(CEnhanceAreaPoint &pt)
 {
 //	pt.areaCode = 0;
 //	if (pt.x < WXL)

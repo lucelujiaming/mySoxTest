@@ -152,7 +152,7 @@ void CDASP::sendDiscoveryRequest()
 	// Convert local byte order to network byte order
 	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
 	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
-	m_ClientSeqNum++ ;
+	// m_ClientSeqNum++ ;
 
 	//  The client sends a discover message with no header fields.
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_DISCOVER) << 4) | 0x00 ;
@@ -174,7 +174,7 @@ void CDASP::sendHelloRequest()
 	// Convert local byte order to network byte order
 	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
 	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
-	m_ClientSeqNum++ ;
+	// m_ClientSeqNum++ ;
 
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_HELLO) << 4) | 0x02 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
@@ -279,7 +279,7 @@ void CDASP::sendAuthenticateRequest(char * cUserName, char * cPassword)
 	// Convert local byte order to network byte order
 	daspHeader.seqNum[0] = m_ClientSeqNum / 0x100;
 	daspHeader.seqNum[1] = m_ClientSeqNum % 0x100;
-	m_ClientSeqNum++ ;
+	// m_ClientSeqNum++ ;
 	daspHeader.typeAndfieldsNum = ((char)(CDASP::MESSAGE_TYPES_AUTHENTICATE) << 4) | 0x02 ;
 	memcpy(sendBufPtr, &daspHeader, sizeof(DASP_MESSAGE));
 	sendBufPtr += sizeof(DASP_MESSAGE);

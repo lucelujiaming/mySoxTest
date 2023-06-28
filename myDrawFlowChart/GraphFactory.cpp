@@ -46,6 +46,8 @@
 #include "LiangBarskyClipLine.h"
 #include "ArbitraryRotateCube.h"
 #include "OrthogonalRotateCube.h"
+#include "CabinetRotateCube.h"
+#include "PerspectiveRotateCube.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -261,6 +263,16 @@ CGraph* CGraphFactory::CreateArbitraryRotateCube()
 CGraph* CGraphFactory::CreateOrthogonalRotateCube()
 {
 	return new COrthogonalRotateCube();
+}
+
+CGraph* CGraphFactory::CreateCabinetRotateCube()
+{
+	return new CCabinetRotateCube();
+}
+
+CGraph* CGraphFactory::CreatePerspectiveRotateCube()
+{
+	return new CPerspectiveRotateCube();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

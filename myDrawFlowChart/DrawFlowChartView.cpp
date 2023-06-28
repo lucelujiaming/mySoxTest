@@ -12,6 +12,8 @@
 #include "RotatePentagram.h"
 #include "ArbitraryRotateCube.h"
 #include "OrthogonalRotateCube.h"
+#include "CabinetRotateCube.h"
+#include "PerspectiveRotateCube.h"
 
 #include <math.h>
 
@@ -99,6 +101,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_LIANGBARSKY_CLIP_LINE, OnToolbarLiangBarskyClipLine)
 	ON_COMMAND(ID_TOOLBAR_ARBITRARY_ROTATE_CUBE, OnToolbarArbitraryRotateCube)
 	ON_COMMAND(ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE, OnToolbarOrthogonalRotateCube)
+	ON_COMMAND(ID_TOOLBAR_CABINET_ROTATE_CUBE, OnToolbarCabinetRotateCube)
+	ON_COMMAND(ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE, OnToolbarPerspectiveRotateCube)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -461,6 +465,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((COrthogonalRotateCube *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
+			{
+				((CCabinetRotateCube *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
+			{
+				((CPerspectiveRotateCube *)focusGraph)->upBox();
+			}
 			else
 			{
 				pDoc->m_GraphManager.Move(0, -2);
@@ -482,6 +494,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "COrthogonalRotateCube")
 			{
 				((COrthogonalRotateCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
+			{
+				((CCabinetRotateCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
+			{
+				((CPerspectiveRotateCube *)focusGraph)->downBox();
 			}
 			else
 			{
@@ -513,6 +533,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((COrthogonalRotateCube *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
+			{
+				((CCabinetRotateCube *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
+			{
+				((CPerspectiveRotateCube *)focusGraph)->leftBox();
+			}
 			else
 			{
 				pDoc->m_GraphManager.Move(-2, 0);
@@ -542,6 +570,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "COrthogonalRotateCube")
 			{
 				((COrthogonalRotateCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
+			{
+				((CCabinetRotateCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
+			{
+				((CPerspectiveRotateCube *)focusGraph)->rightBox();
 			}
 			else
 			{
@@ -1299,6 +1335,42 @@ void CDrawFlowChartView::OnCreateOrthogonalRotateCube()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateOrthogonalRotateCube());
 }
 
+void CDrawFlowChartView::OnCreateCabinetRotateCube() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCabinetRotateCube());
+}
+
+void CDrawFlowChartView::OnCreatePerspectiveRotateCube() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePerspectiveRotateCube());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1586,6 +1658,18 @@ void CDrawFlowChartView::OnToolbarOrthogonalRotateCube()
 {
 	// TODO: Add your command handler code here
 	OnCreateOrthogonalRotateCube();
+}
+
+void CDrawFlowChartView::OnToolbarCabinetRotateCube() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCabinetRotateCube();
+}
+
+void CDrawFlowChartView::OnToolbarPerspectiveRotateCube() 
+{
+	// TODO: Add your command handler code here
+	OnCreatePerspectiveRotateCube();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

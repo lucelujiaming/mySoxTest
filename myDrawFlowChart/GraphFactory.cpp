@@ -44,6 +44,8 @@
 #include "CohenSutherlandClipLine.h"
 #include "MidPointDividLine.h"
 #include "LiangBarskyClipLine.h"
+#include "ArbitraryRotateCube.h"
+#include "OrthogonalRotateCube.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -249,6 +251,16 @@ CGraph* CGraphFactory::CreateMidPointDividLine()
 CGraph* CGraphFactory::CreateLiangBarskyClipLine()
 {
 	return new CLiangBarskyClipLine();
+}
+
+CGraph* CGraphFactory::CreateArbitraryRotateCube()
+{
+	return new CArbitraryRotateCube();
+}
+
+CGraph* CGraphFactory::CreateOrthogonalRotateCube()
+{
+	return new COrthogonalRotateCube();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

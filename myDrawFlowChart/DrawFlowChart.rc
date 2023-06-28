@@ -83,7 +83,7 @@ IDR_TOOLBAR_GRAPHICS    BITMAP  DISCARDABLE     "res\\graphics.bmp"
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR DISCARDABLE  21, 13
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -142,6 +142,8 @@ BEGIN
     BUTTON      ID_TOOLBAR_COHENSUTHERLAND_CLIP_LINE
     BUTTON      ID_TOOLBAR_MIDPOINT_DIVID_LINE
     BUTTON      ID_TOOLBAR_LIANGBARSKY_CLIP_LINE
+    BUTTON      ID_TOOLBAR_ARBITRARY_ROTATE_CUBE
+    BUTTON      ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE
 END
 
 
@@ -493,7 +495,14 @@ BEGIN
     ID_TOOLBAR_COHENSUTHERLAND_CLIP_LINE 
                             "使用Cohen-Sutherland裁剪直线\nCohen-Sutherland裁直线"
     ID_TOOLBAR_MIDPOINT_DIVID_LINE "使用中点算法裁剪直线\n中点算法裁直线"
-    ID_TOOLBAR_LIANGBARSKY_CLIP_LINE "使用LiangBarsky算法裁剪直线\nLiangBarsky算法裁直线"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_TOOLBAR_LIANGBARSKY_CLIP_LINE 
+                            "使用LiangBarsky算法裁剪直线\nLiangBarsky算法裁直线"
+    ID_TOOLBAR_ARBITRARY_ROTATE_CUBE "绕任意轴旋转立方体\n任意轴旋转立方体"
+    ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE      "使用正交投影旋转立方体\n正交投影旋转立方体"
 END
 
 #endif    // Chinese (P.R.C.) resources

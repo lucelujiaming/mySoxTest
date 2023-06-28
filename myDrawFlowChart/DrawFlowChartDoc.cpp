@@ -259,6 +259,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateLiangBarskyClipLine(), child);
                 }
+				else if(strcmp(child->string, "CArbitraryRotateCube") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateArbitraryRotateCube(), child);
+                }
+				else if(strcmp(child->string, "COrthogonalRotateCube") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateOrthogonalRotateCube(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

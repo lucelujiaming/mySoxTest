@@ -142,6 +142,8 @@ protected:
 	afx_msg void OnToolbarCohenSutherlandClipLine();
 	afx_msg void OnToolbarMidPointDividLine();
 	afx_msg void OnToolbarLiangBarskyClipLine();
+	afx_msg void OnToolbarArbitraryRotateCube();
+	afx_msg void OnToolbarOrthogonalRotateCube();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -157,6 +159,8 @@ protected:
 	afx_msg void OnCreateCohenSutherlandClipLine();
 	afx_msg void OnCreateMidPointDividLine();
 	afx_msg void OnCreateLiangBarskyClipLine();
+	afx_msg void OnCreateArbitraryRotateCube();
+	afx_msg void OnCreateOrthogonalRotateCube();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

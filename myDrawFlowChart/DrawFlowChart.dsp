@@ -98,6 +98,10 @@ SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ArbitraryRotateCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ArcLine.cpp
 # End Source File
 # Begin Source File
@@ -211,6 +215,10 @@ SOURCE=.\End.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Face.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Facet.cpp
 # End Source File
 # Begin Source File
@@ -233,6 +241,10 @@ SOURCE=.\flowchart_cJSON.cpp
 # Begin Source File
 
 SOURCE=.\GenericLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GeometryCube.cpp
 # End Source File
 # Begin Source File
 
@@ -277,6 +289,18 @@ SOURCE=.\MiddleCircle.cpp
 # Begin Source File
 
 SOURCE=.\MidPointDividLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalProjection.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalProjectionCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalRotateCube.cpp
 # End Source File
 # Begin Source File
 
@@ -361,6 +385,10 @@ SOURCE=.\Transform3.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Vector3.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\WuAntiLine.cpp
 # End Source File
 # End Group
@@ -374,6 +402,10 @@ SOURCE=.\ActiveEdgeTable.h
 # Begin Source File
 
 SOURCE=.\AdjustPoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArbitraryRotateCube.h
 # End Source File
 # Begin Source File
 
@@ -477,6 +509,10 @@ SOURCE=.\End.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Face.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Facet.h
 # End Source File
 # Begin Source File
@@ -498,6 +534,10 @@ SOURCE=.\flowchart_cJSON.h
 # Begin Source File
 
 SOURCE=.\GenericLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GeometryCube.h
 # End Source File
 # Begin Source File
 
@@ -542,6 +582,14 @@ SOURCE=.\MiddleCircle.h
 # Begin Source File
 
 SOURCE=.\MidPointDividLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalProjection.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OrthogonalProjectionCube.h
 # End Source File
 # Begin Source File
 
@@ -626,6 +674,10 @@ SOURCE=.\Transform2.h
 # Begin Source File
 
 SOURCE=.\Transform3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Vector3.h
 # End Source File
 # Begin Source File
 

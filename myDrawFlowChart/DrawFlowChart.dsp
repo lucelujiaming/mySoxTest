@@ -130,6 +130,18 @@ SOURCE=.\BucketTableFill.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CabinetProjection.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CabinetProjectionCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CabinetRotateCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CohenSutherlandClipLine.cpp
 # End Source File
 # Begin Source File
@@ -328,6 +340,18 @@ SOURCE=.\PathManager.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PerspectiveProjection.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PerspectiveProjectionCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PerspectiveRotateCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\PolygonalLine.cpp
 # End Source File
 # Begin Source File
@@ -434,6 +458,18 @@ SOURCE=.\BucketTable.h
 # Begin Source File
 
 SOURCE=.\BucketTableFill.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CabinetProjection.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CabinetProjectionCube.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CabinetRotateCube.h
 # End Source File
 # Begin Source File
 
@@ -614,6 +650,18 @@ SOURCE=.\Path.h
 # Begin Source File
 
 SOURCE=.\PathManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PerspectiveProjection.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PerspectiveProjectionCube.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PerspectiveRotateCube.h
 # End Source File
 # Begin Source File
 

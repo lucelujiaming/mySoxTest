@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_CP3_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)
-#define AFX_CP3_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_
+#if !defined(AFX_CP3_H_83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)
+#define AFX_CP3_H_83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -31,4 +31,4 @@ public:
 	double z;
 };
 
-#endif // !defined(AFX_CP3_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)
+#endif // !defined(AFX_CP3_H_83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)

@@ -15,6 +15,7 @@
 #include "BrokenLine.h"
 #include "BezierLine.h"
 #include "CustomBezierLine.h"
+#include "CubicBezierCurve.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -350,6 +351,10 @@ void CGraphManager::SmoothAllBreizerLink()
 		else if(objGraph->GetTypeName() == "CCustomBezierLine")
 		{
 			((CCustomBezierLine *)objGraph)->smoothBezierLine();
+		}
+		else if(objGraph->GetTypeName() == "CCubicBezierCurve")
+		{
+			((CCubicBezierCurve *)objGraph)->smoothBezierLine();
 		}
 	}
 }

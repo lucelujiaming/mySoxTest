@@ -197,6 +197,7 @@ void CCubicBezierCurve::Draw( CDC *pdc, BOOL bShowSelectBorder )
 			DrawPolygon(pdc);
 		}
 		// DrawBezier(pdc);
+		// DrawPrimaryFuncBezierCurve(pdc);
 		DrawCasteljauBezierCurve(pdc);
 	}
 	free(pointBezier);

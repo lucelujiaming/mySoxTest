@@ -279,6 +279,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateCubicBezierCurve(), child);
                 }
+				else if(strcmp(child->string, "CBicubicBezierPatchGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateBicubicBezierPatchGraph(), child);
+                }
+				else if(strcmp(child->string, "CBicubicBezierSphereGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateBicubicBezierSphereGraph(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

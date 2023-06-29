@@ -114,6 +114,22 @@ SOURCE=.\BezierLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BicubicBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierPatchGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierSphere.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\BresenhamLine.cpp
 # End Source File
 # Begin Source File
@@ -127,10 +143,6 @@ SOURCE=.\BucketTable.cpp
 # Begin Source File
 
 SOURCE=.\BucketTableFill.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CabinetProjection.cpp
 # End Source File
 # Begin Source File
 
@@ -308,10 +320,6 @@ SOURCE=.\MidPointDividLine.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\OrthogonalProjection.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\OrthogonalProjectionCube.cpp
 # End Source File
 # Begin Source File
@@ -344,10 +352,6 @@ SOURCE=.\PathManager.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PerspectiveProjection.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\PerspectiveProjectionCube.cpp
 # End Source File
 # Begin Source File
@@ -357,6 +361,10 @@ SOURCE=.\PerspectiveRotateCube.cpp
 # Begin Source File
 
 SOURCE=.\PolygonalLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Projection.cpp
 # End Source File
 # Begin Source File
 
@@ -449,6 +457,22 @@ SOURCE=.\BezierLine.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BicubicBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierPatchGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierSphere.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BicubicBezierSphereGraph.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\BresenhamLine.h
 # End Source File
 # Begin Source File
@@ -462,10 +486,6 @@ SOURCE=.\BucketTable.h
 # Begin Source File
 
 SOURCE=.\BucketTableFill.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CabinetProjection.h
 # End Source File
 # Begin Source File
 
@@ -629,10 +649,6 @@ SOURCE=.\MidPointDividLine.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\OrthogonalProjection.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\OrthogonalProjectionCube.h
 # End Source File
 # Begin Source File
@@ -653,15 +669,15 @@ SOURCE=.\Parallelogram.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Patch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Path.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\PathManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\PerspectiveProjection.h
 # End Source File
 # Begin Source File
 
@@ -674,6 +690,10 @@ SOURCE=.\PerspectiveRotateCube.h
 # Begin Source File
 
 SOURCE=.\PolygonalLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Projection.h
 # End Source File
 # Begin Source File
 

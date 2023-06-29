@@ -146,6 +146,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE
     BUTTON      ID_TOOLBAR_CABINET_ROTATE_CUBE
     BUTTON      ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE
+    BUTTON      ID_TOOLBAR_CUBIC_BEZIER_CURVE
 END
 
 
@@ -507,7 +508,10 @@ BEGIN
     ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE 
                             "使用正交投影旋转立方体\n正交投影旋转立方体"
     ID_TOOLBAR_CABINET_ROTATE_CUBE "使用斜投影旋转立方体\n斜投影旋转立方体"
-    ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE "使用透视投影旋转立方体\n透视投影旋转立方体"
+    ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE 
+                            "使用透视投影旋转立方体\n透视投影旋转立方体"
+    ID_TOOLBAR_CUBIC_BEZIER_CURVE 
+                            "绘制三次Bezier曲线\n三次Bezier曲线"
 END
 
 #endif    // Chinese (P.R.C.) resources

@@ -39,15 +39,9 @@ CArbitraryRotateCube::~CArbitraryRotateCube()
 
 }
 
-void CArbitraryRotateCube::DrawObject(CDC* pDC)//绘制图形
-{
-	cube.Draw(pDC);
-}
-
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-#define ClipLine_DIFF     40
 void CArbitraryRotateCube::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
@@ -58,21 +52,31 @@ void CArbitraryRotateCube::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	
-	cube.ReadVertex();
+	// 读入点表
+	// cube.ReadVertex();
+	cube.ReadVertex(2,3,4);
+	// 读入面表
 	cube.ReadFace();
+	// 读入立方体顶点数组。
 	transform.SetMatrix(cube.V, 8);
-	transform.Translate(-0.5, -0.5, -0.5);
-	int nScale = 300;
+	// 移动到立方体的中心位置。作为后面旋转的中心位置。
+	// transform.Translate(-0.5, -0.5, -0.5);
+	transform.Translate((-1.0) * (double)cube.m_xScale / 2.0, 
+		                (-1.0) * (double)cube.m_yScale / 2.0, 
+						(-1.0) * (double)cube.m_zScale / 2.0);
+	// 放大立方体。
+	int nScale = (m_End.x - m_Start.x);
 	transform.Scale(nScale, nScale, nScale);
 	// Rotate
 	CVector3 n = cube.V[2] - cube.V[4];//任意方向
 	n = n.Normalize();//n为单位方向矢量
 	transform.ArbitraryDirection(m_currentBeta, n.x, n.y, n.z);
 	// Move to current position
-	transform.Translate(m_Start.x, m_Start.y, 0);
-
-	DrawObject(pdc);
+	transform.Translate(m_Start.x + (m_End.x - m_Start.x) / 2, 
+		m_Start.y + (m_End.y - m_Start.y) / 2,
+		0);
+	// 绘制图形
+	cube.Draw(pdc);
 
 	if(m_IsMark)
 	{

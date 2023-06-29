@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE, OnToolbarOrthogonalRotateCube)
 	ON_COMMAND(ID_TOOLBAR_CABINET_ROTATE_CUBE, OnToolbarCabinetRotateCube)
 	ON_COMMAND(ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE, OnToolbarPerspectiveRotateCube)
+	ON_COMMAND(ID_TOOLBAR_CUBIC_BEZIER_CURVE, OnToolbarCubicBezierCurve)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1371,6 +1372,24 @@ void CDrawFlowChartView::OnCreatePerspectiveRotateCube()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePerspectiveRotateCube());
 }
 
+void CDrawFlowChartView::OnCreateCubicBezierCurve() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = true;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicBezierCurve());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1670,6 +1689,12 @@ void CDrawFlowChartView::OnToolbarPerspectiveRotateCube()
 {
 	// TODO: Add your command handler code here
 	OnCreatePerspectiveRotateCube();
+}
+
+void CDrawFlowChartView::OnToolbarCubicBezierCurve() 
+{
+	// TODO: Add your command handler code here
+	OnCreateCubicBezierCurve();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

@@ -48,7 +48,6 @@ void CPerspectiveRotateCube::DrawObject(CDC* pDC)//绘制图形
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-#define ClipLine_DIFF     40
 void CPerspectiveRotateCube::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();

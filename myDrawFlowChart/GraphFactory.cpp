@@ -49,6 +49,8 @@
 #include "CabinetRotateCube.h"
 #include "PerspectiveRotateCube.h"
 #include "CubicBezierCurve.h"
+#include "BicubicBezierPatchGraph.h"
+#include "BicubicBezierSphereGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -279,6 +281,16 @@ CGraph* CGraphFactory::CreatePerspectiveRotateCube()
 CGraph* CGraphFactory::CreateCubicBezierCurve()
 {
 	return new CCubicBezierCurve();
+}
+
+CGraph* CGraphFactory::CreateBicubicBezierPatchGraph()
+{
+	return new CBicubicBezierPatchGraph();
+}
+
+CGraph* CGraphFactory::CreateBicubicBezierSphereGraph()
+{
+	return new CBicubicBezierSphereGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

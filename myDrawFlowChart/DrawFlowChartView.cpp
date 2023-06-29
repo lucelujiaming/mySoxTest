@@ -14,6 +14,7 @@
 #include "OrthogonalRotateCube.h"
 #include "CabinetRotateCube.h"
 #include "PerspectiveRotateCube.h"
+#include "BicubicBezierSphereGraph.h"
 
 #include <math.h>
 
@@ -104,6 +105,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_CABINET_ROTATE_CUBE, OnToolbarCabinetRotateCube)
 	ON_COMMAND(ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE, OnToolbarPerspectiveRotateCube)
 	ON_COMMAND(ID_TOOLBAR_CUBIC_BEZIER_CURVE, OnToolbarCubicBezierCurve)
+	ON_COMMAND(ID_TOOLBAR_BICUBIC_BEZIER_PATCH_GRAPH, OnToolbarBicubicBezierPatchGraph)
+	ON_COMMAND(ID_TOOLBAR_BICUBIC_BEZIER_SPHERE_GRAPH, OnToolbarBicubicBezierSphereGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -470,6 +473,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CCabinetRotateCube *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBicubicBezierSphereGraph")
+			{
+				((CBicubicBezierSphereGraph *)focusGraph)->upBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->upBox();
@@ -499,6 +506,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
 			{
 				((CCabinetRotateCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBicubicBezierSphereGraph")
+			{
+				((CBicubicBezierSphereGraph *)focusGraph)->downBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -538,6 +549,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CCabinetRotateCube *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBicubicBezierSphereGraph")
+			{
+				((CBicubicBezierSphereGraph *)focusGraph)->leftBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->leftBox();
@@ -575,6 +590,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CCabinetRotateCube")
 			{
 				((CCabinetRotateCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBicubicBezierSphereGraph")
+			{
+				((CBicubicBezierSphereGraph *)focusGraph)->rightBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -1390,6 +1409,42 @@ void CDrawFlowChartView::OnCreateCubicBezierCurve()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicBezierCurve());
 }
 
+void CDrawFlowChartView::OnCreateBicubicBezierPatchGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBicubicBezierPatchGraph());
+}
+
+void CDrawFlowChartView::OnCreateBicubicBezierSphereGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBicubicBezierSphereGraph());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1695,6 +1750,18 @@ void CDrawFlowChartView::OnToolbarCubicBezierCurve()
 {
 	// TODO: Add your command handler code here
 	OnCreateCubicBezierCurve();
+}
+
+void CDrawFlowChartView::OnToolbarBicubicBezierPatchGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateBicubicBezierPatchGraph();
+}
+
+void CDrawFlowChartView::OnToolbarBicubicBezierSphereGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateBicubicBezierSphereGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

@@ -163,6 +163,10 @@ SOURCE=.\ColorStack.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CubicBezierCurve.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CubicBox.cpp
 # End Source File
 # Begin Source File
@@ -482,6 +486,10 @@ SOURCE=.\ColorPoint.h
 # Begin Source File
 
 SOURCE=.\ColorStack.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CubicBezierCurve.h
 # End Source File
 # Begin Source File
 

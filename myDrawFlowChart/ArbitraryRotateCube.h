@@ -23,8 +23,6 @@ public:
 	virtual ~CArbitraryRotateCube();
 	CString GetTypeName() { return CString("CArbitraryRotateCube"); }
 
-public:
-	void DrawObject(CDC* pDC);//绘制图形
 protected:
 	CGeometryCube cube;//六面体对象
 	CTransform3 transform;//变换
@@ -51,13 +49,13 @@ public:
 	{  
 		int Beta=-2; 
 		m_currentBeta -= 2;
-		m_currentBeta = m_currentBeta % 180;
+		m_currentBeta = m_currentBeta % 360;
 	}
 	void rightBox() 
 	{  
 		int Beta=+2;	
 		m_currentBeta += 2;
-		m_currentBeta = m_currentBeta % 180;
+		m_currentBeta = m_currentBeta % 360;
 	}
 
 private:

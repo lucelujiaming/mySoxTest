@@ -146,6 +146,7 @@ protected:
 	afx_msg void OnToolbarOrthogonalRotateCube();
 	afx_msg void OnToolbarCabinetRotateCube();
 	afx_msg void OnToolbarPerspectiveRotateCube();
+	afx_msg void OnToolbarCubicBezierCurve();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -165,6 +166,7 @@ protected:
 	afx_msg void OnCreateOrthogonalRotateCube();
 	afx_msg void OnCreateCabinetRotateCube();
 	afx_msg void OnCreatePerspectiveRotateCube();
+	afx_msg void OnCreateCubicBezierCurve();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

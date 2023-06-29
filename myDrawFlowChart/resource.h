@@ -67,6 +67,7 @@
 #define ID_TOOLBAR_ORTHOGONAL_ROTATE_CUBE 32866
 #define ID_TOOLBAR_CABINET_ROTATE_CUBE  32867
 #define ID_TOOLBAR_PERSPECTIVE_ROTATE_CUBE 32868
+#define ID_TOOLBAR_CUBIC_BEZIER_CURVE   32871
 
 // Next default values for new objects
 // 
@@ -74,7 +75,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         32869
+#define _APS_NEXT_COMMAND_VALUE         32872
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

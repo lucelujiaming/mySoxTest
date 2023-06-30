@@ -22,6 +22,9 @@ public:
 	virtual ~CBackfaceCullRotateCube();
 	CString GetTypeName() { return CString("CBackfaceCullRotateCube"); }
 	
+public:
+	void DoubleBuffer(CDC* pDC);//双缓冲
+	void DrawObject(CDC* pDC);//绘制图形
 protected:
 	CBackfaceCullCube cube;//球体对象
 	CTransform3 transform;//变换对象

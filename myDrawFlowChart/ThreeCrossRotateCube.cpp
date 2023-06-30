@@ -47,29 +47,22 @@ void CThreeCrossRotateCube::DoubleBuffer(CDC* pDC)
 	CRect rectScreen;//定义客户区矩形
 	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
 	pMain->GetClientRect(&rectScreen);//获得客户区的大小
-
-	CRect rect = CRect(m_Start.x - 200, m_Start.y - 200, m_Start.x + 200, m_Start.y + 200);
 	
-	pDC->SetMapMode(MM_ANISOTROPIC);
-	pDC->SetWindowExt(rect.Width(), rect.Height());
-	pDC->SetViewportExt(rect.Width(), -rect.Height());
-	pDC->SetViewportOrg(rect.Width() / 2, rect.Height() / 2);
-	CDC memDC;//声明内存DC
-	memDC.CreateCompatibleDC(pDC);//创建一个与显示DC兼容的内存DC
+	CRect rect = CRect(0, 0, 400, 400);
+	
+    CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
 	CBitmap NewBitmap, *pOldBitmap;
-	NewBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());//创建兼容内存位图 
-	pOldBitmap = memDC.SelectObject(&NewBitmap);//将兼容位图选入内存DC
+    NewBitmap.CreateCompatibleBitmap(pDC, 400, 400);//rt为RECT变量;
+    pOldBitmap = memDC.SelectObject(&NewBitmap);
 	memDC.FillSolidRect(rect, pDC->GetBkColor());//设置客户区背景色
-	rect.OffsetRect(-rect.Width() / 2, -rect.Height() / 2);
-	memDC.SetMapMode(MM_ANISOTROPIC);//内存DC自定义坐标系
-	memDC.SetWindowExt(rect.Width(), rect.Height());
-	memDC.SetViewportExt(rect.Width(), -rect.Height());
-	memDC.SetViewportOrg(rect.Width() / 2, rect.Height() / 2);
+	// rect.OffsetRect(-200, -200);
 	DrawObject(&memDC);//绘制图形
-	pDC->BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &memDC, -rect.Width() / 2, -rect.Height() / 2, SRCCOPY); //将内存DC中的位图拷贝到显示DC
+    pDC->BitBlt(m_Start.x, m_Start.y, 400, 400, 
+        &memDC, 0, 0, SRCCOPY);
 	memDC.SelectObject(pOldBitmap);
 	NewBitmap.DeleteObject();
-	memDC.DeleteDC();
+    memDC.DeleteDC();
 }
 
 void CThreeCrossRotateCube::DrawObject(CDC* pDC)//绘制图形
@@ -122,12 +115,15 @@ void CThreeCrossRotateCube::Draw( CDC *pDC, BOOL bShowSelectBorder )
 	{
 		smallTransform[i].RotateX(m_currentAlpha);
 		smallTransform[i].RotateY(m_currentBeta);
-	//	smallTransform[i].Translate(m_Start.x, m_Start.y, 0);
+		// Move to (100, 100, 100) to display
+		smallTransform[i].Translate(100, 100, 100);
 	}
 	largeTransform.RotateX(m_currentAlpha);
 	largeTransform.RotateY(m_currentBeta);
-	//largeTransform.Translate(m_Start.x, m_Start.y, 0);
+	// Move to (100, 100, 100) to display
+	largeTransform.Translate(100, 100, 100);
 	// Move to current position
+	// DrawObject(pDC);
 	DoubleBuffer(pDC);
 	if(m_IsMark)
 	{

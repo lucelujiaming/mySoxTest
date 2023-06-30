@@ -53,6 +53,8 @@
 #include "BicubicBezierSphereGraph.h"
 #include "RationalQuadraticBezierCircle.h"
 #include "RationalQuadraticBezierSphereGraph.h"
+#include "BackfaceCullRotateCube.h"
+#include "ThreeCrossRotateCube.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -303,6 +305,16 @@ CGraph* CGraphFactory::CreateRationalQuadraticBezierCircle()
 CGraph* CGraphFactory::CreateRationalQuadraticBezierSphereGraph()
 {
 	return new CRationalQuadraticBezierSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateBackfaceCullRotateCube()
+{
+	return new CBackfaceCullRotateCube();
+}
+
+CGraph* CGraphFactory::CreateThreeCrossRotateCube()
+{
+	return new CThreeCrossRotateCube();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

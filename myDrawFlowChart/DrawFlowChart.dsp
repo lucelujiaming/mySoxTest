@@ -110,6 +110,14 @@ SOURCE=.\ArrowLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BackfaceCullCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BackfaceCullRotateCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\BezierLine.cpp
 # End Source File
 # Begin Source File
@@ -158,6 +166,18 @@ SOURCE=.\CohenSutherlandClipLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorFace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorP2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorP3.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorPoint.cpp
 
 !IF  "$(CFG)" == "DrawFlowChart - Win32 Release"
@@ -171,7 +191,23 @@ SOURCE=.\ColorPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorPoint2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorPoint3.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorStack.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorTransform3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorVector3.cpp
 # End Source File
 # Begin Source File
 
@@ -433,6 +469,10 @@ SOURCE=.\StdAfx.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ThreeCrossRotateCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Transform2.cpp
 # End Source File
 # Begin Source File
@@ -446,6 +486,14 @@ SOURCE=.\Vector3.cpp
 # Begin Source File
 
 SOURCE=.\WuAntiLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ZBuffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ZBufferCube.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -470,6 +518,14 @@ SOURCE=.\ArcLine.h
 # Begin Source File
 
 SOURCE=.\ArrowLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BackfaceCullCube.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BackfaceCullRotateCube.h
 # End Source File
 # Begin Source File
 
@@ -521,11 +577,39 @@ SOURCE=.\CohenSutherlandClipLine.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorP2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorP3.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorPoint.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorPoint2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorPoint3.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorStack.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorTransform3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorVector3.h
 # End Source File
 # Begin Source File
 
@@ -785,6 +869,10 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ThreeCrossRotateCube.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Transform2.h
 # End Source File
 # Begin Source File
@@ -798,6 +886,14 @@ SOURCE=.\Vector3.h
 # Begin Source File
 
 SOURCE=.\WuAntiLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ZBuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ZBufferCube.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

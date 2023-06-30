@@ -151,6 +151,8 @@ BEGIN
     BUTTON      ID_TOOLBAR_BICUBIC_BEZIER_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_RATIONAL_QUADRATIC_BEZIER_CIRCLE_GRAPH
     BUTTON      ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH
+    BUTTON      ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE
+    BUTTON      ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE
 END
 
 
@@ -523,6 +525,10 @@ BEGIN
                             "使用有理二次Bezier曲线绘制圆\n有理二次Bezier曲线圆"
     ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH 
                             "使用有理二次Bezier曲线绘制球面\n有理二次Bezier曲线球面"
+    ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE 
+                            "使用背面剔除算法绘制立方体\n背面剔除立方体"
+    ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE 
+                            "使用ZBuffer算法绘制三向交叉立方体\n三向交叉立方体"
 END
 
 #endif    // Chinese (P.R.C.) resources

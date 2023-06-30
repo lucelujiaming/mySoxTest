@@ -6,6 +6,7 @@
 #endif // _MSC_VER > 1000
 
 #include "P3.h"
+#include "ColorP3.h"
 
 #define ORTHOGONAL_PROJECTION    1
 #define CABINET_PROJECTION       2
@@ -28,6 +29,9 @@ public:
 	void SetEye(CP3 Eye);//设置视点
 	CP3 GetEye(void);//获得视点
 	CP2 MakePerspectiveProjection(CP3 WorldPoint);//透视投影
+	
+	CColorP2 PerspectiveProjection2(CColorP3 WorldPoint); //二维透视投影
+	CColorP3 PerspectiveProjection3(CColorP3 WorldPoint); //三维透视投影
 private:
 	CP3 Eye;//视点
 	double R, d;//视径和视距

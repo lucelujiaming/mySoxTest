@@ -74,3 +74,32 @@ CP2 CProjection::MakePerspectiveProjection(CP3 WorldPoint)
 	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
 	return ScreenPoint;
 }
+
+CColorP2 CProjection::PerspectiveProjection2(CColorP3 WorldPoint)
+{
+	CColorP3 ViewPoint;//观察坐标系三维点
+	ViewPoint.x = WorldPoint.x;
+	ViewPoint.y = WorldPoint.y;
+	ViewPoint.z = R - WorldPoint.z;
+	ViewPoint.c = WorldPoint.c;
+	CColorP2 ScreenPoint;//屏幕坐标系二维点
+	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
+	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
+	ScreenPoint.c = ViewPoint.c;
+	return ScreenPoint;
+}
+
+CColorP3 CProjection::PerspectiveProjection3(CColorP3 WorldPoint)
+{
+	CColorP3 ViewPoint;//观察坐标系三维点
+	ViewPoint.x = WorldPoint.x;
+	ViewPoint.y = WorldPoint.y;
+	ViewPoint.z = R - WorldPoint.z;
+	ViewPoint.c = WorldPoint.c;
+	CColorP3 ScreenPoint;//屏幕坐标系三维点
+	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
+	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
+	ScreenPoint.z = (ViewPoint.z - d) * d / ViewPoint.z;//Bouknight公式
+	ScreenPoint.c = ViewPoint.c;
+	return ScreenPoint;
+}

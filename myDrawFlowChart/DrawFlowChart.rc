@@ -149,6 +149,8 @@ BEGIN
     BUTTON      ID_TOOLBAR_CUBIC_BEZIER_CURVE
     BUTTON      ID_TOOLBAR_BICUBIC_BEZIER_PATCH_GRAPH
     BUTTON      ID_TOOLBAR_BICUBIC_BEZIER_SPHERE_GRAPH
+    BUTTON      ID_TOOLBAR_RATIONAL_QUADRATIC_BEZIER_CIRCLE_GRAPH
+    BUTTON      ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH
 END
 
 
@@ -517,6 +519,10 @@ BEGIN
                             "绘制双三次Bezier曲面\n双三次Bezier曲面"
     ID_TOOLBAR_BICUBIC_BEZIER_SPHERE_GRAPH 
                             "绘制双三次Bezier球面\n双三次Bezier球面"
+    ID_TOOLBAR_RATIONAL_QUADRATIC_BEZIER_CIRCLE_GRAPH 
+                            "使用有理二次Bezier曲线绘制圆\n有理二次Bezier曲线圆"
+    ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH 
+                            "使用有理二次Bezier曲线绘制球面\n有理二次Bezier曲线球面"
 END
 
 #endif    // Chinese (P.R.C.) resources

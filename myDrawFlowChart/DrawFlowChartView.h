@@ -149,6 +149,8 @@ protected:
 	afx_msg void OnToolbarCubicBezierCurve();
 	afx_msg void OnToolbarBicubicBezierPatchGraph();
 	afx_msg void OnToolbarBicubicBezierSphereGraph();
+	afx_msg void OnToolbarRationalQuadraticBezierCircle();
+	afx_msg void OnToolbarRationalQuadraticBezierSphereGraph();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -171,6 +173,8 @@ protected:
 	afx_msg void OnCreateCubicBezierCurve();
 	afx_msg void OnCreateBicubicBezierPatchGraph();
 	afx_msg void OnCreateBicubicBezierSphereGraph();
+	afx_msg void OnCreateRationalQuadraticBezierCircle();
+	afx_msg void OnCreateRationalQuadraticBezierSphereGraph();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

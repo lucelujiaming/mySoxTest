@@ -10,6 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include <vector>
+#include "MainFrm.h"
 #include "AdjustPoint.h"
 
 #define CCONNECTPOINT_INVALID_OPTION      -1

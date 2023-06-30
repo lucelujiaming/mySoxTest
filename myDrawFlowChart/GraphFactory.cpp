@@ -51,6 +51,8 @@
 #include "CubicBezierCurve.h"
 #include "BicubicBezierPatchGraph.h"
 #include "BicubicBezierSphereGraph.h"
+#include "RationalQuadraticBezierCircle.h"
+#include "RationalQuadraticBezierSphereGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -291,6 +293,16 @@ CGraph* CGraphFactory::CreateBicubicBezierPatchGraph()
 CGraph* CGraphFactory::CreateBicubicBezierSphereGraph()
 {
 	return new CBicubicBezierSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateRationalQuadraticBezierCircle()
+{
+	return new CRationalQuadraticBezierCircle();
+}
+
+CGraph* CGraphFactory::CreateRationalQuadraticBezierSphereGraph()
+{
+	return new CRationalQuadraticBezierSphereGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

@@ -372,6 +372,26 @@ SOURCE=.\QuadraticSplineLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RationalBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierCircle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierCurve.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierSphere.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Rectangle.cpp
 # End Source File
 # Begin Source File
@@ -698,6 +718,26 @@ SOURCE=.\Projection.h
 # Begin Source File
 
 SOURCE=.\QuadraticSplineLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierCircle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierCurve.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierSphere.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RationalQuadraticBezierSphereGraph.h
 # End Source File
 # Begin Source File
 

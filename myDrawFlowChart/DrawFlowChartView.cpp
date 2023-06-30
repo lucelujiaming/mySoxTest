@@ -16,6 +16,8 @@
 #include "PerspectiveRotateCube.h"
 #include "BicubicBezierSphereGraph.h"
 #include "RationalQuadraticBezierSphereGraph.h"
+#include "BackfaceCullRotateCube.h"
+#include "ThreeCrossRotateCube.h"
 
 #include <math.h>
 
@@ -112,6 +114,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 											OnToolbarRationalQuadraticBezierCircle)
 	ON_COMMAND(ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH, 
 											OnToolbarRationalQuadraticBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE, OnToolbarBackfaceCullRotateCube)
+	ON_COMMAND(ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE, OnToolbarThreeCrossRotateCube)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -486,6 +490,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CRationalQuadraticBezierSphereGraph *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBackfaceCullRotateCube")
+			{
+				((CBackfaceCullRotateCube *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
+			{
+				((CThreeCrossRotateCube *)focusGraph)->upBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->upBox();
@@ -523,6 +535,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CRationalQuadraticBezierSphereGraph")
 			{
 				((CRationalQuadraticBezierSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBackfaceCullRotateCube")
+			{
+				((CBackfaceCullRotateCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
+			{
+				((CThreeCrossRotateCube *)focusGraph)->downBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -570,6 +590,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CRationalQuadraticBezierSphereGraph *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBackfaceCullRotateCube")
+			{
+				((CBackfaceCullRotateCube *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
+			{
+				((CThreeCrossRotateCube *)focusGraph)->leftBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->leftBox();
@@ -615,6 +643,14 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CRationalQuadraticBezierSphereGraph")
 			{
 				((CRationalQuadraticBezierSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBackfaceCullRotateCube")
+			{
+				((CBackfaceCullRotateCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
+			{
+				((CThreeCrossRotateCube *)focusGraph)->rightBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -1502,6 +1538,42 @@ void CDrawFlowChartView::OnCreateRationalQuadraticBezierSphereGraph()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateRationalQuadraticBezierSphereGraph());
 }
 
+void CDrawFlowChartView::OnCreateBackfaceCullRotateCube() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBackfaceCullRotateCube());
+}
+
+void CDrawFlowChartView::OnCreateThreeCrossRotateCube() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateThreeCrossRotateCube());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1831,6 +1903,18 @@ void CDrawFlowChartView::OnToolbarRationalQuadraticBezierSphereGraph()
 {
 	// TODO: Add your command handler code here
 	OnCreateRationalQuadraticBezierSphereGraph();
+}
+
+void CDrawFlowChartView::OnToolbarBackfaceCullRotateCube() 
+{
+	// TODO: Add your command handler code here
+	OnCreateBackfaceCullRotateCube();
+}
+
+void CDrawFlowChartView::OnToolbarThreeCrossRotateCube() 
+{
+	// TODO: Add your command handler code here
+	OnCreateThreeCrossRotateCube();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

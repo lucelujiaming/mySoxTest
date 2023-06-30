@@ -66,6 +66,8 @@ public:
 	CGraph* CreateBicubicBezierSphereGraph();
 	CGraph* CreateRationalQuadraticBezierCircle();
 	CGraph* CreateRationalQuadraticBezierSphereGraph();
+	CGraph* CreateBackfaceCullRotateCube();
+	CGraph* CreateThreeCrossRotateCube();
 };
 
 #endif // !defined(AFX_GRAPHFACTORY_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)

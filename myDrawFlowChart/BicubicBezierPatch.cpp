@@ -11,15 +11,22 @@ CBicubicBezierPatch::~CBicubicBezierPatch(void)
 
 }
 
+// 双三次Bezier曲面由两组三次Bezier曲线交织而成，
+// 控制网格由16个控制点组成。
 void CBicubicBezierPatch::ReadControlPoint(CP3 P[4][4])
 {
    for(int i = 0;i < 4;i++)
+   {
 	   for(int j = 0;j < 4;j++)
+	   {
    			this->P[i][j]  = P[i][j];
+	   }
+   }
 }
 void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 {
-	double M[4][4];//系数矩阵M
+	double M[4][4]; // 系数矩阵M
+	// B 0,3 (u) = 
 	M[0][0]=-1,M[0][1]=3, M[0][2]=-3,M[0][3]=1;
 	M[1][0]= 3,M[1][1]=-6,M[1][2]= 3,M[1][3]=0;
 	M[2][0]=-3,M[2][1]=3, M[2][2]= 0,M[2][3]=0;
@@ -28,12 +35,16 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 	for(int i=0;i < 4;i++)
 		for(int j = 0;j < 4;j++)
 			P3[i][j] = P[i][j];
+	// P * | B 0,3 (v)  B 1,3 (v)  B 2,3 (v)  B 3,3 (v) | 
 	RightMultiplyMatrix(P3, M);//系数矩阵右乘三维点矩阵
 	TransposeMatrix(M);//计算转置矩阵
+	// | B 0,3 (u)  B 1,3 (u)  B 2,3 (u)  B 3,3 (u) | * P
 	LeftMultiplyMatrix(M, P3);//系数矩阵左乘三维点矩阵
 	double tStep = 0.1;//步长
 	double u0,u1,u2,u3,v0,v1,v2,v3;//u，v参数的幂
-	for(double u = 0;u <= 1;u += tStep)
+	// p = Bu * P * Bv
+	for(double u = 0; u <= 1; u += tStep)
+	{
 		for(double v = 0;v <= 1;v += tStep)
 		{
 			u3 = u * u * u, u2 = u * u, u1 = u, u0 = 1;
@@ -42,13 +53,15 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 			         +(u3 * P3[0][1] + u2 * P3[1][1] + u1 * P3[2][1] + u0 * P3[3][1]) * v2
 			         +(u3 * P3[0][2] + u2 * P3[1][2] + u1 * P3[2][2] + u0 * P3[3][2]) * v1
 			         +(u3 * P3[0][3] + u2 * P3[1][3] + u1 * P3[2][3] + u0 * P3[3][3]) * v0;
-			CP2 Point2 = projection.MakeCustomProjection(pt);//斜投影
+			CP2 Point2 = projection.CustomProjection(pt); // 斜投影
 			if(0 == v)
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
 			else
 				pDC->LineTo(ROUND(Point2.x), ROUND(Point2.y));
-		}		  
-	for(double v = 0;v <= 1;v += tStep)
+		}
+	}
+	for(double v = 0; v <= 1; v += tStep)
+	{
 		for(double u = 0;u <= 1;u += tStep)
 		{
 			u3 = u * u * u; u2 = u * u; u1 = u; u0 = 1; 
@@ -57,12 +70,13 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 			        +(u3 * P3[0][1] + u2 * P3[1][1] + u1 * P3[2][1] + u0 * P3[3][1]) * v2
 			        +(u3 * P3[0][2] + u2 * P3[1][2] + u1 * P3[2][2] + u0 * P3[3][2]) * v1
 			        +(u3 * P3[0][3] + u2 * P3[1][3] + u1 * P3[2][3] + u0 * P3[3][3]) * v0;			
-			CP2 Point2 = projection.MakeCustomProjection(pt);//斜投影    
+			CP2 Point2 = projection.CustomProjection(pt); // 斜投影    
 			if(0 == u)
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
 			else
 				pDC->LineTo(ROUND(Point2.x),ROUND(Point2.y));
 		}
+	}
 }
 
 void CBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CP3 P[4][4])//左乘矩阵M*P
@@ -103,7 +117,7 @@ void CBicubicBezierPatch::DrawControlGrid(CDC* pDC)//绘制控制网格
 	CP2 P2[4][4];//二维控制点
 	for(int i = 0;i < 4;i++)
 		for(int j = 0;j < 4;j++)
-			P2[i][j] = projection.MakeCustomProjection(P[i][j]);
+			P2[i][j] = projection.CustomProjection(P[i][j]);
 	CPen NewPen,*pOldPen;
 	NewPen.CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
 	pOldPen=pDC->SelectObject(&NewPen);

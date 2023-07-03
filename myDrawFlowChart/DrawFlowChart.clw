@@ -15,10 +15,10 @@ Class3=CDrawFlowChartView
 Class4=CMainFrame
 
 ResourceCount=3
-Resource1=IDR_MAINFRAME
+Resource1=IDR_TOOLBAR_GRAPHICS
 Class5=CAboutDlg
-Resource2=IDD_ABOUTBOX
-Resource3=IDR_TOOLBAR_GRAPHICS
+Resource2=IDR_MAINFRAME
+Resource3=IDD_ABOUTBOX
 
 [CLS:CDrawFlowChartApp]
 Type=0

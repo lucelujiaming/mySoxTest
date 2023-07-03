@@ -62,6 +62,9 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
+private:
+	void DoubleBuffer(CDC* pDC);
+	void DrawAllGraph( CDC *pDC);
 protected:
 
 // Generated message map functions
@@ -153,6 +156,8 @@ protected:
 	afx_msg void OnToolbarRationalQuadraticBezierSphereGraph();
 	afx_msg void OnToolbarBackfaceCullRotateCube();
 	afx_msg void OnToolbarThreeCrossRotateCube();
+	afx_msg void OnToolbarSpatialArrangedCube();
+	afx_msg void OnToolbarGouraudLightingSphereGraph();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -179,6 +184,8 @@ protected:
 	afx_msg void OnCreateRationalQuadraticBezierSphereGraph();
 	afx_msg void OnCreateBackfaceCullRotateCube();
 	afx_msg void OnCreateThreeCrossRotateCube();
+	afx_msg void OnCreateSpatialArrangedCube();
+	afx_msg void OnCreateGouraudLightingSphereGraph();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

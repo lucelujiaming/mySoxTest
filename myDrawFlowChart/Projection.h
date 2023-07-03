@@ -30,6 +30,8 @@ public:
 	CP3 GetEye(void);     // 获得视点
 	CP2 PerspectiveProjection(CP3 WorldPoint); // 透视投影
 	
+	void SetColorEye(CColorP3 Eye); // 设置视点
+	CColorP3 GetColorEye(void);     // 获得视点
 	// 带有颜色信息的二维透视投影
 	CColorP2 TwoDimColorPerspectiveProjection(CColorP3 WorldPoint); 
 	// 带有颜色信息的三维透视投影
@@ -39,6 +41,8 @@ private:
 	double R; // 视径
 	double d; // 视距
 	
+	CColorP3 ColorEye;//视点
+
 public:
 	void useOrthogonalProjection()  { projectionMode = ORTHOGONAL_PROJECTION; }
 	void useCavalierProjection()    { projectionMode = CAVALIER_PROJECTION;    }

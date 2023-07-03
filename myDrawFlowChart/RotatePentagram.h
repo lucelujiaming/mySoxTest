@@ -32,8 +32,6 @@ protected:
 	CP2 cPoint;//中心点
 	CTransform2 transform;//变换对象
 
-	int m_currentAlpha;
-
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );
@@ -52,17 +50,11 @@ public:
 public:
 	void leftBox()  
 	{  
-		int Alpha=-2;
-		m_currentAlpha -= 2;
-		m_currentAlpha = m_currentAlpha % 360;
-		transform.Rotate(Alpha); 
+		transform.Rotate(-2);
 	}
 	void rightBox() 
-	{  
-		int Alpha=+2; 	
-		m_currentAlpha += 2;
-		m_currentAlpha = m_currentAlpha % 360;
-		transform.Rotate(Alpha); 
+	{  	
+		transform.Rotate(2);
 	}
 	
 private:

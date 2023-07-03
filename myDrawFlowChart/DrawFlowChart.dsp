@@ -166,6 +166,10 @@ SOURCE=.\CohenSutherlandClipLine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorFace.cpp
 # End Source File
 # Begin Source File
@@ -239,6 +243,10 @@ SOURCE=.\DDALine.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DepthFace.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.cpp
 # End Source File
 # Begin Source File
@@ -309,6 +317,10 @@ SOURCE=.\GenericLine.cpp
 # Begin Source File
 
 SOURCE=.\GeometryCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudLightingSphereGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -460,6 +472,10 @@ SOURCE=.\SmoothFillTriangle.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SpatialArrangedCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.cpp
 # End Source File
 # Begin Source File
@@ -478,6 +494,10 @@ SOURCE=.\Transform2.cpp
 # Begin Source File
 
 SOURCE=.\Transform3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Triangle.cpp
 # End Source File
 # Begin Source File
 
@@ -577,6 +597,10 @@ SOURCE=.\CohenSutherlandClipLine.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorCube.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorFace.h
 # End Source File
 # Begin Source File
@@ -638,6 +662,10 @@ SOURCE=.\CylinderGraph.h
 # Begin Source File
 
 SOURCE=.\DDALine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DepthFace.h
 # End Source File
 # Begin Source File
 
@@ -706,6 +734,10 @@ SOURCE=.\GenericLine.h
 # Begin Source File
 
 SOURCE=.\GeometryCube.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudLightingSphereGraph.h
 # End Source File
 # Begin Source File
 
@@ -861,6 +893,10 @@ SOURCE=.\SmoothFillTriangle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SpatialArrangedCube.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Start.h
 # End Source File
 # Begin Source File
@@ -878,6 +914,10 @@ SOURCE=.\Transform2.h
 # Begin Source File
 
 SOURCE=.\Transform3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Triangle.h
 # End Source File
 # Begin Source File
 

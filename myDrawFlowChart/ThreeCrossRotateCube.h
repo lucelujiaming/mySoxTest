@@ -26,9 +26,6 @@ protected:
 	CZBufferCube smallCube[3], largeCube;//立方体对象
 	CColorTransform3 smallTransform[3], largeTransform;//变换
 	
-	int m_currentAlpha;
-	int m_currentBeta;
-
 public:
 	void DoubleBuffer(CDC* pDC);//双缓冲
 	void DrawObject(CDC* pDC);//绘制图形
@@ -50,23 +47,39 @@ public:
 public:
 	void upBox()    
 	{  	
-		m_currentAlpha += 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		// Rotate
+		for (int i = 0; i < 3; i++)
+		{
+			smallTransform[i].RotateX(2);
+		}
+		largeTransform.RotateX(2);
 	}
 	void downBox()  
 	{  
-		m_currentAlpha -= 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		// Rotate
+		for (int i = 0; i < 3; i++)
+		{
+			smallTransform[i].RotateX(-2);
+		}
+		largeTransform.RotateX(-2);
 	}
 	void leftBox()  
 	{  
-		m_currentBeta -= 2;
-		m_currentBeta = m_currentBeta % 360;
+		// Rotate
+		for (int i = 0; i < 3; i++)
+		{
+			smallTransform[i].RotateY(-2);
+		}
+		largeTransform.RotateY(-2);
 	}
 	void rightBox() 
 	{  	
-		m_currentBeta += 2;
-		m_currentBeta = m_currentBeta % 360;
+		// Rotate
+		for (int i = 0; i < 3; i++)
+		{
+			smallTransform[i].RotateY(2);
+		}
+		largeTransform.RotateY(2);
 	}
 
 private:

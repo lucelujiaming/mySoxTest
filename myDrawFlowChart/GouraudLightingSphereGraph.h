@@ -1,9 +1,9 @@
-// OrthogonalRotateCube.h: interface for the COrthogonalRotateCube class.
+// GouraudLightingSphereGraph.h: interface for the CGouraudLightingSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_ORTHOGONAL_ROTATE_CUBE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_ORTHOGONAL_ROTATE_CUBE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -11,24 +11,29 @@
 
 #include "Graph.h"
 #include "AdjustPoint.h"
-#include "OrthogonalProjectionCube.h"
-#include "Transform3.h"
-#include "Vector3.h"
+#include "DepthFace.h"
+#include "ColorCube.h"
+#include "ColorTransform3.h"
+#include "projection.h"
+#include "Triangle.h"
 
-class COrthogonalRotateCube : public CGraph  
+class CGouraudLightingSphereGraph : public CGraph  
 {
-//		DECLARE_SERIAL(COrthogonalRotateCube)
+//		DECLARE_SERIAL(CGouraudLightingSphereGraph)
 public:
-	COrthogonalRotateCube();
-	virtual ~COrthogonalRotateCube();
-	CString GetTypeName() { return CString("COrthogonalRotateCube"); }
-
-public:
-	void DrawObject(CDC* pDC);//绘制图形
+	CGouraudLightingSphereGraph();
+	virtual ~CGouraudLightingSphereGraph();
+	CString GetTypeName() { return CString("CGouraudLightingSphereGraph"); }
+	
 protected:
-	COrthogonalProjectionCube cube;//六面体对象
-	CTransform3 transform;//变换
-		
+//	CZBufferSphere sphere;//球体对象
+	CColorTransform3 transform;//变换
+//	CLightingScene* pScene;//光照场景	
+//	
+public:
+	void DoubleBuffer(CDC* pDC);//双缓冲
+	void DrawObject(CDC* pDC);//绘制图形
+	void InitializeIlightingScene(void);//初始化光照场景	
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );
@@ -73,4 +78,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_ORTHOGONAL_ROTATE_CUBE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

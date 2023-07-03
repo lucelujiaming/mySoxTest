@@ -28,10 +28,7 @@ public:
 protected:
 	CPerspectiveProjectionCube cube;//六面体对象
 	CTransform3 transform;//变换
-	
-	int m_currentAlpha;
-	int m_currentBeta;
-	
+		
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );
@@ -50,23 +47,19 @@ public:
 public:
 	void upBox()    
 	{  	
-		m_currentAlpha += 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		transform.RotateX(2);
 	}
 	void downBox()  
 	{  
-		m_currentAlpha -= 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		transform.RotateX(-2);
 	}
 	void leftBox()  
 	{  
-		m_currentBeta -= 2;
-		m_currentBeta = m_currentBeta % 360;
+		transform.RotateY(-2);
 	}
 	void rightBox() 
 	{  	
-		m_currentBeta += 2;
-		m_currentBeta = m_currentBeta % 360;
+		transform.RotateY(2);
 	}
 
 private:

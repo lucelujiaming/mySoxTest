@@ -33,8 +33,24 @@ CThreeCrossRotateCube::CThreeCrossRotateCube()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	m_currentAlpha = -14;
-	m_currentBeta = -18;
+	
+	largeCube.ReadVertex();
+	largeCube.ReadFace();
+	largeTransform.SetMatrix(largeCube.V, 8);
+	largeTransform.Translate(-0.5, -0.5, -0.5);//将大立方体中心位于坐标系原点
+	int nLargeScale = 50;
+	largeTransform.Scale(nLargeScale, nLargeScale, nLargeScale);
+	for (i = 0; i < 3; i++)
+	{
+		smallCube[i].ReadVertex();
+		smallCube[i].ReadFace();
+		smallTransform[i].SetMatrix(smallCube[i].V, 8);
+		smallTransform[i].Translate(-0.5, -0.5, -0.5);//将小立方体中心位于坐标系原点
+	}	
+	int nSmallScale = 20;
+	smallTransform[0].Scale(3 * nLargeScale, nSmallScale, nSmallScale);
+	smallTransform[1].Scale(nSmallScale, 3 * nLargeScale, nSmallScale);
+	smallTransform[2].Scale(nSmallScale, nSmallScale, 3 * nLargeScale);	
 }
 
 CThreeCrossRotateCube::~CThreeCrossRotateCube()
@@ -91,40 +107,27 @@ void CThreeCrossRotateCube::Draw( CDC *pDC, BOOL bShowSelectBorder )
         pOldPen=pDC-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 	
-
-	largeCube.ReadVertex();
-	largeCube.ReadFace();
-	largeTransform.SetMatrix(largeCube.V, 8);
-	largeTransform.Translate(-0.5, -0.5, -0.5);//将大立方体中心位于坐标系原点
-	int nLargeScale = 50;
-	largeTransform.Scale(nLargeScale, nLargeScale, nLargeScale);
+	// Rotate
 	for (int i = 0; i < 3; i++)
 	{
-		smallCube[i].ReadVertex();
-		smallCube[i].ReadFace();
-		smallTransform[i].SetMatrix(smallCube[i].V, 8);
-		smallTransform[i].Translate(-0.5, -0.5, -0.5);//将小立方体中心位于坐标系原点
-	}	
-	int nSmallScale = 20;
-	smallTransform[0].Scale(3 * nLargeScale, nSmallScale, nSmallScale);
-	smallTransform[1].Scale(nSmallScale, 3 * nLargeScale, nSmallScale);
-	smallTransform[2].Scale(nSmallScale, nSmallScale, 3 * nLargeScale);	
-	
-	// Rotate
-	for (i = 0; i < 3; i++)
-	{
-		smallTransform[i].RotateX(m_currentAlpha);
-		smallTransform[i].RotateY(m_currentBeta);
 		// Move to (100, 100, 100) to display
 		smallTransform[i].Translate(100, 100, 100);
 	}
-	largeTransform.RotateX(m_currentAlpha);
-	largeTransform.RotateY(m_currentBeta);
 	// Move to (100, 100, 100) to display
 	largeTransform.Translate(100, 100, 100);
 	// Move to current position
 	// DrawObject(pDC);
 	DoubleBuffer(pDC);
+
+	// Rotate
+	for (i = 0; i < 3; i++)
+	{
+		// Move to (100, 100, 100) to display
+		smallTransform[i].Translate(-100, -100, -100);
+	}
+	// Move to (100, 100, 100) to display
+	largeTransform.Translate(-100, -100, -100);
+
 	if(m_IsMark)
 	{
 		pDC->SelectObject(pOldPen);

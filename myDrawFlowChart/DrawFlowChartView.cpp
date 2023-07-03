@@ -116,6 +116,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 											OnToolbarRationalQuadraticBezierSphereGraph)
 	ON_COMMAND(ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE, OnToolbarBackfaceCullRotateCube)
 	ON_COMMAND(ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE, OnToolbarThreeCrossRotateCube)
+	ON_COMMAND(ID_TOOLBAR_SPATIAL_ARRANGED_CUBE, OnToolbarSpatialArrangedCube)
+	ON_COMMAND(ID_TOOLBAR_GOURAUD_LIGHTING_SPHERE_GRAPH, OnToolbarGouraudLightingSphereGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -155,6 +157,34 @@ BOOL CDrawFlowChartView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
+void CDrawFlowChartView::DoubleBuffer(CDC* pDC)//双缓冲
+{
+	CRect rect;//定义客户区矩形
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	pMain->GetClientRect(&rect);//获得客户区的大小
+	CDC memDC;//内存DC
+	memDC.CreateCompatibleDC(pDC);//创建一个与显示pDC兼容的内存memDC
+	CBitmap NewBitmap,*pOldBitmap;//内存中承载的临时位图 
+	NewBitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图 
+	pOldBitmap=memDC.SelectObject(&NewBitmap);//将兼容位图选入memDC 
+	memDC.FillSolidRect(rect,pDC->GetBkColor());//按原来背景填充客户区，否则是黑色
+	// rect.OffsetRect(-rect.Width()/2,-rect.Height()/2);
+	DrawAllGraph(&memDC);//向memDC绘制图形
+	pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),
+				&memDC, 0, 0,SRCCOPY);//将内存memDC中的位图拷贝到显示pDC中
+	memDC.SelectObject(pOldBitmap);//恢复位图
+	NewBitmap.DeleteObject();//删除位图
+	memDC.DeleteDC();//删除memDC
+}
+
+void CDrawFlowChartView::DrawAllGraph( CDC *pDC)
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	BOOL bShowSelectBorder = pMain->m_bShowSelectBorder;
+	pDoc->m_GraphManager.DrawAll( pDC, bShowSelectBorder );
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CDrawFlowChartView drawing
 
@@ -163,9 +193,8 @@ void CDrawFlowChartView::OnDraw(CDC* pDC)
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	// TODO: add draw code for native data here
-	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
-	BOOL bShowSelectBorder = pMain->m_bShowSelectBorder;
-	pDoc->m_GraphManager.DrawAll( pDC, bShowSelectBorder );
+	// DrawAllGraph(pDC);
+	DoubleBuffer(pDC);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1574,6 +1603,42 @@ void CDrawFlowChartView::OnCreateThreeCrossRotateCube()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateThreeCrossRotateCube());
 }
 
+void CDrawFlowChartView::OnCreateSpatialArrangedCube() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateSpatialArrangedCube());
+}
+
+void CDrawFlowChartView::OnCreateGouraudLightingSphereGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateGouraudLightingSphereGraph());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -1915,6 +1980,18 @@ void CDrawFlowChartView::OnToolbarThreeCrossRotateCube()
 {
 	// TODO: Add your command handler code here
 	OnCreateThreeCrossRotateCube();
+}
+
+void CDrawFlowChartView::OnToolbarSpatialArrangedCube() 
+{
+	// TODO: Add your command handler code here
+	OnCreateSpatialArrangedCube();
+}
+
+void CDrawFlowChartView::OnToolbarGouraudLightingSphereGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateGouraudLightingSphereGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

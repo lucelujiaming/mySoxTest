@@ -1,31 +1,30 @@
-// RotatePentagram.cpp: implementation of the CRotatePentagram class.
+// SpatialArrangedCube.cpp: implementation of the CSpatialArrangedCube class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RotatePentagram.h"
+#include "SpatialArrangedCube.h"
 #include "math.h"
+#define ROUND(d) int(d + 0.5)
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-#define ROUND(d) int(d + 0.5)//四舍五入
-#define PI 3.1415926
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CRotatePentagram, CObject, 1)
+// IMPLEMENT_SERIAL(CSpatialArrangedCube, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRotatePentagram::CRotatePentagram()
+CSpatialArrangedCube::CSpatialArrangedCube()
 {
-	m_IsMark = false;
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
@@ -34,41 +33,135 @@ CRotatePentagram::CRotatePentagram()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	int nRadius = 150;
-	// CP2 CenterPoint = CP2(0, -200);
-	CP2 CenterPoint = CP2(0, 0);
-	SetParameter(nRadius, CenterPoint);
-	transform.SetMatrix(m_pointVertex, 5);
 	
-	ReadPoint();
-}
-
-CRotatePentagram::~CRotatePentagram()
-{
-
-}
-
-void CRotatePentagram::SetParameter(int nRadius, CP2 CenterPoint)
-{
-	r = nRadius;
-	cPoint = CenterPoint;
-}
-
-void CRotatePentagram::ReadPoint(void)//顶点表
-{
-	double Theta = 2 * PI / 5;//θ为等分角
-	double Alpha = PI / 2 - Theta;//α为起始角,用于调整图案起始方位
-	for (int i = 0; i < 5; i++)//计算等分点坐标
+	int nScale = 150;
+	for (i = 0; i < NumberofCube; i++)//绘制5个立方体
 	{
-		m_pointVertex[i].x = cPoint.x + r * cos(i * Theta + Alpha);
-		m_pointVertex[i].y = cPoint.y + r * sin(i * Theta + Alpha);
+		cube[i].ReadVertex();//读入立方体的顶点
+		cube[i].ReadFace();//读入立方体的表面
+		transform[i].SetMatrix(cube[i].V, 8);//三维变换接口
+		transform[i].Scale(nScale, nScale, nScale);//比例变换
+		transform[i].Translate(-nScale / 2, -nScale / 2, -nScale / 2);//平移变换
+	}
+	transform[1].Translate(0, 2 * nScale, 0);
+	transform[2].Translate(0, -2 * nScale, 0);
+	transform[3].Translate(2 * nScale, 0, 0);
+	transform[4].Translate(-2 * nScale, 0, 0);
+	
+	// Rotate to a certain angle
+	for (i = 0; i < NumberofCube; i++)
+	{
+		transform[i].RotateX(-14);
+		transform[i].RotateY(-18);
+	}
+}
+
+CSpatialArrangedCube::~CSpatialArrangedCube()
+{
+
+}
+
+void CSpatialArrangedCube::DoubleBuffer(CDC* pDC)
+{
+	CRect rectScreen;//定义客户区矩形
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	pMain->GetClientRect(&rectScreen);//获得客户区的大小
+	
+	CRect rect = CRect(0, 0, 400, 400);
+	
+    CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
+	CBitmap NewBitmap, *pOldBitmap;
+    NewBitmap.CreateCompatibleBitmap(pDC, 400, 400);//rt为RECT变量;
+    pOldBitmap = memDC.SelectObject(&NewBitmap);
+	memDC.FillSolidRect(rect, pDC->GetBkColor());//设置客户区背景色
+	// rect.OffsetRect(-200, -200);
+	DrawObject(&memDC);//绘制图形
+    pDC->BitBlt(m_Start.x, m_Start.y, 400, 400, 
+        &memDC, 0, 0, SRCCOPY);
+	memDC.SelectObject(pOldBitmap);
+	NewBitmap.DeleteObject();
+    memDC.DeleteDC();
+}
+
+void CSpatialArrangedCube::DrawObject(CDC* pDC)//绘制图形
+{
+	for (int i = 0; i < NumberofCube; i++)//立方体个数
+	{
+		for (int j = 0; j < FaceNumberofCube; j++)//每个立方体6个表面
+		{
+			globalface[i * FaceNumberofCube + j].ptNumber = cube[i].F[j].ptNumber;
+			for (int k = 0; k < globalface[i * FaceNumberofCube + j].ptNumber; k++)
+			{
+				globalface[i * FaceNumberofCube + j].ptIndex[k] = cube[i].F[j].ptIndex[k];
+				globalface[i * FaceNumberofCube + j].Point[k] = cube[i].V[globalface[i * 6 + j].ptIndex[k]];
+				globalface[i * FaceNumberofCube + j].fMaxDepth = GetMaxDepth(globalface[i * 6 + j]);
+			}
+		}
+	}
+	SortFace();//表面按面心到视点的距离排序
+	CColorP2 ScreenPoint[4];//二维投影点
+	CPen penWhite(PS_SOLID, 1, RGB(255, 255, 255));//白色画笔用于绘制面的边界线
+	CPen* pOldPen = pDC->SelectObject(&penWhite);
+	for (i = 0; i < NumberofCube * FaceNumberofCube; i++)//访问立方体群的所有表面
+	{
+		//得到每个表面的二维顶点
+		for (int nPoint = 0; nPoint < globalface[i].ptNumber; nPoint++)//顶点循环
+			ScreenPoint[nPoint] = projection.TwoDimColorPerspectiveProjection(globalface[i].Point[nPoint]);
+		//填充表面
+		CTriangle* pFill = new CTriangle;//申请内存
+		//填充表面上三角形
+		pFill->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]);
+		pFill->Fill(pDC);
+		//填充表面下三角形
+		pFill->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]);
+		pFill->Fill(pDC);
+		delete pFill;//撤销内存		
+		//绘制表面边界线
+		pDC->MoveTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));
+		pDC->LineTo(ROUND(ScreenPoint[1].x), ROUND(ScreenPoint[1].y));
+		pDC->LineTo(ROUND(ScreenPoint[2].x), ROUND(ScreenPoint[2].y));
+		pDC->LineTo(ROUND(ScreenPoint[3].x), ROUND(ScreenPoint[3].y));
+		pDC->LineTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));		
+	}
+	pDC->SelectObject(pOldPen);
+}
+
+
+double CSpatialArrangedCube::GetMaxDepth(CDepthFace face)//计算面的深度
+{
+	CColorP3 faceCenter = (face.Point[0] + face.Point[1] + face.Point[2] + face.Point[3]) / 4;
+	return GetDistance(faceCenter, projection.GetColorEye());
+}
+
+double CSpatialArrangedCube::GetDistance(CColorP3 p0, CColorP3 p1)//计算空间两点之间的距离
+{
+	double result = sqrt((p0.x - p1.x) * (p0.x - p1.x) + (p0.y - p1.y) * (p0.y - p1.y) + (p0.z - p1.z) * (p0.z - p1.z));
+	return result;
+}
+
+void CSpatialArrangedCube::SortFace(void)//表面排序
+{
+	//对一维数组F进行冒泡排序
+	for (int i = 0; i < NumberofCube * FaceNumberofCube - 1; i++)
+	{
+		for (int j = 0; j < NumberofCube * FaceNumberofCube - 1 - i; j++)
+		{
+			if (globalface[j].fMaxDepth < globalface[j + 1].fMaxDepth)
+			{
+				CDepthFace FTemp;
+				FTemp = globalface[j];
+				globalface[j] = globalface[j + 1];
+				globalface[j + 1] = FTemp;
+			}
+		}
 	}
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CSpatialArrangedCube::Draw( CDC *pDC, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -76,32 +169,33 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	if(m_IsMark)
 	{
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
-        pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
+        pOldPen=pDC-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-
-	CP2 P[5];//顶点坐标
-	for (int i = 0; i < 5; i++)//计算等分点坐标
+	
+	// Rotate
+	for (int i = 0; i < NumberofCube; i++)
 	{
-		P[i].x = m_pointVertex[i].x + m_Start.x, P[i].y += m_pointVertex[i].y + m_Start.y; 
+		// Move to (100, 100, 100) to display
+		transform[i].Translate(100, 100, 100);
 	}
-	pdc->MoveTo(ROUND(P[0].x), ROUND(P[0].y));
-	pdc->LineTo(ROUND(P[2].x), ROUND(P[2].y));
-	pdc->LineTo(ROUND(P[4].x), ROUND(P[4].y));
-	pdc->LineTo(ROUND(P[1].x), ROUND(P[1].y));
-	pdc->LineTo(ROUND(P[3].x), ROUND(P[3].y));
-	pdc->LineTo(ROUND(P[0].x), ROUND(P[0].y));
-
+	// Move to current position
+	DrawObject(pDC);
+	for (i = 0; i < NumberofCube; i++)
+	{
+		// Move to (100, 100, 100) to display
+		transform[i].Translate(-100, -100, -100);
+	}
 	if(m_IsMark)
 	{
-		pdc->SelectObject(pOldPen);
+		pDC->SelectObject(pOldPen);
 	}
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
+	pDC->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRotatePentagram::DrawFocus( CDC *pdc )
+void CSpatialArrangedCube::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -125,7 +219,7 @@ void CRotatePentagram::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRotatePentagram::Move( int cx, int cy )
+void CSpatialArrangedCube::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -135,7 +229,7 @@ void CRotatePentagram::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRotatePentagram::AdjustSize( CPoint &pt )
+void CSpatialArrangedCube::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -195,7 +289,7 @@ void CRotatePentagram::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRotatePentagram::IsIn( CPoint &pt )
+bool CSpatialArrangedCube::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -219,7 +313,7 @@ bool CRotatePentagram::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
+int CSpatialArrangedCube::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -237,7 +331,7 @@ int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRotatePentagram::IsOn( CPoint &pt )
+bool CSpatialArrangedCube::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -267,7 +361,7 @@ bool CRotatePentagram::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRotatePentagram::AdjustStartAndEnd()
+void CSpatialArrangedCube::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -285,7 +379,7 @@ void CRotatePentagram::AdjustStartAndEnd()
 	}
 }
 
-int CRotatePentagram::GetAdjustPoint()
+int CSpatialArrangedCube::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -293,7 +387,7 @@ int CRotatePentagram::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRotatePentagram::AdjustFocusPoint()
+void CSpatialArrangedCube::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -323,7 +417,7 @@ void CRotatePentagram::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
+void CSpatialArrangedCube::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -353,7 +447,7 @@ void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CRotatePentagram::LoadParamsFromJSON(cJSON * objJSON)
+void CSpatialArrangedCube::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

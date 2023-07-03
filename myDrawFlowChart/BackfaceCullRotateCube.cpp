@@ -33,8 +33,17 @@ CBackfaceCullRotateCube::CBackfaceCullRotateCube()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	m_currentAlpha = -14;
-	m_currentBeta = -18;
+	
+	cube.ReadVertex();
+	cube.ReadFace();
+	transform.SetMatrix(cube.V, 8);
+	int nScale = 150;
+	transform.Scale(nScale, nScale, nScale);
+	transform.Translate(-nScale / 2, -nScale / 2, -nScale / 2);
+	
+	// Rotate to a certain angle
+	transform.RotateX(-18);
+	transform.RotateY(-14);
 }
 
 CBackfaceCullRotateCube::~CBackfaceCullRotateCube()
@@ -42,33 +51,6 @@ CBackfaceCullRotateCube::~CBackfaceCullRotateCube()
 
 }
 
-void CBackfaceCullRotateCube::DoubleBuffer(CDC* pDC)
-{
-	CRect rectScreen;//定义客户区矩形
-	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
-	pMain->GetClientRect(&rectScreen);//获得客户区的大小
-	
-	CRect rect = CRect(0, 0, 400, 400);
-	
-    CDC memDC;
-	memDC.CreateCompatibleDC(pDC);
-	CBitmap NewBitmap, *pOldBitmap;
-    NewBitmap.CreateCompatibleBitmap(pDC, 400, 400);//rt为RECT变量;
-    pOldBitmap = memDC.SelectObject(&NewBitmap);
-	memDC.FillSolidRect(rect, pDC->GetBkColor());//设置客户区背景色
-	// rect.OffsetRect(-200, -200);
-	DrawObject(&memDC);//绘制图形
-    pDC->BitBlt(m_Start.x, m_Start.y, 400, 400, 
-        &memDC, 0, 0, SRCCOPY);
-	memDC.SelectObject(pOldBitmap);
-	NewBitmap.DeleteObject();
-    memDC.DeleteDC();
-}
-
-void CBackfaceCullRotateCube::DrawObject(CDC* pDC)
-{
-	cube.Draw(pDC);
-}
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
@@ -83,22 +65,12 @@ void CBackfaceCullRotateCube::Draw( CDC *pdc, BOOL bShowSelectBorder )
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 	
-	cube.ReadVertex();
-	cube.ReadFace();
-	transform.SetMatrix(cube.V, 8);
-	int nScale = 150;
-	transform.Scale(nScale, nScale, nScale);
-	transform.Translate(-nScale / 2, -nScale / 2, -nScale / 2);
-	// Rotate
-	transform.RotateX(m_currentAlpha);
-	transform.RotateY(m_currentBeta);
-	// Move to (nScale·, nScale, nScale) to display
-	transform.Translate(nScale, nScale, nScale);
 	// Move to current position
-	// transform.Translate(m_Start.x, m_Start.y, 0);
-	// cube.Draw(pDC);
+	transform.Translate(m_Start.x, m_Start.y, 0);
+	cube.Draw(pdc);
+	// Move to current position
+	transform.Translate(-m_Start.x, -m_Start.y, 0);
 
-	DoubleBuffer(pdc);
 	if(m_IsMark)
 	{
 		pdc->SelectObject(pOldPen);

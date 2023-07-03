@@ -153,6 +153,8 @@ BEGIN
     BUTTON      ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE
     BUTTON      ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE
+    BUTTON      ID_TOOLBAR_SPATIAL_ARRANGED_CUBE
+    BUTTON      ID_TOOLBAR_GOURAUD_LIGHTING_SPHERE_GRAPH
 END
 
 
@@ -527,8 +529,15 @@ BEGIN
                             "使用有理二次Bezier曲线绘制球面\n有理二次Bezier曲线球面"
     ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE 
                             "使用背面剔除算法绘制立方体\n背面剔除立方体"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE 
                             "使用ZBuffer算法绘制三向交叉立方体\n三向交叉立方体"
+    ID_TOOLBAR_SPATIAL_ARRANGED_CUBE "使用画家算法绘制多个立方体\n多个立方体"
+    ID_TOOLBAR_GOURAUD_LIGHTING_SPHERE_GRAPH 
+                            "使用Gouraud明暗处理算法绘制球\nGouraud明暗球"
 END
 
 #endif    // Chinese (P.R.C.) resources

@@ -46,7 +46,7 @@ BOOL CDrawFlowChartDoc::OnNewDocument()
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
-	SetTitle("Á÷³ÌÍ¼±à¼­Æ÷");
+	SetTitle("FlowChartEditor");
 	m_GraphManager.DeleteAll();
 	return TRUE;
 }
@@ -302,6 +302,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
 				else if(strcmp(child->string, "CThreeCrossRotateCube") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateThreeCrossRotateCube(), child);
+                }
+				else if(strcmp(child->string, "CSpatialArrangedCube") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateSpatialArrangedCube(), child);
+                }
+				else if(strcmp(child->string, "CGouraudLightingSphereGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudLightingSphereGraph(), child);
                 }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   

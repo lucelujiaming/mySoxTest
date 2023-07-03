@@ -43,10 +43,8 @@ CCubicBox::CCubicBox()
 	ReadFacet();
 	tran.SetMatrix(P,8);
 
-	m_currentAlpha = -14;
-	m_currentBeta = -18;
-	tran.RotateX(m_currentAlpha); 
-	tran.RotateY(m_currentBeta); 
+	tran.RotateX(-14); 
+	tran.RotateY(-18); 
 }
 
 CCubicBox::~CCubicBox()
@@ -65,33 +63,6 @@ void CCubicBox::ReadPoint(void)
 	P[5].x=+a;P[5].y=-a;P[5].z=+a;
 	P[6].x=+a;P[6].y=+a;P[6].z=+a;
 	P[7].x=-a;P[7].y=+a;P[7].z=+a;
-}
-
-void CCubicBox::DoubleBuffer(CDC* pDC)//双缓冲
-{
-	CRect rect;//定义客户区矩形
-	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
-	pMain->GetClientRect(&rect);//获得客户区的大小
-	pDC->SetMapMode(MM_ANISOTROPIC);//pDC自定义坐标系
-	pDC->SetWindowExt(rect.Width(),rect.Height());//设置窗口范围
-	pDC->SetViewportExt(rect.Width(),-rect.Height());//设置视区范围,x轴水平向右，y轴垂直向上
-	pDC->SetViewportOrg(rect.Width()/2,rect.Height()/2);//客户区中心为原点
-	CDC memDC;//内存DC
-	memDC.CreateCompatibleDC(pDC);//创建一个与显示pDC兼容的内存memDC
-	CBitmap NewBitmap,*pOldBitmap;//内存中承载的临时位图 
-	NewBitmap.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图 
-	pOldBitmap=memDC.SelectObject(&NewBitmap);//将兼容位图选入memDC 
-	memDC.FillSolidRect(rect,pDC->GetBkColor());//按原来背景填充客户区，否则是黑色
-	memDC.SetMapMode(MM_ANISOTROPIC);//memDC自定义坐标系
-	memDC.SetWindowExt(rect.Width(),rect.Height());
-	memDC.SetViewportExt(rect.Width(),-rect.Height());
-	memDC.SetViewportOrg(rect.Width()/2,rect.Height()/2);
-	rect.OffsetRect(-rect.Width()/2,-rect.Height()/2);
-	DrawGraph(&memDC, CPoint(0, 0));//向memDC绘制图形
-	pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),&memDC,-rect.Width()/2,-rect.Height()/2,SRCCOPY);//将内存memDC中的位图拷贝到显示pDC中
-	memDC.SelectObject(pOldBitmap);//恢复位图
-	NewBitmap.DeleteObject();//删除位图
-	memDC.DeleteDC();//删除memDC
 }
 
 void CCubicBox::DrawGraph(CDC* pDC, CPoint ptStart)//绘制立方体线框
@@ -237,8 +208,8 @@ void CCubicBox::AdjustSize( CPoint &pt )
 	}	
 	ReadPoint();
 	tran.SetMatrix(P,8);
-	tran.RotateX(m_currentAlpha); 
-	tran.RotateY(m_currentBeta); 
+	tran.RotateX(-14); 
+	tran.RotateY(-18); 
 }
 
 bool CCubicBox::IsIn( CPoint &pt )

@@ -31,8 +31,16 @@ COrthogonalRotateCube::COrthogonalRotateCube()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	m_currentBeta = 18;
-	m_currentBeta = 14;
+	// Init 
+	cube.ReadVertex();
+	cube.ReadFace();
+	transform.SetMatrix(cube.V, 8);
+	int nScale = 50;
+	transform.Scale(nScale, nScale, nScale);
+	
+	// Rotate to a certain angle
+	transform.RotateX(-18);
+	transform.RotateY(-14);
 }
 
 COrthogonalRotateCube::~COrthogonalRotateCube()
@@ -58,19 +66,10 @@ void COrthogonalRotateCube::Draw( CDC *pdc, BOOL bShowSelectBorder )
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
         pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	// Init 
-	cube.ReadVertex();
-	cube.ReadFace();
-	transform.SetMatrix(cube.V, 8);
-	int nScale = 180;
-	transform.Scale(nScale, nScale, nScale);
-	// Rotate
-	transform.RotateX(m_currentAlpha);
-	transform.RotateY(m_currentBeta);
 	// Move to current position
 	transform.Translate(m_Start.x, m_Start.y, 0);
-
 	DrawObject(pdc);
+	transform.Translate(-m_Start.x, -m_Start.y, 0);
 
 	if(m_IsMark)
 	{

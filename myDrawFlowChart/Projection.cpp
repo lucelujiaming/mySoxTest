@@ -91,6 +91,22 @@ CP2 CProjection::PerspectiveProjection(CP3 WorldPoint)
 	return ScreenPoint;
 }
 
+
+// 设置透视投影的视点。
+void CProjection::SetColorEye(CColorP3 Eye)
+{
+	this->ColorEye = ColorEye;
+}
+
+// 获得透视投影的视点。
+CColorP3 CProjection::GetColorEye(void)//读取视点
+{
+	//视点位于正前方
+	// 视点在世界坐标系中的坐标为(0, 0, R)。
+	ColorEye.x = 0, ColorEye.y = 0, ColorEye.z = R;
+	return ColorEye;
+}
+
 CColorP2 CProjection::TwoDimColorPerspectiveProjection(CColorP3 WorldPoint)
 {
 	CColorP3 ViewPoint; // 观察坐标系三维点

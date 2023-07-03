@@ -22,16 +22,10 @@ public:
 	virtual ~CBackfaceCullRotateCube();
 	CString GetTypeName() { return CString("CBackfaceCullRotateCube"); }
 	
-public:
-	void DoubleBuffer(CDC* pDC);//双缓冲
-	void DrawObject(CDC* pDC);//绘制图形
 protected:
 	CBackfaceCullCube cube;//球体对象
 	CTransform3 transform;//变换对象
 	
-	int m_currentAlpha;
-	int m_currentBeta;
-
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );
@@ -50,23 +44,19 @@ public:
 public:
 	void upBox()    
 	{  	
-		m_currentAlpha += 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		transform.RotateX(2);
 	}
 	void downBox()  
 	{  
-		m_currentAlpha -= 2;
-		m_currentAlpha = m_currentAlpha % 360;
+		transform.RotateX(-2);
 	}
 	void leftBox()  
 	{  
-		m_currentBeta -= 2;
-		m_currentBeta = m_currentBeta % 360;
+		transform.RotateY(-2);
 	}
 	void rightBox() 
 	{  	
-		m_currentBeta += 2;
-		m_currentBeta = m_currentBeta % 360;
+		transform.RotateY(2);
 	}
 
 private:

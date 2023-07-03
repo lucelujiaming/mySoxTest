@@ -42,31 +42,19 @@ public:
 public:
 	void upBox()    
 	{  
-		int Alpha=+2; 	
-		m_currentAlpha += 2;
-		m_currentAlpha = m_currentAlpha % 180;
-		tran.RotateX(Alpha); 
+		tran.RotateX(2); 
 	}
 	void downBox()  
 	{  
-		int Alpha=-2;
-		m_currentAlpha -= 2;
-		m_currentAlpha = m_currentAlpha % 180;
-		tran.RotateX(Alpha); 
+		tran.RotateX(-2); 
 	}
 	void leftBox()  
 	{  
-		int Beta=-2; 
-		m_currentBeta -= 2;
-		m_currentBeta = m_currentBeta % 180;
-		tran.RotateY(Beta); 
+		tran.RotateY(-2); 
 	}
 	void rightBox() 
 	{  
-		int Beta=+2;	
-		m_currentBeta += 2;
-		m_currentBeta = m_currentBeta % 180;	
-		tran.RotateY(Beta); 
+		tran.RotateY(2); 
 	}
 
 private:
@@ -75,7 +63,6 @@ private:
 
 	void ReadPoint(void);
 	void ReadFacet(void);
-	void DoubleBuffer(CDC* pDC);
 	void DrawGraph(CDC* pDC, CPoint ptStart);
 
 private:
@@ -85,9 +72,6 @@ private:
 	CFacet F[6];//面表
 // 	double Alpha,Beta;//绕x轴旋转角α,绕y轴旋转角β
 	CTransform3 tran;//变换对象
-
-	int m_currentAlpha;
-	int m_currentBeta;
 	
 	//CObArray m_Points;
 	CLogFile m_objLogFile;

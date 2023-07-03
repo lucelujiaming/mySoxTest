@@ -1,31 +1,30 @@
-// RotatePentagram.cpp: implementation of the CRotatePentagram class.
+// GouraudLightingSphereGraph.cpp: implementation of the CGouraudLightingSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RotatePentagram.h"
+#include "GouraudLightingSphereGraph.h"
 #include "math.h"
+#define ROUND(d) int(d + 0.5)
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-#define ROUND(d) int(d + 0.5)//四舍五入
-#define PI 3.1415926
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CRotatePentagram, CObject, 1)
+// IMPLEMENT_SERIAL(CGouraudLightingSphereGraph, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRotatePentagram::CRotatePentagram()
+CGouraudLightingSphereGraph::CGouraudLightingSphereGraph()
 {
-	m_IsMark = false;
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
 	CAdjustPoint *connPoint = NULL; 
@@ -34,41 +33,80 @@ CRotatePentagram::CRotatePentagram()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
-	int nRadius = 150;
-	// CP2 CenterPoint = CP2(0, -200);
-	CP2 CenterPoint = CP2(0, 0);
-	SetParameter(nRadius, CenterPoint);
-	transform.SetMatrix(m_pointVertex, 5);
+
+//	sphere.ReadVertex();
+//	sphere.ReadFace();
+//	double nScale = 300;
+//	transform.SetMatrix(sphere.Ver, 62);
+//	transform.Scale(nScale, nScale, nScale);
+//	InitializeIlightingScene();//初始化光照场景
+//	sphere.bezier.SetLightingScene(pScene);//设置光照场景
+}
+
+CGouraudLightingSphereGraph::~CGouraudLightingSphereGraph()
+{
+
+}
+
+void CGouraudLightingSphereGraph::DoubleBuffer(CDC* pDC)
+{
+	CRect rectScreen;//定义客户区矩形
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	pMain->GetClientRect(&rectScreen);//获得客户区的大小
 	
-	ReadPoint();
+	CRect rect = CRect(0, 0, 400, 400);
+	
+    CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
+	CBitmap NewBitmap, *pOldBitmap;
+    NewBitmap.CreateCompatibleBitmap(pDC, 400, 400);//rt为RECT变量;
+    pOldBitmap = memDC.SelectObject(&NewBitmap);
+	memDC.FillSolidRect(rect, pDC->GetBkColor());//设置客户区背景色
+	// rect.OffsetRect(-200, -200);
+	DrawObject(&memDC);//绘制图形
+    pDC->BitBlt(m_Start.x, m_Start.y, 400, 400, 
+        &memDC, 0, 0, SRCCOPY);
+	memDC.SelectObject(pOldBitmap);
+	NewBitmap.DeleteObject();
+    memDC.DeleteDC();
 }
 
-CRotatePentagram::~CRotatePentagram()
+void CGouraudLightingSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
-
+//	CZBuffer* pZBuffer = new CZBuffer;//申请内存
+//	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
+//	sphere.Draw(pDC, pZBuffer);
+//	delete pZBuffer;//释放内存
 }
 
-void CRotatePentagram::SetParameter(int nRadius, CP2 CenterPoint)
+void CGouraudLightingSphereGraph::InitializeIlightingScene(void)//初始化光照环境
 {
-	r = nRadius;
-	cPoint = CenterPoint;
-}
-
-void CRotatePentagram::ReadPoint(void)//顶点表
-{
-	double Theta = 2 * PI / 5;//θ为等分角
-	double Alpha = PI / 2 - Theta;//α为起始角,用于调整图案起始方位
-	for (int i = 0; i < 5; i++)//计算等分点坐标
-	{
-		m_pointVertex[i].x = cPoint.x + r * cos(i * Theta + Alpha);
-		m_pointVertex[i].y = cPoint.y + r * sin(i * Theta + Alpha);
-	}
+//	//设置光源属性
+//	nLightSourceNumber = 1;//光源个数
+//	pScene = new CLighting(nLightSourceNumber);//一维光源动态数组
+//	pScene->pLightSource[0].SetPosition(1000, 1000, 1000);//设置光源位置坐标
+//	for (int i = 0; i < nLightSourceNumber; i++)
+//	{
+//		pScene->pLightSource[i].L_Diffuse = CRGB(1.0, 1.0, 1.0);//光源的漫反射颜色
+//		pScene->pLightSource[i].L_Specular = CRGB(1.0, 1.0, 1.0);//光源镜面高光颜色
+//		pScene->pLightSource[i].L_C0 = 1.0;//常数衰减因子
+//		pScene->pLightSource[i].L_C1 = 0.0000001;//线性衰减因子
+//		pScene->pLightSource[i].L_C2 = 0.00000001;//二次衰减因子
+//		pScene->pLightSource[i].L_OnOff = TRUE;//光源开启
+//	}
+//	//设置材质属性
+//	pScene->pMaterial = new CMaterial;
+//	pScene->pMaterial->SetAmbient(CRGB(0.847, 0.10, 0.075));//环境反射率
+//	pScene->pMaterial->SetDiffuse(CRGB(0.852, 0.006, 0.026));//漫反射率
+//	pScene->pMaterial->SetSpecular(CRGB(1.0, 1.0, 1.0));//镜面反射率
+//	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//自身辐射的颜色
+//	pScene->pMaterial->SetExponent(10);//高光指数
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CGouraudLightingSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -76,32 +114,30 @@ void CRotatePentagram::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	if(m_IsMark)
 	{
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
-        pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
+        pOldPen=pDC-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-
-	CP2 P[5];//顶点坐标
-	for (int i = 0; i < 5; i++)//计算等分点坐标
-	{
-		P[i].x = m_pointVertex[i].x + m_Start.x, P[i].y += m_pointVertex[i].y + m_Start.y; 
-	}
-	pdc->MoveTo(ROUND(P[0].x), ROUND(P[0].y));
-	pdc->LineTo(ROUND(P[2].x), ROUND(P[2].y));
-	pdc->LineTo(ROUND(P[4].x), ROUND(P[4].y));
-	pdc->LineTo(ROUND(P[1].x), ROUND(P[1].y));
-	pdc->LineTo(ROUND(P[3].x), ROUND(P[3].y));
-	pdc->LineTo(ROUND(P[0].x), ROUND(P[0].y));
-
+	
+//	// Rotate
+//	for (i = 0; i < NumberofCube; i++)
+//	{
+//		transform[i].RotateX(m_currentAlpha);
+//		transform[i].RotateY(m_currentBeta);
+//		// Move to (100, 100, 100) to display
+//		transform[i].Translate(100, 100, 100);
+//	}
+	// Move to current position
+	DrawObject(pDC);
 	if(m_IsMark)
 	{
-		pdc->SelectObject(pOldPen);
+		pDC->SelectObject(pOldPen);
 	}
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
+	pDC->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRotatePentagram::DrawFocus( CDC *pdc )
+void CGouraudLightingSphereGraph::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -125,7 +161,7 @@ void CRotatePentagram::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRotatePentagram::Move( int cx, int cy )
+void CGouraudLightingSphereGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -135,7 +171,7 @@ void CRotatePentagram::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRotatePentagram::AdjustSize( CPoint &pt )
+void CGouraudLightingSphereGraph::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -195,7 +231,7 @@ void CRotatePentagram::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRotatePentagram::IsIn( CPoint &pt )
+bool CGouraudLightingSphereGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -219,7 +255,7 @@ bool CRotatePentagram::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
+int CGouraudLightingSphereGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -237,7 +273,7 @@ int CRotatePentagram::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRotatePentagram::IsOn( CPoint &pt )
+bool CGouraudLightingSphereGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -267,7 +303,7 @@ bool CRotatePentagram::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRotatePentagram::AdjustStartAndEnd()
+void CGouraudLightingSphereGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -285,7 +321,7 @@ void CRotatePentagram::AdjustStartAndEnd()
 	}
 }
 
-int CRotatePentagram::GetAdjustPoint()
+int CGouraudLightingSphereGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -293,7 +329,7 @@ int CRotatePentagram::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRotatePentagram::AdjustFocusPoint()
+void CGouraudLightingSphereGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -323,7 +359,7 @@ void CRotatePentagram::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
+void CGouraudLightingSphereGraph::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -353,7 +389,7 @@ void CRotatePentagram::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CRotatePentagram::LoadParamsFromJSON(cJSON * objJSON)
+void CGouraudLightingSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

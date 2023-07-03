@@ -26,6 +26,8 @@ public:
 	void DrawObject(CDC* pDC);//绘制图形
 	
 protected:
+	// 双三次Bezier曲面由两组三次Bezier曲线交织而成，
+	// 控制网格由16个控制点组成。
 	CP3 P[4][4];//控制点
 	CBicubicBezierPatch bezier;
 public:

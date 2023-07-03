@@ -12,72 +12,89 @@ CProjection::~CProjection(void)
 
 }
 
-CP2  CProjection::MakeCustomProjection(CP3 pt)
+CP2  CProjection::CustomProjection(CP3 pt)
 {
 	if(projectionMode == ORTHOGONAL_PROJECTION)
-		return MakeOrthogonalProjection(pt);
+		return OrthogonalProjection(pt);
 	else if(projectionMode == CABINET_PROJECTION)
-		return MakeCabinetProjection(pt);
+		return CabinetProjection(pt);
 	else if(projectionMode == CAVALIER_PROJECTION)
-		return MakeCavalierProjection(pt);
+		return CavalierProjection(pt);
 	else if(projectionMode == PERSPECTIVE_PROJECTION)
-		return MakePerspectiveProjection(pt);
+		return PerspectiveProjection(pt);
 	else 
 		return CP2();
 }
 
-CP2 CProjection::MakeOrthogonalProjection(CP3 WorldPoint)//正交投影
+// 所谓的投影，其实就是把一个三维坐标变成一个二维坐标。用于屏幕显示。
+// 而正交投影则非常简单。就是XY不变，Z被舍弃。
+CP2 CProjection::OrthogonalProjection(CP3 WorldPoint)//正交投影
 {
-	CP2 ScreenPoint;//屏幕坐标系二维点
+	CP2 ScreenPoint; // 屏幕坐标系二维点
 	ScreenPoint.x = WorldPoint.x;
 	ScreenPoint.y = WorldPoint.y;
 	return ScreenPoint;
 }
 
-CP2 CProjection::MakeCavalierProjection(CP3 WorldPoint)//斜等测投影
+// 斜投影的计算公式参见公式(5-30)。
+CP2 CProjection::CavalierProjection(CP3 WorldPoint) // 斜等测投影
 {
 	CP2 ScreenPoint;
+	// 取Beta=45度，Alpha=45度。得到的投影为斜等测投影。
+	// Cos(Alpha)Sin(Beta) = sqrt(2)/2 = 0.707。
 	double m = 0.707;
 	ScreenPoint.x = WorldPoint.x - m * WorldPoint.z;
 	ScreenPoint.y = WorldPoint.y - m * WorldPoint.z;
 	return ScreenPoint;
 }
 
-CP2 CProjection::MakeCabinetProjection(CP3 WorldPoint)//斜二测投影
+// 斜投影的计算公式参见公式(5-30)。
+CP2 CProjection::CabinetProjection(CP3 WorldPoint) // 斜二测投影
 {
 	CP2 ScreenPoint;
+	// 取Beta=45度，Alpha=63.4度。得到的投影为斜二测投影。
+	// Cos(Alpha)Sin(Beta) = sqrt(2)/4 = 0.3536。
+	// 斜二测投影更加真实，因为透视缩小系数为1/2。
 	double m = 0.3536;
 	ScreenPoint.x = WorldPoint.x - m * WorldPoint.z;
 	ScreenPoint.y = WorldPoint.y - m * WorldPoint.z;
 	return ScreenPoint;
 }
 
+// 设置透视投影的视点。
 void CProjection::SetEye(CP3 Eye)
 {
 	this->Eye = Eye;
 }
 
+// 获得透视投影的视点。
 CP3 CProjection::GetEye(void)//读取视点
 {
-	Eye.x = 0, Eye.y = 0, Eye.z = R;//视点位于正前方
+	//视点位于正前方
+	// 视点在世界坐标系中的坐标为(0, 0, R)。
+	Eye.x = 0, Eye.y = 0, Eye.z = R;
 	return Eye;
 }
 
-CP2 CProjection::MakePerspectiveProjection(CP3 WorldPoint)
+// 透视投影存在一个视点的问题。因此上需要设置和获取函数。
+CP2 CProjection::PerspectiveProjection(CP3 WorldPoint)
 {
-	CP3 ViewPoint;//观察坐标系三维点
+	CP3 ViewPoint; // 观察坐标系三维点
+	// 参见公式(5-38)
 	ViewPoint.x = WorldPoint.x;
 	ViewPoint.y = WorldPoint.y;
 	ViewPoint.z = R - WorldPoint.z;
 	CP2 ScreenPoint;//屏幕坐标系二维点
+	// 参见公式(5-45)
 	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
 	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
 	return ScreenPoint;
 }
 
-CColorP2 CProjection::PerspectiveProjection2(CColorP3 WorldPoint)
+CColorP2 CProjection::TwoDimColorPerspectiveProjection(CColorP3 WorldPoint)
 {
-	CColorP3 ViewPoint;//观察坐标系三维点
+	CColorP3 ViewPoint; // 观察坐标系三维点
+	// 参见公式(5-38)
 	ViewPoint.x = WorldPoint.x;
 	ViewPoint.y = WorldPoint.y;
 	ViewPoint.z = R - WorldPoint.z;
@@ -89,14 +106,15 @@ CColorP2 CProjection::PerspectiveProjection2(CColorP3 WorldPoint)
 	return ScreenPoint;
 }
 
-CColorP3 CProjection::PerspectiveProjection3(CColorP3 WorldPoint)
+CColorP3 CProjection::ThreeDimColorPerspectiveProjection(CColorP3 WorldPoint)
 {
-	CColorP3 ViewPoint;//观察坐标系三维点
+	CColorP3 ViewPoint; // 观察坐标系三维点
+	// 参见公式(5-38)
 	ViewPoint.x = WorldPoint.x;
 	ViewPoint.y = WorldPoint.y;
 	ViewPoint.z = R - WorldPoint.z;
 	ViewPoint.c = WorldPoint.c;
-	CColorP3 ScreenPoint;//屏幕坐标系三维点
+	CColorP3 ScreenPoint; // 屏幕坐标系三维点
 	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
 	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
 	ScreenPoint.z = (ViewPoint.z - d) * d / ViewPoint.z;//Bouknight公式

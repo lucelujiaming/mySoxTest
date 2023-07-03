@@ -45,6 +45,30 @@ CCubicBezierCurve::~CCubicBezierCurve()
 {
 }
 
+/************************************************************************/
+/* 给定n+1个控制点Pi(i = 1,2,...,n)，则n次Bezier曲线定义为：            */
+/*     p(t) = Σ Pi * Bernstein(t)                                       */
+/* 这个Bernstein函数的表达式为：                                        */
+/*     Bernstein(t) = n!/i! * (n - i)! * t^i * (1 - t)^(n-i)            */
+/*                  = C(n, i) * t^i * (1 - t)^(n-i)                     */
+/* 根据这个算式可以给出一次，二次，三次Bezier曲线。                     */
+/************************************************************************/
+/* 当n = 1的时候，一次Bezier曲线的计算公式为：                          */
+/*     p(t) = (1 - t) * P0 + t * P1                                     */
+/* 这是一条连接P0和P1的直线。                                           */
+/* 其中B01(t) = (1 - t)；B11(t) = t。                                   */
+/************************************************************************/
+/* 当n = 2的时候，二次Bezier曲线的计算公式为：                          */
+/*     p(t) = (1 - t)^2 * P0 + 2t(1 - t) * P1 + t^2 * P2                */
+/* 这是一条从P0和P2的抛物线。                                           */
+/* 其中B02(t) = (1 - t)^2；B12(t) = 2t(1 - t)；B22(t) = t^2。           */
+/************************************************************************/
+/* 当n = 3的时候，三次Bezier曲线的计算公式为：                          */
+/*     p(t) = (1 - t)^3 * P0 + 3t(1 - t)^2 * P1 +                       */
+/*            3t^2 * (1 - t) * P3 + t^3 * P4                            */
+/* 其中B03(t) = (1 - t)^3；     B13(t) = 3t(1 - t)^2；                  */
+/*     B23(t) = 3t^2 * (1 - t)；B33(t) = t^3。                          */
+/************************************************************************/
 void CCubicBezierCurve::DrawPrimaryFuncBezierCurve(CDC* pDC) // 基函数算法
 {
 	pDC->MoveTo(ROUND(m_objBezierCurveControlPoint[0].x), 
@@ -52,19 +76,42 @@ void CCubicBezierCurve::DrawPrimaryFuncBezierCurve(CDC* pDC) // 基函数算法
 	double tStep = 0.01;
 	for (double t = 0; t <= 1; t += tStep)
 	{
+		// B03(t) = (1 - t)^3；
 		double B03 = (1 - t) * (1 - t) * (1 - t);
+		// B13(t) = 3t(1 - t)^2
 		double B13 = 3 * t * (1 - t) * (1 - t);
+		// B23(t) = 3t^2 * (1 - t)
 		double B23 = 3 * t * t * (1 - t);
+		// B33(t) = t^3
 		double B33 = t * t * t;
+		// p(t) = (1 - t)^3 * P0 + 3t(1 - t)^2 * P1 + 
+		//        3t^2 * (1 - t) * P3 + t^3 * P4
 		CP2 pt = B03 * m_objBezierCurveControlPoint[0] 
 			   + B13 * m_objBezierCurveControlPoint[1]
 			   + B23 * m_objBezierCurveControlPoint[2] 
 			   + B33 * m_objBezierCurveControlPoint[3];
+		// 使用p(t)绘制。 
 		pDC->LineTo(ROUND(pt.x), ROUND(pt.y));
 	}
 }
 
-void CCubicBezierCurve::DrawCasteljauBezierCurve(CDC* pDC) // de Casteljau递推算法
+/************************************************************************/
+// de Casteljau递推算法
+// 这个算法不依赖于n次Bezier曲线的定义。而使用下面的递推公式：
+//    P r,i (t) = (1 - t) * P r-1,i (t) + t * P r-1,i+1 (t) 
+// 当n = 3的时候，有：
+//    r = 1, i = 0, 1, 2
+//    r = 2, i = 0, 1
+//    r = 3, i = 0
+// 三次曲线的递推如下：
+//    P 1,0 (t) = (1 - t) * P 0,0 (t) + t * P 0,1 (t) 
+//    P 1,1 (t) = (1 - t) * P 0,1 (t) + t * P 0,2 (t) 
+//    P 1,2 (t) = (1 - t) * P 0,2 (t) + t * P 0,3 (t) 
+//    P 2,0 (t) = (1 - t) * P 1,0 (t) + t * P 1,1 (t) 
+//    P 2,1 (t) = (1 - t) * P 1,1 (t) + t * P 1,2 (t) 
+//    P 3,0 (t) = (1 - t) * P 2,0 (t) + t * P 2,1 (t) 
+// 
+void CCubicBezierCurve::DrawCasteljauBezierCurve(CDC* pDC) 
 {
 	pDC->MoveTo(ROUND(m_objBezierCurveControlPoint[0].x), 
 			    ROUND(m_objBezierCurveControlPoint[0].y)); 
@@ -72,12 +119,19 @@ void CCubicBezierCurve::DrawCasteljauBezierCurve(CDC* pDC) // de Casteljau递推算
 	for (double t = 0; t < 1; t += tStep)
 	{
 		CP2 p0, p1, p2, p3, p4, p5;
+        // P 1,0 (t) = (1 - t) * P 0,0 (t) + t * P 0,1 (t) 
 		p0 = (1 - t) * m_objBezierCurveControlPoint[0] + t * m_objBezierCurveControlPoint[1];
+        // P 1,1 (t) = (1 - t) * P 0,1 (t) + t * P 0,2 (t) 
 		p1 = (1 - t) * m_objBezierCurveControlPoint[1] + t * m_objBezierCurveControlPoint[2];
+        // P 1,2 (t) = (1 - t) * P 0,2 (t) + t * P 0,3 (t) 
 		p2 = (1 - t) * m_objBezierCurveControlPoint[2] + t * m_objBezierCurveControlPoint[3];
+        // P 2,0 (t) = (1 - t) * P 1,0 (t) + t * P 1,1 (t) 
 		p3 = (1 - t) * p0 + t * p1;
+        // P 2,1 (t) = (1 - t) * P 1,1 (t) + t * P 1,2 (t) 
 		p4 = (1 - t) * p1 + t * p2;
+        // P 3,0 (t) = (1 - t) * P 2,0 (t) + t * P 2,1 (t) 
 		p5 = (1 - t) * p3 + t * p4;
+		// 使用p(t)绘制。 
 		pDC->LineTo(ROUND(p5.x), ROUND(p5.y));
 	}
 	// Connect breakpoint.

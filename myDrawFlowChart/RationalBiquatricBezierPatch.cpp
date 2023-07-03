@@ -55,7 +55,7 @@ void CRationalBiquatricBezierPatch::DrawCurvedPatch(CDC* pDC)
 			                   + (u2 * W[0][1] + u1 * W[1][1] + u0 * W[2][1]) * v1
 			                   + (u2 * W[0][2] + u1 * W[1][2] + u0 * W[2][2]) * v0;
 			CP3 pt = numerator / denominator;
-			CP2 Point2 = projection.MakePerspectiveProjection(pt);//投影
+			CP2 Point2 = projection.PerspectiveProjection(pt);//投影
 			if(v == 0)
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
 			else
@@ -73,7 +73,7 @@ void CRationalBiquatricBezierPatch::DrawCurvedPatch(CDC* pDC)
 			                    +(u2 * W[0][1] + u1 * W[1][1] + u0 * W[2][1]) * v1
 			                    +(u2 * W[0][2] + u1 * W[1][2] + u0 * W[2][2]) * v0;
 			CP3 pt = numerator / denominator;						
-			CP2 Point2 = projection.MakePerspectiveProjection(pt);//投影    
+			CP2 Point2 = projection.PerspectiveProjection(pt);//投影    
 			if(0 == u)
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
 			else
@@ -141,7 +141,7 @@ void CRationalBiquatricBezierPatch::DrawControlGrid(CDC* pDC)//绘制控制网格
 	CP2 P2[3][3];//二维控制点
 	for(int i = 0;i < 3;i++)
 		for(int j = 0;j < 3;j++)
-			P2[i][j] = projection.MakePerspectiveProjection(P[i][j]);
+			P2[i][j] = projection.PerspectiveProjection(P[i][j]);
 	CPen NewPen,*pOldPen;
 	NewPen.CreatePen(PS_SOLID,3,RGB(0, 0, 255));
 	pOldPen=pDC->SelectObject(&NewPen);

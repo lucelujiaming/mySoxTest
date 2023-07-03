@@ -19,27 +19,30 @@ public:
 	CProjection(void);
 	virtual ~CProjection(void);
 	
-	CP2 MakeCustomProjection(CP3 WorldPoint);
+	CP2 CustomProjection(CP3 WorldPoint);
 
-	CP2 MakeOrthogonalProjection(CP3 WorldPoint);//正交投影
+	CP2 OrthogonalProjection(CP3 WorldPoint); // 正交投影
 	
-	CP2 MakeCavalierProjection(CP3 WorldPoint); // 斜等测投影
-	CP2 MakeCabinetProjection(CP3 WorldPoint);  // 斜二测投影
+	CP2 CavalierProjection(CP3 WorldPoint); // 斜等测投影
+	CP2 CabinetProjection(CP3 WorldPoint);  // 斜二测投影
 	
-	void SetEye(CP3 Eye);//设置视点
-	CP3 GetEye(void);//获得视点
-	CP2 MakePerspectiveProjection(CP3 WorldPoint);//透视投影
+	void SetEye(CP3 Eye); // 设置视点
+	CP3 GetEye(void);     // 获得视点
+	CP2 PerspectiveProjection(CP3 WorldPoint); // 透视投影
 	
-	CColorP2 PerspectiveProjection2(CColorP3 WorldPoint); //二维透视投影
-	CColorP3 PerspectiveProjection3(CColorP3 WorldPoint); //三维透视投影
+	// 带有颜色信息的二维透视投影
+	CColorP2 TwoDimColorPerspectiveProjection(CColorP3 WorldPoint); 
+	// 带有颜色信息的三维透视投影
+	CColorP3 ThreeDimColorPerspectiveProjection(CColorP3 WorldPoint); 
 private:
 	CP3 Eye;//视点
-	double R, d;//视径和视距
+	double R; // 视径
+	double d; // 视距
 	
 public:
 	void useOrthogonalProjection()  { projectionMode = ORTHOGONAL_PROJECTION; }
-	void useCabinetProjection()     { projectionMode = CABINET_PROJECTION;    }
 	void useCavalierProjection()    { projectionMode = CAVALIER_PROJECTION;    }
+	void useCabinetProjection()     { projectionMode = CABINET_PROJECTION;    }
 	void usePerspectiveProjection() { projectionMode = PERSPECTIVE_PROJECTION; }
 private:
 	int    projectionMode;

@@ -17,6 +17,10 @@ public:
 	friend CRGB operator * (const CRGB &clr, double scalar);
 	friend CRGB operator * (double scalar, const CRGB &clr);
 	friend CRGB operator / (const CRGB &clr, double scalar);
+	friend CRGB operator += (CRGB& c1, CRGB& c2);
+	friend CRGB operator -= (CRGB& c1, CRGB& c2);
+	friend CRGB operator *= (CRGB& c1, CRGB& c2);
+	friend CRGB operator /= (CRGB& c1, double scalalr);
 	void Normalize();//规范化到[0,1]区间
 public:
 	double red;//红色分量

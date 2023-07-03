@@ -33,6 +33,21 @@ CVector3::CVector3(const CP3 &p0, const CP3 &p1)//相对矢量
 	z = p1.z - p0.z;
 }
 
+
+CVector3::CVector3(const CColorP3 &p)
+{
+	x = p.x;
+	y = p.y;
+	z = p.z;
+}
+
+CVector3::CVector3(const CColorP3 &p0, const CColorP3 &p1)//相对矢量
+{
+	x = p1.x - p0.x;
+	y = p1.y - p0.y;
+	z = p1.z - p0.z;
+}
+
 double CVector3::Magnitude(void)//矢量的模
 {
 	return sqrt(x * x + y * y + z * z);

@@ -1,9 +1,9 @@
-// GouraudLightingSphereGraph.h: interface for the CGouraudLightingSphereGraph class.
+// GouraudLightingBicubicBezierSphereGraph.h: interface for the CGouraudLightingBicubicBezierSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,24 +12,26 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "ColorCube.h"
+#include "ZBufferBicubicBezierSphere.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
+#include "LightingScene.h"
 
-class CGouraudLightingSphereGraph : public CGraph  
+class CGouraudLightingBicubicBezierSphereGraph : public CGraph  
 {
-//		DECLARE_SERIAL(CGouraudLightingSphereGraph)
+//		DECLARE_SERIAL(CGouraudLightingBicubicBezierSphereGraph)
 public:
-	CGouraudLightingSphereGraph();
-	virtual ~CGouraudLightingSphereGraph();
-	CString GetTypeName() { return CString("CGouraudLightingSphereGraph"); }
+	CGouraudLightingBicubicBezierSphereGraph();
+	virtual ~CGouraudLightingBicubicBezierSphereGraph();
+	CString GetTypeName() { return CString("CGouraudLightingBicubicBezierSphereGraph"); }
 	
 protected:
-//	CZBufferSphere sphere;//球体对象
+	CZBufferBicubicBezierSphere sphere;//球体对象
 	CColorTransform3 transform;//变换
-//	CLightingScene* pScene;//光照场景	
-//	
+	int	nLightSourceNumber;//光源数量
+	CLightingScene* pScene;//光照场景	
+	
 public:
 	void DoubleBuffer(CDC* pDC);//双缓冲
 	void DrawObject(CDC* pDC);//绘制图形
@@ -78,4 +80,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_GOURAUD_LIGHTING_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

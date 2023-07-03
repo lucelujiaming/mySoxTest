@@ -76,6 +76,39 @@ CRGB operator /(const CRGB &clr, double scalar)///运算符重载
 	return color;
 }
 
+
+CRGB operator += (CRGB& c1, CRGB& c2)//"+="运算符重载
+{
+	c1.red = c1.red + c2.red;
+	c1.green = c1.green + c2.green;
+	c1.blue = c1.blue + c2.blue;
+	return c1;
+}
+
+CRGB operator -= (CRGB& c1, CRGB& c2)//"-="运算符重载
+{
+	c1.red = c1.red - c2.red;
+	c1.green = c1.green - c2.green;
+	c1.blue = c1.blue - c2.blue;
+	return c1;
+}
+
+CRGB operator *= (CRGB& c1, CRGB& c2)//"*="运算符重载
+{
+	c1.red = c1.red * c2.red;
+	c1.green = c1.green * c2.green;
+	c1.blue = c1.blue * c2.blue;
+	return c1;
+}
+
+CRGB operator /= (CRGB& c1, double scalalr)//"/="运算符重载
+{
+	c1.red = c1.red / scalalr;
+	c1.green = c1.green / scalalr;
+	c1.blue = c1.blue / scalalr;
+	return c1;
+}
+
 void CRGB::Normalize(void)//归一化
 {
 	red = (red < 0.0) ? 0.0 : ((red > 1.0) ? 1.0 : red);

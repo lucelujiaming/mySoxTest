@@ -117,7 +117,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE, OnToolbarBackfaceCullRotateCube)
 	ON_COMMAND(ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE, OnToolbarThreeCrossRotateCube)
 	ON_COMMAND(ID_TOOLBAR_SPATIAL_ARRANGED_CUBE, OnToolbarSpatialArrangedCube)
-	ON_COMMAND(ID_TOOLBAR_GOURAUD_LIGHTING_SPHERE_GRAPH, OnToolbarGouraudLightingSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_GOURAUD_LIGHTING_BICUBIC_BEZIER_SPHERE_GRAPH, 
+											OnToolbarGouraudLightingBicubicBezierSphereGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1621,7 +1622,7 @@ void CDrawFlowChartView::OnCreateSpatialArrangedCube()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateSpatialArrangedCube());
 }
 
-void CDrawFlowChartView::OnCreateGouraudLightingSphereGraph() 
+void CDrawFlowChartView::OnCreateGouraudLightingBicubicBezierSphereGraph() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -1636,7 +1637,7 @@ void CDrawFlowChartView::OnCreateGouraudLightingSphereGraph()
 
 	m_IsControlFlow = false;
 	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateGouraudLightingSphereGraph());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateGouraudLightingBicubicBezierSphereGraph());
 }
 
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
@@ -1988,10 +1989,10 @@ void CDrawFlowChartView::OnToolbarSpatialArrangedCube()
 	OnCreateSpatialArrangedCube();
 }
 
-void CDrawFlowChartView::OnToolbarGouraudLightingSphereGraph() 
+void CDrawFlowChartView::OnToolbarGouraudLightingBicubicBezierSphereGraph() 
 {
 	// TODO: Add your command handler code here
-	OnCreateGouraudLightingSphereGraph();
+	OnCreateGouraudLightingBicubicBezierSphereGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

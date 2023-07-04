@@ -320,19 +320,19 @@ SOURCE=.\GeometryCube.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\GouraudBicubicBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudBicubicBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GouraudBiquatricBezierPatch.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\GouraudBiquatricBezierSphereGraph.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GouraudLightingBicubicBezierPatch.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GouraudLightingBicubicBezierSphereGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -785,19 +785,19 @@ SOURCE=.\GeometryCube.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GouraudBicubicBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudBicubicBezierSphereGraph.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GouraudBiquatricBezierPatch.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\GouraudBiquatricBezierSphereGraph.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GouraudLightingBicubicBezierPatch.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GouraudLightingBicubicBezierSphereGraph.h
 # End Source File
 # Begin Source File
 

@@ -320,11 +320,19 @@ SOURCE=.\GeometryCube.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\GouraudLightingBicubicBezierPatch.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GouraudLightingBicubicBezierSphereGraph.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\GouraudLightingRationalBiquatricBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudZBufferBicubicBezierSphere.cpp
 # End Source File
 # Begin Source File
 
@@ -349,10 +357,6 @@ SOURCE=.\Ladder.cpp
 # Begin Source File
 
 SOURCE=.\LiangBarskyClipLine.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LightingBicubicBezierPatch.cpp
 # End Source File
 # Begin Source File
 
@@ -530,10 +534,6 @@ SOURCE=.\WuAntiLine.cpp
 # Begin Source File
 
 SOURCE=.\ZBuffer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ZBufferBicubicBezierSphere.cpp
 # End Source File
 # Begin Source File
 
@@ -761,11 +761,19 @@ SOURCE=.\GeometryCube.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GouraudLightingBicubicBezierPatch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GouraudLightingBicubicBezierSphereGraph.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\GouraudLightingRationalBiquatricBezierSphereGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudZBufferBicubicBezierSphere.h
 # End Source File
 # Begin Source File
 
@@ -790,10 +798,6 @@ SOURCE=.\Ladder.h
 # Begin Source File
 
 SOURCE=.\LiangBarskyClipLine.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LightingBicubicBezierPatch.h
 # End Source File
 # Begin Source File
 
@@ -974,10 +978,6 @@ SOURCE=.\WuAntiLine.h
 # Begin Source File
 
 SOURCE=.\ZBuffer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ZBufferBicubicBezierSphere.h
 # End Source File
 # Begin Source File
 

@@ -324,6 +324,10 @@ SOURCE=.\GouraudLightingBicubicBezierSphereGraph.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\GouraudLightingRationalBiquatricBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Graph.cpp
 # End Source File
 # Begin Source File
@@ -758,6 +762,10 @@ SOURCE=.\GeometryCube.h
 # Begin Source File
 
 SOURCE=.\GouraudLightingBicubicBezierSphereGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GouraudLightingRationalBiquatricBezierSphereGraph.h
 # End Source File
 # Begin Source File
 

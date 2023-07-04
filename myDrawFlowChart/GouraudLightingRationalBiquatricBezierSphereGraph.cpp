@@ -1,10 +1,10 @@
-// GouraudLightingBicubicBezierSphereGraph.cpp: implementation of the CGouraudLightingBicubicBezierSphereGraph class.
+// GouraudLightingRationalBiquatricBezierSphereGraph.cpp: implementation of the CGouraudLightingRationalBiquatricBezierSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "GouraudLightingBicubicBezierSphereGraph.h"
+#include "GouraudLightingRationalBiquatricBezierSphereGraph.h"
 #include "math.h"
 #define ROUND(d) int(d + 0.5)
 
@@ -18,12 +18,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CGouraudLightingBicubicBezierSphereGraph, CObject, 1)
+// IMPLEMENT_SERIAL(CGouraudLightingRationalBiquatricBezierSphereGraph, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CGouraudLightingBicubicBezierSphereGraph::CGouraudLightingBicubicBezierSphereGraph()
+CGouraudLightingRationalBiquatricBezierSphereGraph::CGouraudLightingRationalBiquatricBezierSphereGraph()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -37,18 +37,18 @@ CGouraudLightingBicubicBezierSphereGraph::CGouraudLightingBicubicBezierSphereGra
 	sphere.ReadVertex();
 	sphere.ReadFace();
 	double nScale = 30;
-	transform.SetMatrix(sphere.Ver, 62);
+	transform.SetMatrix(sphere.Ver, 26);
 	transform.Scale(nScale, nScale, nScale);
 	InitializeLightingScene();//初始化光照场景
 	sphere.bezier.SetLightingScene(pScene);//设置光照场景
 }
 
-CGouraudLightingBicubicBezierSphereGraph::~CGouraudLightingBicubicBezierSphereGraph()
+CGouraudLightingRationalBiquatricBezierSphereGraph::~CGouraudLightingRationalBiquatricBezierSphereGraph()
 {
 
 }
 
-void CGouraudLightingBicubicBezierSphereGraph::DoubleBuffer(CDC* pDC)
+void CGouraudLightingRationalBiquatricBezierSphereGraph::DoubleBuffer(CDC* pDC)
 {
 	CRect rectScreen;//定义客户区矩形
 	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
@@ -71,7 +71,7 @@ void CGouraudLightingBicubicBezierSphereGraph::DoubleBuffer(CDC* pDC)
     memDC.DeleteDC();
 }
 
-void CGouraudLightingBicubicBezierSphereGraph::DrawObject(CDC* pDC)//绘制图形
+void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
 	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
 	CZBuffer* pZBuffer = new CZBuffer;//申请内存
@@ -80,7 +80,7 @@ void CGouraudLightingBicubicBezierSphereGraph::DrawObject(CDC* pDC)//绘制图形
 	delete pZBuffer;//释放内存
 }
 
-void CGouraudLightingBicubicBezierSphereGraph::InitializeLightingScene(void)//初始化光照环境
+void CGouraudLightingRationalBiquatricBezierSphereGraph::InitializeLightingScene(void)//初始化光照环境
 {
 	//设置光源属性
 	nLightSourceNumber = 1;//光源个数
@@ -107,7 +107,7 @@ void CGouraudLightingBicubicBezierSphereGraph::InitializeLightingScene(void)//初
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
+void CGouraudLightingRationalBiquatricBezierSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -139,7 +139,7 @@ void CGouraudLightingBicubicBezierSphereGraph::Draw( CDC *pDC, BOOL bShowSelectB
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::DrawFocus( CDC *pdc )
+void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -163,7 +163,7 @@ void CGouraudLightingBicubicBezierSphereGraph::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::Move( int cx, int cy )
+void CGouraudLightingRationalBiquatricBezierSphereGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -173,7 +173,7 @@ void CGouraudLightingBicubicBezierSphereGraph::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::AdjustSize( CPoint &pt )
+void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -233,7 +233,7 @@ void CGouraudLightingBicubicBezierSphereGraph::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CGouraudLightingBicubicBezierSphereGraph::IsIn( CPoint &pt )
+bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -257,7 +257,7 @@ bool CGouraudLightingBicubicBezierSphereGraph::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CGouraudLightingBicubicBezierSphereGraph::IsConnectOn(CAdjustPoint *pt)
+int CGouraudLightingRationalBiquatricBezierSphereGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -275,7 +275,7 @@ int CGouraudLightingBicubicBezierSphereGraph::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CGouraudLightingBicubicBezierSphereGraph::IsOn( CPoint &pt )
+bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -305,7 +305,7 @@ bool CGouraudLightingBicubicBezierSphereGraph::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::AdjustStartAndEnd()
+void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -323,7 +323,7 @@ void CGouraudLightingBicubicBezierSphereGraph::AdjustStartAndEnd()
 	}
 }
 
-int CGouraudLightingBicubicBezierSphereGraph::GetAdjustPoint()
+int CGouraudLightingRationalBiquatricBezierSphereGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -331,7 +331,7 @@ int CGouraudLightingBicubicBezierSphereGraph::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::AdjustFocusPoint()
+void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -361,7 +361,7 @@ void CGouraudLightingBicubicBezierSphereGraph::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CGouraudLightingBicubicBezierSphereGraph::SaveParamsToJSON(cJSON * objJSON)
+void CGouraudLightingRationalBiquatricBezierSphereGraph::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -391,7 +391,7 @@ void CGouraudLightingBicubicBezierSphereGraph::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CGouraudLightingBicubicBezierSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
+void CGouraudLightingRationalBiquatricBezierSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

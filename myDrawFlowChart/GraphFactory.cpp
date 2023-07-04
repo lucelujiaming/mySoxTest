@@ -58,7 +58,8 @@
 #include "SpatialArrangedCube.h"
 #include "GouraudBicubicBezierSphereGraph.h"
 #include "GouraudBiquatricBezierSphereGraph.h"
-#include "PhongLightingBiquatricBezierSphereGraph.h"
+#include "PhongBiquatricBezierSphereGraph.h"
+#include "TextureCubeGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -336,9 +337,14 @@ CGraph* CGraphFactory::CreateGouraudBiquatricBezierSphereGraph()
 	return new CGouraudBiquatricBezierSphereGraph();
 }
 
-CGraph* CGraphFactory::CreatePhongLightingBiquatricBezierSphereGraph()
+CGraph* CGraphFactory::CreatePhongBiquatricBezierSphereGraph()
 {
-	return new CPhongLightingBiquatricBezierSphereGraph();
+	return new CPhongBiquatricBezierSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateTextureCubeGraph()
+{
+	return new CTextureCubeGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

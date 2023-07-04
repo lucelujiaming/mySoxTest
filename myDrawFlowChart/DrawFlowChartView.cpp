@@ -121,8 +121,10 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 								OnToolbarGouraudBicubicBezierSphereGraph)
 	ON_COMMAND(ID_TOOLBAR_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH, 
 								OnToolbarGouraudBiquatricBezierSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_PHONG_LIGHTING_BIQUATRIC_BEZIER_SPHERE_GRAPH, 
-								OnToolbarPhongLightingBiquatricBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH, 
+								OnToolbarPhongBiquatricBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_TEXTURE_CUBE_GRAPH, 
+								OnToolbarTextureCubeGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1662,7 +1664,7 @@ void CDrawFlowChartView::OnCreateGouraudBiquatricBezierSphereGraph()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateGouraudBiquatricBezierSphereGraph());
 }
 
-void CDrawFlowChartView::OnCreatePhongLightingBiquatricBezierSphereGraph() 
+void CDrawFlowChartView::OnCreatePhongBiquatricBezierSphereGraph() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
@@ -1677,7 +1679,25 @@ void CDrawFlowChartView::OnCreatePhongLightingBiquatricBezierSphereGraph()
 
 	m_IsControlFlow = false;
 	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
-	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePhongLightingBiquatricBezierSphereGraph());
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreatePhongBiquatricBezierSphereGraph());
+}
+
+void CDrawFlowChartView::OnCreateTextureCubeGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateTextureCubeGraph());
 }
 
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
@@ -2041,10 +2061,16 @@ void CDrawFlowChartView::OnToolbarGouraudBiquatricBezierSphereGraph()
 	OnCreateGouraudBiquatricBezierSphereGraph();
 }
 
-void CDrawFlowChartView::OnToolbarPhongLightingBiquatricBezierSphereGraph() 
+void CDrawFlowChartView::OnToolbarPhongBiquatricBezierSphereGraph() 
 {
 	// TODO: Add your command handler code here
-	OnCreatePhongLightingBiquatricBezierSphereGraph();
+	OnCreatePhongBiquatricBezierSphereGraph();
+}
+
+void CDrawFlowChartView::OnToolbarTextureCubeGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateTextureCubeGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

@@ -1,33 +1,33 @@
 #include "stdafx.h"
-#include "PhongLightingRationalBiquatricBezierPatch.h"
+#include "PhongBiquatricBezierPatch.h"
 #define ROUND(d) int(d+0.5)
 
-CPhongLightingRationalBiquatricBezierPatch::CPhongLightingRationalBiquatricBezierPatch(void)
+CPhongBiquatricBezierPatch::CPhongBiquatricBezierPatch(void)
 {
 
 }
 
 
-CPhongLightingRationalBiquatricBezierPatch::~CPhongLightingRationalBiquatricBezierPatch(void)
+CPhongBiquatricBezierPatch::~CPhongBiquatricBezierPatch(void)
 {
 
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::ReadControlPoint(CColorP3 P[3][3])
+void CPhongBiquatricBezierPatch::ReadControlPoint(CColorP3 P[3][3])
 {
    for(int i = 0; i < 3; i++)
 	   for(int j = 0;j < 3; j++)
    			this->P[i][j] = P[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::ReadWeight(double W[3][3])
+void CPhongBiquatricBezierPatch::ReadWeight(double W[3][3])
 {
    for(int i = 0; i < 3; i++)
 	   for(int j = 0;j < 3; j++)
    			this->W[i][j] = W[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::SaveFacetData(void)
+void CPhongBiquatricBezierPatch::SaveFacetData(void)
  {
 	double M[3][3];//œµ ˝æÿ’ÛMbe
 	M[0][0] = 1, M[0][1] =-2, M[0][2] = 1;
@@ -69,12 +69,12 @@ void CPhongLightingRationalBiquatricBezierPatch::SaveFacetData(void)
 	}
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::SetLightingScene(CLightingScene* pScene)
+void CPhongBiquatricBezierPatch::SetLightingScene(CLightingScene* pScene)
 {
 	this->pScene = pScene;
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
+void CPhongBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
 {
 	SaveFacetData();//∂¡»°∆Ω√Ê∆¨µƒµ„±Ì”Î√Ê±Ì
 	CColorP3 Eye = projection.GetColorEye();
@@ -95,7 +95,7 @@ void CPhongLightingRationalBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer*
 	}
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColorP3 P[3][3])//◊Û≥Àæÿ’ÛM*P
+void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColorP3 P[3][3])//◊Û≥Àæÿ’ÛM*P
 {
 	CColorP3 T[3][3];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 3;i++)
@@ -106,7 +106,7 @@ void CPhongLightingRationalBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][
 			P[i][j] = T[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double W[3][3])//◊Û≥Àæÿ’ÛM*W
+void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double W[3][3])//◊Û≥Àæÿ’ÛM*W
 {
 	double T[3][3];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 3;i++)
@@ -117,7 +117,7 @@ void CPhongLightingRationalBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][
 			W[i][j] = T[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])//”“≥Àæÿ’ÛP*M
+void CPhongBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])//”“≥Àæÿ’ÛP*M
 {
 	CColorP3 T[3][3];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 3; i++)
@@ -128,7 +128,7 @@ void CPhongLightingRationalBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[
 			P[i][j] = T[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])//”“≥Àæÿ’ÛW*M
+void CPhongBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])//”“≥Àæÿ’ÛW*M
 {
 	double T[3][3];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 3;i++)
@@ -139,7 +139,7 @@ void CPhongLightingRationalBiquatricBezierPatch::RightMultiplyMatrix(double W[3]
 			W[i][j] = T[i][j];
 }
 
-void CPhongLightingRationalBiquatricBezierPatch::TransposeMatrix(double M[3][3])//◊™÷√æÿ’Û
+void CPhongBiquatricBezierPatch::TransposeMatrix(double M[3][3])//◊™÷√æÿ’Û
 {
 	double T[3][3];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 3;i++)

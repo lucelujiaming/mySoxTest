@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "PhongZBufferRationalBiquatricBezierSphere.h"
+#include "PhongZBufferBiquatricBezierSphere.h"
 #include "math.h"
 
-CPhongZBufferRationalBiquatricBezierSphere::CPhongZBufferRationalBiquatricBezierSphere(void)
+CPhongZBufferBiquatricBezierSphere::CPhongZBufferBiquatricBezierSphere(void)
 {
 
 }
 
-CPhongZBufferRationalBiquatricBezierSphere::~CPhongZBufferRationalBiquatricBezierSphere(void)
+CPhongZBufferBiquatricBezierSphere::~CPhongZBufferBiquatricBezierSphere(void)
 {
 
 }
 
-void CPhongZBufferRationalBiquatricBezierSphere::ReadVertex(void)//读入点表
+void CPhongZBufferBiquatricBezierSphere::ReadVertex(void)//读入点表
 {
 	//第1卦限控制点
 	Ver[0].x = 0, Ver[0].y = 1, Ver[0].z = 0;
@@ -43,7 +43,7 @@ void CPhongZBufferRationalBiquatricBezierSphere::ReadVertex(void)//读入点表
 	Ver[25].x = 0, Ver[25].y = -1, Ver[25].z = 0;
 }
 
-void CPhongZBufferRationalBiquatricBezierSphere::ReadFace(void)//读入曲面表
+void CPhongZBufferBiquatricBezierSphere::ReadFace(void)//读入曲面表
 {
 	//第1卦限面片
 	Pat[0].ptIndex[0] = 2, Pat[0].ptIndex[1] = 4, Pat[0].ptIndex[2] = 6;
@@ -79,7 +79,7 @@ void CPhongZBufferRationalBiquatricBezierSphere::ReadFace(void)//读入曲面表
 	Pat[7].ptIndex[6] = 14, Pat[7].ptIndex[7] = 16, Pat[7].ptIndex[8] = 2;
 }
 
-void CPhongZBufferRationalBiquatricBezierSphere::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)//绘制图形
+void CPhongZBufferBiquatricBezierSphere::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)//绘制图形
 {
 	CColorP3 P[3][3];//三维顶点
 	double W[3][3];//权因子

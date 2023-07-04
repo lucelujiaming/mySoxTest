@@ -1,5 +1,5 @@
-#if !defined(AFX_PHONG_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_)
-#define AFX_PHONG_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_
+#if !defined(AFX_PHONG_BIQUATRICBEZIER_PATCH_H_)
+#define AFX_PHONG_BIQUATRICBEZIER_PATCH_H_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -10,11 +10,11 @@
 #include "Vector3ZBuffer.h"
 #include "LightingScene.h"
 
-class CPhongLightingRationalBiquatricBezierPatch//有理双二次Bezier曲面片类
+class CPhongBiquatricBezierPatch//有理双二次Bezier曲面片类
 {
 public:
-	CPhongLightingRationalBiquatricBezierPatch(void);
-	virtual ~CPhongLightingRationalBiquatricBezierPatch(void);
+	CPhongBiquatricBezierPatch(void);
+	virtual ~CPhongBiquatricBezierPatch(void);
 	void ReadControlPoint(CColorP3 P[3][3]);//读入9个控制点
 	void ReadWeight(double W[3][3]);//读入9个权因子
 	void SetLightingScene(CLightingScene* pScene);//设置光照场景
@@ -35,4 +35,4 @@ public:
 	CLightingScene* pScene;//光照
 };
 
-#endif // !defined(AFX_PHONG_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_)
+#endif // !defined(AFX_PHONG_BIQUATRICBEZIER_PATCH_H_)

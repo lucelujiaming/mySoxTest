@@ -12,7 +12,8 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "PhongZBufferBiquatricBezierSphere.h"
+#include "TextureCube.h"
+#include "Vector3ZBuffer.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
@@ -27,10 +28,11 @@ public:
 	CString GetTypeName() { return CString("CTextureCubeGraph"); }
 	
 protected:
-	CPhongZBufferBiquatricBezierSphere sphere;//球体对象
+	CTextureCube cube;//立方体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
-	CLightingScene* pScene;//光照场景	
+	CLightingScene* pScene;//光照场景
+	CTexture texture;//纹理
 	
 public:
 	void DoubleBuffer(CDC* pDC);//双缓冲

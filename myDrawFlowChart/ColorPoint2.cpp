@@ -29,6 +29,14 @@ CColorPoint2::CColorPoint2(int x, int y, CVector3 n)
 	this->n = n;
 }
 
+CColorPoint2::CColorPoint2(int x, int y, CVector3 n, CTextureCoordinate t)
+{
+	this->x = x;
+	this->y = y;
+	this->n = n;
+	this->t = t;
+}
+
 CColorPoint2::~CColorPoint2(void)
 {
 

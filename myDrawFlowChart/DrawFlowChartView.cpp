@@ -125,6 +125,8 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 								OnToolbarPhongBiquatricBezierSphereGraph)
 	ON_COMMAND(ID_TOOLBAR_TEXTURE_CUBE_GRAPH, 
 								OnToolbarTextureCubeGraph)
+	ON_COMMAND(ID_TOOLBAR_TEXTURE_SPHERE_GRAPH, 
+								OnToolbarTextureSphereGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1700,6 +1702,24 @@ void CDrawFlowChartView::OnCreateTextureCubeGraph()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateTextureCubeGraph());
 }
 
+void CDrawFlowChartView::OnCreateTextureSphereGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateTextureSphereGraph());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -2071,6 +2091,12 @@ void CDrawFlowChartView::OnToolbarTextureCubeGraph()
 {
 	// TODO: Add your command handler code here
 	OnCreateTextureCubeGraph();
+}
+
+void CDrawFlowChartView::OnToolbarTextureSphereGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateTextureSphereGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

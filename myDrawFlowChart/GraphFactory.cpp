@@ -60,6 +60,7 @@
 #include "GouraudBiquatricBezierSphereGraph.h"
 #include "PhongBiquatricBezierSphereGraph.h"
 #include "TextureCubeGraph.h"
+#include "TextureSphereGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -345,6 +346,11 @@ CGraph* CGraphFactory::CreatePhongBiquatricBezierSphereGraph()
 CGraph* CGraphFactory::CreateTextureCubeGraph()
 {
 	return new CTextureCubeGraph();
+}
+
+CGraph* CGraphFactory::CreateTextureSphereGraph()
+{
+	return new CTextureSphereGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

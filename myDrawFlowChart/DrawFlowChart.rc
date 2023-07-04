@@ -159,6 +159,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_TEXTURE_CUBE_GRAPH
+    BUTTON      ID_TOOLBAR_TEXTURE_SPHERE_GRAPH
 END
 
 
@@ -546,7 +547,8 @@ BEGIN
                             "使用Gouraud明暗处理算法绘制双二次Bezier曲面球\nGouraud算法绘制的双二次Bezier曲面球"
     ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH 
                             "使用Phong算法绘制双二次Bezier曲面球\nPhong算法绘制的双二次Bezier曲面球"
-    ID_TOOLBAR_TEXTURE_CUBE_GRAPH "使用图像纹理映射算法立方体\n图像纹理立方体"
+    ID_TOOLBAR_TEXTURE_CUBE_GRAPH "使用图像纹理映射算法绘制立方体\n图像纹理立方体"
+    ID_TOOLBAR_TEXTURE_SPHERE_GRAPH "使用图像纹理映射算法绘制球体\n图像纹理球体"
 END
 
 #endif    // Chinese (P.R.C.) resources

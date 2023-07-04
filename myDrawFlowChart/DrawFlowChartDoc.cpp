@@ -315,9 +315,13 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudBiquatricBezierSphereGraph(), child);
                 }
-				else if(strcmp(child->string, "CPhongLightingBiquatricBezierSphereGraph") == 0)
+				else if(strcmp(child->string, "CPhongBiquatricBezierSphereGraph") == 0)
                 {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreatePhongLightingBiquatricBezierSphereGraph(), child);
+                    m_GraphManager.AddGraph(m_GraphFactory.CreatePhongBiquatricBezierSphereGraph(), child);
+                }
+				else if(strcmp(child->string, "CTextureCubeGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateTextureCubeGraph(), child);
                 }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   

@@ -1,9 +1,9 @@
-// PhongLightingBiquatricBezierSphereGraph.h: interface for the CPhongLightingBiquatricBezierSphereGraph class.
+// TextureCubeGraph.h: interface for the CTextureCubeGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_PHONG_LIGHTING_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_PHONG_LIGHTING_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_TEXTURE_CUBE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_TEXTURE_CUBE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,22 +12,22 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "PhongZBufferRationalBiquatricBezierSphere.h"
+#include "PhongZBufferBiquatricBezierSphere.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
 #include "LightingScene.h"
 
-class CPhongLightingBiquatricBezierSphereGraph : public CGraph  
+class CTextureCubeGraph : public CGraph  
 {
-//		DECLARE_SERIAL(CPhongLightingBiquatricBezierSphereGraph)
+//		DECLARE_SERIAL(CTextureCubeGraph)
 public:
-	CPhongLightingBiquatricBezierSphereGraph();
-	virtual ~CPhongLightingBiquatricBezierSphereGraph();
-	CString GetTypeName() { return CString("CPhongLightingBiquatricBezierSphereGraph"); }
+	CTextureCubeGraph();
+	virtual ~CTextureCubeGraph();
+	CString GetTypeName() { return CString("CTextureCubeGraph"); }
 	
 protected:
-	CPhongZBufferRationalBiquatricBezierSphere sphere;//球体对象
+	CPhongZBufferBiquatricBezierSphere sphere;//球体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景	
@@ -80,4 +80,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_PHONG_LIGHTING_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_TEXTURE_CUBE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

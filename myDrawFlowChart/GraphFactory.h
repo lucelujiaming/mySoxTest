@@ -71,7 +71,8 @@ public:
 	CGraph* CreateSpatialArrangedCube();
 	CGraph* CreateGouraudBicubicBezierSphereGraph();
 	CGraph* CreateGouraudBiquatricBezierSphereGraph();
-	CGraph* CreatePhongLightingBiquatricBezierSphereGraph();
+	CGraph* CreatePhongBiquatricBezierSphereGraph();
+	CGraph* CreateTextureCubeGraph();
 };
 
 #endif // !defined(AFX_GRAPHFACTORY_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)

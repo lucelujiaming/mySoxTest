@@ -440,15 +440,15 @@ SOURCE=.\PerspectiveRotateCube.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongLightingBiquatricBezierSphereGraph.cpp
+SOURCE=.\PhongBiquatricBezierPatch.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongLightingRationalBiquatricBezierPatch.cpp
+SOURCE=.\PhongBiquatricBezierSphereGraph.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongZBufferRationalBiquatricBezierSphere.cpp
+SOURCE=.\PhongZBufferBiquatricBezierSphere.cpp
 # End Source File
 # Begin Source File
 
@@ -526,6 +526,10 @@ SOURCE=.\Start.cpp
 
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCubeGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -905,15 +909,15 @@ SOURCE=.\PerspectiveRotateCube.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongLightingBiquatricBezierSphereGraph.h
+SOURCE=.\PhongBiquatricBezierPatch.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongLightingRationalBiquatricBezierPatch.h
+SOURCE=.\PhongBiquatricBezierSphereGraph.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PhongZBufferRationalBiquatricBezierSphere.h
+SOURCE=.\PhongZBufferBiquatricBezierSphere.h
 # End Source File
 # Begin Source File
 
@@ -994,6 +998,10 @@ SOURCE=.\Start.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCubeGraph.h
 # End Source File
 # Begin Source File
 

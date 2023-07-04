@@ -159,6 +159,7 @@ protected:
 	afx_msg void OnToolbarSpatialArrangedCube();
 	afx_msg void OnToolbarGouraudLightingBicubicBezierSphereGraph();
 	afx_msg void OnToolbarGouraudLightingRationalBiquatricBezierSphereGraph();
+	afx_msg void OnToolbarPhongLightingBiquatricBezierSphereGraph();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -188,6 +189,7 @@ protected:
 	afx_msg void OnCreateSpatialArrangedCube();
 	afx_msg void OnCreateGouraudLightingBicubicBezierSphereGraph();
 	afx_msg void OnCreateGouraudLightingRationalBiquatricBezierSphereGraph();
+	afx_msg void OnCreatePhongLightingBiquatricBezierSphereGraph();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

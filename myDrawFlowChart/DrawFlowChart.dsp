@@ -440,6 +440,18 @@ SOURCE=.\PerspectiveRotateCube.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PhongLightingBiquatricBezierSphereGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PhongLightingRationalBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PhongZBufferRationalBiquatricBezierSphere.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\PolygonalLine.cpp
 # End Source File
 # Begin Source File
@@ -534,6 +546,10 @@ SOURCE=.\Triangle.cpp
 # Begin Source File
 
 SOURCE=.\Vector3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Vector3ZBuffer.cpp
 # End Source File
 # Begin Source File
 
@@ -889,6 +905,18 @@ SOURCE=.\PerspectiveRotateCube.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\PhongLightingBiquatricBezierSphereGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PhongLightingRationalBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PhongZBufferRationalBiquatricBezierSphere.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\PolygonalLine.h
 # End Source File
 # Begin Source File
@@ -986,6 +1014,10 @@ SOURCE=.\Triangle.h
 # Begin Source File
 
 SOURCE=.\Vector3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Vector3ZBuffer.h
 # End Source File
 # Begin Source File
 

@@ -6,6 +6,7 @@
 #endif // _MSC_VER > 1000
 
 #include"RGB.h"
+#include "Vector3.h"
 
 class CColorPoint2
 {
@@ -13,11 +14,14 @@ public:
 	CColorPoint2(void);
 	CColorPoint2(int x, int y);
 	CColorPoint2(int x, int y, CRGB c);
+	CColorPoint2(int x, int y, CVector3 n);
 	virtual ~CColorPoint2(void);	
 public:
 	int x;
 	int y;
 	CRGB c;
+		
+	CVector3 n;//∑®œÚ¡ø
 };
 
 #endif // !defined(AFX_COLOR_POINT2_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

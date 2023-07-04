@@ -155,6 +155,7 @@ BEGIN
     BUTTON      ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE
     BUTTON      ID_TOOLBAR_SPATIAL_ARRANGED_CUBE
     BUTTON      ID_TOOLBAR_GOURAUD_LIGHTING_BICUBIC_BEZIER_SPHERE_GRAPH
+    BUTTON      ID_TOOLBAR_GOURAUD_LIGHTING_RATIONAL_BIQUATRIC_BEZIER_SPHERE_GRAPH
 END
 
 
@@ -537,7 +538,9 @@ BEGIN
                             "使用ZBuffer算法绘制三向交叉立方体\n三向交叉立方体"
     ID_TOOLBAR_SPATIAL_ARRANGED_CUBE "使用画家算法绘制多个立方体\n多个立方体"
     ID_TOOLBAR_GOURAUD_LIGHTING_BICUBIC_BEZIER_SPHERE_GRAPH 
-                            "使用Gouraud明暗处理算法绘制球\nGouraud明暗球"
+                            "使用Gouraud明暗处理算法绘制双三次Bezier球\nGouraud明暗的双三次Bezier球"
+    ID_TOOLBAR_GOURAUD_LIGHTING_RATIONAL_BIQUATRIC_BEZIER_SPHERE_GRAPH 
+                            "使用Gouraud明暗处理算法绘制双二次Bezier曲面球\nGouraud明暗的双二次Bezier曲面球"
 END
 
 #endif    // Chinese (P.R.C.) resources

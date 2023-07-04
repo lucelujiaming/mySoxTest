@@ -117,7 +117,33 @@ double DotProduct(const CVector3 &v0, const CVector3 &v1)//矢量的点积
 	return(v0.x * v1.x + v0.y * v1.y + v0.z * v1.z);
 }
 
-CVector3 CrossProduct(const CVector3 &v0, const CVector3 &v1)//矢量的叉积
+/************************************************************************/
+/* 下面复习一下：                                                       */
+/* 首先叉乘是这么定义。                                                 */
+/*     c = a × b = |a||b| * sin(cita)                                  */
+/* 其中cita是a和b的夹角。c的模为以ab为两条边的平行四边形的面积。        */
+/* 进一步有下面的几条性质：                                             */
+/*   1. a × b = -b × a。                                              */
+/*   2. a × a = 0。因为夹角cita为0，因此上sin(cita)也为零。            */
+/*   3. a × (b + c) = a × b + a × c。                                */
+/* 那么对于空间中的两个向量：                                           */
+/*   a = ax * i + ay * j + az * k                                       */
+/*   b = bx * i + by * j + bz * k                                       */
+/* 则 a × b = (ax * i + ay * j + az * k)×(bx * i + by * j + bz * k)   */
+/*           = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
+/*             ax * by * i * j + ay * by * j * j + az * by * k * j +    */
+/*             ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
+/* 根据公式2可知： i * i = j * j = k * k = 0。在结合公式1，则原式等于： */
+/*             (ax * by - ay * bx) i * j +                              */
+/*             (az * bx - ax * bz) k * i +                              */
+/*             (ay * bz - az * by) j * k +                              */
+/* 根据定义可知： i * j = k, k * i = j, k * i = j。则原式等于：         */
+/*             (ay * bz - az * by) i +                                  */
+/*             (az * bx - ax * bz) j +                                  */
+/*             (ax * by - ay * bx) k                                    */
+/* 这就是下面这个代码的计算公式。                                       */
+/************************************************************************/
+CVector3 CrossProduct(const CVector3 &v0, const CVector3 &v1) // 矢量的叉积
 {
 	CVector3 vector;
 	vector.x = v0.y * v1.z - v0.z * v1.y;

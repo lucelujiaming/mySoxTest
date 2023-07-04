@@ -82,19 +82,30 @@ void CBackfaceCullCube::Draw(CDC* pDC)
 	// 面循环：也就是一个面一个面绘制。
 	for (int nFace = 0; nFace < 6; nFace++)//面循环
 	{
-		CVector3 ViewVector(V[F[nFace].ptIndex[0]], Eye);//面的视矢量
-		ViewVector = ViewVector.Normalize();//归一化视矢量
-		CVector3 Vector01(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[1]]);//面的一个边矢量
-		CVector3 Vector02(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[2]]);//面的另一个边矢量
-		CVector3 FaceNormal = CrossProduct(Vector01, Vector02);//面的法矢量
-		FaceNormal = FaceNormal.Normalize();//归一化法矢量
-		if (DotProduct(ViewVector, FaceNormal) >= 0)//背面剔除
+		// 计算每一个面的第一个顶点和视点的相对矢量
+		CVector3 ViewVector(V[F[nFace].ptIndex[0]], Eye); // 面的视矢量
+		// 归一化前面计算出来的视矢量
+		ViewVector = ViewVector.Normalize(); 
+		// 计算出来面的一个边矢量
+		// 是面的第一个顶点到第二个顶点这条边的相对矢量
+		CVector3 Vector01(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[1]]); 
+		// 计算出来面的另一个边矢量。
+		// 是面的第一个顶点到第三个顶点的对角线的相对矢量
+		CVector3 Vector02(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[2]]); 
+		// 计算边和一条线的叉乘×得到面的法矢量
+		CVector3 FaceNormal = CrossProduct(Vector01, Vector02);
+		// 归一化前面计算出来的法矢量
+		FaceNormal = FaceNormal.Normalize();
+		// 将视矢量·法矢量 >= 0 作为绘制可见表面边界的基本条件。
+		// 对于立方体来说，视矢量·法矢量 >= 0剔除了背向视点的三个不可见表面。
+		if (DotProduct(ViewVector, FaceNormal) >= 0) // 背面剔除
 		{
 		    // 得到这个面所有顶点的坐标。
 			for (int nPoint = 0; nPoint < F[nFace].ptNumber; nPoint++) // 顶点循环
 			{
 			    // 我们这里使用透视投影计算投影点。
-				ScreenPoint[nPoint] = projection.PerspectiveProjection(V[F[nFace].ptIndex[nPoint]]); // 透视投影
+				ScreenPoint[nPoint] = projection.PerspectiveProjection(
+									V[F[nFace].ptIndex[nPoint]]); // 透视投影
 		    }
 			// 所谓的绘制一个面。其实就是使用MoveTo和LineTo绘制一个多边形。
 			// 绘制多边形

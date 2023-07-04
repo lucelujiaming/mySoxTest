@@ -1,9 +1,9 @@
-// GouraudLightingBicubicBezierSphereGraph.h: interface for the CGouraudLightingBicubicBezierSphereGraph class.
+// GouraudLightingRationalBiquatricBezierSphereGraph.h: interface for the CGouraudLightingRationalBiquatricBezierSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -18,13 +18,13 @@
 #include "Triangle.h"
 #include "LightingScene.h"
 
-class CGouraudLightingBicubicBezierSphereGraph : public CGraph  
+class CGouraudLightingRationalBiquatricBezierSphereGraph : public CGraph  
 {
-//		DECLARE_SERIAL(CGouraudLightingBicubicBezierSphereGraph)
+//		DECLARE_SERIAL(CGouraudLightingRationalBiquatricBezierSphereGraph)
 public:
-	CGouraudLightingBicubicBezierSphereGraph();
-	virtual ~CGouraudLightingBicubicBezierSphereGraph();
-	CString GetTypeName() { return CString("CGouraudLightingBicubicBezierSphereGraph"); }
+	CGouraudLightingRationalBiquatricBezierSphereGraph();
+	virtual ~CGouraudLightingRationalBiquatricBezierSphereGraph();
+	CString GetTypeName() { return CString("CGouraudLightingRationalBiquatricBezierSphereGraph"); }
 	
 protected:
 	CZBufferBicubicBezierSphere sphere;//«ÚÃÂ∂‘œÛ
@@ -80,4 +80,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_GOURAUD_LIGHTING_BICUBICBEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

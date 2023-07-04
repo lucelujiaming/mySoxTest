@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include"RGB.h"
+#include "RGB.h"
 
 class CColorP2
 {

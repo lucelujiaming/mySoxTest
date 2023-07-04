@@ -22,6 +22,13 @@ CColorPoint2::CColorPoint2(int x, int y, CRGB c)
 	this->c = c;
 }
 
+CColorPoint2::CColorPoint2(int x, int y, CVector3 n)
+{
+	this->x = x;
+	this->y = y;
+	this->n = n;
+}
+
 CColorPoint2::~CColorPoint2(void)
 {
 

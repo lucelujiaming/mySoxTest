@@ -56,8 +56,8 @@
 #include "BackfaceCullRotateCube.h"
 #include "ThreeCrossRotateCube.h"
 #include "SpatialArrangedCube.h"
-#include "GouraudLightingBicubicBezierSphereGraph.h"
-#include "GouraudLightingRationalBiquatricBezierSphereGraph.h"
+#include "GouraudBicubicBezierSphereGraph.h"
+#include "GouraudBiquatricBezierSphereGraph.h"
 #include "PhongLightingBiquatricBezierSphereGraph.h"
 
 #ifdef _DEBUG
@@ -326,14 +326,14 @@ CGraph* CGraphFactory::CreateSpatialArrangedCube()
 	return new CSpatialArrangedCube();
 }
 
-CGraph* CGraphFactory::CreateGouraudLightingBicubicBezierSphereGraph()
+CGraph* CGraphFactory::CreateGouraudBicubicBezierSphereGraph()
 {
-	return new CGouraudLightingBicubicBezierSphereGraph();
+	return new CGouraudBicubicBezierSphereGraph();
 }
 
-CGraph* CGraphFactory::CreateGouraudLightingRationalBiquatricBezierSphereGraph()
+CGraph* CGraphFactory::CreateGouraudBiquatricBezierSphereGraph()
 {
-	return new CGouraudLightingRationalBiquatricBezierSphereGraph();
+	return new CGouraudBiquatricBezierSphereGraph();
 }
 
 CGraph* CGraphFactory::CreatePhongLightingBiquatricBezierSphereGraph()

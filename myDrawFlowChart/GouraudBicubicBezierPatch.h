@@ -1,5 +1,5 @@
-#if !defined(AFX_GOURAUD_LIGHTING_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_GOURAUD_LIGHTING_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_GOURAUD_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_GOURAUD_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -10,11 +10,11 @@
 #include "ZBuffer.h"
 #include "LightingScene.h"
 
-class CGouraudLightingBicubicBezierPatch
+class CGouraudBicubicBezierPatch
 {
 public:
-	CGouraudLightingBicubicBezierPatch(void);
-	virtual ~CGouraudLightingBicubicBezierPatch(void);
+	CGouraudBicubicBezierPatch(void);
+	virtual ~CGouraudBicubicBezierPatch(void);
 	void ReadControlPoint(CColorP3 P[4][4]);//读入16个控制点
 	void SetLightingScene(CLightingScene* pScene);//设置光照场景
 	void SaveFacetData(void);//绘制网格点数据
@@ -31,4 +31,4 @@ public:
 	CLightingScene* pScene;//光照
 };
 
-#endif // !defined(AFX_GOURAUD_LIGHTING_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_GOURAUD_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

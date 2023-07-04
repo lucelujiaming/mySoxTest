@@ -69,8 +69,8 @@ public:
 	CGraph* CreateBackfaceCullRotateCube();
 	CGraph* CreateThreeCrossRotateCube();
 	CGraph* CreateSpatialArrangedCube();
-	CGraph* CreateGouraudLightingBicubicBezierSphereGraph();
-	CGraph* CreateGouraudLightingRationalBiquatricBezierSphereGraph();
+	CGraph* CreateGouraudBicubicBezierSphereGraph();
+	CGraph* CreateGouraudBiquatricBezierSphereGraph();
 	CGraph* CreatePhongLightingBiquatricBezierSphereGraph();
 };
 

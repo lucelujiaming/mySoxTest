@@ -1,10 +1,10 @@
-// GouraudLightingRationalBiquatricBezierSphereGraph.cpp: implementation of the CGouraudLightingRationalBiquatricBezierSphereGraph class.
+// GouraudBicubicBezierSphereGraph.cpp: implementation of the CGouraudBicubicBezierSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "GouraudLightingRationalBiquatricBezierSphereGraph.h"
+#include "GouraudBicubicBezierSphereGraph.h"
 #include "math.h"
 #define ROUND(d) int(d + 0.5)
 
@@ -18,12 +18,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CGouraudLightingRationalBiquatricBezierSphereGraph, CObject, 1)
+// IMPLEMENT_SERIAL(CGouraudBicubicBezierSphereGraph, CObject, 1)
 
 /************************************************************************/
 /* ¹¦ÄÜ£º½¨¹¹º¯Êı¡£Éè¶¨ÁËÁ¬½Óµã¡£                                       */
 /************************************************************************/
-CGouraudLightingRationalBiquatricBezierSphereGraph::CGouraudLightingRationalBiquatricBezierSphereGraph()
+CGouraudBicubicBezierSphereGraph::CGouraudBicubicBezierSphereGraph()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -37,18 +37,18 @@ CGouraudLightingRationalBiquatricBezierSphereGraph::CGouraudLightingRationalBiqu
 	sphere.ReadVertex();
 	sphere.ReadFace();
 	double nScale = 30;
-	transform.SetMatrix(sphere.Ver, 26);
+	transform.SetMatrix(sphere.Ver, 62);
 	transform.Scale(nScale, nScale, nScale);
 	InitializeLightingScene();//³õÊ¼»¯¹âÕÕ³¡¾°
 	sphere.bezier.SetLightingScene(pScene);//ÉèÖÃ¹âÕÕ³¡¾°
 }
 
-CGouraudLightingRationalBiquatricBezierSphereGraph::~CGouraudLightingRationalBiquatricBezierSphereGraph()
+CGouraudBicubicBezierSphereGraph::~CGouraudBicubicBezierSphereGraph()
 {
 
 }
 
-void CGouraudLightingRationalBiquatricBezierSphereGraph::DoubleBuffer(CDC* pDC)
+void CGouraudBicubicBezierSphereGraph::DoubleBuffer(CDC* pDC)
 {
 	CRect rectScreen;//¶¨Òå¿Í»§Çø¾ØĞÎ
 	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
@@ -71,7 +71,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::DoubleBuffer(CDC* pDC)
     memDC.DeleteDC();
 }
 
-void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawObject(CDC* pDC)//»æÖÆÍ¼ĞÎ
+void CGouraudBicubicBezierSphereGraph::DrawObject(CDC* pDC)//»æÖÆÍ¼ĞÎ
 {
 	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
 	CZBuffer* pZBuffer = new CZBuffer;//ÉêÇëÄÚ´æ
@@ -80,7 +80,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawObject(CDC* pDC)//»
 	delete pZBuffer;//ÊÍ·ÅÄÚ´æ
 }
 
-void CGouraudLightingRationalBiquatricBezierSphereGraph::InitializeLightingScene(void)//³õÊ¼»¯¹âÕÕ»·¾³
+void CGouraudBicubicBezierSphereGraph::InitializeLightingScene(void)//³õÊ¼»¯¹âÕÕ»·¾³
 {
 	//ÉèÖÃ¹âÔ´ÊôĞÔ
 	nLightSourceNumber = 1;//¹âÔ´¸öÊı
@@ -107,7 +107,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::InitializeLightingScene
 /************************************************************************/
 /* ¹¦ÄÜ£º»æÖÆº¯Êı¡£»æÖÆÁËÒ»¸öÍÖÔ²ºÍÉÏÃæµÄÎÄ×Ö¡£                         */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
+void CGouraudBicubicBezierSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -139,7 +139,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::Draw( CDC *pDC, BOOL bS
 /************************************************************************/
 /* ¹¦ÄÜ£ºÑ¡ÖĞ»æÖÆº¯Êı¡£»æÖÆÁËÁ¬½Óµã¡£                                   */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawFocus( CDC *pdc )
+void CGouraudBicubicBezierSphereGraph::DrawFocus( CDC *pdc )
 {
 	// »­±ÊÎªĞéÏß£¬Ïß¿íÎª1£¬ÑÕÉ«ÎªºÚÉ«¡£
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -163,7 +163,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* ¹¦ÄÜ£º ÒÆ¶¯´¦Àíº¯Êı¡£                                                */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::Move( int cx, int cy )
+void CGouraudBicubicBezierSphereGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -173,7 +173,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::Move( int cx, int cy )
 /* ¹¦ÄÜ£º ´óĞ¡µ÷Õû´¦Àíº¯Êı¡£                                            */
 /*        ¸ù¾İIsOnº¯Êı¼ÆËã½á¹ûµÃµ½×¼±¸½øĞĞ´óĞ¡µ÷ÕûµÄÁ¬½Óµã£¬½øĞĞµ÷Õû¡£  */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustSize( CPoint &pt )
+void CGouraudBicubicBezierSphereGraph::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -233,7 +233,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustSize( CPoint &pt 
 /************************************************************************/
 /* ¹¦ÄÜ£ºÅĞ¶ÏÊÇ·ñÔÚÍ¼ÔªÇøÓòÄÚ¡£                                         */
 /************************************************************************/
-bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsIn( CPoint &pt )
+bool CGouraudBicubicBezierSphereGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -257,7 +257,7 @@ bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsIn( CPoint &pt )
 /************************************************************************/
 /* ¹¦ÄÜ£º ÅĞ¶ÏÒ»¸öÁ¬½ÓµãÊÇ·ñÔÚÍ¼Ôª±ß½çÉÏ¡£ÓÃÓÚµ÷ÕûÍ¼ÔªÊÇ·ñÁ¬½Ó¡£        */
 /************************************************************************/
-int CGouraudLightingRationalBiquatricBezierSphereGraph::IsConnectOn(CAdjustPoint *pt)
+int CGouraudBicubicBezierSphereGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -275,7 +275,7 @@ int CGouraudLightingRationalBiquatricBezierSphereGraph::IsConnectOn(CAdjustPoint
 /************************************************************************/
 /* ¹¦ÄÜ£º ÅĞ¶ÏÒ»¸öÆÁÄ»×ø±êÊÇ·ñÔÚÍ¼Ôª±ß½çÉÏ¡£ÓÃÓÚµ÷ÕûÍ¼Ôª´óĞ¡¡£          */
 /************************************************************************/
-bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsOn( CPoint &pt )
+bool CGouraudBicubicBezierSphereGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -305,7 +305,7 @@ bool CGouraudLightingRationalBiquatricBezierSphereGraph::IsOn( CPoint &pt )
 /************************************************************************/
 /* ¹¦ÄÜ£ºÔÚµ÷Õû´óĞ¡·¢Éú·­×ªµÄÊ±ºò£¬¸ù¾İµ÷Õû½á¹û½»»»ÆğÊ¼µãºÍ½áÊøµã×ø±ê¡£ */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustStartAndEnd()
+void CGouraudBicubicBezierSphereGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -323,7 +323,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustStartAndEnd()
 	}
 }
 
-int CGouraudLightingRationalBiquatricBezierSphereGraph::GetAdjustPoint()
+int CGouraudBicubicBezierSphereGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -331,7 +331,7 @@ int CGouraudLightingRationalBiquatricBezierSphereGraph::GetAdjustPoint()
 /************************************************************************/
 /* ¹¦ÄÜ£º¸ù¾İÆğÊ¼µãºÍ½áÊøµã×ø±êµ÷ÕûÓÃÓÚ´óĞ¡µ÷ÕûºÍÁ¬ÏßµÄÁ¬½Óµã×ø±ê¡£     */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustFocusPoint()
+void CGouraudBicubicBezierSphereGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -361,7 +361,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::AdjustFocusPoint()
 /************************************************************************/
 /* ¹¦ÄÜ£º´®ĞĞ»¯²Ù×÷¡£                                                   */
 /************************************************************************/
-void CGouraudLightingRationalBiquatricBezierSphereGraph::SaveParamsToJSON(cJSON * objJSON)
+void CGouraudBicubicBezierSphereGraph::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -391,7 +391,7 @@ void CGouraudLightingRationalBiquatricBezierSphereGraph::SaveParamsToJSON(cJSON 
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CGouraudLightingRationalBiquatricBezierSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
+void CGouraudBicubicBezierSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

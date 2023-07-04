@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "GouraudLightingBicubicBezierPatch.h"
+#include "GouraudBicubicBezierPatch.h"
 #include "Patch.h"
 #include "ZBuffer.h"
 
@@ -19,7 +19,7 @@ public:
 	void Draw(CDC* pDC, CZBuffer* pZBuffer);//绘制图形
 public:
 	CColorP3 Ver[62];//球面控制点
-	CGouraudLightingBicubicBezierPatch bezier;//曲面片
+	CGouraudBicubicBezierPatch bezier;//曲面片
 private:
 	CPatch Pat[8];//球面曲面片数	
 };

@@ -1,30 +1,30 @@
 #include "stdafx.h"
-#include "GouraudLightingBicubicBezierPatch.h"
+#include "GouraudBicubicBezierPatch.h"
 #define ROUND(d) int(d + 0.5)
 
-CGouraudLightingBicubicBezierPatch::CGouraudLightingBicubicBezierPatch(void)
+CGouraudBicubicBezierPatch::CGouraudBicubicBezierPatch(void)
 {
 
 }
 
-CGouraudLightingBicubicBezierPatch::~CGouraudLightingBicubicBezierPatch(void)
+CGouraudBicubicBezierPatch::~CGouraudBicubicBezierPatch(void)
 {
 
 }
 
-void CGouraudLightingBicubicBezierPatch::ReadControlPoint(CColorP3 P[4][4])
+void CGouraudBicubicBezierPatch::ReadControlPoint(CColorP3 P[4][4])
 {
    for(int i = 0;i < 4;i++)
 	   for(int j = 0;j < 4;j++)
    			this->P[i][j]  = P[i][j];
 }
 
-void CGouraudLightingBicubicBezierPatch::SetLightingScene(CLightingScene* pScene)
+void CGouraudBicubicBezierPatch::SetLightingScene(CLightingScene* pScene)
 {
 	this->pScene = pScene;
 }
 
-void CGouraudLightingBicubicBezierPatch::SaveFacetData(void)
+void CGouraudBicubicBezierPatch::SaveFacetData(void)
 {
 	double M[4][4];//œµ ˝æÿ’ÛM
 	M[0][0] = -1, M[0][1] = 3, M[0][2] = -3, M[0][3] = 1;
@@ -66,7 +66,7 @@ void CGouraudLightingBicubicBezierPatch::SaveFacetData(void)
 		}
 }
 
-void CGouraudLightingBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4])//◊Û≥Àæÿ’ÛM*P
+void CGouraudBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4])//◊Û≥Àæÿ’ÛM*P
 {
 	CColorP3 PTemp [4][4];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 4;i++)
@@ -77,7 +77,7 @@ void CGouraudLightingBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CColo
 			P[i][j] = PTemp [i][j];
 }
 
-void CGouraudLightingBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
+void CGouraudBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 {
 	SaveFacetData();//∂¡»°∆Ω√Ê∆¨µƒµ„±Ì”Î√Ê±Ì
 	CColorP3 Eye = projection.GetColorEye();
@@ -97,7 +97,7 @@ void CGouraudLightingBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 	}
 }
 
-void CGouraudLightingBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4])//”“≥Àæÿ’ÛP*M
+void CGouraudBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4])//”“≥Àæÿ’ÛP*M
 {
 	CColorP3 PTemp [4][4];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 4;i++)
@@ -108,7 +108,7 @@ void CGouraudLightingBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],do
 			P[i][j] = PTemp [i][j];
 }
 
-void CGouraudLightingBicubicBezierPatch::TransposeMatrix(double M[4][4])//◊™÷√æÿ’Û
+void CGouraudBicubicBezierPatch::TransposeMatrix(double M[4][4])//◊™÷√æÿ’Û
 {
 	double PTemp[4][4];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 4;i++)

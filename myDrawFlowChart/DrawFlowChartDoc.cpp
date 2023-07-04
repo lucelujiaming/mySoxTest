@@ -307,13 +307,13 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateSpatialArrangedCube(), child);
                 }
-				else if(strcmp(child->string, "CGouraudLightingBicubicBezierSphereGraph") == 0)
+				else if(strcmp(child->string, "CGouraudBicubicBezierSphereGraph") == 0)
                 {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudLightingBicubicBezierSphereGraph(), child);
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudBicubicBezierSphereGraph(), child);
                 }
-				else if(strcmp(child->string, "CGouraudLightingRationalBiquatricBezierSphereGraph") == 0)
+				else if(strcmp(child->string, "CGouraudBiquatricBezierSphereGraph") == 0)
                 {   
-                    m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudLightingRationalBiquatricBezierSphereGraph(), child);
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateGouraudBiquatricBezierSphereGraph(), child);
                 }
 				else if(strcmp(child->string, "CPhongLightingBiquatricBezierSphereGraph") == 0)
                 {   

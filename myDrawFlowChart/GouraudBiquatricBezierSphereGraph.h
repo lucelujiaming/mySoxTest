@@ -1,9 +1,9 @@
-// GouraudLightingRationalBiquatricBezierSphereGraph.h: interface for the CGouraudLightingRationalBiquatricBezierSphereGraph class.
+// GouraudBiquatricBezierSphereGraph.h: interface for the CGouraudBiquatricBezierSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
-#define AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
+#if !defined(AFX_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#define AFX_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,22 +12,22 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "GouraudZBufferRationalBiquatricBezierSphere.h"
+#include "GouraudZBufferBiquatricBezierSphere.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
 #include "LightingScene.h"
 
-class CGouraudLightingRationalBiquatricBezierSphereGraph : public CGraph  
+class CGouraudBiquatricBezierSphereGraph : public CGraph  
 {
-//		DECLARE_SERIAL(CGouraudLightingRationalBiquatricBezierSphereGraph)
+//		DECLARE_SERIAL(CGouraudBiquatricBezierSphereGraph)
 public:
-	CGouraudLightingRationalBiquatricBezierSphereGraph();
-	virtual ~CGouraudLightingRationalBiquatricBezierSphereGraph();
-	CString GetTypeName() { return CString("CGouraudLightingRationalBiquatricBezierSphereGraph"); }
+	CGouraudBiquatricBezierSphereGraph();
+	virtual ~CGouraudBiquatricBezierSphereGraph();
+	CString GetTypeName() { return CString("CGouraudBiquatricBezierSphereGraph"); }
 	
 protected:
-	CGouraudZBufferRationalBiquatricBezierSphere sphere;//球体对象
+	CGouraudZBufferBiquatricBezierSphere sphere;//球体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景	
@@ -80,4 +80,4 @@ private:
 	CLogFile m_objLogFile;
 };
 
-#endif // !defined(AFX_GOURAUD_LIGHTING_RATIONALBIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)
+#endif // !defined(AFX_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

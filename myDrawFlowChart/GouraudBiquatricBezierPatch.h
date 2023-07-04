@@ -1,5 +1,5 @@
-#if !defined(AFX_GOURAUD_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_)
-#define AFX_GOURAUD_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_
+#if !defined(AFX_GOURAUD_BIQUATRICBEZIER_PATCH_H_)
+#define AFX_GOURAUD_BIQUATRICBEZIER_PATCH_H_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -10,11 +10,11 @@
 #include"ZBuffer.h"
 #include "LightingScene.h"
 
-class CGouraudLightingRationalBiquatricBezierPatch//有理双二次Bezier曲面片类
+class CGouraudBiquatricBezierPatch//有理双二次Bezier曲面片类
 {
 public:
-	CGouraudLightingRationalBiquatricBezierPatch(void);
-	virtual ~CGouraudLightingRationalBiquatricBezierPatch(void);
+	CGouraudBiquatricBezierPatch(void);
+	virtual ~CGouraudBiquatricBezierPatch(void);
 	void ReadControlPoint(CColorP3 P[3][3]);//读入9个控制点
 	void ReadWeight(double W[3][3]);//读入9个权因子
 	void SetLightingScene(CLightingScene* pScene);//设置光照场景
@@ -35,4 +35,4 @@ public:
 	CLightingScene* pScene;//光照
 };
 
-#endif // !defined(AFX_GOURAUD_LIGHTING_RATIONAL_BIQUATRICBEZIER_PATCH_H_)
+#endif // !defined(AFX_GOURAUD_BIQUATRICBEZIER_PATCH_H_)

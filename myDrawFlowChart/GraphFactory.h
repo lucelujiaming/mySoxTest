@@ -73,6 +73,7 @@ public:
 	CGraph* CreateGouraudBiquatricBezierSphereGraph();
 	CGraph* CreatePhongBiquatricBezierSphereGraph();
 	CGraph* CreateTextureCubeGraph();
+	CGraph* CreateTextureSphereGraph();
 };
 
 #endif // !defined(AFX_GRAPHFACTORY_H__83A9A336_3155_4360_ACD5_39ABFFB9442A__INCLUDED_)

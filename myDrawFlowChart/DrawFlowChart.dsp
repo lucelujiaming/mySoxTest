@@ -549,6 +549,18 @@ SOURCE=.\TextureFace.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TexturelBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureSphere.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TextureZBuffer.cpp
 # End Source File
 # Begin Source File
@@ -1038,6 +1050,18 @@ SOURCE=.\TextureCubeGraph.h
 # Begin Source File
 
 SOURCE=.\TextureFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TexturelBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureSphere.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureSphereGraph.h
 # End Source File
 # Begin Source File
 

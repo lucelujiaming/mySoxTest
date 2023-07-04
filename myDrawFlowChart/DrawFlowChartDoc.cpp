@@ -323,6 +323,10 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateTextureCubeGraph(), child);
                 }
+				else if(strcmp(child->string, "CTextureSphereGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateTextureSphereGraph(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

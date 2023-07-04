@@ -77,6 +77,7 @@ IDR_DRAWFLTYPE          ICON    DISCARDABLE     "res\\DrawFlowChartDoc.ico"
 
 IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
 IDR_TOOLBAR_GRAPHICS    BITMAP  DISCARDABLE     "res\\graphics.bmp"
+IDB_TEXTURE_BITMAP      BITMAP  DISCARDABLE     "res\\texture.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -545,8 +546,7 @@ BEGIN
                             "使用Gouraud明暗处理算法绘制双二次Bezier曲面球\nGouraud算法绘制的双二次Bezier曲面球"
     ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH 
                             "使用Phong算法绘制双二次Bezier曲面球\nPhong算法绘制的双二次Bezier曲面球"
-    ID_TOOLBAR_TEXTURE_CUBE_GRAPH 
-                            "使用图像纹理映射算法立方体\n图像纹理立方体"
+    ID_TOOLBAR_TEXTURE_CUBE_GRAPH "使用图像纹理映射算法立方体\n图像纹理立方体"
 END
 
 #endif    // Chinese (P.R.C.) resources

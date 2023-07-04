@@ -14,7 +14,6 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -34,13 +33,16 @@ CTextureCubeGraph::CTextureCubeGraph()
 		m_Points.push_back(connPoint);
 	}
 
-	sphere.ReadVertex();
-	sphere.ReadFace();
-	double nScale = 30;
-	transform.SetMatrix(sphere.Ver, 26);
+	cube.ReadVertex();
+	cube.ReadFace();
+	double nScale = 500;
+	transform.SetMatrix(cube.V, 8);
 	transform.Scale(nScale, nScale, nScale);
+	transform.Translate(-nScale / 2, -nScale / 2, -nScale / 2);
 	InitializeLightingScene();//初始化光照场景
-	sphere.bezier.SetLightingScene(pScene);//设置光照场景
+	cube.SetLightingScene(pScene);//设置光照场景
+	texture.ReadBitmap(IDB_TEXTURE_BITMAP);//准备位图
+	cube.SetTexture(&texture);
 }
 
 CTextureCubeGraph::~CTextureCubeGraph()
@@ -74,9 +76,9 @@ void CTextureCubeGraph::DoubleBuffer(CDC* pDC)
 void CTextureCubeGraph::DrawObject(CDC* pDC)//绘制图形
 {
 	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
-	CVector3ZBuffer* pZBuffer = new CVector3ZBuffer;//申请内存
+	CTextureZBuffer* pZBuffer = new CTextureZBuffer;//申请内存
 	pZBuffer->InitialDepthBuffer(10000 + iAppendDepth, 10000 + iAppendDepth, 10000 + iAppendDepth);//初始化深度缓冲器
-	sphere.Draw(pDC, pZBuffer);
+	cube.Draw(pDC, pZBuffer);
 	delete pZBuffer;//释放内存
 }
 

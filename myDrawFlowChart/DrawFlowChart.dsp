@@ -529,7 +529,27 @@ SOURCE=.\StdAfx.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Texture.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCoordinate.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCube.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TextureCubeGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureFace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureZBuffer.cpp
 # End Source File
 # Begin Source File
 
@@ -1001,7 +1021,27 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Texture.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCoordinate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureCube.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TextureCubeGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextureZBuffer.h
 # End Source File
 # Begin Source File
 
@@ -1058,6 +1098,10 @@ SOURCE=.\res\DrawFlowChartDoc.ico
 # Begin Source File
 
 SOURCE=.\res\graphics.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\texture.bmp
 # End Source File
 # Begin Source File
 

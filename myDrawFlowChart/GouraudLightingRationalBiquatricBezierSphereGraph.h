@@ -12,7 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "GouraudZBufferBicubicBezierSphere.h"
+#include "GouraudZBufferRationalBiquatricBezierSphere.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
@@ -27,7 +27,7 @@ public:
 	CString GetTypeName() { return CString("CGouraudLightingRationalBiquatricBezierSphereGraph"); }
 	
 protected:
-	CGouraudZBufferBicubicBezierSphere sphere;//球体对象
+	CGouraudZBufferRationalBiquatricBezierSphere sphere;//球体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景	

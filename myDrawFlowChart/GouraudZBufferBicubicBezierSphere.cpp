@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "ZBufferBicubicBezierSphere.h"
+#include "GouraudZBufferBicubicBezierSphere.h"
 
-CZBufferBicubicBezierSphere::CZBufferBicubicBezierSphere(void)
+CGouraudZBufferBicubicBezierSphere::CGouraudZBufferBicubicBezierSphere(void)
 {
 
 }
 
-CZBufferBicubicBezierSphere::~CZBufferBicubicBezierSphere(void)
+CGouraudZBufferBicubicBezierSphere::~CGouraudZBufferBicubicBezierSphere(void)
 {
 
 }
 
-void CZBufferBicubicBezierSphere::ReadVertex(void)//读入点表
+void CGouraudZBufferBicubicBezierSphere::ReadVertex(void)//读入点表
 {
 	const double m = 0.5523;//魔术常数
 	//第1卦限控制点
@@ -86,7 +86,7 @@ void CZBufferBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[61].x = 0.0, Ver[61].y = -1.0, Ver[61].z = 0;
 }
 
-void CZBufferBicubicBezierSphere::ReadFace(void)//读入曲面表
+void CGouraudZBufferBicubicBezierSphere::ReadFace(void)//读入曲面表
 {
 	//第1卦限面片
 	Pat[0].ptIndex[0] = 3, Pat[0].ptIndex[1] = 6, Pat[0].ptIndex[2] = 9, Pat[0].ptIndex[3] = 12;
@@ -130,7 +130,7 @@ void CZBufferBicubicBezierSphere::ReadFace(void)//读入曲面表
 	Pat[7].ptIndex[12] = 30, Pat[7].ptIndex[13] = 33, Pat[7].ptIndex[14] = 36, Pat[7].ptIndex[15] = 3;
 }
 
-void CZBufferBicubicBezierSphere::Draw(CDC* pDC, CZBuffer* pZBuffer)//绘制图形
+void CGouraudZBufferBicubicBezierSphere::Draw(CDC* pDC, CZBuffer* pZBuffer)//绘制图形
 {
 	CColorP3 P[4][4]; // 一片曲面的控制点
 	for(int nPatch = 0; nPatch < 8; nPatch++)

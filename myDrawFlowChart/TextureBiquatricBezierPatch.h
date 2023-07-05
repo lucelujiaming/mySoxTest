@@ -11,11 +11,11 @@
 #include "LightingScene.h"
 #include "Texture.h"
 
-class CTexturelBiquatricBezierPatch//有理双二次Bezier曲面片类
+class CTextureBiquatricBezierPatch//有理双二次Bezier曲面片类
 {
 public:
-	CTexturelBiquatricBezierPatch(void);
-	virtual ~CTexturelBiquatricBezierPatch(void);
+	CTextureBiquatricBezierPatch(void);
+	virtual ~CTextureBiquatricBezierPatch(void);
 	void ReadControlPoint(CColorP3 P[3][3]);//读入9个控制点
 	void ReadWeight(double W[3][3]);//读入9个权因子
 	void SetLightingScene(CLightingScene* pScene);//设置光照场景

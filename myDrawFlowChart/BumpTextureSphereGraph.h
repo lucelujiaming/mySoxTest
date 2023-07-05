@@ -12,7 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "TextureSphere.h"
+#include "BumpTextureSphere.h"
 #include "Vector3ZBuffer.h"
 #include "ColorTransform3.h"
 #include "projection.h"
@@ -28,7 +28,7 @@ public:
 	CString GetTypeName() { return CString("CBumpTextureSphereGraph"); }
 	
 protected:
-	CTextureSphere sphere;//立方体对象
+	CBumpTextureSphere sphere;//立方体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景

@@ -6,7 +6,10 @@
 #define IDR_MAINFRAME                   128
 #define IDR_DRAWFLTYPE                  129
 #define IDR_TOOLBAR_GRAPHICS            136
-#define IDB_TEXTURE_BITMAP              138
+#define IDB_LANDSCAPE_BITMAP            138
+#define IDB_BEAR_BITMAP                 139
+#define IDB_BUMPTEXTURE_BITMAP          140
+#define IDB_WORLD_BITMAP                141
 #define ID_RECTANGLE                    32771
 #define ID_ELLIPSE                      32772
 #define ID_DIAMOND                      32773
@@ -89,7 +92,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        139
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32890
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101

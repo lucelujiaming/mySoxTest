@@ -95,7 +95,7 @@ void SabReader::setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer, unsign
 	*cBuffer += 4;
 }
 
-void SabReader::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned long uValue)
+void SabReader::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned _int64 uValue)
 {
 	if (m_bBigEndian)
 	{
@@ -456,6 +456,8 @@ bool SabReader::decodeAndSkipOnePropFromBuf(unsigned char ** cBuf, SAB_PROP_VALU
 bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configProps,
 						 int         iFpBix,      bool isStr)
 {
+	int uRetConvert = 0;
+	unsigned _int64  ullRetConvert = 0;
 	int slotTypeID = getSlotTypeIDbyMagicSlotType(iFpBix);
     // switch (iFpBix)
 	switch (slotTypeID)
@@ -477,23 +479,29 @@ bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configP
 		break;
 	// case MAGIC_SLOT_TYPE_INT	:
 	case SLOT_TYPEID_INTID	:
-		memcpy(*cBuf, (char *)(&configProps.uRet), sizeof(int));
+		// memcpy(*cBuf, (char *)(&configProps.uRet), sizeof(int));
+		setAndSkipUnsignedIntValueToBuf(cBuf, configProps.uRet);
 		*cBuf += sizeof(int);
 		break;
 	// case MAGIC_SLOT_TYPE_LONG	:
 	case SLOT_TYPEID_LONGID	:
-		memcpy(*cBuf, (char *)(&configProps.ulRet), sizeof(long));
+		// memcpy(*cBuf, (char *)(&configProps.ulRet), sizeof(long));
+		setAndSkipUnsignedIntValueToBuf(cBuf, configProps.ulRet);
 		*cBuf += sizeof(long);
 		break;
 	// case MAGIC_SLOT_TYPE_FLOAT	:
 	case SLOT_TYPEID_FLOATID	:
-		memcpy(*cBuf, (char *)(&configProps.ufRet), sizeof(int));
+		memcpy(&uRetConvert, (char *)(&configProps.ufRet), sizeof(int));
+		// memcpy(*cBuf, (char *)(&configProps.ufRet), sizeof(int));
+		setAndSkipUnsignedIntValueToBuf(cBuf, uRetConvert);
 		*cBuf += sizeof(int);
 		break;
 	// case MAGIC_SLOT_TYPE_DOUBLE	:
 	case SLOT_TYPEID_DOUBLEID	:
-		memcpy(*cBuf, (char *)(&configProps.udRet), sizeof(long));
-		*cBuf += sizeof(long);
+		memcpy(&ullRetConvert, (char *)(&configProps.udRet), sizeof(ullRetConvert));
+		// memcpy(*cBuf, (char *)(&configProps.udRet), sizeof(long));
+		setAndSkipUnsignedIntValueToBuf(cBuf, ullRetConvert);
+		*cBuf += sizeof(_int64);
 		break;
 	// case MAGIC_SLOT_TYPE_BUF	:
 	case SLOT_TYPEID_BUFID	:
@@ -504,7 +512,7 @@ bool SabReader::encodeOnePropToBuf(unsigned char ** cBuf, SAB_PROP_VALUE configP
 	// case MAGIC_SLOT_TYPE_BYTE	:
 	case SLOT_TYPEID_BYTEID	:
 		memcpy(*cBuf, (char *)(&configProps.cByte), 1);
-		*cBuf ++;
+		*cBuf++;
 		break;
 	// case MAGIC_SLOT_TYPE_SHORT	:
 	case SLOT_TYPEID_SHORTID	:

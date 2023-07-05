@@ -52,6 +52,7 @@ typedef struct _SAB_COMP_INFO
 
 typedef struct _SAB_PROP_VALUE
 {
+	unsigned int        propId;
 	unsigned int        propType;
 	unsigned int        uBufLen ;
 	union {
@@ -162,7 +163,7 @@ private:
 	
 	void setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue);
 	void setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer,   unsigned int uValue);
-	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned long uValue);
+	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned _int64 uValue);
 	
 private:
 	FileReader         m_objFileReader;

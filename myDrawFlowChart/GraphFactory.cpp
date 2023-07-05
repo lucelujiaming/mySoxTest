@@ -63,6 +63,7 @@
 #include "TextureSphereGraph.h"
 #include "BumpTextureSphereGraph.h"
 #include "AntiAliasedBumpTextureSphereGraph.h"
+#include "ObjFileCubeGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -361,6 +362,16 @@ CGraph* CGraphFactory::CreateBumpTextureSphereGraph()
 }
 
 CGraph* CGraphFactory::CreateAntiAliasedBumpTextureSphereGraph()
+{
+	return new CAntiAliasedBumpTextureSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateObjFileCubeGraph()
+{
+	return new CObjFileCubeGraph();
+}
+
+CGraph* CGraphFactory::CreateObjFileTeapotGraph()
 {
 	return new CAntiAliasedBumpTextureSphereGraph();
 }

@@ -164,6 +164,8 @@ protected:
 	afx_msg void OnToolbarTextureSphereGraph();
 	afx_msg void OnToolbarBumpTextureSphereGraph();
 	afx_msg void OnToolbarAntiAliasedBumpTextureSphereGraph();
+	afx_msg void OnToolbarObjFileCubeGraph();
+	afx_msg void OnToolbarObjFileTeapotGraph();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -198,6 +200,8 @@ protected:
 	afx_msg void OnCreateTextureSphereGraph();
 	afx_msg void OnCreateBumpTextureSphereGraph();
 	afx_msg void OnCreateAntiAliasedBumpTextureSphereGraph();
+	afx_msg void OnCreateObjFileCubeGraph();
+	afx_msg void OnCreateObjFileTeapotGraph();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

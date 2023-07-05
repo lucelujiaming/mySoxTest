@@ -64,6 +64,7 @@
 #include "BumpTextureSphereGraph.h"
 #include "AntiAliasedBumpTextureSphereGraph.h"
 #include "ObjFileCubeGraph.h"
+#include "ObjFileTeapotGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -373,7 +374,7 @@ CGraph* CGraphFactory::CreateObjFileCubeGraph()
 
 CGraph* CGraphFactory::CreateObjFileTeapotGraph()
 {
-	return new CAntiAliasedBumpTextureSphereGraph();
+	return new CObjFileTeapotGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

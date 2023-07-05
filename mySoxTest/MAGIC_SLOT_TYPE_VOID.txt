@@ -1,0 +1,13 @@
+//	#define MAGIC_SLOT_TYPE_VOID			0x02DB // 0b001011011011  // From AbstractBase::doAbstract       0x0310   0b001100010000
+//	#define MAGIC_SLOT_TYPE_BOOL			0x02DD // 0b001011011101  // From AbstractBase::doBool           0x0312   0b
+//	#define MAGIC_SLOT_TYPE_BYTE			0x02DF // 0b001011011111  // From SoxService::receiveMax         0x0314   0b
+//	#define MAGIC_SLOT_TYPE_SHORT			0x02E1 // 0b  // From SoxService::eventsPerSec       0x0316    0b
+//	#define MAGIC_SLOT_TYPE_INT			    0x02E3 // 0b  // From AbstractBase::doInt            0x0318    0b
+//	#define MAGIC_SLOT_TYPE_LONG			0x02E5 // 0b  // From AbstractBase::doLong           0x031A    0b
+//	#define MAGIC_SLOT_TYPE_FLOAT			0x02E7 // 0b  // From AbstractBase::doFloat          0x031C    0b
+//	#define MAGIC_SLOT_TYPE_DOUBLE			0x02E9 // 0b  // From AbstractBase::doDouble         0x031E    0b
+//	#define MAGIC_SLOT_TYPE_BUF			    0x055F // 0b  // From AbstractBase::doBuf            0x05BD    0b
+
+
+0b001011011011
+0b001100010000

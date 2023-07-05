@@ -298,7 +298,7 @@ public:
 	bool           m_bBigEndian;
 	void setAndSkipUnsignedShortValueToBuf(unsigned char ** cBuffer, unsigned short uValue);
 	void setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer,   unsigned int uValue);
-	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned long uValue);
+	void setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer,  unsigned _int64 uValue);
 
 	unsigned short calcAndSkipUnsignedShortValue(unsigned char ** cBuffer);
 	unsigned int   calcAndSkipUnsignedIntValue(unsigned char ** cBuffer);

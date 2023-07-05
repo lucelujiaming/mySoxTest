@@ -52,7 +52,7 @@ void CSoxMsg::setAndSkipUnsignedIntValueToBuf(unsigned char ** cBuffer, unsigned
 	*cBuffer += 4;
 }
 
-void CSoxMsg::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned long uValue)
+void CSoxMsg::setAndSkipUnsignedLongValueToBuf(unsigned char ** cBuffer, unsigned _int64 uValue)
 {
 	if (m_bBigEndian)
 	{

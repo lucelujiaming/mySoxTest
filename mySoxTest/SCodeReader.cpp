@@ -335,7 +335,7 @@ void SCodeReader::printSCodeKits()
 		for (int j=0; j < m_scode_kit_list[i].typesLen; j++)
 		{
 			printf("\t SCode::kit[%d].type[%d].(id, slotsLen, nameBix, cName, kitBix, baseBix, size, initBix) "
-				"  = (%02d, %02d, %02d, %s, %d, %d, %04X) \r\n", i, j, 
+				"  = (%02d, %02d, %02d, %s, %d, %d, %04X, %d) \r\n", i, j, 
 				m_scode_kit_list[i].kit_type_list[j].id, 
 				m_scode_kit_list[i].kit_type_list[j].slotsLen,
 				m_scode_kit_list[i].kit_type_list[j].nameBix,
@@ -975,9 +975,9 @@ void SCodeReader::parseKit(SCODE_KIT& objScodeKit, unsigned int bi)
     objScodeKit.id       = m_cFileBufPtr[0];
     objScodeKit.typesLen = m_cFileBufPtr[1];
 	m_cFileBufPtr += 2;
-	short sNameLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+	unsigned int sNameLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     parseStr(objScodeKit.cName, sNameLen);
-	short sVerLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
+	unsigned int  sVerLen  = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     parseStr(objScodeKit.cVer, sVerLen);
     objScodeKit.pad      = calcAndSkipUnsignedShortValue(&m_cFileBufPtr);
     objScodeKit.checksum        = calcAndSkipUnsignedIntValue(&m_cFileBufPtr);

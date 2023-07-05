@@ -1,0 +1,73 @@
+  <kit name="sys" checksum="82791acf" />
+  <kit name="BacNet" checksum="f82f54c3" />
+  <kit name="BitLogic" checksum="08f49dc2" />
+  <kit name="Compare" checksum="12b0b2a0" />
+  <kit name="Convert" checksum="2e912cff" />
+  <kit name="Math" checksum="bb067daf" />
+  <kit name="ModBus" checksum="8ebaf58b" />
+  <kit name="Other" checksum="cac8e575" />
+  <kit name="PID" checksum="b2629dbe" />
+  <kit name="Schedule" checksum="f1dcee26" />
+  <kit name="Timer" checksum="5703682d" />
+  <kit name="Variable" checksum="7d9f1047" />
+  <kit name="WordOpr" checksum="1bfc4cc9" />
+  <kit name="inet" checksum="25648ba7" />
+  <kit name="platform" checksum="b8bbb7d8" />
+  <kit name="sox" checksum="397a84dd" />
+
+  
+Invoke an action on a component. 
+  setSysDate
+0000   29 00 ae d0 61 25 83 40 69 00 00 05 08 00 00 00  )...a%.@i.......
+0010   00 00 12 d6 87                                   .....
+
+Invoke an action on a component. 
+  setSysTime
+0000   29 00 ae d8 61 25 85 1b 69 00 00 05 09 00 00 00  )...a%..i.......
+0010   00 00 00 d4 31                                   ....1
+
+Reorder a component's child components.
+0000   29 00 ae f1 61 25 96 0e 6f 00 00 07 06 00 0a 00  )...a%..o.......
+0010   0b 00 0d 00 0c 00 10 00 11                       .........
+
+0000   f2 00 1c b2 61 25 1c af 72 69 00 0b 01           ....a%..ri...
+0000   12 34 25 5a 62 25 1e f1 2b 01 09 52 f4 00 0b 01  .4%Zb%..+..R....
+0010   04 00 00 00 00                                   .....
+52 f4 00 
+0b 01 04 00 00 00 00
+
+0000   31 00 14 a4 61 25 14 a1 72 e6 00 0b 02           1...a%..r....
+
+
+-	objTmp	{...}
+	id	0x00000001
+	rtFlags	0x00000000
+	nameBix	0x0000578c
++	cPropName	0x00fdfd4c "status"
+	fpBix	0x000002e3
+	codeBix	0x00000024
++	objTmp.cPropName	0x00fdfd4c "status"
++	this	0x0019ead8
+
+
+0000   12 34 5c ff 62 25 0e 87 2b 01 09 59 38 78 75 6e  .4\.b%..+..Y8xun
+0010   67 61 6f 61 75 74 6f 2d 30 2e 31 2e 30 00 02 30  gaoauto-0.1.0..0
+0020   2e 31 2e 30 00 30 2e 31 2e 30 00 30 2e 31 2e 30  .1.0.0.1.0.0.1.0
+0030   00 30 2e 31 2e 30 00 30 2e 31 2e 30 00 30 2e 31  .0.1.0.0.1.0.0.1
+0040   2e 30 00 30 2e 31 2e 30 00 30 2e 31 2e 30 00 30  .0.0.1.0.0.1.0.0
+0050   2e 31 2e 30 00 30 2e 31 2e 30 00 30 2e 31 2e 30  .1.0.0.1.0.0.1.0
+0060   00 30 2e 31 2e 30 00 30 2e 31 2e 30 00 30 2e 31  .0.1.0.0.1.0.0.1
+0070   2e 30 00 30 2e 31 2e 30 00 30 2e 31 2e 30 00 01  .0.0.1.0.0.1.0..
+0080   73 6f 78 56 65 72 00 31 2e 31 00                 soxVer.1.1.
+
+
+0000   12 34 62 c2 62 25 10 66 2b 01 09 51 a9 ff ff     .4b.b%.f+..Q...
+
+0000   12 34 d7 9f 62 25 15 7d 2b 01 09 51 01 ff ff     .4..b%.}+..Q...
+
+
+2022/01/13 周报：
+sab文件读取：已完成。
+scode文件读取：已完成。
+DASP协议实现：已完成。
+SOX协议实现：50%。

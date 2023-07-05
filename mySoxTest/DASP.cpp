@@ -136,6 +136,18 @@ int CDASP::initializeSocket()
 	client_in.sin_port = htons(1876);
 
 	int iRet = connect(m_clientSocket, (SOCKADDR*)&client_in, sizeof(SOCKADDR));
+	struct timeval tv;
+	tv.tv_sec = 60000;
+	tv.tv_usec = 0;
+	int optlen = sizeof(struct timeval);
+
+	if (setsockopt(m_clientSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, optlen) ==
+		SOCKET_ERROR)
+	{
+		close();
+		return 0;
+	}
+
 	return 1;
 }
 

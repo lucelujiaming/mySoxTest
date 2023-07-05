@@ -61,6 +61,8 @@
 #include "PhongBiquatricBezierSphereGraph.h"
 #include "TextureCubeGraph.h"
 #include "TextureSphereGraph.h"
+#include "BumpTextureSphereGraph.h"
+#include "AntiAliasedBumpTextureSphereGraph.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -351,6 +353,16 @@ CGraph* CGraphFactory::CreateTextureCubeGraph()
 CGraph* CGraphFactory::CreateTextureSphereGraph()
 {
 	return new CTextureSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateBumpTextureSphereGraph()
+{
+	return new CBumpTextureSphereGraph();
+}
+
+CGraph* CGraphFactory::CreateAntiAliasedBumpTextureSphereGraph()
+{
+	return new CAntiAliasedBumpTextureSphereGraph();
 }
 
 CGraph* CGraphFactory::CreateMiddleCircle()

@@ -98,6 +98,10 @@ SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AntiAliasedBumpTextureSphereGraph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ArbitraryRotateCube.cpp
 # End Source File
 # Begin Source File
@@ -151,6 +155,10 @@ SOURCE=.\BucketTable.cpp
 # Begin Source File
 
 SOURCE=.\BucketTableFill.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureSphereGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -613,6 +621,10 @@ SOURCE=.\AdjustPoint.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\AntiAliasedBumpTextureSphereGraph.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ArbitraryRotateCube.h
 # End Source File
 # Begin Source File
@@ -666,6 +678,10 @@ SOURCE=.\BucketTable.h
 # Begin Source File
 
 SOURCE=.\BucketTableFill.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureSphereGraph.h
 # End Source File
 # Begin Source File
 

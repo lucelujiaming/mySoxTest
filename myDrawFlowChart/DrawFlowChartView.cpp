@@ -127,6 +127,10 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 								OnToolbarTextureCubeGraph)
 	ON_COMMAND(ID_TOOLBAR_TEXTURE_SPHERE_GRAPH, 
 								OnToolbarTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_BUMP_TEXTURE_SPHERE_GRAPH, 
+								OnToolbarBumpTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH, 
+								OnToolbarAntiAliasedBumpTextureSphereGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1720,6 +1724,42 @@ void CDrawFlowChartView::OnCreateTextureSphereGraph()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateTextureSphereGraph());
 }
 
+void CDrawFlowChartView::OnCreateBumpTextureSphereGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateBumpTextureSphereGraph());
+}
+
+void CDrawFlowChartView::OnCreateAntiAliasedBumpTextureSphereGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateAntiAliasedBumpTextureSphereGraph());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -2097,6 +2137,18 @@ void CDrawFlowChartView::OnToolbarTextureSphereGraph()
 {
 	// TODO: Add your command handler code here
 	OnCreateTextureSphereGraph();
+}
+
+void CDrawFlowChartView::OnToolbarBumpTextureSphereGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateBumpTextureSphereGraph();
+}
+
+void CDrawFlowChartView::OnToolbarAntiAliasedBumpTextureSphereGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateAntiAliasedBumpTextureSphereGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

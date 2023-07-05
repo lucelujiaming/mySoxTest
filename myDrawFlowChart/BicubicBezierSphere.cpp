@@ -14,7 +14,7 @@ CBicubicBezierSphere::~CBicubicBezierSphere(void)
 void CBicubicBezierSphere::ReadVertex(void)//读入点表
 {
 	const double m = 0.5523;//魔术常数
-	//第1卦限控制点
+	// 第1卦限控制点。共需13个控制点（北极点有4个重点）。只有三个位于曲面上。
 	Ver[0].x = 0.0,		Ver[0].y = 1.0,		Ver[0].z = 0.0;
 	Ver[1].x = 0.0,		Ver[1].y = 1.0,		Ver[1].z = m;
 	Ver[2].x = 0.0,		Ver[2].y = m,		Ver[2].z = 1.0;
@@ -28,7 +28,7 @@ void CBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[10].x = m,		Ver[10].y = 1.0,	Ver[10].z = 0.0;
 	Ver[11].x = 1.0,	Ver[11].y = m,		Ver[11].z = 0.0;
 	Ver[12].x = 1.0,	Ver[12].y = 0.0,	Ver[12].z = 0.0;
-	//第2卦限控制点
+	//第2卦限控制点。共需9个控制点。
 	Ver[13].x = m,		Ver[13].y = 1.0,	Ver[13].z = -m * m;
 	Ver[14].x = 1.0,	Ver[14].y = m,		Ver[14].z = -m;
 	Ver[15].x = 1.0,	Ver[15].y = 0.0,	Ver[15].z = -m;
@@ -38,7 +38,7 @@ void CBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[19].x = 0.0,	Ver[19].y = 1.0,	Ver[19].z = -m;
 	Ver[20].x = 0.0,	Ver[20].y = m,		Ver[20].z = -1.0;
 	Ver[21].x = 0.0,	Ver[21].y = 0.0,	Ver[21].z = -1.0;
-	//第3卦限控制点
+	//第3卦限控制点。共需9个控制点
 	Ver[22].x =-m * m,	Ver[22].y = 1.0,	Ver[22].z = -m;
 	Ver[23].x =-m,		Ver[23].y = m,		Ver[23].z = -1.0;
 	Ver[24].x =-m,		Ver[24].y = 0.0,	Ver[24].z = -1.0;
@@ -48,14 +48,14 @@ void CBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[28].x =-m,		Ver[28].y = 1.0,	Ver[28].z = 0.0;
 	Ver[29].x = -1.0,	Ver[29].y = m,		Ver[29].z = 0.0;
 	Ver[30].x = -1.0,	Ver[30].y = 0.0,	Ver[30].z = 0.0;
-	//第4卦限控制点
+	//第4卦限控制点。共需9个控制点
 	Ver[31].x =-m,		Ver[31].y = 1.0,	Ver[31].z = m * m;
 	Ver[32].x = -1.0,	Ver[32].y = m,		Ver[32].z = m;
 	Ver[33].x = -1.0,	Ver[33].y = 0.0,	Ver[33].z = m;
 	Ver[34].x =-m * m,	Ver[34].y = 1.0,	Ver[34].z = m;
 	Ver[35].x =-m,		Ver[35].y = m,		Ver[35].z = 1.0;
 	Ver[36].x =-m,		Ver[36].y = 0.0,	Ver[36].z = 1.0;
-	//第5卦限控制点
+	//第5卦限控制点。共需9个控制点
 	Ver[37].x = 0.0,	Ver[37].y =-m,		Ver[37].z = 1.0;
 	Ver[38].x = 0.0,	Ver[38].y = -1.0,	Ver[38].z = m;
 	Ver[39].x = m,		Ver[39].y =-m,		Ver[39].z = 1.0;
@@ -64,21 +64,21 @@ void CBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[42].x = m,		Ver[42].y = -1.0,	Ver[42].z = m * m;
 	Ver[43].x =  1.0,	Ver[43].y =-m,		Ver[43].z = 0.0;
 	Ver[44].x = m,		Ver[44].y = -1.0,	Ver[44].z = 0.0;
-	//第6卦限控制点
+	//第6卦限控制点。共需6个控制点
 	Ver[45].x = 1.0,	Ver[45].y =-m,		Ver[45].z =-m;
 	Ver[46].x = m,		Ver[46].y = -1.0,	Ver[46].z =-m * m;
 	Ver[47].x = m,		Ver[47].y =-m,		Ver[47].z = -1.0;
 	Ver[48].x = m * m,	Ver[48].y = -1.0,	Ver[48].z = -m;
 	Ver[49].x =  0.0,	Ver[49].y =-m,		Ver[49].z = -1.0;
 	Ver[50].x =  0.0,	Ver[50].y = -1.0,	Ver[50].z = -m;
-	//第7卦限控制点
+	//第7卦限控制点。共需6个控制点
 	Ver[51].x =-m,		Ver[51].y =-m,		Ver[51].z = -1.0;
 	Ver[52].x =-m * m,	Ver[52].y = -1.0,	Ver[52].z = -m;
 	Ver[53].x = -1.0,	Ver[53].y =-m,		Ver[53].z = -m;
 	Ver[54].x =-m,		Ver[54].y = -1.0,	Ver[54].z =-m * m;
 	Ver[55].x = -1.0,	Ver[55].y =-m,		Ver[55].z = -0.0;
 	Ver[56].x =-m,		Ver[56].y = -1.0,	Ver[56].z = -0.0;
-	//第8卦限控制点
+	//第8卦限控制点。共需5个控制点
 	Ver[57].x = -1.0,	Ver[57].y =-m,		Ver[57].z = m;
 	Ver[58].x =-m,		Ver[58].y = -1.0,	Ver[58].z = m * m;
 	Ver[59].x =-m,		Ver[59].y =-m,		Ver[59].z =  1.0;

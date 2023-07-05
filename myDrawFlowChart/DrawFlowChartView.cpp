@@ -131,6 +131,10 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 								OnToolbarBumpTextureSphereGraph)
 	ON_COMMAND(ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH, 
 								OnToolbarAntiAliasedBumpTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_CUBE_GRAPH, 
+								OnToolbarObjFileCubeGraph)
+	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_TEAPOT_GRAPH, 
+								OnToolbarObjFileTeapotGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -1760,6 +1764,42 @@ void CDrawFlowChartView::OnCreateAntiAliasedBumpTextureSphereGraph()
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateAntiAliasedBumpTextureSphereGraph());
 }
 
+void CDrawFlowChartView::OnCreateObjFileCubeGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateObjFileCubeGraph());
+}
+
+void CDrawFlowChartView::OnCreateObjFileTeapotGraph() 
+{
+	CDrawFlowChartDoc* pDoc = GetDocument();
+	// TODO: Add your command handler code here
+	if(m_OperateType != CREATE)
+	{
+		m_OperateType = CREATE;
+	}
+	else
+	{
+		pDoc->m_GraphManager.DeleteFocusGraph();
+	}
+
+	m_IsControlFlow = false;
+	//CGraph* newGraph = pDoc->m_GraphManager.CreateGraph( CGraphManager.Ellipse );
+	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateObjFileTeapotGraph());
+}
+
 void CDrawFlowChartView::OnCreateArbitraryRotateCube() 
 {
 	CDrawFlowChartDoc* pDoc = GetDocument();
@@ -2149,6 +2189,18 @@ void CDrawFlowChartView::OnToolbarAntiAliasedBumpTextureSphereGraph()
 {
 	// TODO: Add your command handler code here
 	OnCreateAntiAliasedBumpTextureSphereGraph();
+}
+
+void CDrawFlowChartView::OnToolbarObjFileCubeGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateObjFileCubeGraph();
+}
+
+void CDrawFlowChartView::OnToolbarObjFileTeapotGraph() 
+{
+	// TODO: Add your command handler code here
+	OnCreateObjFileTeapotGraph();
 }
 
 void CDrawFlowChartView::OnToolbarMiddleCircle() 

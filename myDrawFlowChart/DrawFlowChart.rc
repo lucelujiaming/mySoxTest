@@ -165,6 +165,8 @@ BEGIN
     BUTTON      ID_TOOLBAR_TEXTURE_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_BUMP_TEXTURE_SPHERE_GRAPH
     BUTTON      ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH
+    BUTTON      ID_TOOLBAR_OBJ_FILE_CUBE_GRAPH
+    BUTTON      ID_TOOLBAR_OBJ_FILE_TEAPOT_GRAPH
 END
 
 
@@ -560,6 +562,10 @@ BEGIN
                             "使用凹凸纹理映射算法绘制球体\n凹凸纹理球体"
     ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH 
                             "使用反走样凹凸纹理映射算法绘制球体\n反走样凹凸纹理球体"
+    ID_TOOLBAR_OBJ_FILE_CUBE_GRAPH 
+                            "使用OBJ文件绘制立方体\n基于OBJ文件的立方体"
+    ID_TOOLBAR_OBJ_FILE_TEAPOT_GRAPH 
+                            "使用OBJ文件绘制茶壶\n基于OBJ文件的茶壶"
 END
 
 #endif    // Chinese (P.R.C.) resources

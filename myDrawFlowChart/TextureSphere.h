@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "TexturelBiquatricBezierPatch.h"
+#include "TextureBiquatricBezierPatch.h"
 #include "Patch.h"
 #include "TextureZBuffer.h"
 
@@ -19,7 +19,7 @@ public:
 	void Draw(CDC* pDC, CTextureZBuffer* pZBuffer);//绘制图形
 public:
 	CColorP3 Ver[26];//球面二次控制点
-	CTexturelBiquatricBezierPatch bezier;//曲面片
+	CTextureBiquatricBezierPatch bezier;//曲面片
 private:
 	CPatch Pat[8];//球面曲面片数	
 };

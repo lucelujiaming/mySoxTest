@@ -13,7 +13,6 @@
 #include "AdjustPoint.h"
 #include "DepthFace.h"
 #include "TextureSphere.h"
-#include "Vector3ZBuffer.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"

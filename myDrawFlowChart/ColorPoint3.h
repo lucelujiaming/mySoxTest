@@ -12,6 +12,7 @@ class CColorPoint3 : public CColorPoint2
 public:
 	CColorPoint3(void);
 	CColorPoint3(int x, int y, double z);
+	CColorPoint3(int x, int y, double z, CVector3 n);
 	virtual ~CColorPoint3(void);
 public:
 	double z;

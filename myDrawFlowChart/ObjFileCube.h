@@ -7,9 +7,9 @@
 
 #include"P3.h"
 #include "Face.h"
-#include"Projection.h"
-#include"Vector3.h"
-#include"TextureCoordinate.h"
+#include "Projection.h"
+#include "Vector3.h"
+#include "TextureCoordinate.h"
 
 class CObjFileCube
 {

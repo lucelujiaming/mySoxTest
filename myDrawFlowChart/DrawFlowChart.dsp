@@ -98,7 +98,23 @@ SOURCE=.\AdjustPoint.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AntiAliasedBumpTexture.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureSphere.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\AntiAliasedBumpTextureSphereGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureZBuffer.cpp
 # End Source File
 # Begin Source File
 
@@ -267,6 +283,10 @@ SOURCE=.\DepthFace.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DepthLinearInterpZBuffer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.cpp
 # End Source File
 # Begin Source File
@@ -417,6 +437,26 @@ SOURCE=.\MiddleCircle.cpp
 # Begin Source File
 
 SOURCE=.\MidPointDividLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NormalRotation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileCube.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileCubeGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileTeapot.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileTeapotGraph.cpp
 # End Source File
 # Begin Source File
 
@@ -633,7 +673,23 @@ SOURCE=.\AdjustPoint.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\AntiAliasedBumpTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureSphere.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\AntiAliasedBumpTextureSphereGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AntiAliasedBumpTextureZBuffer.h
 # End Source File
 # Begin Source File
 
@@ -793,6 +849,10 @@ SOURCE=.\DepthFace.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DepthLinearInterpZBuffer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Diamond.h
 # End Source File
 # Begin Source File
@@ -938,6 +998,26 @@ SOURCE=.\MiddleCircle.h
 # Begin Source File
 
 SOURCE=.\MidPointDividLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NormalRotation.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileCube.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileCubeGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileTeapot.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjFileTeapotGraph.h
 # End Source File
 # Begin Source File
 

@@ -77,7 +77,10 @@ IDR_DRAWFLTYPE          ICON    DISCARDABLE     "res\\DrawFlowChartDoc.ico"
 
 IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
 IDR_TOOLBAR_GRAPHICS    BITMAP  DISCARDABLE     "res\\graphics.bmp"
-IDB_TEXTURE_BITMAP      BITMAP  DISCARDABLE     "res\\texture.bmp"
+IDB_LANDSCAPE_BITMAP    BITMAP  DISCARDABLE     "res\\landscape.bmp"
+IDB_BEAR_BITMAP         BITMAP  DISCARDABLE     "res\\bear.bmp"
+IDB_BUMPTEXTURE_BITMAP  BITMAP  DISCARDABLE     "res\\bumpTexture.bmp"
+IDB_WORLD_BITMAP        BITMAP  DISCARDABLE     "res\\world.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

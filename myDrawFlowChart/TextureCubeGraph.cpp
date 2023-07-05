@@ -41,7 +41,7 @@ CTextureCubeGraph::CTextureCubeGraph()
 	transform.Translate(-nScale / 2, -nScale / 2, -nScale / 2);
 	InitializeLightingScene();//初始化光照场景
 	cube.SetLightingScene(pScene);//设置光照场景
-	texture.ReadBitmap(IDB_TEXTURE_BITMAP);//准备位图
+	texture.ReadBitmap(IDB_LANDSCAPE_BITMAP);//准备位图
 	cube.SetTexture(&texture);
 }
 

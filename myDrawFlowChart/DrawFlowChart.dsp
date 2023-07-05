@@ -158,7 +158,19 @@ SOURCE=.\BucketTableFill.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BumpTextureBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureSphere.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\BumpTextureSphereGraph.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureZBuffer.cpp
 # End Source File
 # Begin Source File
 
@@ -541,6 +553,10 @@ SOURCE=.\Texture.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TextureBiquatricBezierPatch.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TextureCoordinate.cpp
 # End Source File
 # Begin Source File
@@ -554,10 +570,6 @@ SOURCE=.\TextureCubeGraph.cpp
 # Begin Source File
 
 SOURCE=.\TextureFace.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TexturelBiquatricBezierPatch.cpp
 # End Source File
 # Begin Source File
 
@@ -681,7 +693,19 @@ SOURCE=.\BucketTableFill.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BumpTextureBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureSphere.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\BumpTextureSphereGraph.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BumpTextureZBuffer.h
 # End Source File
 # Begin Source File
 
@@ -1053,6 +1077,10 @@ SOURCE=.\Texture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\TextureBiquatricBezierPatch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TextureCoordinate.h
 # End Source File
 # Begin Source File
@@ -1066,10 +1094,6 @@ SOURCE=.\TextureCubeGraph.h
 # Begin Source File
 
 SOURCE=.\TextureFace.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TexturelBiquatricBezierPatch.h
 # End Source File
 # Begin Source File
 
@@ -1125,6 +1149,14 @@ SOURCE=.\ZBufferCube.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=.\res\bear.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\bumpTexture.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\DrawFlowChart.ico
 # End Source File
 # Begin Source File
@@ -1146,6 +1178,10 @@ SOURCE=.\res\texture.bmp
 # Begin Source File
 
 SOURCE=.\res\Toolbar.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\world.bmp
 # End Source File
 # End Group
 # Begin Source File

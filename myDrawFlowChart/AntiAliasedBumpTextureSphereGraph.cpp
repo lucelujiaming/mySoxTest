@@ -38,9 +38,11 @@ CAntiAliasedBumpTextureSphereGraph::CAntiAliasedBumpTextureSphereGraph()
 	double nScale = 300;
 	transform.SetMatrix(sphere.Ver, 26);
 	transform.Scale(nScale, nScale, nScale);
+	transform.RotateY(-90);
+	texture.SetDestImage(nScale);//先放大，后读入位图
+	texture.ReadBitmap(IDB_WORLD_BITMAP);//读入位图
 	InitializeLightingScene();//初始化光照场景
 	sphere.bezier.SetLightingScene(pScene);//设置光照场景
-	texture.ReadBitmap(IDB_WORLD_BITMAP);//准备位图
 	sphere.bezier.SetTexture(&texture);
 }
 
@@ -75,7 +77,7 @@ void CAntiAliasedBumpTextureSphereGraph::DoubleBuffer(CDC* pDC)
 void CAntiAliasedBumpTextureSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
 	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
-	CTextureZBuffer* pZBuffer = new CTextureZBuffer;//申请内存
+	CAntiAliasedBumpTextureZBuffer* pZBuffer = new CAntiAliasedBumpTextureZBuffer;//申请内存
 	pZBuffer->InitialDepthBuffer(10000 + iAppendDepth, 10000 + iAppendDepth, 10000 + iAppendDepth);//初始化深度缓冲器
 	sphere.Draw(pDC, pZBuffer);
 	delete pZBuffer;//释放内存
@@ -86,11 +88,11 @@ void CAntiAliasedBumpTextureSphereGraph::InitializeLightingScene(void)//初始化光
 	//设置光源属性
 	nLightSourceNumber = 1;//光源个数
 	pScene = new CLightingScene(nLightSourceNumber);//一维光源动态数组
-	pScene->pLightSource[0].SetPosition(1000, 1000, 2000);//设置光源位置坐标
+	pScene->pLightSource[0].SetPosition(1000, 1000, 1000);//设置光源位置坐标
 	for (int i = 0; i < nLightSourceNumber; i++)
 	{
 		pScene->pLightSource[i].L_Diffuse = CRGB(1.0, 1.0, 1.0);//光源的漫反射颜色
-		pScene->pLightSource[i].L_Specular = CRGB(0.3, 0.3, 0.3);//光源镜面高光颜色
+		pScene->pLightSource[i].L_Specular = CRGB(0.5, 0.5, 0.5);//光源镜面高光颜色
 		pScene->pLightSource[i].L_C0 = 1.0;//常数衰减因子
 		pScene->pLightSource[i].L_C1 = 0.0000001;//线性衰减因子
 		pScene->pLightSource[i].L_C2 = 0.00000001;//二次衰减因子

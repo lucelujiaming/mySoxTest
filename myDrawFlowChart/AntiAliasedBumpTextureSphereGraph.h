@@ -12,8 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 #include "DepthFace.h"
-#include "TextureSphere.h"
-#include "Vector3ZBuffer.h"
+#include "AntiAliasedBumpTextureSphere.h"
 #include "ColorTransform3.h"
 #include "projection.h"
 #include "Triangle.h"
@@ -28,11 +27,11 @@ public:
 	CString GetTypeName() { return CString("CAntiAliasedBumpTextureSphereGraph"); }
 	
 protected:
-	CTextureSphere sphere;//立方体对象
+	CAntiAliasedBumpTextureSphere sphere;//立方体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景
-	CTexture texture;//纹理
+	CAntiAliasedBumpTexture texture;//纹理
 	
 public:
 	void DoubleBuffer(CDC* pDC);//双缓冲

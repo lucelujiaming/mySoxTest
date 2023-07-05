@@ -162,6 +162,8 @@ protected:
 	afx_msg void OnToolbarPhongBiquatricBezierSphereGraph();
 	afx_msg void OnToolbarTextureCubeGraph();
 	afx_msg void OnToolbarTextureSphereGraph();
+	afx_msg void OnToolbarBumpTextureSphereGraph();
+	afx_msg void OnToolbarAntiAliasedBumpTextureSphereGraph();
 	//
 	afx_msg void OnCreateDDALine();
 	afx_msg void OnCreateBresenhamLine();
@@ -194,6 +196,8 @@ protected:
 	afx_msg void OnCreatePhongBiquatricBezierSphereGraph();
 	afx_msg void OnCreateTextureCubeGraph();
 	afx_msg void OnCreateTextureSphereGraph();
+	afx_msg void OnCreateBumpTextureSphereGraph();
+	afx_msg void OnCreateAntiAliasedBumpTextureSphereGraph();
 	//
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG

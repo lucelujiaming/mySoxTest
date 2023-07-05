@@ -21,6 +21,19 @@ void CRationalQuadraticBezierCurve::ReadPoint(CP2* P, double* w)
 	}
 }
 
+/************************************************************************/
+/* 有理二次Bezier曲线的有理分式表示为：                                 */
+/*   p(t) =                                                             */
+/*       (B0,2(t) * w0 * P0 + B1,2(t) * w1 * P1 + B2,2(t) * w2 * P2)    */
+/*     / (B0,2(t) * w0 + B1,2(t) * w1 + B2,2(t) * w2)                   */
+/*        = [(1-t)^2 * w0 * P0 + 2t(1-t) * w1 * P1 + t^2 * w2 * P2)]    */
+/*        / [(1-t)^2 * w0      + 2t(1-t) * w1      + t^2 * w2)]         */
+/*  其中：                                                              */
+/*     Bern0,2(t) = (1-t)^2                                             */
+/*     Bern1,2(t) = 2t(1-t)                                             */
+/*     Bern2,2(t) = t^2                                                 */
+/*  下面的代码描述了这个计算过程。                                      */
+/************************************************************************/
 void CRationalQuadraticBezierCurve::DrawCurve(CDC* pDC)
 {
 	CPen NewPen,*pOldPen;
@@ -32,9 +45,9 @@ void CRationalQuadraticBezierCurve::DrawCurve(CDC* pDC)
 	for(double t = 0.0;t <= 1.0;t += tStep)
 	{
 		CP2 pt;
-		Bern02 = (1 - t) * (1 - t);//计算Bern0,2(t)
-		Bern12 = 2 * t * (1-t);//计算Bern1,2(t)
-		Bern22 = t * t;//计算Bern2,2(t)
+		Bern02 = (1 - t) * (1 - t);  // 计算Bern0,2(t)
+		Bern12 = 2 * t * (1-t);      // 计算Bern1,2(t)
+		Bern22 = t * t;              // 计算Bern2,2(t)
 		double denominator = Bern02 * w[0] + Bern12 * w[1] + Bern22 * w[2];
 		pt.x = (Bern02 * P[0].x * w[0] + Bern12 * P[1].x * w[1] + Bern22 * P[2].x * w[2])/denominator;
 		pt.y = (Bern02 * P[0].y * w[0] + Bern12 * P[1].y * w[1] + Bern22 * P[2].y * w[2])/denominator;

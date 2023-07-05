@@ -1,10 +1,10 @@
-// RationalQuadraticBezierCircle.cpp: implementation of the CRationalQuadraticBezierCircle class.
+// BumpTextureSphereGraph.cpp: implementation of the CBumpTextureSphereGraph class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "DrawFlowChart.h"
-#include "RationalQuadraticBezierCircle.h"
+#include "BumpTextureSphereGraph.h"
 #include "math.h"
 #define ROUND(d) int(d + 0.5)
 
@@ -14,16 +14,15 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENT_SERIAL(CRationalQuadraticBezierCircle, CObject, 1)
+// IMPLEMENT_SERIAL(CBumpTextureSphereGraph, CObject, 1)
 
 /************************************************************************/
 /* 功能：建构函数。设定了连接点。                                       */
 /************************************************************************/
-CRationalQuadraticBezierCircle::CRationalQuadraticBezierCircle()
+CBumpTextureSphereGraph::CBumpTextureSphereGraph()
 {
 	m_AdjustPoint = CCONNECTPOINT_INVALID_OPTION;
 
@@ -33,66 +32,83 @@ CRationalQuadraticBezierCircle::CRationalQuadraticBezierCircle()
 		connPoint = new CAdjustPoint();
 		m_Points.push_back(connPoint);
 	}
+
+	sphere.ReadVertex();
+	sphere.ReadFace();
+	double nScale = 300;
+	transform.SetMatrix(sphere.Ver, 26);
+	transform.Scale(nScale, nScale, nScale);
+	InitializeLightingScene();//初始化光照场景
+	sphere.bezier.SetLightingScene(pScene);//设置光照场景
+	texture.ReadBitmap(IDB_TEXTURE_BITMAP);//准备位图
+	sphere.bezier.SetTexture(&texture);
 }
 
-CRationalQuadraticBezierCircle::~CRationalQuadraticBezierCircle()
+CBumpTextureSphereGraph::~CBumpTextureSphereGraph()
 {
 
 }
 
-void CRationalQuadraticBezierCircle::ReadPoint(void)
+void CBumpTextureSphereGraph::DoubleBuffer(CDC* pDC)
 {
-	r = 150;
-	p[0].x = r, p[0].y = 0;
-	p[1].x = r, p[1].y = r;
-	p[2].x = 0, p[2].y = r;
-	p[3].x =-r, p[3].y = r;
-	p[4].x =-r, p[4].y = 0;
-	p[5].x =-r, p[5].y =-r;
-	p[6].x = 0, p[6].y = -r;
-	p[7].x = r, p[7].y = -r;	
+	CRect rectScreen;//定义客户区矩形
+	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
+	pMain->GetClientRect(&rectScreen);//获得客户区的大小
 	
-    for(int i = 0;i < 8;i++)
-	{
-		p[i].x  +=  m_Start.x;
-		p[i].y  +=  m_Start.y;
-	}
+	CRect rect = CRect(0, 0, 400, 400);
+	
+    CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
+	CBitmap NewBitmap, *pOldBitmap;
+    NewBitmap.CreateCompatibleBitmap(pDC, 400, 400);//rt为RECT变量;
+    pOldBitmap = memDC.SelectObject(&NewBitmap);
+	memDC.FillSolidRect(rect, pDC->GetBkColor());//设置客户区背景色
+	// rect.OffsetRect(-200, -200);
+	DrawObject(&memDC);//绘制图形
+    pDC->BitBlt(m_Start.x, m_Start.y, 400, 400, 
+        &memDC, 0, 0, SRCCOPY);
+	memDC.SelectObject(pOldBitmap);
+	NewBitmap.DeleteObject();
+    memDC.DeleteDC();
 }
 
-void CRationalQuadraticBezierCircle::DrawObject(CDC* pDC) // 绘制图形
+void CBumpTextureSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
-	CP2 P[3];//控制点
-	double w[3]; // 权因子
-	// 因为是分成4段绘制，每一段的角度为90度。因此上：
-	// w0 = w2 = 1; w1 = cos(90/2) = cos(45) = sqrt(2.0) / 2.0
-	w[0] = 1, w[2] = 1, w[1] = sqrt(2.0) / 2.0;
-	//w[0] = 1, w[1] = 1, w[2] = 2; // Piegl书19页,效果一致
-	//第一段圆弧
-	P[0] = p[0], P[1] = p[1], P[2] = p[2];	
-	bezier.ReadPoint(P, w);
-	bezier.DrawCurve(pDC);
-	bezier.DrawPolygon(pDC);
-	//第二段圆弧
-	P[0] = p[2], P[1] = p[3], P[2] = p[4];
-	bezier.ReadPoint(P, w);
-	bezier.DrawCurve(pDC);
-	bezier.DrawPolygon(pDC);
-	//第三段圆弧
-	P[0] = p[4], P[1] = p[5], P[2] = p[6];
-	bezier.ReadPoint(P, w);
-	bezier.DrawCurve(pDC);
-	bezier.DrawPolygon(pDC);
-	//第四段圆弧
-	P[0] = p[6], P[1] = p[7], P[2] = p[0];
-	bezier.ReadPoint(P, w);
-	bezier.DrawCurve(pDC);
-	bezier.DrawPolygon(pDC);
+	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
+	CTextureZBuffer* pZBuffer = new CTextureZBuffer;//申请内存
+	pZBuffer->InitialDepthBuffer(10000 + iAppendDepth, 10000 + iAppendDepth, 10000 + iAppendDepth);//初始化深度缓冲器
+	sphere.Draw(pDC, pZBuffer);
+	delete pZBuffer;//释放内存
+}
+
+void CBumpTextureSphereGraph::InitializeLightingScene(void)//初始化光照环境
+{
+	//设置光源属性
+	nLightSourceNumber = 1;//光源个数
+	pScene = new CLightingScene(nLightSourceNumber);//一维光源动态数组
+	pScene->pLightSource[0].SetPosition(1000, 1000, 2000);//设置光源位置坐标
+	for (int i = 0; i < nLightSourceNumber; i++)
+	{
+		pScene->pLightSource[i].L_Diffuse = CRGB(1.0, 1.0, 1.0);//光源的漫反射颜色
+		pScene->pLightSource[i].L_Specular = CRGB(0.3, 0.3, 0.3);//光源镜面高光颜色
+		pScene->pLightSource[i].L_C0 = 1.0;//常数衰减因子
+		pScene->pLightSource[i].L_C1 = 0.0000001;//线性衰减因子
+		pScene->pLightSource[i].L_C2 = 0.00000001;//二次衰减因子
+		pScene->pLightSource[i].L_OnOff = TRUE;//光源开启
+	}
+	//设置材质属性
+	pScene->pMaterial = new CMaterial;
+	pScene->pMaterial->SetAmbient(CRGB(0.247, 0.200, 0.075));//材质的环境反射率
+	pScene->pMaterial->SetDiffuse(CRGB(0.752, 0.606, 0.226));//材质的漫反射率
+	pScene->pMaterial->SetSpecular(CRGB(0.628, 0.556, 0.366));//材质的镜面反射率
+	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//材质自身发散的颜色
+	pScene->pMaterial->SetExponent(10);//高光指数
 }
 
 /************************************************************************/
 /* 功能：绘制函数。绘制了一个椭圆和上面的文字。                         */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
+void CBumpTextureSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
 {
 	AdjustFocusPoint();
 
@@ -100,25 +116,31 @@ void CRationalQuadraticBezierCircle::Draw( CDC *pdc, BOOL bShowSelectBorder )
 	if(m_IsMark)
 	{
         p.CreatePen(PS_SOLID,1,RGB(255,0,0));     //初始化画笔（红色） 
-        pOldPen=pdc-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
+        pOldPen=pDC-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
-	ReadPoint();
-	DrawObject(pdc); // 绘制图形
-
-	pdc->Ellipse(m_Start.x - ROUND(r), m_Start.y - ROUND(r), 
-		         m_Start.x + ROUND(r), m_Start.y + ROUND(r));//标准圆
 	
+//	// Rotate
+//	for (i = 0; i < NumberofCube; i++)
+//	{
+//		transform[i].RotateX(m_currentAlpha);
+//		transform[i].RotateY(m_currentBeta);
+//		// Move to (100, 100, 100) to display
+//		transform[i].Translate(100, 100, 100);
+//	}
+	// Move to current position
+	transform.Translate(100, 20, 0);
+	DrawObject(pDC);
 	if(m_IsMark)
 	{
-		pdc->SelectObject(pOldPen);
+		pDC->SelectObject(pOldPen);
 	}
-	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
+	pDC->DrawText(m_text, CRect(m_Start+CPoint(8, 8), m_End+CPoint(-8, -8)), DT_CENTER);
 }
 
 /************************************************************************/
 /* 功能：选中绘制函数。绘制了连接点。                                   */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::DrawFocus( CDC *pdc )
+void CBumpTextureSphereGraph::DrawFocus( CDC *pdc )
 {
 	// 画笔为虚线，线宽为1，颜色为黑色。
 	CPen pen( PS_DOT, 1, RGB(0, 0, 0) );
@@ -142,7 +164,7 @@ void CRationalQuadraticBezierCircle::DrawFocus( CDC *pdc )
 /************************************************************************/
 /* 功能： 移动处理函数。                                                */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::Move( int cx, int cy )
+void CBumpTextureSphereGraph::Move( int cx, int cy )
 {
 	m_Start +=  CPoint(cx, cy);
 	m_End +=  CPoint(cx, cy);
@@ -152,7 +174,7 @@ void CRationalQuadraticBezierCircle::Move( int cx, int cy )
 /* 功能： 大小调整处理函数。                                            */
 /*        根据IsOn函数计算结果得到准备进行大小调整的连接点，进行调整。  */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::AdjustSize( CPoint &pt )
+void CBumpTextureSphereGraph::AdjustSize( CPoint &pt )
 {
 	switch(m_AdjustPoint)
 	{
@@ -212,7 +234,7 @@ void CRationalQuadraticBezierCircle::AdjustSize( CPoint &pt )
 /************************************************************************/
 /* 功能：判断是否在图元区域内。                                         */
 /************************************************************************/
-bool CRationalQuadraticBezierCircle::IsIn( CPoint &pt )
+bool CBumpTextureSphereGraph::IsIn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -236,7 +258,7 @@ bool CRationalQuadraticBezierCircle::IsIn( CPoint &pt )
 /************************************************************************/
 /* 功能： 判断一个连接点是否在图元边界上。用于调整图元是否连接。        */
 /************************************************************************/
-int CRationalQuadraticBezierCircle::IsConnectOn(CAdjustPoint *pt)
+int CBumpTextureSphereGraph::IsConnectOn(CAdjustPoint *pt)
 {
 	CAdjustPoint *connPoint = NULL;
 	for(int i = 0; i < CCONNECTPOINT_RECT_MAX; i++)
@@ -254,7 +276,7 @@ int CRationalQuadraticBezierCircle::IsConnectOn(CAdjustPoint *pt)
 /************************************************************************/
 /* 功能： 判断一个屏幕坐标是否在图元边界上。用于调整图元大小。          */
 /************************************************************************/
-bool CRationalQuadraticBezierCircle::IsOn( CPoint &pt )
+bool CBumpTextureSphereGraph::IsOn( CPoint &pt )
 {
 	AdjustStartAndEnd();
 
@@ -284,7 +306,7 @@ bool CRationalQuadraticBezierCircle::IsOn( CPoint &pt )
 /************************************************************************/
 /* 功能：在调整大小发生翻转的时候，根据调整结果交换起始点和结束点坐标。 */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::AdjustStartAndEnd()
+void CBumpTextureSphereGraph::AdjustStartAndEnd()
 {
 	CPoint newStart, newEnd;
 	if((m_End.x < m_Start.x) && (m_End.y < m_Start.y))
@@ -302,7 +324,7 @@ void CRationalQuadraticBezierCircle::AdjustStartAndEnd()
 	}
 }
 
-int CRationalQuadraticBezierCircle::GetAdjustPoint()
+int CBumpTextureSphereGraph::GetAdjustPoint()
 {
 	return m_AdjustPoint;
 }
@@ -310,7 +332,7 @@ int CRationalQuadraticBezierCircle::GetAdjustPoint()
 /************************************************************************/
 /* 功能：根据起始点和结束点坐标调整用于大小调整和连线的连接点坐标。     */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::AdjustFocusPoint()
+void CBumpTextureSphereGraph::AdjustFocusPoint()
 {
 	CAdjustPoint *connPoint = NULL;
 	connPoint = (CAdjustPoint *)m_Points[CCONNECTPOINT_RECT_LEFT_TOP];
@@ -340,7 +362,7 @@ void CRationalQuadraticBezierCircle::AdjustFocusPoint()
 /************************************************************************/
 /* 功能：串行化操作。                                                   */
 /************************************************************************/
-void CRationalQuadraticBezierCircle::SaveParamsToJSON(cJSON * objJSON)
+void CBumpTextureSphereGraph::SaveParamsToJSON(cJSON * objJSON)
 {
 //	if(ar.IsStoring())
 //	{
@@ -370,7 +392,7 @@ void CRationalQuadraticBezierCircle::SaveParamsToJSON(cJSON * objJSON)
 	cJSON_AddItemToObject(objJSON, GetTypeName(), jsonGraph);
 }
 
-void CRationalQuadraticBezierCircle::LoadParamsFromJSON(cJSON * objJSON)
+void CBumpTextureSphereGraph::LoadParamsFromJSON(cJSON * objJSON)
 {
 	cJSON *child = objJSON->child;
     while(child)

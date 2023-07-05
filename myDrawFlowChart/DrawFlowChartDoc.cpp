@@ -327,6 +327,14 @@ BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateTextureSphereGraph(), child);
                 }
+				else if(strcmp(child->string, "CBumpTextureSphereGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateBumpTextureSphereGraph(), child);
+                }
+				else if(strcmp(child->string, "CAntiAliasedBumpTextureSphereGraph") == 0)
+                {   
+                    m_GraphManager.AddGraph(m_GraphFactory.CreateAntiAliasedBumpTextureSphereGraph(), child);
+                }
 				else if(strcmp(child->string, "CMiddleCircle") == 0)
                 {   
                     m_GraphManager.AddGraph(m_GraphFactory.CreateMiddleCircle(), child);

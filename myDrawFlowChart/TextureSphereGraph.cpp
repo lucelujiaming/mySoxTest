@@ -86,11 +86,11 @@ void CTextureSphereGraph::InitializeLightingScene(void)//初始化光照环境
 	//设置光源属性
 	nLightSourceNumber = 1;//光源个数
 	pScene = new CLightingScene(nLightSourceNumber);//一维光源动态数组
-	pScene->pLightSource[0].SetPosition(1000, 1000, 1000);//设置光源位置坐标
+	pScene->pLightSource[0].SetPosition(1000, 1000, 2000);//设置光源位置坐标
 	for (int i = 0; i < nLightSourceNumber; i++)
 	{
 		pScene->pLightSource[i].L_Diffuse = CRGB(1.0, 1.0, 1.0);//光源的漫反射颜色
-		pScene->pLightSource[i].L_Specular = CRGB(1.0, 1.0, 1.0);//光源镜面高光颜色
+		pScene->pLightSource[i].L_Specular = CRGB(0.3, 0.3, 0.3);//光源镜面高光颜色
 		pScene->pLightSource[i].L_C0 = 1.0;//常数衰减因子
 		pScene->pLightSource[i].L_C1 = 0.0000001;//线性衰减因子
 		pScene->pLightSource[i].L_C2 = 0.00000001;//二次衰减因子
@@ -98,10 +98,10 @@ void CTextureSphereGraph::InitializeLightingScene(void)//初始化光照环境
 	}
 	//设置材质属性
 	pScene->pMaterial = new CMaterial;
-	pScene->pMaterial->SetAmbient(CRGB(0.847, 0.10, 0.075));//环境反射率
-	pScene->pMaterial->SetDiffuse(CRGB(0.852, 0.006, 0.026));//漫反射率
-	pScene->pMaterial->SetSpecular(CRGB(1.0, 1.0, 1.0));//镜面反射率
-	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//自身辐射的颜色
+	pScene->pMaterial->SetAmbient(CRGB(0.247, 0.200, 0.075));//材质的环境反射率
+	pScene->pMaterial->SetDiffuse(CRGB(0.752, 0.606, 0.226));//材质的漫反射率
+	pScene->pMaterial->SetSpecular(CRGB(0.628, 0.556, 0.366));//材质的镜面反射率
+	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//材质自身发散的颜色
 	pScene->pMaterial->SetExponent(10);//高光指数
 }
 

@@ -41,7 +41,8 @@ void CTriangle::Fill(CDC* pDC)
 	SpanLeft = new CColorPoint2[nTotalScanLine];
 	SpanRight = new CColorPoint2[nTotalScanLine];
 	//判断P1点位于P0P2边的左侧还是右侧
-	int nDeltz = (P[2].x - P[0].x) * (P[1].y - P[0].y) - (P[2].y - P[0].y) * (P[1].x - P[0].x);//点矢量叉积的z分量
+	int nDeltz = (P[2].x - P[0].x) * (P[1].y - P[0].y)
+		       - (P[2].y - P[0].y) * (P[1].x - P[0].x); // 点矢量叉积的z分量
 	if (nDeltz > 0)//左三角形
 	{
 		nIndex = 0;
@@ -64,7 +65,8 @@ void CTriangle::Fill(CDC* pDC)
 		for (int x = SpanLeft[n].x; x < SpanRight[n].x; ++x)//左闭右开
 		{
 			CRGB crColor = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].c, SpanRight[n].c);
-			pDC->SetPixelV(x, y, RGB(crColor.red * 255, crColor.green * 255, crColor.blue * 255));//绘制像素点
+			pDC->SetPixelV(m_ptDrawPosition.x + x, m_ptDrawPosition.y + y, 
+					RGB(crColor.red * 255, crColor.green * 255, crColor.blue * 255));//绘制像素点
 		}
 	}
 	if (SpanLeft)

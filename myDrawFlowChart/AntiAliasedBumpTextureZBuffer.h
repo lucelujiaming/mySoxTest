@@ -30,7 +30,7 @@ public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
     CColorP3 P[3];					//三角形的浮点坐标
-    CColorPoint3 point[3];			//三角形的整数顶点坐标
+    CColorPoint3 point[3];			//三角形的整数顶点坐标。是P[3]的整数化结果。
     CColorPoint2* SpanLeft;			//跨度的起点数组标志
     CColorPoint2* SpanRight;		//跨度的终点数组标志
     int nIndex;						//记录扫描线条数

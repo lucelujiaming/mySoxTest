@@ -47,11 +47,19 @@ CThreeCrossRotateCube::CThreeCrossRotateCube()
 		smallTransform[i].SetMatrix(smallCube[i].V, 8);
 		smallTransform[i].Translate(-0.5, -0.5, -0.5);//将小立方体中心位于坐标系原点
 	}	
-	int nSmallScale = 20;
-	smallTransform[0].Scale(3 * nLargeScale, nSmallScale, nSmallScale);
-	smallTransform[1].Scale(nSmallScale, 3 * nLargeScale, nSmallScale);
-	smallTransform[2].Scale(nSmallScale, nSmallScale, 3 * nLargeScale);	
+//	int nSmallScale = 20;
+//	smallTransform[0].Scale(3 * nLargeScale, nSmallScale, nSmallScale);
+//	smallTransform[1].Scale(nSmallScale, 3 * nLargeScale, nSmallScale);
+//	smallTransform[2].Scale(nSmallScale, nSmallScale, 3 * nLargeScale);	
+
 	
+	smallTransform[0].Scale(20, 20, 20);
+	smallTransform[1].Scale(20, 20, 20);
+	smallTransform[2].Scale(20, 20, 20);
+	smallTransform[0].Translate(0, -120, 0);
+	smallTransform[2].Translate(0, 120, 0);
+
+
 	// Rotate
 //	for (i = 0; i < 3; i++)
 //	{
@@ -95,10 +103,10 @@ void CThreeCrossRotateCube::DrawObject(CDC* pDC)//绘制图形
 	CZBuffer* pZBuffer = new CZBuffer;//申请内存
 	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
 	pZBuffer->SetDrawPosition(m_Start);
-	smallCube[0].Draw(pDC, pZBuffer, 0);
-	smallCube[1].Draw(pDC, pZBuffer, 1);
-	smallCube[2].Draw(pDC, pZBuffer, 2);
-//	largeCube.Draw(pDC, pZBuffer, 3);
+//	smallCube[0].Draw(pDC, pZBuffer, 0);
+//	smallCube[1].Draw(pDC, pZBuffer, 1);
+//	smallCube[2].Draw(pDC, pZBuffer, 2);
+	largeCube.Draw(pDC, pZBuffer, 3);
 	delete pZBuffer;//释放内存
 }
 

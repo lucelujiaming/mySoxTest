@@ -40,7 +40,7 @@ void CZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 	{
 		zBuffer[i] = new double[nHeight];
 	}
-	// ³õÊ¼»¯Éî¶È»º³å¡£°ÑÃ¿Ò»¸öÔªËØ¶¼Ô¤ÖÃÎª×î´óÉî¶È¡£
+	// ³õÊ¼»¯Éî¶È»º³å¿Õ¼ä¡£°ÑÃ¿Ò»¸öÔªËØ¶¼Ô¤ÖÃÎª×î´óÉî¶È¡£
 	for (i = 0; i < nWidth; i++) 
 	{
 		for (int j = 0; j < nHeight; j++)
@@ -52,9 +52,11 @@ void CZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 
 void CZBuffer::SetPoint(CColorP3 P0, CColorP3 P1, CColorP3 P2)
 {
+	// ¶ÁÈëÈı¸ö¶¥µã¡£
 	this->P0 = P0;
 	this->P1 = P1;
 	this->P2 = P2;
+	// ²¢ÇÒ½«ÕâÈı¸ö¶¥µãÕûÊı»¯¡£
 	point0.x = ROUND(P0.x);
 	point0.y = ROUND(P0.y);
 	point0.z = P0.z;
@@ -72,14 +74,14 @@ void CZBuffer::SetPoint(CColorP3 P0, CColorP3 P1, CColorP3 P2)
 // ±¾Ëã·¨µÄÊµÖÊ¾ÍÊÇ¶ÔÓÚÒ»¸ö¸ø¶¨ÊÓÏßÉÏµÄ(x, y)£¬²éÕÒ¾àÀëÊÓµã×î½üµÄz(x, y)Öµ¡£
 void CZBuffer::FillTriangle(CDC* pDC)
 {
-	//¶¥µã°´ÕÕy×ø±êÓÉĞ¡µ½´óÅÅĞò
+	// ¶¥µã°´ÕÕy×ø±êÓÉĞ¡µ½´óÅÅĞò
 	SortPoint();
-	//¶¨ÒåÈı½ÇĞÎ¸²¸ÇµÄÉ¨ÃèÏßÌõÊı
+	// ¶¨ÒåÈı½ÇĞÎ¸²¸ÇµÄÉ¨ÃèÏßÌõÊı
 	int nTotalScanLine = point2.y - point0.y + 1;
 	// ¶¨ÒåSpanµÄÆğµãÓëÖÕµãÊı×é
 	SpanLeft = new CColorPoint2[nTotalScanLine];
 	SpanRight = new CColorPoint2[nTotalScanLine];
-	//ÅĞ¶ÏP1µãÎ»ÓÚP0P2±ßµÄ×ó²à»¹ÊÇÓÒ²à
+	// ÅĞ¶ÏP1µãÎ»ÓÚP0P2±ßµÄ×ó²à»¹ÊÇÓÒ²à
 	int nDeltz = (point2.x - point0.x) * (point1.y - point0.y)
 		       - (point2.y - point0.y) * (point1.x - point0.x); // µãÊ¸Á¿²æ»ıµÄz·ÖÁ¿
 	if (nDeltz > 0) // ×óÈı½ÇĞÎ¡£ËµÃ÷£º
@@ -164,17 +166,19 @@ void CZBuffer::FillTriangle(CDC* pDC)
 	}
 }
 
-// DDAËã·¨ÀëÉ¢±ß
+// DDAËã·¨ÀëÉ¢±ßÀ´ÏßĞÔ²åÖµÌî³ä¿ç¶ÈSpanµÄÆğµã»òÖÕµãÊı×é¡£
 void CZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature)
 {
 	int dx = PEnd.x - PStart.x;
 	int dy = PEnd.y - PStart.y;
-	double m = double(dx) / dy;
-	double x = PStart.x;
+	double m = double(dx) / dy;	// ¼ÆËãĞ±ÂÊµÄµ¹Êı¡£
+	double x = PStart.x;		// ÕÒµ½Æğµã¡£
 	for (int y = PStart.y; y < PEnd.y; y++)
 	{
 		// ²ÉÓÃË«ÏßĞÔ²îÖµËã·¨¼ÆËã¶à±ßĞÎÄÚÒ»¸öÏñËØµãµÄÑÕÉ«ÏßĞÔ²åÖµ¡£
 		CRGB crColor = Interp(y, PStart.y, PEnd.y, PStart.c, PEnd.c);
+		// // ²ÉÓÃË«ÏßĞÔ²îÖµËã·¨¼ÆËã¶à±ßĞÎÄÚÒ»¸öÏñËØµãµÄÉî¶È¡£
+		// double zDepth = Interp(y, PStart.y, PEnd.y, PStart.z, PEnd.z);
 		if (bFeature)
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, crColor);
 		else
@@ -185,7 +189,8 @@ void CZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature)
 
 void CZBuffer::SortPoint(void)//ÅÅĞò
 {
-	CColorPoint3 pt;//ÒªÇóÅÅĞòºó£¬P[0].y<P[1].y<P[2].y
+	// ÒªÇóÅÅĞòºó£¬P[0].y<P[1].y<P[2].y
+	CColorPoint3 pt;
 	if (point0.y > point1.y)
 	{
 		pt = point0;
@@ -211,4 +216,17 @@ CRGB CZBuffer::Interp(double m, double m0, double m1, CRGB c0, CRGB c1)//ÑÕÉ«ÏßĞ
 	CRGB color;
 	color = (m1 - m) / (m1 - m0) * c0 + (m - m0) / (m1 - m0) * c1;
 	return color;
+}
+
+CVector3 CZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1)//·¨Ê¸Á¿ÏßĞÔ²åÖµ
+{
+	CVector3 vector;
+	vector = (m1 - m) / (m1 - m0) * N0 + (m - m0) / (m1 - m0) * N1;
+	return vector;
+}
+
+double CZBuffer::Interp(double m, double m0, double m1, double z0, double z1)//Éî¶ÈÏßĞÔ²åÖµ
+{
+	double z = (m1 - m) / (m1 - m0) * z0 + (m - m0) / (m1 - m0) * z1;
+	return z;
 }

@@ -20,6 +20,7 @@
 const int NumberofCube = 5;//参与排序的立方体个数
 const int FaceNumberofCube = 6;//立方体的表面数
 
+// 该类绘制了5个立方体。使用深度排序算法，也就是画家算法绘制。
 class CSpatialArrangedCube : public CGraph  
 {
 //		DECLARE_SERIAL(CSpatialArrangedCube)
@@ -35,11 +36,11 @@ protected:
 	CProjection projection;//投影
 	
 public:
-	double GetMaxDepth(CDepthFace face);//面到视点的距离
-	void SortFace(void);//表面按距离排序
-	double GetDistance(CColorP3 p1, CColorP3 p2);//获取空间两点的距离
-	void DoubleBuffer(CDC* pDC);//双缓冲
-	void DrawObject(CDC* pDC);//绘制图形
+	double GetMaxDepth(CDepthFace face);           // 面到视点的距离
+	void SortFace(void);                           // 表面按距离排序
+	double GetDistance(CColorP3 p1, CColorP3 p2);  // 获取空间两点的距离
+	void DoubleBuffer(CDC* pDC);                   // 双缓冲
+	void DrawObject(CDC* pDC);                     // 绘制图形
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );

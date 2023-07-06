@@ -34,7 +34,7 @@ CSpatialArrangedCube::CSpatialArrangedCube()
 		m_Points.push_back(connPoint);
 	}
 	
-	int nScale = 150;
+	int nScale = 50;
 	for (i = 0; i < NumberofCube; i++)//绘制5个立方体
 	{
 		cube[i].ReadVertex();//读入立方体的顶点
@@ -84,65 +84,103 @@ void CSpatialArrangedCube::DoubleBuffer(CDC* pDC)
     memDC.DeleteDC();
 }
 
+/************************************************************************/
+/* 这个函数的处理步骤如下:                                              */
+/*   1. 首先把所有立方体的所有面都导入到globalface中。                  */
+/*   2. 然后计算每一个面的的深度。                                      */
+/*      方法就是计算每一个面的中心坐标到视点的距离。                    */
+/*   3. 之后对表面globalface按面心到视点的距离从大到小排序。            */
+/*   4. 之后遍历所有的表面globalface。                                  */
+/*      按照面心到视点的距离从大到小进行绘制。                          */
+/*     显然距离视点越近的表面越晚绘制。这就是所谓的画家算法。           */
+/************************************************************************/
 void CSpatialArrangedCube::DrawObject(CDC* pDC)//绘制图形
 {
 	for (int i = 0; i < NumberofCube; i++)//立方体个数
 	{
-		for (int j = 0; j < FaceNumberofCube; j++)//每个立方体6个表面
+		for (int j = 0; j < FaceNumberofCube; j++) // 每个立方体6个表面
 		{
+			// 使用把第i个立方体的第j个面的顶点数设置globalface的顶点数
 			globalface[i * FaceNumberofCube + j].ptNumber = cube[i].F[j].ptNumber;
+			// 使用刚才得到的顶点数进行循环。
 			for (int k = 0; k < globalface[i * FaceNumberofCube + j].ptNumber; k++)
 			{
-				globalface[i * FaceNumberofCube + j].ptIndex[k] = cube[i].F[j].ptIndex[k];
-				globalface[i * FaceNumberofCube + j].Point[k] = cube[i].V[globalface[i * 6 + j].ptIndex[k]];
-				globalface[i * FaceNumberofCube + j].fMaxDepth = GetMaxDepth(globalface[i * 6 + j]);
+				// 获得这个面的顶点索引号
+				globalface[i * FaceNumberofCube + j].ptIndex[k] 
+					= cube[i].F[j].ptIndex[k];
+				// 获得这个面的顶点
+				globalface[i * FaceNumberofCube + j].Point[k] 
+					= cube[i].V[globalface[i * FaceNumberofCube + j].ptIndex[k]];
+				// 计算这个面的深度
+				globalface[i * FaceNumberofCube + j].fMaxDepth 
+					= GetMaxDepth(globalface[i * FaceNumberofCube + j]);
 			}
 		}
 	}
-	SortFace();//表面按面心到视点的距离排序
-	CColorP2 ScreenPoint[4];//二维投影点
-	CPen penWhite(PS_SOLID, 1, RGB(255, 255, 255));//白色画笔用于绘制面的边界线
+	// 对表面globalface按面心到视点的距离从大到小排序
+	SortFace();
+	// 二维投影点
+	CColorP2 ScreenPoint[4]; 
+	// 白色画笔用于绘制面的边界线
+	CPen penWhite(PS_SOLID, 1, RGB(255, 255, 255)); 
 	CPen* pOldPen = pDC->SelectObject(&penWhite);
-	for (i = 0; i < NumberofCube * FaceNumberofCube; i++)//访问立方体群的所有表面
+	// 访问立方体群的所有表面
+	for (i = 0; i < NumberofCube * FaceNumberofCube; i++) 
 	{
 		//得到每个表面的二维顶点
-		for (int nPoint = 0; nPoint < globalface[i].ptNumber; nPoint++)//顶点循环
-			ScreenPoint[nPoint] = projection.TwoDimColorPerspectiveProjection(globalface[i].Point[nPoint]);
-		//填充表面
-		CTriangle* pFill = new CTriangle;//申请内存
-		//填充表面上三角形
+		for (int nPoint = 0; nPoint < globalface[i].ptNumber; nPoint++) // 顶点循环
+		{
+			ScreenPoint[nPoint] = 
+				projection.TwoDimColorPerspectiveProjection(
+										globalface[i].Point[nPoint]);
+		}
+		// 填充表面
+		CTriangle* pFill = new CTriangle; // 申请内存
+		pFill->SetDrawPosition(m_Start);
+		// 填充表面上三角形
 		pFill->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]);
 		pFill->Fill(pDC);
-		//填充表面下三角形
+		// 填充表面下三角形
 		pFill->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]);
 		pFill->Fill(pDC);
-		delete pFill;//撤销内存		
-		//绘制表面边界线
-		pDC->MoveTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));
-		pDC->LineTo(ROUND(ScreenPoint[1].x), ROUND(ScreenPoint[1].y));
-		pDC->LineTo(ROUND(ScreenPoint[2].x), ROUND(ScreenPoint[2].y));
-		pDC->LineTo(ROUND(ScreenPoint[3].x), ROUND(ScreenPoint[3].y));
-		pDC->LineTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));		
+		delete pFill; // 撤销内存		
+		// 绘制表面边界线。绘制顺序为0->1->2->3->0。
+		pDC->MoveTo(ROUND(ScreenPoint[0].x + m_Start.x), 
+					ROUND(ScreenPoint[0].y + m_Start.y));
+		pDC->LineTo(ROUND(ScreenPoint[1].x + m_Start.x), 
+					ROUND(ScreenPoint[1].y + m_Start.y));
+		pDC->LineTo(ROUND(ScreenPoint[2].x + m_Start.x), 
+					ROUND(ScreenPoint[2].y + m_Start.y));
+		pDC->LineTo(ROUND(ScreenPoint[3].x + m_Start.x), 
+					ROUND(ScreenPoint[3].y + m_Start.y));
+		pDC->LineTo(ROUND(ScreenPoint[0].x + m_Start.x), 
+					ROUND(ScreenPoint[0].y + m_Start.y));		
 	}
 	pDC->SelectObject(pOldPen);
 }
 
 
-double CSpatialArrangedCube::GetMaxDepth(CDepthFace face)//计算面的深度
+double CSpatialArrangedCube::GetMaxDepth(CDepthFace face) // 计算面的深度
 {
+	// 计算这个面中心的坐标。
 	CColorP3 faceCenter = (face.Point[0] + face.Point[1] + face.Point[2] + face.Point[3]) / 4;
+	// 返回中心到视点的距离。
 	return GetDistance(faceCenter, projection.GetColorEye());
 }
 
-double CSpatialArrangedCube::GetDistance(CColorP3 p0, CColorP3 p1)//计算空间两点之间的距离
+// 计算空间两点之间的距离
+double CSpatialArrangedCube::GetDistance(CColorP3 p0, CColorP3 p1)
 {
-	double result = sqrt((p0.x - p1.x) * (p0.x - p1.x) + (p0.y - p1.y) * (p0.y - p1.y) + (p0.z - p1.z) * (p0.z - p1.z));
+	double result = sqrt((p0.x - p1.x) * (p0.x - p1.x) 
+		               + (p0.y - p1.y) * (p0.y - p1.y)
+					   + (p0.z - p1.z) * (p0.z - p1.z));
 	return result;
 }
 
-void CSpatialArrangedCube::SortFace(void)//表面排序
+// 对表面从大到小排序
+void CSpatialArrangedCube::SortFace(void)
 {
-	//对一维数组F进行冒泡排序
+	//对一维数组进行冒泡排序
 	for (int i = 0; i < NumberofCube * FaceNumberofCube - 1; i++)
 	{
 		for (int j = 0; j < NumberofCube * FaceNumberofCube - 1 - i; j++)
@@ -172,19 +210,8 @@ void CSpatialArrangedCube::Draw( CDC *pDC, BOOL bShowSelectBorder )
         pOldPen=pDC-> SelectObject(&p);     //把画笔选入DC，并保存原来画笔
 	}
 	
-	// Rotate
-	for (int i = 0; i < NumberofCube; i++)
-	{
-		// Move to (100, 100, 100) to display
-		transform[i].Translate(100, 100, 100);
-	}
-	// Move to current position
 	DrawObject(pDC);
-	for (i = 0; i < NumberofCube; i++)
-	{
-		// Move to (100, 100, 100) to display
-		transform[i].Translate(-100, -100, -100);
-	}
+	
 	if(m_IsMark)
 	{
 		pDC->SelectObject(pOldPen);

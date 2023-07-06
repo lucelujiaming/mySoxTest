@@ -48,42 +48,44 @@ void CZBufferCube::ReadFace(void) // 面表
 	F[0].ptNumber = 4;
 	F[0].ptIndex[0] = 4, F[0].ptIndex[1] = 5;
 	F[0].ptIndex[2] = 6, F[0].ptIndex[3] = 7;  // 前面
-	F[0].c = CRGB(1.0, 0.0, 0.0);              // 前面的颜色
+	F[0].c = CRGB(1.0, 0.0, 0.0);              // 前面的颜色：红
 	// 背对我们的立方体表面由0,3,2,1四个点组成。
 	F[1].ptNumber = 4;
 	F[1].ptIndex[0] = 0, F[1].ptIndex[1] = 3;
 	F[1].ptIndex[2] = 2, F[1].ptIndex[3] = 1;  // 后面
-	F[1].c = CRGB(0.0, 1.0, 0.0);              // 后面的颜色
+	F[1].c = CRGB(0.0, 1.0, 0.0);              // 后面的颜色：绿
 	// 立方体的左侧表面由0,4,7,3四个点组成。
 	F[2].ptNumber = 4;
 	F[2].ptIndex[0] = 0, F[2].ptIndex[1] = 4;
 	F[2].ptIndex[2] = 7, F[2].ptIndex[3] = 3;  // 左面
-	F[2].c = CRGB(0.0, 0.0, 1.0);              // 左面的颜色
+	F[2].c = CRGB(0.0, 0.0, 1.0);              // 左面的颜色：蓝
 	// 立方体的右侧表面由1,2,6,5四个点组成。
 	F[3].ptNumber = 4;
 	F[3].ptIndex[0] = 1, F[3].ptIndex[1] = 2;
 	F[3].ptIndex[2] = 6, F[3].ptIndex[3] = 5;  // 右面
-	F[3].c = CRGB(1.0, 1.0, 0.0);              // 右面的颜色
+	F[3].c = CRGB(1.0, 1.0, 0.0);              // 右面的颜色：黄
 	// 立方体的顶端表面由2,3,7,6四个点组成。
 	F[4].ptNumber = 4;
 	F[4].ptIndex[0] = 2, F[4].ptIndex[1] = 3;
 	F[4].ptIndex[2] = 7, F[4].ptIndex[3] = 6;   // 顶面
-	F[4].c = CRGB(1.0, 0.0, 1.0);               // 顶面的颜色
+	F[4].c = CRGB(1.0, 0.0, 1.0);               // 顶面的颜色：品红
 	// 立方体的底端表面由0,1,5,4四个点组成。
 	F[5].ptNumber = 4;
 	F[5].ptIndex[0] = 0, F[5].ptIndex[1] = 1;
 	F[5].ptIndex[2] = 5, F[5].ptIndex[3] = 4;   // 底面
-	F[5].c = CRGB(0.0, 1.0, 1.0);               // 底面的颜色
+	F[5].c = CRGB(0.0, 1.0, 1.0);               // 底面的颜色：青
 }
 
 /************************************************************************/
 /* 有了上面两个函数的基础，我们就可以绘制立方体了。                     */
 /* CZBufferCube使用传入的CZBuffer进行绘制。                             */
 /* 因此上这个函数是一个核心逻辑函数。                                   */
-// 传入三个参数：
-// pDC      - 绘图句柄。
-// pZBuffer - 深度缓冲器。
-// nSign    - 立方体编号。用于分配不同的颜色。
+// 传入三个参数：                                                       */
+// pDC      - 绘图句柄。                                                */
+// pZBuffer - 深度缓冲器。我们使用同一个深度缓冲器绘制多个物体。        */
+//            作为深度缓冲器，它并不知道自己要绘制的是什么。            */
+//            他就会根据深度信息填充三角形。                            */
+// nSign    - 立方体编号。用于分配不同的颜色。                          */
 /************************************************************************/
 void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 {
@@ -97,14 +99,16 @@ void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 		// 得到这个面所有顶点的坐标。
 		for (int nPoint = 0; nPoint < F[nFace].ptNumber; nPoint++)//顶点循环
 		{
-			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);//三维透视投影
-			if (nSign == 0)
-				ScreenPoint[nPoint].c = CRGB(0.5, 0.0, 0.0);
-			else if (nSign == 1)
-				ScreenPoint[nPoint].c = CRGB(0.0, 0.5, 0.0);
-			else if (nSign == 2)
-				ScreenPoint[nPoint].c = CRGB(0.0, 0.0, 0.5);
-			else
+			// 使用三维透视投影得到透视坐标。
+			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
+			// 根据立方体编号分配不同的颜色。 
+//			if (nSign == 0)
+//				ScreenPoint[nPoint].c = CRGB(0.5, 0.0, 0.0);   // 红
+//			else if (nSign == 1)
+//				ScreenPoint[nPoint].c = CRGB(0.0, 0.5, 0.0);   // 绿
+//			else if (nSign == 2)
+//				ScreenPoint[nPoint].c = CRGB(0.0, 0.0, 0.5);   // 蓝
+//			else
 				ScreenPoint[nPoint].c = F[nFace].c;
 		}
 		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。

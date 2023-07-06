@@ -20,18 +20,20 @@ public:
 private:
 	void EdgeFlag(CColorPoint3 PStart, CColorPoint3 PEnd, BOOL bFeature);//边标记算法
 	void SortPoint(void);//顶点排序
+    CRGB Interp(double m, double m0, double m1, 
+				CRGB c0, CRGB c1);					      // 颜色线性插值
 	CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值
 	double Interp(double m, double m0, double m1, double z0, double z1);//深度线性插值
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
-	CColorP3 P[3];//三角形的浮点坐标
-	CColorPoint3 point[3];//三角形的整数顶点坐标
-	CColorPoint3* SpanLeft; //跨度的起点数组标志
-	CColorPoint3* SpanRight;//跨度的终点数组标志
-	int nIndex;//记录扫描线条数
-	double** zBuffer;//深度缓冲区
-	int nWidth, nHeight;//缓冲区宽度和高度
+    CColorP3 P[3];					//三角形的浮点坐标
+    CColorPoint3 point[3];			//三角形的整数顶点坐标。是P[3]的整数化结果。
+    CColorPoint3* SpanLeft;			//跨度的起点数组标志
+    CColorPoint3* SpanRight;		//跨度的终点数组标志
+    int nIndex;						//记录扫描线条数
+    double** zBuffer;				//深度缓冲区
+    int nWidth, nHeight;			//缓冲区宽度和高度
 private:
 	CPoint m_ptDrawPosition;
 };

@@ -18,6 +18,7 @@
 #include "RationalQuadraticBezierSphereGraph.h"
 #include "BackfaceCullRotateCube.h"
 #include "ThreeCrossRotateCube.h"
+#include "SpatialArrangedCube.h"
 
 #include <math.h>
 
@@ -544,6 +545,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CThreeCrossRotateCube *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
+			{
+				((CSpatialArrangedCube *)focusGraph)->upBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->upBox();
@@ -589,6 +594,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
 			{
 				((CThreeCrossRotateCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
+			{
+				((CSpatialArrangedCube *)focusGraph)->downBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -644,6 +653,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CThreeCrossRotateCube *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
+			{
+				((CSpatialArrangedCube *)focusGraph)->leftBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->leftBox();
@@ -697,6 +710,10 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CThreeCrossRotateCube")
 			{
 				((CThreeCrossRotateCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
+			{
+				((CSpatialArrangedCube *)focusGraph)->rightBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{

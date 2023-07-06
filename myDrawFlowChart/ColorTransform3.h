@@ -45,6 +45,8 @@ private:
 	void LeftMultiplyMatrix(double M1[4][4], 
 	                        double M2[4][4]);              // 左乘矩阵M2 = M1 * M2
 private:
+	void printPointInfo(CString strHeadInfo);
+private:
 	double M[4][4];    // 三维变换矩阵。
 	CColorP3* P;            // 三维顶点数组名
 	int ptNumber;      // 三维顶点个数

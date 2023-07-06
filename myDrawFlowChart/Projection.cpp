@@ -125,15 +125,17 @@ CColorP2 CProjection::TwoDimColorPerspectiveProjection(CColorP3 WorldPoint)
 CColorP3 CProjection::ThreeDimColorPerspectiveProjection(CColorP3 WorldPoint)
 {
 	CColorP3 ViewPoint; // 观察坐标系三维点
-	// 参见公式(5-38)
+	// 从三维世界坐标系到三维观察坐标系。参见公式(5-38)
 	ViewPoint.x = WorldPoint.x;
 	ViewPoint.y = WorldPoint.y;
 	ViewPoint.z = R - WorldPoint.z;
 	ViewPoint.c = WorldPoint.c;
 	CColorP3 ScreenPoint; // 屏幕坐标系三维点
+	// 从三维观察坐标系到屏幕三维坐标系。
 	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
 	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
-	ScreenPoint.z = (ViewPoint.z - d) * d / ViewPoint.z;//Bouknight公式
+	// 使用Bouknight公式计算z坐标。
+	ScreenPoint.z = (ViewPoint.z - d) * d / ViewPoint.z;
 	ScreenPoint.c = ViewPoint.c;
 	return ScreenPoint;
 }

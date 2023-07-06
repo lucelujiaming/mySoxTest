@@ -57,6 +57,7 @@ void CColorTransform3::RotateX(double beta)//绕X轴旋转变换
 	M[1][1] = cos(rad), M[1][2] =-sin(rad);
 	M[2][1] = sin(rad), M[2][2] = cos(rad);
 	MultiplyMatrix();
+	printPointInfo("RotateX");
 }
 
 void CColorTransform3::RotateX(double beta, CColorP3 p)//相对于任意点的绕X轴旋转变换
@@ -64,6 +65,7 @@ void CColorTransform3::RotateX(double beta, CColorP3 p)//相对于任意点的绕X轴旋转
 	Translate(-p.x, -p.y, -p.z);
 	RotateX(beta);
 	Translate(p.x, p.y, p.z);
+	printPointInfo("RotateX by CColorP3");
 }
 
 void CColorTransform3::RotateY(double beta)//绕Y轴旋转变换
@@ -73,6 +75,7 @@ void CColorTransform3::RotateY(double beta)//绕Y轴旋转变换
 	M[0][0] = cos(rad), M[0][2] = sin(rad);
 	M[2][0] =-sin(rad), M[2][2] = cos(rad);
 	MultiplyMatrix();
+	printPointInfo("RotateY");
 }
 
 void CColorTransform3::RotateY(double beta, CColorP3 p)//相对于任意点的绕Y轴旋转变换
@@ -80,6 +83,7 @@ void CColorTransform3::RotateY(double beta, CColorP3 p)//相对于任意点的绕Y轴旋转
 	Translate(-p.x, -p.y, -p.z);
 	RotateY(beta);
 	Translate(p.x, p.y, p.z);
+	printPointInfo("RotateY by CColorP3");
 }
 
 void CColorTransform3::RotateZ(double beta)//绕Z轴旋转变换
@@ -159,6 +163,17 @@ void CColorTransform3::ShearZ(double g, double h)//Z方向错切变换
 	Identity();
 	M[2][0] = g, M[2][1] = h;
 	MultiplyMatrix();
+}
+
+void CColorTransform3::printPointInfo(CString strHeadInfo)
+{
+	TRACE("%s\r\n", strHeadInfo);
+	for (int i = 0; i < ptNumber; i++)
+	{
+		TRACE("\tP[%d] = (%.4f, %.4f, %.4f)", i, P[i].x, P[i].y, P[i].z, P[i].c);
+		if((i + 1) % 4 == 0)
+			TRACE("\r\n");
+	}
 }
 
 void CColorTransform3::MultiplyMatrix(void)//矩阵相乘

@@ -51,6 +51,15 @@ CThreeCrossRotateCube::CThreeCrossRotateCube()
 	smallTransform[0].Scale(3 * nLargeScale, nSmallScale, nSmallScale);
 	smallTransform[1].Scale(nSmallScale, 3 * nLargeScale, nSmallScale);
 	smallTransform[2].Scale(nSmallScale, nSmallScale, 3 * nLargeScale);	
+	
+	// Rotate
+//	for (i = 0; i < 3; i++)
+//	{
+//		smallTransform[i].RotateX(20);
+//		smallTransform[i].RotateY(20);
+//	}
+//	largeTransform.RotateX(20);
+//	largeTransform.RotateY(20);
 }
 
 CThreeCrossRotateCube::~CThreeCrossRotateCube()
@@ -83,13 +92,13 @@ void CThreeCrossRotateCube::DoubleBuffer(CDC* pDC)
 
 void CThreeCrossRotateCube::DrawObject(CDC* pDC)//绘制图形
 {
-	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
 	CZBuffer* pZBuffer = new CZBuffer;//申请内存
-	pZBuffer->InitialDepthBuffer(1100 + iAppendDepth, 1100 + iAppendDepth, 1100 + iAppendDepth);//初始化深度缓冲器
+	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
+	pZBuffer->SetDrawPosition(m_Start);
 	smallCube[0].Draw(pDC, pZBuffer, 0);
 	smallCube[1].Draw(pDC, pZBuffer, 1);
 	smallCube[2].Draw(pDC, pZBuffer, 2);
-	largeCube.Draw(pDC, pZBuffer, 3);
+//	largeCube.Draw(pDC, pZBuffer, 3);
 	delete pZBuffer;//释放内存
 }
 
@@ -108,25 +117,8 @@ void CThreeCrossRotateCube::Draw( CDC *pDC, BOOL bShowSelectBorder )
 	}
 	
 	// Rotate
-	for (int i = 0; i < 3; i++)
-	{
-		// Move to (100, 100, 100) to display
-		smallTransform[i].Translate(100, 100, 100);
-	}
-	// Move to (100, 100, 100) to display
-	largeTransform.Translate(100, 100, 100);
-	// Move to current position
-	// DrawObject(pDC);
-	DoubleBuffer(pDC);
-
-	// Rotate
-	for (i = 0; i < 3; i++)
-	{
-		// Move to (100, 100, 100) to display
-		smallTransform[i].Translate(-100, -100, -100);
-	}
-	// Move to (100, 100, 100) to display
-	largeTransform.Translate(-100, -100, -100);
+	DrawObject(pDC);
+	// DoubleBuffer(pDC);
 
 	if(m_IsMark)
 	{

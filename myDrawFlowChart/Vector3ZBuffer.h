@@ -21,6 +21,8 @@ private:
 	void EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature);//边标记算法
 	void SortPoint(void);//顶点排序
 	CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值	
+public:
+	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
 	CColorP3 P0, P1, P2;//三角形的浮点坐标
 	CColorPoint3 point0, point1, point2;//三角形的整数顶点坐标
@@ -29,6 +31,8 @@ private:
 	int nIndex;//记录扫描线条数
 	double** zBuffer;//深度缓冲区
 	int nWidth, nHeight;//缓冲区宽度和高度
+private:
+	CPoint m_ptDrawPosition;
 };
 
 #endif // !defined(AFX_Vector3_ZBuffer_H_)

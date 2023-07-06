@@ -11,6 +11,7 @@
 
 #include "Graph.h"
 
+// 直线的Wu反走样算法
 class CWuAntiLine : public CGraph  
 {
 //		DECLARE_SERIAL(CWuAntiLine)

@@ -24,7 +24,7 @@ CSmoothFillTriangle::~CSmoothFillTriangle(void)
 
 /**********************************************************************/
 /* 这个逻辑非常简单。就是对于着色一个三角形来说，其实就是从三角形的   */
-/* 最低点开始，一行一行的画线。     *//*
+/* 最低点开始，一行一行的画线。                                       */
 /* 而线的始位置和结束位置的计算方法其实和之前的画线算法一样。         */
 /* 这里采用的是最简单的DDA算法。也就是依靠ROUND的四舍五入             */
 /* 计算三角形边的坐标。而边坐标就是着色线的始位置和结束位置。         */
@@ -72,11 +72,12 @@ void CSmoothFillTriangle::Fill(CDC* pDC)
 	}
 	// 下面开始使用计算出来的起始点和结束点画线。
 	// 这里和CFlatFillTriangle::Fill区别在于，我们使用渐变色画点，而不是直接画线。
-	for (int y = m_P[0].y; y < m_P[2].y; y++)//下闭上开
+	for (int y = m_P[0].y; y < m_P[2].y; y++) // 下闭上开
 	{
 		int n = y - m_P[0].y;
-		for (int x = m_SpanLeft[n].x; x < m_SpanRight[n].x; ++x)//左闭右开
+		for (int x = m_SpanLeft[n].x; x < m_SpanRight[n].x; ++x) // 左闭右开
 		{
+			// 采用双线性差值算法计算多边形内一个像素点的颜色线性插值。
 			CRGB crColor = Interp(x, m_SpanLeft[n].x, m_SpanRight[n].x, m_SpanLeft[n].c, m_SpanRight[n].c);
 			pDC->SetPixelV(x, y, RGB(crColor.red * 255, crColor.green * 255, crColor.blue * 255));//绘制像素点
 		}

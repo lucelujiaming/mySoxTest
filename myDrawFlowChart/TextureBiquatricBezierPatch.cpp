@@ -88,15 +88,18 @@ void CTextureBiquatricBezierPatch::Draw(CDC* pDC, CTextureZBuffer* pZBuffer)
 	CColorP3 Point4[4], ScreenPoint4[4];//当前点与投影点
 	CVector3 N4[4];//点法矢量
 	CTextureCoordinate T4[4];//纹理地址
-	for (int nFace = 0; nFace < 81; nFace++)//曲面片划分为81个平面片
+	// 曲面片划分为81个平面片
+	for (int nFace = 0; nFace < 81; nFace++)
 	{
-		for (int nPoint = 0; nPoint < 4; nPoint++)//每个平面片为四边形
+		// 每个平面片为四边形
+		for (int nPoint = 0; nPoint < 4; nPoint++)
 		{				
 			Point4[nPoint] = V[F[nFace].ptIndex[nPoint]];
 			ScreenPoint4[nPoint] = projection.ThreeDimColorPerspectiveProjection(Point4[nPoint]);//三维透视投影
 			N4[nPoint] = CVector3(Point4[nPoint]);
 			T4[nPoint] = T[F[nFace].ptIndex[nPoint]];
 		}
+		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		//绘制左上三角形
 		CColorP3 TLP[3] = { ScreenPoint4[0] ,ScreenPoint4[2] ,ScreenPoint4[3] };
 		CVector3 TLN[3] = { N4[0], N4[2], N4[3] };

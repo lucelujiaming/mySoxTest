@@ -14,6 +14,9 @@
 #include "ZBufferCube.h"
 #include "ColorTransform3.h"
 
+#define   THREECROSSROTATECUBE_X_STEP   5
+#define   THREECROSSROTATECUBE_Y_STEP   5
+
 class CThreeCrossRotateCube : public CGraph  
 {
 //		DECLARE_SERIAL(CThreeCrossRotateCube)
@@ -23,7 +26,8 @@ public:
 	CString GetTypeName() { return CString("CThreeCrossRotateCube"); }
 	
 protected:
-	CZBufferCube smallCube[3], largeCube;//立方体对象
+	CZBufferCube smallCube[3]; 
+	CZBufferCube largeCube;//立方体对象
 	CColorTransform3 smallTransform[3], largeTransform;//变换
 	
 public:
@@ -50,36 +54,36 @@ public:
 		// Rotate
 		for (int i = 0; i < 3; i++)
 		{
-			smallTransform[i].RotateX(2);
+			smallTransform[i].RotateX(THREECROSSROTATECUBE_X_STEP);
 		}
-		largeTransform.RotateX(2);
+		largeTransform.RotateX(THREECROSSROTATECUBE_X_STEP);
 	}
 	void downBox()  
 	{  
 		// Rotate
 		for (int i = 0; i < 3; i++)
 		{
-			smallTransform[i].RotateX(-2);
+			smallTransform[i].RotateX(-THREECROSSROTATECUBE_X_STEP);
 		}
-		largeTransform.RotateX(-2);
+		largeTransform.RotateX(-THREECROSSROTATECUBE_X_STEP);
 	}
 	void leftBox()  
 	{  
 		// Rotate
 		for (int i = 0; i < 3; i++)
 		{
-			smallTransform[i].RotateY(-2);
+			smallTransform[i].RotateY(-THREECROSSROTATECUBE_Y_STEP);
 		}
-		largeTransform.RotateY(-2);
+		largeTransform.RotateY(-THREECROSSROTATECUBE_Y_STEP);
 	}
 	void rightBox() 
 	{  	
 		// Rotate
 		for (int i = 0; i < 3; i++)
 		{
-			smallTransform[i].RotateY(2);
+			smallTransform[i].RotateY(THREECROSSROTATECUBE_Y_STEP);
 		}
-		largeTransform.RotateY(2);
+		largeTransform.RotateY(THREECROSSROTATECUBE_Y_STEP);
 	}
 
 private:

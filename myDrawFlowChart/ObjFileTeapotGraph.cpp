@@ -77,6 +77,7 @@ void CObjFileTeapotGraph::DrawObject(CDC* pDC)//绘制图形
 {
 	CDepthLinearInterpZBuffer* pZBuffer = new CDepthLinearInterpZBuffer;//申请内存
 	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
+	pZBuffer->SetDrawPosition(m_Start);
 	obj.Draw(pDC, pZBuffer);
 	delete pZBuffer;//释放内存
 }
@@ -127,8 +128,6 @@ void CObjFileTeapotGraph::Draw( CDC *pDC, BOOL bShowSelectBorder )
 //		// Move to (100, 100, 100) to display
 //		transform[i].Translate(100, 100, 100);
 //	}
-	// Move to current position
-	transform.Translate(100, 20, 0);
 	DrawObject(pDC);
 	if(m_IsMark)
 	{

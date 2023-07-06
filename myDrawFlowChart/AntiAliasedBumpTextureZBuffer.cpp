@@ -57,15 +57,16 @@ void CAntiAliasedBumpTextureZBuffer::ReadGradient(double** Bu, double** Bv)
 
 void CAntiAliasedBumpTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene, CRGB** DestImage)
 {
-	//顶点按照y坐标由小到大排序
+	// 顶点按照y坐标由小到大排序
 	SortPoint();
-	//定义三角形覆盖的扫描线条数
+	// 定义三角形覆盖的扫描线条数
 	int nTotalScanLine = point[2].y - point[0].y + 1;
-	//定义span的起点与终点数组
+	// 定义Span的起点与终点数组
 	SpanLeft = new CColorPoint2[nTotalScanLine];
 	SpanRight = new CColorPoint2[nTotalScanLine];
-	//判断P1点位于P0P2边的左侧还是右侧
-	int nDeltz = (point[2].x - point[0].x) * (point[1].y - point[0].y) - (point[2].y - point[0].y) * (point[1].x - point[0].x);//点矢量叉积的z分量
+	// 判断P1点位于P0P2边的左侧还是右侧
+	int nDeltz = (point[2].x - point[0].x) * (point[1].y - point[0].y)
+		       - (point[2].y - point[0].y) * (point[1].x - point[0].x); // 点矢量叉积的z分量
 	if (nDeltz > 0)//左三角形
 	{
 		nIndex = 0;
@@ -107,7 +108,8 @@ void CAntiAliasedBumpTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLight
 			if (CurrentDepth <= zBuffer[x + nWidth / 2][y + nHeight / 2])//如果当前采样点的深度小于帧缓冲器中原采样点的深度
 			{
 				zBuffer[x + nWidth / 2][y + nHeight / 2] = CurrentDepth;//使用当前采样点的深度更新深度缓冲器
-				pDC->SetPixelV(x, y, RGB(I.red * 255, I.green * 255, I.blue * 255));
+				pDC->SetPixelV(m_ptDrawPosition.x + x, m_ptDrawPosition.y + y, 
+					RGB(I.red * 255, I.green * 255, I.blue * 255));
 			}
 			CurrentDepth += DepthStep;
 		}

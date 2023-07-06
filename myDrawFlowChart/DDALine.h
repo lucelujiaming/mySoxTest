@@ -16,6 +16,7 @@
 #include"Facet.h"
 #include"Transform3.h"
 
+// ÷±œﬂDDAÀ„∑®
 class CDDALine : public CGraph  
 {
 //		DECLARE_SERIAL(CDDALine)

@@ -3,7 +3,7 @@
 
 CColorTransform3::CColorTransform3(void)
 {
-
+	P = NULL;
 }
 
 CColorTransform3::~CColorTransform3(void)
@@ -163,6 +163,10 @@ void CColorTransform3::ShearZ(double g, double h)//Z∑ΩœÚ¥Ì«–±‰ªª
 
 void CColorTransform3::MultiplyMatrix(void)//æÿ’Ûœ‡≥À
 {
+	if (P == NULL)
+	{
+		return;
+	}
 	CColorP3* PTemp = new CColorP3[ptNumber];
 	for (int i = 0; i < ptNumber; i++)
 		PTemp[i] = P[i];
@@ -187,8 +191,10 @@ void CColorTransform3::LeftMultiplyMatrix(double M1[4][4], double M2[4][4])//◊Û≥
 			M2[i][j] = MTemp[i][j];
 }
 
-void CColorTransform3::ArbitraryDirection(double beta, double nx, double ny, double nz)//»∆»Œ“‚∑ΩœÚµƒ–˝◊™
-{//betaŒ™–˝◊™Ω«£¨n={nx£¨ny£¨nz}Œ™∑ΩœÚ ∏¡ø£¨4∏ˆ≤Œ ˝ππ≥…4‘™ ˝
+//»∆»Œ“‚∑ΩœÚµƒ–˝◊™
+//betaŒ™–˝◊™Ω«£¨n={nx£¨ny£¨nz}Œ™∑ΩœÚ ∏¡ø£¨4∏ˆ≤Œ ˝ππ≥…4‘™ ˝
+void CColorTransform3::ArbitraryDirection(double beta, double nx, double ny, double nz)
+{
 	double Beta = double(beta * PI / 180);
 	double M1[4][4], M2[4][4], M3[4][4], M4[4][4], M5[4][4]; 
 	double sinBetaX = ny;

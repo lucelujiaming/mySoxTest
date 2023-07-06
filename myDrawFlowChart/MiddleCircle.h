@@ -12,6 +12,8 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 
+// 圆的中点算法
+// 椭圆的中点算法
 class CMiddleCircle : public CGraph  
 {
 //		DECLARE_SERIAL(CMiddleCircle)
@@ -21,11 +23,11 @@ public:
 	CString GetTypeName() { return CString("CMiddleCircle"); }
 
 public:
-	void MidPointCircle(CDC* pDC, int R);//中点画圆算法
-	void CirclePoint(CDC* pDC, int x, int y);//八分法画圆子函数
+	void MidPointCircle(CDC* pDC, int R);		// 中点画圆算法
+	void CirclePoint(CDC* pDC, int x, int y);	// 八分法画圆子函数
 
-	void MidPointEllipse(CDC* pDC, int a, int b);//中点画椭圆算法
-	void EllipsePoint(CDC* pDC, int x, int y);//四分法画椭圆子函数
+	void MidPointEllipse(CDC* pDC, int a, int b);	// 中点画椭圆算法
+	void EllipsePoint(CDC* pDC, int x, int y);		// 四分法画椭圆子函数
 	
 private:
 	int m_Radius;

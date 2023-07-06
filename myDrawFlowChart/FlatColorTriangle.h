@@ -12,6 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 
+// 平面着色的三角形图元
 class CFlatColorTriangle : public CGraph  
 {
 //		DECLARE_SERIAL(CFlatColorTriangle)

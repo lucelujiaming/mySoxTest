@@ -12,6 +12,7 @@
 #include "Graph.h"
 #include "AdjustPoint.h"
 
+// 光滑着色的三角形图元
 class CSmoothColorTriangle : public CGraph  
 {
 //		DECLARE_SERIAL(CSmoothColorTriangle)

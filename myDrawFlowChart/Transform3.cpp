@@ -3,7 +3,7 @@
 
 CTransform3::CTransform3(void)
 {
-
+	P = NULL;
 }
 
 CTransform3::~CTransform3(void)
@@ -277,6 +277,10 @@ void CTransform3::ShearZ(double g, double h)//Z方向错切变换
 
 void CTransform3::MultiplyMatrix(void)//矩阵相乘
 {
+	if (P == NULL)
+	{
+		return;
+	}
 	CP3* PTemp = new CP3[ptNumber];
 	for (int i = 0; i < ptNumber; i++)
 		PTemp[i] = P[i];

@@ -11,6 +11,7 @@
 
 #include "Graph.h"
 
+// 直线的Bresenham算法
 // 这个类除了给出了Bresenham算法的代码，还给出了中点算法的代码。
 class CBresenhamLine : public CGraph  
 {

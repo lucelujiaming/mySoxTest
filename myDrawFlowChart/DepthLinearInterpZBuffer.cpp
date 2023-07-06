@@ -86,7 +86,8 @@ void CDepthLinearInterpZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingSc
 			if (depth <= zBuffer[x + nWidth / 2][y + nHeight / 2])//如果当前采样点的深度小于帧缓冲器中原采样点的深度
 			{
 				zBuffer[x + nWidth / 2][y + nHeight / 2] = depth;//使用当前采样点的深度更新深度缓冲器
-				pDC->SetPixelV(x, y, RGB(I.red * 255, I.green * 255, I.blue * 255));
+				pDC->SetPixelV(m_ptDrawPosition.x + x, m_ptDrawPosition.y + y, 
+					RGB(I.red * 255, I.green * 255, I.blue * 255));
 			}
 		}
 	}

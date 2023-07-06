@@ -23,7 +23,7 @@ CFlatFillTriangle::~CFlatFillTriangle(void)
 
 /**********************************************************************/
 /* 这个逻辑非常简单。就是对于着色一个三角形来说，其实就是从三角形的   */
-/* 最低点开始，一行一行的画线。     *//*
+/* 最低点开始，一行一行的画线。                                       */
 /* 而线的始位置和结束位置的计算方法其实和之前的画线算法一样。         */
 /* 这里采用的是最简单的DDA算法。也就是依靠ROUND的四舍五入             */
 /* 计算三角形边的坐标。而边坐标就是着色线的始位置和结束位置。         */
@@ -93,7 +93,8 @@ void CFlatFillTriangle::Fill(CDC* pDC)
 	}
 }
 
-void CFlatFillTriangle::EdgeFlag(CPoint PStart, CPoint PEnd, BOOL bFeature)//DDA算法离散边
+// DDA算法离散边
+void CFlatFillTriangle::EdgeFlag(CPoint PStart, CPoint PEnd, BOOL bFeature) 
 {
 	int dx = PEnd.x - PStart.x;
 	int dy = PEnd.y - PStart.y;

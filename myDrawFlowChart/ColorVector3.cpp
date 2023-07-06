@@ -12,7 +12,8 @@ CColorVector3::~CColorVector3(void)
 {
 }
 
-CColorVector3::CColorVector3(double x, double y, double z)//¾ø¶ÔÊ¸Á¿
+// Ê¹ÓÃ(x, y, z)¶¨ÒåµÄ¾ø¶ÔÊ¸Á¿½øÐÐ³õÊ¼»¯¡£
+CColorVector3::CColorVector3(double x, double y, double z) 
 {
 	this->x = x;
 	this->y = y;
@@ -26,19 +27,21 @@ CColorVector3::CColorVector3(const CColorP3 &p)
 	z = p.z;
 }
 
-CColorVector3::CColorVector3(const CColorP3 &p0, const CColorP3 &p1)//Ïà¶ÔÊ¸Á¿
+// Ê¹ÓÃp1 - p0¶¨ÒåµÄÏà¶ÔÊ¸Á¿½øÐÐ³õÊ¼»¯¡£
+CColorVector3::CColorVector3(const CColorP3 &p0, const CColorP3 &p1) 
 {
 	x = p1.x - p0.x;
 	y = p1.y - p0.y;
 	z = p1.z - p0.z;
 }
 
-double CColorVector3::Magnitude(void)//Ê¸Á¿µÄÄ£
+double CColorVector3::Magnitude(void) // Ê¸Á¿µÄÄ£
 {
 	return sqrt(x * x + y * y + z * z);
 }
 
-CColorVector3 CColorVector3::Normalize(void)//¹éÒ»»¯Îªµ¥Î»Ê¸Á¿
+// ¹éÒ»»¯Îªµ¥Î»Ê¸Á¿
+CColorVector3 CColorVector3::Normalize(void) 
 {
 	CColorVector3 vector;
 	double magnitude = sqrt(x * x + y * y + z * z);
@@ -50,7 +53,8 @@ CColorVector3 CColorVector3::Normalize(void)//¹éÒ»»¯Îªµ¥Î»Ê¸Á¿
 	return vector;
 }
 
-CColorVector3 operator + (const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á¿µÄºÍ
+// Ê¸Á¿µÄºÍ
+CColorVector3 operator + (const CColorVector3 &v0, const CColorVector3 &v1)
 {
 	CColorVector3 vector;
 	vector.x = v0.x + v1.x;
@@ -59,7 +63,8 @@ CColorVector3 operator + (const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á
 	return vector;
 }
 
-CColorVector3 operator - (const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á¿µÄ²î
+// Ê¸Á¿µÄ²î
+CColorVector3 operator - (const CColorVector3 &v0, const CColorVector3 &v1)
 {
 	CColorVector3 vector;
 	vector.x = v0.x - v1.x;
@@ -68,7 +73,8 @@ CColorVector3 operator - (const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á
 	return vector;
 }
 
-CColorVector3 operator * (const CColorVector3 &v, double scalar)//Ê¸Á¿Óë³£Á¿µÄ»ý
+// Ê¸Á¿Óë³£Á¿µÄ»ý
+CColorVector3 operator * (const CColorVector3 &v, double scalar)
 {
 	CColorVector3 vector;
 	vector.x = v.x * scalar;
@@ -77,7 +83,8 @@ CColorVector3 operator * (const CColorVector3 &v, double scalar)//Ê¸Á¿Óë³£Á¿µÄ»ý
 	return vector;
 }
 
-CColorVector3 operator * (double scalar, const CColorVector3 &v)//³£Á¿ÓëÊ¸Á¿µÄ»ý
+// ³£Á¿ÓëÊ¸Á¿µÄ»ý
+CColorVector3 operator * (double scalar, const CColorVector3 &v)
 {
 	CColorVector3 vector;
 	vector.x = v.x * scalar;
@@ -86,7 +93,8 @@ CColorVector3 operator * (double scalar, const CColorVector3 &v)//³£Á¿ÓëÊ¸Á¿µÄ»ý
 	return vector;
 }
 
-CColorVector3 operator / (const CColorVector3 &v, double scalar)//Ê¸Á¿Êý³ý
+// Ê¸Á¿Êý³ý
+CColorVector3 operator / (const CColorVector3 &v, double scalar)
 {
 	if(fabs(scalar) < 1e-4)
 		scalar = 1.0;
@@ -97,11 +105,59 @@ CColorVector3 operator / (const CColorVector3 &v, double scalar)//Ê¸Á¿Êý³ý
 	return vector;
 }
 
-double DotProduct(const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á¿µÄµã»ý
+/************************************************************************/
+/* ÏÂÃæ¸´Ï°Ò»ÏÂ£º                                                       */
+/* Ê×ÏÈÊ¸Á¿µÄµã»ýÊÇÕâÃ´¶¨Òå¡£                                           */
+/* ÏòÁ¿µÄµã³Ë£¬Ò²½ÐÏòÁ¿µÄÄÚ»ý¡¢ÊýÁ¿»ý£¬¶ÔÁ½¸öÏòÁ¿Ö´ÐÐµã³ËÔËËã£¬         */
+/* ¾ÍÊÇ¶ÔÕâÁ½¸öÏòÁ¿¶ÔÓ¦Î»Ò»Ò»Ïà³ËÖ®ºóÇóºÍµÄ²Ù×÷£¬µã³ËµÄ½á¹ûÊÇÒ»¸ö±êÁ¿¡£ */
+/* µã³ËµÄ¼¸ºÎÒâÒåÊÇ¿ÉÒÔÓÃÀ´±íÕ÷»ò¼ÆËãÁ½¸öÏòÁ¿Ö®¼äµÄ¼Ð½Ç£¬               */
+/* ÒÔ¼°ÔÚbÏòÁ¿ÔÚaÏòÁ¿·½ÏòÉÏµÄÍ¶Ó°£¬ÓÐ¹«Ê½£º                             */
+/*     aºÍbµÄµã»ý = |a| * |b| * cos(cita)                               */
+/* ÍÆµ¼¹ý³ÌÈçÏÂ£¬Ê×ÏÈ¼ÙÉèÓÐÁ½¸öÏòÁ¿aºÍb¡£¶¨Òå£º                         */
+/*     c = a - b                                                        */
+/* ¸ù¾ÝÈý½ÇÐÎÓàÏÒ¶¨ÀíÓÐ£º                                               */
+/*     c^2 = a^2 + b^2 - 2 * |a| * |b| * cos(cita)                      */
+/* ¸ù¾Ý¹ØÏµc=a-b£¨a¡¢b¡¢c¾ùÎªÏòÁ¿£©ÓÐ£º                                 */
+/*     (a - b)ºÍ(a - b)µÄµã»ý = a^2 + b^2 - 2 * (aºÍbµÄµã»ý)            */
+/*                            = a^2 + b^2 - 2 * |a| * |b| * cos(cita)   */
+/* ¸ù¾ÝÕâ¸ö¹«Ê½¾Í¿ÉÒÔ¼ÆËãÏòÁ¿aºÍÏòÁ¿bÖ®¼äµÄ¼Ð½Ç¡£                       */
+/* ´Ó¶ø¾Í¿ÉÒÔ½øÒ»²½ÅÐ¶ÏÕâÁ½¸öÏòÁ¿ÊÇ·ñÊÇÍ¬Ò»·½Ïò£¬                       */
+/* ÊÇ·ñÕý½»(Ò²¾ÍÊÇ´¹Ö±)µÈ·½Ïò¹ØÏµ¡£¼´£º                                 */
+/*     aºÍbµÄµã»ý´óÓÚÁã£º·½Ïò»ù±¾ÏàÍ¬£¬¼Ð½ÇÔÚ0¡ãµ½90¡ãÖ®¼ä¡£              */
+/*     aºÍbµÄµã»ýµÈÓÚÁã£ºÕý½»£¬Ïà»¥´¹Ö±¡£                               */
+/*     aºÍbµÄµã»ýÐ¡ÓÚÁã£º·½Ïò»ù±¾Ïà·´£¬¼Ð½ÇÔÚ90¡ãµ½180¡ãÖ®¼ä¡£            */
+/************************************************************************/
+double DotProduct(const CColorVector3 &v0, const CColorVector3 &v1) 
 {
 	return(v0.x * v1.x + v0.y * v1.y + v0.z * v1.z);
 }
 
+/************************************************************************/
+/* ÏÂÃæ¸´Ï°Ò»ÏÂ£º                                                       */
+/* Ê×ÏÈÊ¸Á¿µÄ²æ³ËÊÇÕâÃ´¶¨Òå¡£                                           */
+/*     c = a ¡Á b = |a||b| * sin(cita)                                  */
+/* ÆäÖÐcitaÊÇaºÍbµÄ¼Ð½Ç¡£cµÄÄ£ÎªÒÔabÎªÁ½Ìõ±ßµÄÆ½ÐÐËÄ±ßÐÎµÄÃæ»ý¡£        */
+/* ½øÒ»²½ÓÐÏÂÃæµÄ¼¸ÌõÐÔÖÊ£º                                             */
+/*   1. a ¡Á b = -b ¡Á a¡£                                              */
+/*   2. a ¡Á a = 0¡£ÒòÎª¼Ð½ÇcitaÎª0£¬Òò´ËÉÏsin(cita)Ò²ÎªÁã¡£            */
+/*   3. a ¡Á (b + c) = a ¡Á b + a ¡Á c¡£                                */
+/* ÄÇÃ´¶ÔÓÚ¿Õ¼äÖÐµÄÁ½¸öÏòÁ¿£º                                           */
+/*   a = ax * i + ay * j + az * k                                       */
+/*   b = bx * i + by * j + bz * k                                       */
+/* Ôò a ¡Á b = (ax * i + ay * j + az * k)¡Á(bx * i + by * j + bz * k)   */
+/*           = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
+/*             ax * by * i * j + ay * by * j * j + az * by * k * j +    */
+/*             ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
+/* ¸ù¾Ý¹«Ê½2¿ÉÖª£º i * i = j * j = k * k = 0¡£ÔÚ½áºÏ¹«Ê½1£¬ÔòÔ­Ê½µÈÓÚ£º */
+/*             (ax * by - ay * bx) i * j +                              */
+/*             (az * bx - ax * bz) k * i +                              */
+/*             (ay * bz - az * by) j * k +                              */
+/* ¸ù¾Ý¶¨Òå¿ÉÖª£º i * j = k, k * i = j, k * i = j¡£ÔòÔ­Ê½µÈÓÚ£º         */
+/*             (ay * bz - az * by) i +                                  */
+/*             (az * bx - ax * bz) j +                                  */
+/*             (ax * by - ay * bx) k                                    */
+/* Õâ¾ÍÊÇÏÂÃæÕâ¸ö´úÂëµÄ¼ÆËã¹«Ê½¡£                                       */
+/************************************************************************/
 CColorVector3 CrossProduct(const CColorVector3 &v0, const CColorVector3 &v1)//Ê¸Á¿µÄ²æ»ý
 {
 	CColorVector3 vector;

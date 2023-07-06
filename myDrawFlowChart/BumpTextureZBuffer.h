@@ -23,6 +23,8 @@ private:
 	CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值
 	CTextureCoordinate Interp(double m, double m0, double m1, CTextureCoordinate T0, CTextureCoordinate T1);//纹理地址线性插值
 	CRGB GetTexture(int u, int v, CTexture* pTexture);//读取纹理
+public:
+	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
 	CColorP3 P[3];//三角形的浮点坐标
 	CColorPoint3 point[3];//三角形的整数顶点坐标
@@ -31,6 +33,8 @@ private:
 	int nIndex;//记录扫描线条数
 	double** zBuffer;//深度缓冲区
 	int nWidth, nHeight;//缓冲区宽度和高度
+private:
+	CPoint m_ptDrawPosition;
 };
 
 #endif // !defined(AFX_BUMP_TEXTURE_ZBUFFER_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

@@ -81,12 +81,14 @@ void CGouraudBiquatricBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 	CColorP3 Point[4], ScreenPoint[4];//当前点与投影点
 	for (int nFace = 0; nFace < 81; nFace++)//曲面片划分为81个平面片
 	{
-		for (int nPoint = 0; nPoint < 4; nPoint++)//每个平面片为四边形
+		// 每个平面片为四边形
+		for (int nPoint = 0; nPoint < 4; nPoint++)
 		{				
 			Point[nPoint] = V[F[nFace].ptIndex[nPoint]];
 			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);//三维透视投影
 			ScreenPoint[nPoint].c = pScene->Illuminate(Eye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);//调用光照函数
 		}
+		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]);//上三角形
 		pZBuffer->FillTriangle(pDC);
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]);//下三角形

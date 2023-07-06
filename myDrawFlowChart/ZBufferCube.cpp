@@ -76,7 +76,15 @@ void CZBufferCube::ReadFace(void) // 面表
 	F[5].c = CRGB(0.0, 1.0, 1.0);               // 底面的颜色
 }
 
-// 有了上面两个函数的基础，我们就可以绘制立方体了。
+/************************************************************************/
+/* 有了上面两个函数的基础，我们就可以绘制立方体了。                     */
+/* CZBufferCube使用传入的CZBuffer进行绘制。                             */
+/* 因此上这个函数是一个核心逻辑函数。                                   */
+// 传入三个参数：
+// pDC      - 绘图句柄。
+// pZBuffer - 深度缓冲器。
+// nSign    - 立方体编号。用于分配不同的颜色。
+/************************************************************************/
 void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 {
 	CColorP3 ScreenPoint[4];//三维投影点
@@ -99,6 +107,7 @@ void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 			else
 				ScreenPoint[nPoint].c = F[nFace].c;
 		}
+		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形
 		pZBuffer->FillTriangle(pDC);
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]); // 下三角形

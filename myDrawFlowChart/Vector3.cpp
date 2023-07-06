@@ -12,7 +12,8 @@ CVector3::~CVector3(void)
 {
 }
 
-CVector3::CVector3(double x, double y, double z)//绝对矢量
+// 使用(x, y, z)定义的绝对矢量进行初始化。
+CVector3::CVector3(double x, double y, double z)
 {
 	this->x = x;
 	this->y = y;
@@ -41,7 +42,8 @@ CVector3::CVector3(const CColorP3 &p)
 	z = p.z;
 }
 
-CVector3::CVector3(const CColorP3 &p0, const CColorP3 &p1)//相对矢量
+// 使用p1 - p0定义的相对矢量进行初始化。
+CVector3::CVector3(const CColorP3 &p0, const CColorP3 &p1)
 {
 	x = p1.x - p0.x;
 	y = p1.y - p0.y;
@@ -53,7 +55,8 @@ double CVector3::Magnitude(void)//矢量的模
 	return sqrt(x * x + y * y + z * z);
 }
 
-CVector3 CVector3::Normalize(void)//归一化为单位矢量
+// 归一化为单位矢量
+CVector3 CVector3::Normalize(void)
 {
 	CVector3 vector;
 	double magnitude = sqrt(x * x + y * y + z * z);
@@ -112,14 +115,36 @@ CVector3 operator / (const CVector3 &v, double scalar)//矢量数除
 	return vector;
 }
 
-double DotProduct(const CVector3 &v0, const CVector3 &v1)//矢量的点积
+/************************************************************************/
+/* 下面复习一下：                                                       */
+/* 首先矢量的点积是这么定义。                                           */
+/* 向量的点乘，也叫向量的内积、数量积，对两个向量执行点乘运算，         */
+/* 就是对这两个向量对应位一一相乘之后求和的操作，点乘的结果是一个标量。 */
+/* 点乘的几何意义是可以用来表征或计算两个向量之间的夹角，               */
+/* 以及在b向量在a向量方向上的投影，有公式：                             */
+/*     a和b的点积 = |a| * |b| * cos(cita)                               */
+/* 推导过程如下，首先假设有两个向量a和b。定义：                         */
+/*     c = a - b                                                        */
+/* 根据三角形余弦定理有：                                               */
+/*     c^2 = a^2 + b^2 - 2 * |a| * |b| * cos(cita)                      */
+/* 根据关系c=a-b（a、b、c均为向量）有：                                 */
+/*     (a - b)和(a - b)的点积 = a^2 + b^2 - 2 * (a和b的点积)            */
+/*                            = a^2 + b^2 - 2 * |a| * |b| * cos(cita)   */
+/* 根据这个公式就可以计算向量a和向量b之间的夹角。                       */
+/* 从而就可以进一步判断这两个向量是否是同一方向，                       */
+/* 是否正交(也就是垂直)等方向关系。即：                                 */
+/*     a和b的点积大于零：方向基本相同，夹角在0°到90°之间。              */
+/*     a和b的点积等于零：正交，相互垂直。                               */
+/*     a和b的点积小于零：方向基本相反，夹角在90°到180°之间。            */
+/************************************************************************/
+double DotProduct(const CVector3 &v0, const CVector3 &v1)
 {
 	return(v0.x * v1.x + v0.y * v1.y + v0.z * v1.z);
 }
 
 /************************************************************************/
 /* 下面复习一下：                                                       */
-/* 首先叉乘是这么定义。                                                 */
+/* 首先矢量的叉乘是这么定义。                                           */
 /*     c = a × b = |a||b| * sin(cita)                                  */
 /* 其中cita是a和b的夹角。c的模为以ab为两条边的平行四边形的面积。        */
 /* 进一步有下面的几条性质：                                             */

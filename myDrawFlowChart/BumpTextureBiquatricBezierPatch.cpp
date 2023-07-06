@@ -90,20 +90,22 @@ void CBumpTextureBiquatricBezierPatch::Draw(CDC* pDC, CBumpTextureZBuffer* pZBuf
 	CTextureCoordinate T4[4];//纹理
 	for (int nFace = 0; nFace < 81; nFace++)//曲面片划分为81个平面片
 	{
-		for (int nPoint = 0; nPoint < 4; nPoint++)//每个平面片为四边形
+		// 每个平面片为四边形
+		for (int nPoint = 0; nPoint < 4; nPoint++)
 		{				
 			int nVertexIndex = F[nFace].ptIndex[nPoint];
 			ScreenPoint4[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[nVertexIndex]);//三维透视投影
 			N4[nPoint] = CVector3(V[nVertexIndex]);
 			T4[nPoint] = T[nVertexIndex];
 		}
-		//绘制左上三角形
+		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
+		// 绘制左上三角形
 		CColorP3 TLP[3] = { ScreenPoint4[0] ,ScreenPoint4[2] ,ScreenPoint4[3] };
 		CVector3 TLN[3] = { N4[0], N4[2], N4[3] };
 		CTextureCoordinate TLT[3] = { T4[0], T4[2], T4[3] };
 		pZBuffer->SetPoint(TLP, TLN, TLT);//左上三角形的顶点P，法矢量N和纹理地址T
 		pZBuffer->FillTriangle(pDC, Eye, pScene, pTexture);
-		//绘制右下三角形
+		// 绘制右下三角形
 		CColorP3 DRP[3] = { ScreenPoint4[0] ,ScreenPoint4[1] ,ScreenPoint4[2] };
 		CVector3 DRN[3] = { N4[0], N4[1], N4[2] };
 		CTextureCoordinate DRT[3] = { T4[0], T4[1], T4[2] };//右下三角形的顶点P，法矢量N和纹理地址T

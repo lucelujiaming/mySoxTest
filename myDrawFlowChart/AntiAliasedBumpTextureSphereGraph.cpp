@@ -76,9 +76,9 @@ void CAntiAliasedBumpTextureSphereGraph::DoubleBuffer(CDC* pDC)
 
 void CAntiAliasedBumpTextureSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
-	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
 	CAntiAliasedBumpTextureZBuffer* pZBuffer = new CAntiAliasedBumpTextureZBuffer;//申请内存
-	pZBuffer->InitialDepthBuffer(10000 + iAppendDepth, 10000 + iAppendDepth, 10000 + iAppendDepth);//初始化深度缓冲器
+	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
+	pZBuffer->SetDrawPosition(m_Start);
 	sphere.Draw(pDC, pZBuffer);
 	delete pZBuffer;//释放内存
 }
@@ -129,8 +129,6 @@ void CAntiAliasedBumpTextureSphereGraph::Draw( CDC *pDC, BOOL bShowSelectBorder 
 //		// Move to (100, 100, 100) to display
 //		transform[i].Translate(100, 100, 100);
 //	}
-	// Move to current position
-	transform.Translate(100, 20, 0);
 	DrawObject(pDC);
 	if(m_IsMark)
 	{

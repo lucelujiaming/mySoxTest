@@ -91,6 +91,7 @@ void CTextureCube::Draw(CDC* pDC, CTextureZBuffer* pZBuffer)
 			T4[nPoint].u = F[nFace].t[nPoint].u * (pTexture->bmp.bmWidth - 1);
 			T4[nPoint].v = F[nFace].t[nPoint].v * (pTexture->bmp.bmHeight - 1);
 		}
+		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。
 		//绘制左上三角形
 		CColorP3 TLP[3] = { ScreenPoint4[0] ,ScreenPoint4[2] ,ScreenPoint4[3] };
 		CVector3 TLN[3] = { N4[0], N4[2], N4[3] };

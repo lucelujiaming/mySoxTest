@@ -35,7 +35,8 @@ CColorVector3::CColorVector3(const CColorP3 &p0, const CColorP3 &p1)
 	z = p1.z - p0.z;
 }
 
-double CColorVector3::Magnitude(void) // 矢量的模
+// 矢量的模
+double CColorVector3::Magnitude(void)
 {
 	return sqrt(x * x + y * y + z * z);
 }
@@ -145,9 +146,9 @@ double DotProduct(const CColorVector3 &v0, const CColorVector3 &v1)
 /*   a = ax * i + ay * j + az * k                                       */
 /*   b = bx * i + by * j + bz * k                                       */
 /* 则 a × b = (ax * i + ay * j + az * k)×(bx * i + by * j + bz * k)   */
-/*           = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
-/*             ax * by * i * j + ay * by * j * j + az * by * k * j +    */
-/*             ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
+/*          = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
+/*            ax * by * i * j + ay * by * j * j + az * by * k * j +    */
+/*            ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
 /* 根据公式2可知： i * i = j * j = k * k = 0。在结合公式1，则原式等于： */
 /*             (ax * by - ay * bx) i * j +                              */
 /*             (az * bx - ax * bz) k * i +                              */
@@ -157,6 +158,12 @@ double DotProduct(const CColorVector3 &v0, const CColorVector3 &v1)
 /*             (az * bx - ax * bz) j +                                  */
 /*             (ax * by - ay * bx) k                                    */
 /* 这就是下面这个代码的计算公式。                                       */
+/************************************************************************/
+/* 证明两个矢量的叉乘垂直于这两个矢量也很简单：                         */
+/*                   | ay * bz - az * by |                              */
+/*    | ax ay az | * | az * bx - ax * bz | = | 0 |                      */
+/*    | bx by bz |   | ax * by - ay * bx }   | 0 |                      */
+/* 两个矢量的乘积为零，即为垂直。                                       */
 /************************************************************************/
 CColorVector3 CrossProduct(const CColorVector3 &v0, const CColorVector3 &v1)//矢量的叉积
 {

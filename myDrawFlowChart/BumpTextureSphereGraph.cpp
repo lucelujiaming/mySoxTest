@@ -35,7 +35,7 @@ CBumpTextureSphereGraph::CBumpTextureSphereGraph()
 
 	sphere.ReadVertex();
 	sphere.ReadFace();
-	double nScale = 300;
+	double nScale = 100;
 	transform.SetMatrix(sphere.Ver, 26);
 	transform.Scale(nScale, nScale, nScale);
 	InitializeLightingScene();//初始化光照场景

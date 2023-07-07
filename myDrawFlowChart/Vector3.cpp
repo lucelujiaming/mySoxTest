@@ -4,7 +4,8 @@
 
 CVector3::CVector3(void)
 {
-	x = 0.0,y = 0.0, z = 1.0;//指向z轴正向
+	// 指向z轴正向
+	x = 0.0,y = 0.0, z = 1.0; 
 }
 
 
@@ -27,13 +28,13 @@ CVector3::CVector3(const CP3 &p)
 	z = p.z;
 }
 
-CVector3::CVector3(const CP3 &p0, const CP3 &p1)//相对矢量
+// 相对矢量
+CVector3::CVector3(const CP3 &p0, const CP3 &p1)
 {
 	x = p1.x - p0.x;
 	y = p1.y - p0.y;
 	z = p1.z - p0.z;
 }
-
 
 CVector3::CVector3(const CColorP3 &p)
 {
@@ -50,7 +51,8 @@ CVector3::CVector3(const CColorP3 &p0, const CColorP3 &p1)
 	z = p1.z - p0.z;
 }
 
-double CVector3::Magnitude(void)//矢量的模
+// 矢量的模
+double CVector3::Magnitude(void)
 {
 	return sqrt(x * x + y * y + z * z);
 }
@@ -68,7 +70,8 @@ CVector3 CVector3::Normalize(void)
 	return vector;
 }
 
-CVector3 operator + (const CVector3 &v0, const CVector3 &v1)//矢量的和
+// 矢量的和
+CVector3 operator + (const CVector3 &v0, const CVector3 &v1)
 {
 	CVector3 vector;
 	vector.x = v0.x + v1.x;
@@ -77,7 +80,8 @@ CVector3 operator + (const CVector3 &v0, const CVector3 &v1)//矢量的和
 	return vector;
 }
 
-CVector3 operator - (const CVector3 &v0, const CVector3 &v1)//矢量的差
+// 矢量的差
+CVector3 operator - (const CVector3 &v0, const CVector3 &v1)
 {
 	CVector3 vector;
 	vector.x = v0.x - v1.x;
@@ -86,7 +90,8 @@ CVector3 operator - (const CVector3 &v0, const CVector3 &v1)//矢量的差
 	return vector;
 }
 
-CVector3 operator * (const CVector3 &v, double scalar)//矢量与常量的积
+// 矢量与常量的积
+CVector3 operator * (const CVector3 &v, double scalar)
 {
 	CVector3 vector;
 	vector.x = v.x * scalar;
@@ -95,7 +100,8 @@ CVector3 operator * (const CVector3 &v, double scalar)//矢量与常量的积
 	return vector;
 }
 
-CVector3 operator * (double scalar, const CVector3 &v)//常量与矢量的积
+// 常量与矢量的积
+CVector3 operator * (double scalar, const CVector3 &v)
 {
 	CVector3 vector;
 	vector.x = v.x * scalar;
@@ -104,7 +110,8 @@ CVector3 operator * (double scalar, const CVector3 &v)//常量与矢量的积
 	return vector;
 }
 
-CVector3 operator / (const CVector3 &v, double scalar)//矢量数除
+// 矢量数除
+CVector3 operator / (const CVector3 &v, double scalar)
 {
 	if(fabs(scalar) < 1e-4)
 		scalar = 1.0;
@@ -133,9 +140,9 @@ CVector3 operator / (const CVector3 &v, double scalar)//矢量数除
 /* 根据这个公式就可以计算向量a和向量b之间的夹角。                       */
 /* 从而就可以进一步判断这两个向量是否是同一方向，                       */
 /* 是否正交(也就是垂直)等方向关系。即：                                 */
-/*     a和b的点积大于零：方向基本相同，夹角在0°到90°之间。              */
+/*     a和b的点积大于零：方向基本相同，夹角在0°到90°之间。            */
 /*     a和b的点积等于零：正交，相互垂直。                               */
-/*     a和b的点积小于零：方向基本相反，夹角在90°到180°之间。            */
+/*     a和b的点积小于零：方向基本相反，夹角在90°到180°之间。          */
 /************************************************************************/
 double DotProduct(const CVector3 &v0, const CVector3 &v1)
 {
@@ -155,9 +162,9 @@ double DotProduct(const CVector3 &v0, const CVector3 &v1)
 /*   a = ax * i + ay * j + az * k                                       */
 /*   b = bx * i + by * j + bz * k                                       */
 /* 则 a × b = (ax * i + ay * j + az * k)×(bx * i + by * j + bz * k)   */
-/*           = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
-/*             ax * by * i * j + ay * by * j * j + az * by * k * j +    */
-/*             ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
+/*          = ax * bx * i * i + ay * bx * j * i + az * bx * k * i +    */
+/*            ax * by * i * j + ay * by * j * j + az * by * k * j +    */
+/*            ax * bz * i * k + ay * bz * j * k + az * bz * k * k +    */
 /* 根据公式2可知： i * i = j * j = k * k = 0。在结合公式1，则原式等于： */
 /*             (ax * by - ay * bx) i * j +                              */
 /*             (az * bx - ax * bz) k * i +                              */
@@ -167,6 +174,12 @@ double DotProduct(const CVector3 &v0, const CVector3 &v1)
 /*             (az * bx - ax * bz) j +                                  */
 /*             (ax * by - ay * bx) k                                    */
 /* 这就是下面这个代码的计算公式。                                       */
+/************************************************************************/
+/* 证明两个矢量的叉乘垂直于这两个矢量也很简单：                         */
+/*                   | ay * bz - az * by |                              */
+/*    | ax ay az | * | az * bx - ax * bz | = | 0 |                      */
+/*    | bx by bz |   | ax * by - ay * bx }   | 0 |                      */
+/* 两个矢量的乘积为零，即为垂直。                                       */
 /************************************************************************/
 CVector3 CrossProduct(const CVector3 &v0, const CVector3 &v1) // 矢量的叉积
 {

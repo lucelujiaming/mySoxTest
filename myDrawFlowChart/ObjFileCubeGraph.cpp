@@ -71,6 +71,7 @@ void CObjFileCubeGraph::DoubleBuffer(CDC* pDC)
 
 void CObjFileCubeGraph::DrawObject(CDC* pDC)//ªÊ÷∆Õº–Œ
 {
+	obj.SetDrawPosition(m_Start);
 	obj.Draw(pDC);
 }
 

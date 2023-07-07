@@ -166,10 +166,14 @@ void CObjFileCube::Draw(CDC* pDC)//透视投影
 			{
 				ScreenPoint[nVertex] = projection.PerspectiveProjection(V[F[nMesh].vtIndex[nVertex]]);//透视投影
 			}
-			pDC->MoveTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));//绘制多边形
-			pDC->LineTo(ROUND(ScreenPoint[1].x), ROUND(ScreenPoint[1].y));
-			pDC->LineTo(ROUND(ScreenPoint[2].x), ROUND(ScreenPoint[2].y));
-			pDC->LineTo(ROUND(ScreenPoint[0].x), ROUND(ScreenPoint[0].y));
+			pDC->MoveTo(ROUND(ScreenPoint[0].x + m_ptDrawPosition.x), 
+				        ROUND(ScreenPoint[0].y + m_ptDrawPosition.y)); // 绘制多边形
+			pDC->LineTo(ROUND(ScreenPoint[1].x + m_ptDrawPosition.x), 
+						ROUND(ScreenPoint[1].y + m_ptDrawPosition.y));
+			pDC->LineTo(ROUND(ScreenPoint[2].x + m_ptDrawPosition.x), 
+						ROUND(ScreenPoint[2].y + m_ptDrawPosition.y));
+			pDC->LineTo(ROUND(ScreenPoint[0].x + m_ptDrawPosition.x), 
+						ROUND(ScreenPoint[0].y + m_ptDrawPosition.y));
 		}
 	}
 }

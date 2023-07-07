@@ -111,31 +111,20 @@ BEGIN_MESSAGE_MAP(CDrawFlowChartView, CView)
 	ON_COMMAND(ID_TOOLBAR_CUBIC_BEZIER_CURVE, OnToolbarCubicBezierCurve)
 	ON_COMMAND(ID_TOOLBAR_BICUBIC_BEZIER_PATCH_GRAPH, OnToolbarBicubicBezierPatchGraph)
 	ON_COMMAND(ID_TOOLBAR_BICUBIC_BEZIER_SPHERE_GRAPH, OnToolbarBicubicBezierSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_RATIONAL_QUADRATIC_BEZIER_CIRCLE_GRAPH, 
-											OnToolbarRationalQuadraticBezierCircle)
-	ON_COMMAND(ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH, 
-											OnToolbarRationalQuadraticBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_RATIONAL_QUADRATIC_BEZIER_CIRCLE_GRAPH, OnToolbarRationalQuadraticBezierCircle)
+	ON_COMMAND(ID_TOOLBAR_RATIONALQUADRATIC_BEZIER_SPHERE_GRAPH, OnToolbarRationalQuadraticBezierSphereGraph)
 	ON_COMMAND(ID_TOOLBAR_BACKFACE_CULL_ROTATE_CUBE, OnToolbarBackfaceCullRotateCube)
 	ON_COMMAND(ID_TOOLBAR_THREE_CROSS_ROTATE_CUBE, OnToolbarThreeCrossRotateCube)
 	ON_COMMAND(ID_TOOLBAR_SPATIAL_ARRANGED_CUBE, OnToolbarSpatialArrangedCube)
-	ON_COMMAND(ID_TOOLBAR_GOURAUD_BICUBIC_BEZIER_SPHERE_GRAPH, 
-								OnToolbarGouraudBicubicBezierSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH, 
-								OnToolbarGouraudBiquatricBezierSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH, 
-								OnToolbarPhongBiquatricBezierSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_TEXTURE_CUBE_GRAPH, 
-								OnToolbarTextureCubeGraph)
-	ON_COMMAND(ID_TOOLBAR_TEXTURE_SPHERE_GRAPH, 
-								OnToolbarTextureSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_BUMP_TEXTURE_SPHERE_GRAPH, 
-								OnToolbarBumpTextureSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH, 
-								OnToolbarAntiAliasedBumpTextureSphereGraph)
-	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_CUBE_GRAPH, 
-								OnToolbarObjFileCubeGraph)
-	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_TEAPOT_GRAPH, 
-								OnToolbarObjFileTeapotGraph)
+	ON_COMMAND(ID_TOOLBAR_GOURAUD_BICUBIC_BEZIER_SPHERE_GRAPH, OnToolbarGouraudBicubicBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_GOURAUD_BIQUATRIC_BEZIER_SPHERE_GRAPH, OnToolbarGouraudBiquatricBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_PHONG_BIQUATRIC_BEZIER_SPHERE_GRAPH, OnToolbarPhongBiquatricBezierSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_TEXTURE_CUBE_GRAPH, OnToolbarTextureCubeGraph)
+	ON_COMMAND(ID_TOOLBAR_TEXTURE_SPHERE_GRAPH, OnToolbarTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_BUMP_TEXTURE_SPHERE_GRAPH, OnToolbarBumpTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_ANTIALIASED_BUMP_TEXTURE_SPHERE_GRAPH, OnToolbarAntiAliasedBumpTextureSphereGraph)
+	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_CUBE_GRAPH, OnToolbarObjFileCubeGraph)
+	ON_COMMAND(ID_TOOLBAR_OBJ_FILE_TEAPOT_GRAPH, OnToolbarObjFileTeapotGraph)
 	// 
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
@@ -507,7 +496,7 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_DELETE:
 		{
 			pDoc->m_GraphManager.DeleteFocusGraph();
-			Invalidate();
+			Invalidate(FALSE);
 			break;
 		}
 	case VK_UP:
@@ -557,7 +546,7 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				pDoc->m_GraphManager.Move(0, -2);
 			}
-			Invalidate();
+			Invalidate(FALSE);
 		}
 		break;
 	case VK_DOWN:
@@ -607,7 +596,7 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				pDoc->m_GraphManager.Move(0, 2);
 			}
-			Invalidate();
+			Invalidate(FALSE);
 		}
 		break;
 	case VK_LEFT:
@@ -665,7 +654,7 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				pDoc->m_GraphManager.Move(-2, 0);
 			}
-			Invalidate();
+			Invalidate(FALSE);
 		}
 		break;
 	case VK_RIGHT:
@@ -723,7 +712,7 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				pDoc->m_GraphManager.Move(2, 0);
 			}
-			Invalidate();
+			Invalidate(FALSE);
 		}
 		break;
 	default:

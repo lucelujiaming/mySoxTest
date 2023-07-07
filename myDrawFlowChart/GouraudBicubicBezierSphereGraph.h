@@ -18,6 +18,7 @@
 #include "Triangle.h"
 #include "LightingScene.h"
 
+// 使用Gouraud明暗处理算法绘制双三次Bezier球
 class CGouraudBicubicBezierSphereGraph : public CGraph  
 {
 //		DECLARE_SERIAL(CGouraudBicubicBezierSphereGraph)
@@ -27,7 +28,7 @@ public:
 	CString GetTypeName() { return CString("CGouraudBicubicBezierSphereGraph"); }
 	
 protected:
-	CGouraudZBufferBicubicBezierSphere sphere;//球体对象
+	CGouraudZBufferBicubicBezierSphere sphere; // 球体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量
 	CLightingScene* pScene;//光照场景	

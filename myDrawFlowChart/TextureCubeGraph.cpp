@@ -35,7 +35,7 @@ CTextureCubeGraph::CTextureCubeGraph()
 
 	cube.ReadVertex();
 	cube.ReadFace();
-	double nScale = 500;
+	double nScale = 100;
 	transform.SetMatrix(cube.V, 8);
 	transform.Scale(nScale, nScale, nScale);
 	transform.Translate(-nScale / 2, -nScale / 2, -nScale / 2);

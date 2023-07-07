@@ -73,7 +73,6 @@ void CPhongBiquatricBezierSphereGraph::DoubleBuffer(CDC* pDC)
 
 void CPhongBiquatricBezierSphereGraph::DrawObject(CDC* pDC)//绘制图形
 {
-	int iAppendDepth = (m_Start.x > m_Start.y) ? m_Start.x : m_Start.y;
 	CVector3ZBuffer* pZBuffer = new CVector3ZBuffer;//申请内存
 	pZBuffer->InitialDepthBuffer(1000, 1000, 1000);//初始化深度缓冲器
 	pZBuffer->SetDrawPosition(m_Start);

@@ -35,7 +35,7 @@ CAntiAliasedBumpTextureSphereGraph::CAntiAliasedBumpTextureSphereGraph()
 
 	sphere.ReadVertex();
 	sphere.ReadFace();
-	double nScale = 300;
+	double nScale = 100;
 	transform.SetMatrix(sphere.Ver, 26);
 	transform.Scale(nScale, nScale, nScale);
 	transform.RotateY(-90);

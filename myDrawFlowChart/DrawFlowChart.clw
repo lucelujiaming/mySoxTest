@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=CDrawFlowChartDoc
+LastClass=CDrawFlowChartView
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "DrawFlowChart.h"

@@ -9,6 +9,8 @@
 #include "Patch.h"
 #include "ZBuffer.h"
 
+// 使用Gouraud明暗处理算法绘制的双三次Bezier球
+// 这种球，通常是由8片曲面片组成的。
 class CGouraudZBufferBicubicBezierSphere // 球类
 {
 public:
@@ -19,7 +21,7 @@ public:
 	void Draw(CDC* pDC, CZBuffer* pZBuffer);//绘制图形
 public:
 	CColorP3 Ver[62];//球面控制点
-	CGouraudBicubicBezierPatch bezier;//曲面片
+	CGouraudBicubicBezierPatch bezier; // 曲面片
 private:
 	CPatch Pat[8];//球面曲面片数	
 };

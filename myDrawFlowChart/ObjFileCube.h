@@ -24,6 +24,8 @@ public:
 	CP3* GetVertexName(void);//得到顶点数组名
 	int GetVertexNumber(void);//得到顶点个数
 	void Draw(CDC* pDC);//绘制立方体线框
+public:
+	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
 	CString FileName;
 	CP3* V;//点表
@@ -35,6 +37,8 @@ private:
 	int nTotalTexture;//纹理个数
 	int nTotalFace;//表面个数
 	CProjection projection;//投影
+private:
+	CPoint m_ptDrawPosition;
 };
 
 #endif // !defined(AFX_OBJFILE_CUBE_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

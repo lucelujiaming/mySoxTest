@@ -1253,6 +1253,10 @@ SOURCE=.\res\graphics.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\landscape.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\texture.bmp
 # End Source File
 # Begin Source File

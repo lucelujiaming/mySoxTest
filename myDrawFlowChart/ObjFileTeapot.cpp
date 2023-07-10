@@ -67,6 +67,8 @@ void CObjFileTeapot::ReadNumber(void)
 	CString strLine;//行字符串
 	while (file.ReadString(strLine))//按行读取
 	{
+		if(strLine.GetLength() == 0)
+			continue;
 		if (strLine[0] == 'v' && strLine[1] == ' ')//当前行以"v+空格"开头时读取
 		{
 			nTotalVertex++;
@@ -95,6 +97,8 @@ void CObjFileTeapot::ReadVertex(void)//读入点表
 	CString strLine;//存放文件中每行字符串的缓冲区
 	while (file.ReadString(strLine))//按行读取
 	{
+		if(strLine.GetLength() == 0)
+			continue;
 		if (strLine[0] == 'v' && strLine[1] == ' ')//当前行以"v+空格"开头时读取点表
 		{
 			CString str[3];//将strLine以'空格'为间隔符分割 并把第i+1段赋值给str[i](开头字符'v'为第0段)			
@@ -150,6 +154,8 @@ void CObjFileTeapot::ReadNormal(void)//读入法矢量
 	CString strLine;//行字符串
 	while (file.ReadString(strLine))//按行读取
 	{
+		if(strLine.GetLength() == 0)
+			continue;
 		if (strLine[0] == 'v' && strLine[1] == 'n' && strLine[2] == ' ')//当前行以"vn+空格"开头时读取面表
 		{
 			CString str[3];
@@ -180,6 +186,8 @@ void CObjFileTeapot::ReadFace(void)//读入面表
 	CString strLine;//行字符串
 	while (file.ReadString(strLine))//按行读取
 	{
+		if(strLine.GetLength() == 0)
+			continue;
 		if (strLine[0] == 'f' && strLine[1] == ' ')//当前行以"f+空格"开头时读取面表
 		{
 			CString str[3];
@@ -205,7 +213,7 @@ void CObjFileTeapot::Draw(CDC* pDC, CDepthLinearInterpZBuffer* pZBuffer)//茶壶光
 {
 	CColorP3 ScreenPoint[3];//二维投影点
 	CVector3 vtNormal[3];//点法矢量
-	CColorP3 Eye = projection.GetColorEye();
+	CColorP3 colorEye = projection.GetColorEye();
 	for (int nMesh = 0; nMesh < nTotalFace; nMesh++)//面循环
 	{
 		for (int nVertex = 0; nVertex < 3; nVertex++)//顶点循环
@@ -214,6 +222,6 @@ void CObjFileTeapot::Draw(CDC* pDC, CDepthLinearInterpZBuffer* pZBuffer)//茶壶光
 			vtNormal[nVertex] = N[F[nMesh].Index[nVertex]];			
 		}
 		pZBuffer->SetPoint(ScreenPoint, vtNormal);
-		pZBuffer->FillTriangle(pDC, Eye, pScene);
+		pZBuffer->FillTriangle(pDC, colorEye, pScene);
 	}
 }

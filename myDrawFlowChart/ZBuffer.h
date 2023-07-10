@@ -33,6 +33,8 @@
 /*      则将当前像素的颜色值写入帧缓冲器，                              */
 /*   3. 同时用当前像素的深度值更新深度缓冲器。                          */
 /*   4. 否则，不作更改。                                                */
+/* 因此上，Buffer算法的实质就是对于一个给定视线上的(x, y)，             */
+/* 查找距离视点最近的z(x, y)值。                                        */
 /************************************************************************/
 /* 2.算法设计                                                           */
 /*   (1) 设置帧缓冲器(fBuffer)初始值为背景色。                          */
@@ -75,6 +77,9 @@
 /* 其中深度缓冲器就是double** zBuffer。而帧缓冲器不需要实现。           */
 /* 只需要调用pDC->SetPixelV写当前像素颜色值即可。                       */
 /************************************************************************/
+/* 另外这个类除了在EdgeFlag函数中实现了线性插值来填充跨度Span以外，     */
+/* 还在Interp函数中实现了双线性差值。 用于设置三角形的绘制颜色。        */
+/************************************************************************/
 class CZBuffer // ZBuffer类
 {
 public:
@@ -91,8 +96,10 @@ private:
     void SortPoint(void);                                 // 顶点排序
     CRGB Interp(double m, double m0, double m1, 
 				CRGB c0, CRGB c1);					      // 颜色线性插值
-	CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值
-	double Interp(double m, double m0, double m1, double z0, double z1);//深度线性插值
+	CVector3 Interp(double m, double m0, double m1, 
+				CVector3 N0, CVector3 N1);				  // 法矢量线性插值。未使用。
+	double Interp(double m, double m0, double m1, 
+				double z0, double z1);                    // 深度线性插值。未使用。
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:

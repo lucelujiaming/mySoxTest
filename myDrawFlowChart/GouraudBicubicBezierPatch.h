@@ -10,25 +10,28 @@
 #include "ZBuffer.h"
 #include "LightingScene.h"
 
+// 这个类包含两个部分。一个是双三次贝塞尔曲面片的绘制。
+// 这部分和CBicubicBezierPatch中的实现一样。
+// 另一个就是引入了光照模型。这个函数的入口函数是Illuminate函数。
 class CGouraudBicubicBezierPatch
 {
 public:
 	CGouraudBicubicBezierPatch(void);
 	virtual ~CGouraudBicubicBezierPatch(void);
-	void ReadControlPoint(CColorP3 P[4][4]);//读入16个控制点
-	void SetLightingScene(CLightingScene* pScene);//设置光照场景
-	void SaveFacetData(void);//绘制网格点数据
-	void Draw(CDC* pDC, CZBuffer* pZBuffer);//绘制曲面
+	void ReadControlPoint(CColorP3 P[4][4]);			// 读入16个控制点
+	void SetLightingScene(CLightingScene* pScene);		// 设置光照场景
+	void SaveFacetData(void);							// 绘制网格点数据
+	void Draw(CDC* pDC, CZBuffer* pZBuffer);			// 绘制曲面
 private:
-	void LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4]);//左乘顶点矩阵
-	void RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4]);//右乘顶点矩阵
-	void TransposeMatrix(double M[4][4]);//转置矩阵
+	void LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4]);	// 左乘顶点矩阵
+	void RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4]);	// 右乘顶点矩阵
+	void TransposeMatrix(double M[4][4]);						// 转置矩阵
 public:
-	CColorP3 P[4][4];//三维控制点
-	CColorP3 V[100];//小面顶点数组10×10
-	CColorFace F[81];//小面面表数组
-	CProjection projection;//投影对象
-	CLightingScene* pScene;//光照
+	CColorP3 P[4][4];			// 三维控制点
+	CColorP3 V[100];			// 小面顶点数组10×10
+	CColorFace F[81];			// 小面面表数组
+	CProjection projection;		// 投影对象
+	CLightingScene* pScene;		// 光照场景
 };
 
 #endif // !defined(AFX_GOURAUD_BICUBIC_BEZIER_PATCH_H__6BBCFA39_2B2E_45D8_B2B4_6C9464FB23C9__INCLUDED_)

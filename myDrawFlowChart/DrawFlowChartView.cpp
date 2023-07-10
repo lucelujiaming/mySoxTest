@@ -19,6 +19,16 @@
 #include "BackfaceCullRotateCube.h"
 #include "ThreeCrossRotateCube.h"
 #include "SpatialArrangedCube.h"
+#include "GouraudBicubicBezierSphereGraph.h"
+#include "GouraudBiquatricBezierSphereGraph.h"
+#include "PhongBiquatricBezierSphereGraph.h"
+#include "TextureCubeGraph.h"
+#include "TextureSphereGraph.h"
+#include "BumpTextureSphereGraph.h"
+#include "AntiAliasedBumpTextureSphereGraph.h"
+#include "ObjFileCubeGraph.h"
+#include "ObjFileTeapotGraph.h"
+
 
 #include <math.h>
 
@@ -288,7 +298,7 @@ void CDrawFlowChartView::OnLButtonDown(UINT nFlags, CPoint point)
 					}
 				}
 
-				Invalidate();
+				Invalidate(false);
 				break;
 			}
 		case CREATE:
@@ -391,7 +401,7 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			strStatusBar += "\r\n";
 			// TRACE(strStatusBar);
 			// Show point information in the StatusBar end
-			Invalidate();
+			Invalidate(false);
 		}
 	}
 	else 
@@ -452,7 +462,7 @@ void CDrawFlowChartView::OnMouseMove(UINT nFlags, CPoint point)
 			}
 	}
 
-	Invalidate();
+	Invalidate(false);
 	CView::OnMouseMove(nFlags, point);
 }
 
@@ -538,6 +548,42 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CSpatialArrangedCube *)focusGraph)->upBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBicubicBezierSphereGraph")
+			{
+				((CGouraudBicubicBezierSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBiquatricBezierSphereGraph")
+			{
+				((CGouraudBiquatricBezierSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPhongBiquatricBezierSphereGraph")
+			{
+				((CPhongBiquatricBezierSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureCubeGraph")
+			{
+				((CTextureCubeGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureSphereGraph")
+			{
+				((CTextureSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBumpTextureSphereGraph")
+			{
+				((CBumpTextureSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CAntiAliasedBumpTextureSphereGraph")
+			{
+				((CAntiAliasedBumpTextureSphereGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileCubeGraph")
+			{
+				((CObjFileCubeGraph *)focusGraph)->upBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileTeapotGraph")
+			{
+				((CObjFileTeapotGraph *)focusGraph)->upBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->upBox();
@@ -587,6 +633,42 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
 			{
 				((CSpatialArrangedCube *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBicubicBezierSphereGraph")
+			{
+				((CGouraudBicubicBezierSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBiquatricBezierSphereGraph")
+			{
+				((CGouraudBiquatricBezierSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPhongBiquatricBezierSphereGraph")
+			{
+				((CPhongBiquatricBezierSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureCubeGraph")
+			{
+				((CTextureCubeGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureSphereGraph")
+			{
+				((CTextureSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBumpTextureSphereGraph")
+			{
+				((CBumpTextureSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CAntiAliasedBumpTextureSphereGraph")
+			{
+				((CAntiAliasedBumpTextureSphereGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileCubeGraph")
+			{
+				((CObjFileCubeGraph *)focusGraph)->downBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileTeapotGraph")
+			{
+				((CObjFileTeapotGraph *)focusGraph)->downBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -646,6 +728,42 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				((CSpatialArrangedCube *)focusGraph)->leftBox();
 			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBicubicBezierSphereGraph")
+			{
+				((CGouraudBicubicBezierSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBiquatricBezierSphereGraph")
+			{
+				((CGouraudBiquatricBezierSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPhongBiquatricBezierSphereGraph")
+			{
+				((CPhongBiquatricBezierSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureCubeGraph")
+			{
+				((CTextureCubeGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureSphereGraph")
+			{
+				((CTextureSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBumpTextureSphereGraph")
+			{
+				((CBumpTextureSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CAntiAliasedBumpTextureSphereGraph")
+			{
+				((CAntiAliasedBumpTextureSphereGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileCubeGraph")
+			{
+				((CObjFileCubeGraph *)focusGraph)->leftBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileTeapotGraph")
+			{
+				((CObjFileTeapotGraph *)focusGraph)->leftBox();
+			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
 				((CPerspectiveRotateCube *)focusGraph)->leftBox();
@@ -703,6 +821,42 @@ void CDrawFlowChartView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else if(focusGraph && focusGraph->GetTypeName() == "CSpatialArrangedCube")
 			{
 				((CSpatialArrangedCube *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBicubicBezierSphereGraph")
+			{
+				((CGouraudBicubicBezierSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CGouraudBiquatricBezierSphereGraph")
+			{
+				((CGouraudBiquatricBezierSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CPhongBiquatricBezierSphereGraph")
+			{
+				((CPhongBiquatricBezierSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureCubeGraph")
+			{
+				((CTextureCubeGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CTextureSphereGraph")
+			{
+				((CTextureSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CBumpTextureSphereGraph")
+			{
+				((CBumpTextureSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CAntiAliasedBumpTextureSphereGraph")
+			{
+				((CAntiAliasedBumpTextureSphereGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileCubeGraph")
+			{
+				((CObjFileCubeGraph *)focusGraph)->rightBox();
+			}
+			else if(focusGraph && focusGraph->GetTypeName() == "CObjFileTeapotGraph")
+			{
+				((CObjFileTeapotGraph *)focusGraph)->rightBox();
 			}
 			else if(focusGraph && focusGraph->GetTypeName() == "CPerspectiveRotateCube")
 			{
@@ -1123,7 +1277,6 @@ void CDrawFlowChartView::OnCreateCubicBox()
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateCubicBox());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateMeshSphere() 
@@ -1131,7 +1284,6 @@ void CDrawFlowChartView::OnCreateMeshSphere()
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMeshSphere());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateQuadraticSplineLine() 
@@ -1211,7 +1363,6 @@ void CDrawFlowChartView::OnCreateStart()
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateStart());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateEnd() 
@@ -1219,7 +1370,6 @@ void CDrawFlowChartView::OnCreateEnd()
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateEnd());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateDDALine() 
@@ -1227,7 +1377,6 @@ void CDrawFlowChartView::OnCreateDDALine()
 	CDrawFlowChartDoc* pDoc = GetDocument();
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateDDALine());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateBresenhamLine() 
@@ -1263,7 +1412,6 @@ void CDrawFlowChartView::OnCreateWuAntiLine()
 
 	m_IsControlFlow = false;
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateWuAntiLine());
-	Invalidate();
 }
 
 void CDrawFlowChartView::OnCreateFlatColorTriangle() 
@@ -1840,7 +1988,7 @@ void CDrawFlowChartView::OnCreateMiddleCircle()
 	m_IsControlFlow = false;
 	// TODO: Add your command handler code here
 	pDoc->m_GraphManager.AddGraph(pDoc->m_GraphFactory.CreateMiddleCircle());
-	Invalidate();
+	// Invalidate();
 }
 
 void CDrawFlowChartView::OnToolbarStart() 

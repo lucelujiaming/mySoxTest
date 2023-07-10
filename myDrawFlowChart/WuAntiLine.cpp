@@ -33,6 +33,8 @@ void CWuAntiLine::BresenhamWuAntiLine(CDC* pDC, CPoint P0, CPoint P1)
 	COLORREF crColor = RGB(0, 0, 0);
 	int dx = abs(P1.x - P0.x);
 	int dy = abs(P1.y - P0.y);
+	if(dy == 0)
+		return;
 	bool bInterchange = false;
 	int e, signX, signY, temp;
 	// 计算X累加方向和Y累加方向

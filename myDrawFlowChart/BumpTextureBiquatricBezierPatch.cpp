@@ -84,7 +84,7 @@ void CBumpTextureBiquatricBezierPatch::SetTexture(CTexture* pTexture)
 void CBumpTextureBiquatricBezierPatch::Draw(CDC* pDC, CBumpTextureZBuffer* pZBuffer)
 {
 	SaveFacetData();//读取平面片的点表与面表
-	CColorP3 Eye = projection.GetColorEye();
+	CColorP3 colorEye = projection.GetColorEye();
 	CColorP3 ScreenPoint4[4];//当前点与投影点
 	CVector3 N4[4];//点法矢量
 	CTextureCoordinate T4[4];//纹理
@@ -104,13 +104,13 @@ void CBumpTextureBiquatricBezierPatch::Draw(CDC* pDC, CBumpTextureZBuffer* pZBuf
 		CVector3 TLN[3] = { N4[0], N4[2], N4[3] };
 		CTextureCoordinate TLT[3] = { T4[0], T4[2], T4[3] };
 		pZBuffer->SetPoint(TLP, TLN, TLT);//左上三角形的顶点P，法矢量N和纹理地址T
-		pZBuffer->FillTriangle(pDC, Eye, pScene, pTexture);
+		pZBuffer->FillTriangle(pDC, colorEye, pScene, pTexture);
 		// 绘制右下三角形
 		CColorP3 DRP[3] = { ScreenPoint4[0] ,ScreenPoint4[1] ,ScreenPoint4[2] };
 		CVector3 DRN[3] = { N4[0], N4[1], N4[2] };
 		CTextureCoordinate DRT[3] = { T4[0], T4[1], T4[2] };//右下三角形的顶点P，法矢量N和纹理地址T
 		pZBuffer->SetPoint(DRP, DRN, DRT);
-		pZBuffer->FillTriangle(pDC, Eye, pScene, pTexture);
+		pZBuffer->FillTriangle(pDC, colorEye, pScene, pTexture);
 	}
 }
 

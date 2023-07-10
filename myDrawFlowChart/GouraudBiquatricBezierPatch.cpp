@@ -27,6 +27,29 @@ void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
    			this->W[i][j] = W[i][j];
 }
 
+/************************************************************************/
+/* 有理双二次Bezier曲面片的定义如下：                                   */
+/*   p(u, v) = [B0,2(u) B1,2(u) B2,2(u)]                                */
+/*       | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |   | B0,2(v) |          */
+/*     * | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 | * | B1,2(v) |  /       */
+/*       | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |   | B2,2(v) |          */
+/*                                | w0,0 w0,1 w0,2 |   | B0,2(v) |      */
+/*    [B0,2(u) B1,2(u) B2,2(u)] * | w1,0 w1,1 w1,2 | * | B1,2(v) |      */
+/*                                | w2,0 w2,1 w2,2 |   | B2,2(v) |      */
+/* 其中B0,2(u)，B1,2(u)，B2,2(u)                                        */
+/* 和B0,2(v)，B1,2(v)，B2,2(v)是二次Bernstein基函数。                   */
+/************************************************************************/
+/* 也就是说：                                                           */
+/*     B0,2(u) = (1 - u)^2 = u^2 - 2u + 1                               */
+/*     B1,2(u) = 2u(1 - u) = -2u^2 + 2u                                 */
+/*     B2,2(u) = u^2       = u^2                                        */
+/* 同理有：                                                             */
+/*     B0,2(v) = (1 - v)^2 = v^2 - 2v + 1                               */
+/*     B1,2(v) = 2v(1 - v) = -2v^2 + 2v                                 */
+/*     B2,2(v) = v^2       = v^2                                        */
+/* 下面的代码就是使用B0,2(u)，B1,2(u)，B2,2(u)                          */
+/* 和B0,2(v)，B1,2(v)，B2,2(v)计算p(u, v)的过程。                       */
+/************************************************************************/
 void CGouraudBiquatricBezierPatch::SaveFacetData(void)
  {
 	double M[3][3];//系数矩阵Mbe
@@ -48,18 +71,26 @@ void CGouraudBiquatricBezierPatch::SaveFacetData(void)
 	{
 		for (int v = 0; v < nStep + 1; v++)
 		{
+			// 计算u的二次方，一次方和零次方。
 			u2 = (u / double(nStep)) * (u / double(nStep)), u1 = u / double(nStep), u0 = 1;
+
+			// 计算v的二次方，一次方和零次方。
 			v2 = (v / double(nStep)) * (v / double(nStep)), v1 = v / double(nStep), v0 = 1;
+
+			// 使用前面计算好的Pw，算出p(u, v)的分子。保存在numerator中。
 			CColorP3 numerator = (u2 * Pw[0][0] + u1 * Pw[1][0] + u0 * Pw[2][0]) * v2
-				+ (u2 * Pw[0][1] + u1 * Pw[1][1] + u0 * Pw[2][1]) * v1
-				+ (u2 * Pw[0][2] + u1 * Pw[1][2] + u0 * Pw[2][2]) * v0;
+				               + (u2 * Pw[0][1] + u1 * Pw[1][1] + u0 * Pw[2][1]) * v1
+				               + (u2 * Pw[0][2] + u1 * Pw[1][2] + u0 * Pw[2][2]) * v0;
+			// 使用前面计算好的W，算出p(u, v)的的分母。保存在denominator中。
 			double denominator = (u2 * W[0][0] + u1 * W[1][0] + u0 * W[2][0]) * v2
-				+ (u2 * W[0][1] + u1 * W[1][1] + u0 * W[2][1]) * v1
-				+ (u2 * W[0][2] + u1 * W[1][2] + u0 * W[2][2]) * v0;
+			                   + (u2 * W[0][1] + u1 * W[1][1] + u0 * W[2][1]) * v1
+				               + (u2 * W[0][2] + u1 * W[1][2] + u0 * W[2][2]) * v0;
+			// 使用前面计算好的分子和分母。计算p(u, v)的值。
 			V[u * (nStep + 1) + v] = numerator / denominator;
 		}
 	}
-	for (int nFacet = 0; nFacet < 81; nFacet++)//9×9个平面片面表信息，定义每个平面片的索引号
+	// 9×9个平面片面表信息，定义每个平面片的索引号
+	for (int nFacet = 0; nFacet < 81; nFacet++)
 	{
 		F[nFacet].SetPtNumber(4);		
 		F[nFacet].ptIndex[0] = nFacet / nStep + nFacet;//0
@@ -77,21 +108,25 @@ void CGouraudBiquatricBezierPatch::SetLightingScene(CLightingScene* pScene)
 void CGouraudBiquatricBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 {
 	SaveFacetData();//读取平面片的点表与面表
-	CColorP3 Eye = projection.GetColorEye();
+	CColorP3 colorEye = projection.GetColorEye();
 	CColorP3 Point[4], ScreenPoint[4];//当前点与投影点
-	for (int nFace = 0; nFace < 81; nFace++)//曲面片划分为81个平面片
+	// 曲面片划分为81个平面片
+	for (int nFace = 0; nFace < 81; nFace++)
 	{
 		// 每个平面片为四边形
 		for (int nPoint = 0; nPoint < 4; nPoint++)
-		{				
+		{
+			// 取出平面片四边形的一个顶点的坐标。
 			Point[nPoint] = V[F[nFace].ptIndex[nPoint]];
-			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);//三维透视投影
-			ScreenPoint[nPoint].c = pScene->Illuminate(Eye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);//调用光照函数
+			// 把这个顶点使用三维透视投影投影到二维。用于显示。
+			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
+			// 调用光照函数计算这个顶点的颜色。
+			ScreenPoint[nPoint].c = pScene->Illuminate(colorEye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]);//上三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形
 		pZBuffer->FillTriangle(pDC);
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]);//下三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]); // 下三角形
 		pZBuffer->FillTriangle(pDC);
 	}
 }

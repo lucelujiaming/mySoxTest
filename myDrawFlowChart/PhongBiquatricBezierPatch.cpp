@@ -77,7 +77,7 @@ void CPhongBiquatricBezierPatch::SetLightingScene(CLightingScene* pScene)
 void CPhongBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
 {
 	SaveFacetData();//读取平面片的点表与面表
-	CColorP3 Eye = projection.GetColorEye();
+	CColorP3 colorEye = projection.GetColorEye();
 	CColorP3 Point[4], ScreenPoint[4];//当前点与投影点
 	CVector3 N[4];//点法矢量
 	// 曲面片划分为81个平面片
@@ -92,9 +92,9 @@ void CPhongBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3], N[0], N[2], N[3]);//上三角形
-		pZBuffer->FillTriangle(pDC, Eye, pScene);
+		pZBuffer->FillTriangle(pDC, colorEye, pScene);
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2], N[0], N[1], N[2]);//下三角形
-		pZBuffer->FillTriangle(pDC, Eye, pScene);
+		pZBuffer->FillTriangle(pDC, colorEye, pScene);
 	}
 }
 

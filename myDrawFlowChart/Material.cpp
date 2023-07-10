@@ -3,11 +3,11 @@
 
 CMaterial::CMaterial(void)
 {
-	M_Ambient = CRGB(0.2, 0.2, 0.2);//材质的环境反射率
-	M_Diffuse = CRGB(0.8, 0.8, 0.8);//材质的漫反射率
-	M_Specular = CRGB(0.0, 0.0, 0.0);//材质的镜面反射率
-	M_Emission = CRGB(0.0, 0.0, 0.0);//材质的辐射光
-	M_n = 1.0;//高光指数
+	M_Ambient = CRGB(0.2, 0.2, 0.2);  // 材质的环境反射率。为灰色。
+	M_Diffuse = CRGB(0.8, 0.8, 0.8);  // 材质的漫反射率。为灰色。
+	M_Specular = CRGB(0.0, 0.0, 0.0); // 材质的镜面反射率。为白色。
+	M_Emission = CRGB(0.0, 0.0, 0.0); // 材质的辐射光。为白色。
+	M_n = 1.0;                        // 高光指数
 }
 
 CMaterial::~CMaterial(void)

@@ -408,5 +408,5 @@ void CDrawFlowChartDoc::OnEditSmoothBezierline()
 	// TODO: Add your command handler code here
 	m_GraphManager.SmoothAllBreizerLink();
 	CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd;
-	pMain->Invalidate();
+	pMain->Invalidate(false);
 }

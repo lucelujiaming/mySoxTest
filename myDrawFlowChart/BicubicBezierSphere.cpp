@@ -11,9 +11,10 @@ CBicubicBezierSphere::~CBicubicBezierSphere(void)
 
 }
 
-void CBicubicBezierSphere::ReadVertex(void)//读入点表
+// 读入点表
+void CBicubicBezierSphere::ReadVertex(void)
 {
-	const double m = 0.5523;//魔术常数
+	const double m = 0.5523;			//	魔术常数
 	// 第1卦限控制点。共需13个控制点（北极点有4个重点）。只有三个位于曲面上。
 	Ver[0].x = 0.0,		Ver[0].y = 1.0,		Ver[0].z = 0.0;
 	Ver[1].x = 0.0,		Ver[1].y = 1.0,		Ver[1].z = m;
@@ -86,7 +87,8 @@ void CBicubicBezierSphere::ReadVertex(void)//读入点表
 	Ver[61].x = 0.0,	Ver[61].y = -1.0,	Ver[61].z = 0;
 }
 
-void CBicubicBezierSphere::ReadFace(void)//读入曲面表
+// 读入曲面表
+void CBicubicBezierSphere::ReadFace(void)
 {
 	//第1卦限面片
 	Pat[0].ptIndex[0] = 3, Pat[0].ptIndex[1] = 6, Pat[0].ptIndex[2] = 9, Pat[0].ptIndex[3] = 12;

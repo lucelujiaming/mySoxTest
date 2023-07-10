@@ -4,7 +4,7 @@
 
 CProjection::CProjection(void)
 {
-	
+	R = 1200, d = 800;
 }
 
 CProjection::~CProjection(void)
@@ -131,10 +131,12 @@ CColorP3 CProjection::ThreeDimColorPerspectiveProjection(CColorP3 WorldPoint)
 	ViewPoint.z = R - WorldPoint.z;
 	ViewPoint.c = WorldPoint.c;
 	CColorP3 ScreenPoint; // 屏幕坐标系三维点
-	// 从三维观察坐标系到屏幕三维坐标系。
+	// 从三维观察坐标系到屏幕三维坐标系。给出伪深度。
+	// 使用Bouknight公式计算x坐标。参见公式(5-50)。
 	ScreenPoint.x = d * ViewPoint.x / ViewPoint.z;
+	// 使用Bouknight公式计算y坐标。参见公式(5-50)。
 	ScreenPoint.y = d * ViewPoint.y / ViewPoint.z;
-	// 使用Bouknight公式计算z坐标。
+	// 使用Bouknight公式计算z坐标。参见公式(5-50)。
 	ScreenPoint.z = (ViewPoint.z - d) * d / ViewPoint.z;
 	ScreenPoint.c = ViewPoint.c;
 	return ScreenPoint;

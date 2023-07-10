@@ -5,7 +5,9 @@ CLightSource::CLightSource(void)
 {
 	L_Diffuse = CRGB(0.0, 0.0, 0.0);//光源的漫反射颜色	
 	L_Specular = CRGB(1.0, 1.0, 1.0);//光源镜面高光颜色
-	L_Position.x = 0.0, L_Position.y = 0.0, L_Position.z = 1000.0;//光源位置直角坐标
+	L_Position.x = 0.0;
+	L_Position.y = 0.0;
+	L_Position.z = 1000.0;  // 光源位置直角坐标
 	L_C0 = 1.0;//常数衰减系数
 	L_C1 = 0.0;//线性衰减系数
 	L_C2 = 0.0;//二次衰减系数
@@ -38,6 +40,7 @@ void CLightSource::SetOnOff(BOOL onoff)
 	L_OnOff = onoff;
 }
 
+// 设置光强的衰减因子
 void CLightSource::SetAttenuationFactor(double c0, double c1, double c2)
 {
 	L_C0 = c0;

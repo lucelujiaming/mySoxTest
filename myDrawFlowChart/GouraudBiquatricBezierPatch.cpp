@@ -13,11 +13,15 @@ CGouraudBiquatricBezierPatch::~CGouraudBiquatricBezierPatch(void)
 
 }
 
-void CGouraudBiquatricBezierPatch::ReadControlPoint(CColorP3 P[3][3])
+void CGouraudBiquatricBezierPatch::ReadControlPoint(CColorP3 objBezierControlPoint[3][3])
 {
    for(int i = 0; i < 3; i++)
+   {
 	   for(int j = 0;j < 3; j++)
-   			this->P[i][j] = P[i][j];
+	   {
+   			this->m_objBezierControlPoint[i][j] = objBezierControlPoint[i][j];
+	   }
+   }
 }
 
 void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
@@ -39,7 +43,7 @@ void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
 /* 其中B0,2(u)，B1,2(u)，B2,2(u)                                        */
 /* 和B0,2(v)，B1,2(v)，B2,2(v)是二次Bernstein基函数。                   */
 /************************************************************************/
-/* 也就是说：                                                           */
+/* 根据二次Bernstein基函数，也就是说：                                                           */
 /*     B0,2(u) = (1 - u)^2 = u^2 - 2u + 1                               */
 /*     B1,2(u) = 2u(1 - u) = -2u^2 + 2u                                 */
 /*     B2,2(u) = u^2       = u^2                                        */
@@ -47,19 +51,44 @@ void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
 /*     B0,2(v) = (1 - v)^2 = v^2 - 2v + 1                               */
 /*     B1,2(v) = 2v(1 - v) = -2v^2 + 2v                                 */
 /*     B2,2(v) = v^2       = v^2                                        */
-/* 下面的代码就是使用B0,2(u)，B1,2(u)，B2,2(u)                          */
-/* 和B0,2(v)，B1,2(v)，B2,2(v)计算p(u, v)的过程。                       */
+/************************************************************************/
+/* 因为我们绘制的时候，是使用u和v从0到1进行绘制。因此上，               */
+/* 我们需要把u和v分离出来。于是我们把上面的展开式写成如下的形式。       */
+/*                             |  1 -2  1 |                             */
+/*   p(u, v) = [u^2 u^1 u^0] * | -2  2  0 | *                           */
+/*                             |  1  0  0 |                             */ 
+/*   | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |   |  1 -2  1 |   | v^2 |   */
+/*   | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 | * | -2  2  0 | * | v   | / */
+/*   | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |   |  1  0  0 |   | 1   |   */
+/*                   |  1 -2  1 |                                       */
+/*   [u^2 u^1 u^0] * | -2  2  0 | *                                     */
+/*                   |  1  0  0 |                                       */
+/*   | w0,0 w0,1 w0,2 |     |  1 -2  1 |   | v^2 |                      */
+/*   | w1,0 w1,1 w1,2 |  *  | -2  2  0 | * | v   |                      */
+/*   | w2,0 w2,1 w2,2 |     |  1  0  0 |   | 1   |                      */
+/* 注意这里的两个系数矩阵只是看起来一样。其实互为转置关系。             */
+/* 下面的代码就是上面这个公式的计算过程。                               */
 /************************************************************************/
 void CGouraudBiquatricBezierPatch::SaveFacetData(void)
  {
 	double M[3][3];//系数矩阵Mbe
+	// 这里给出的是前面提到的二次Bernstein基函数的系数。
+	// 以B0,2(v)，B1,2(v)，B2,2(v)为例。其中：
+    // B0,2(u) = (1 - u)^2 = u^2 - 2u + 1  
 	M[0][0] = 1, M[0][1] =-2, M[0][2] = 1;
+    // B1,2(v) = 2v(1 - v) = -2v^2 + 2v 
 	M[1][0] =-2, M[1][1] = 2, M[1][2] = 0;
+    // B2,2(v) = v^2       = v^2
 	M[2][0] = 1, M[2][1] = 0, M[2][2] = 0;
 	CColorP3 Pw[3][3];//曲线计算用控制点数组
+	// 复制一份控制点数组
 	for(int i = 0; i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
-			Pw[i][j] = P[i][j] * W[i][j];
+		{
+			Pw[i][j] = m_objBezierControlPoint[i][j] * W[i][j];
+		}
+	}
 	RightMultiplyMatrix(Pw, M);//系数矩阵右乘三维点矩阵
 	RightMultiplyMatrix(W, M);//系数矩阵右乘权因子矩阵
 	TransposeMatrix(M);//计算转置矩阵
@@ -89,7 +118,25 @@ void CGouraudBiquatricBezierPatch::SaveFacetData(void)
 			V[u * (nStep + 1) + v] = numerator / denominator;
 		}
 	}
-	// 9×9个平面片面表信息，定义每个平面片的索引号
+	/************************************************************************/
+	/* 9×9个平面片面表信息，定义每个平面片的索引号。                        */
+	/* 下面的代码巧妙的给出了每一个小面对应的四个顶点坐标索引。             */
+	/* 只要手工列出这些点的索引就可以看明白代码了。100个顶点的索引如下：    */
+	/*      0  1  2  3  4  5  6  7  8  9                                    */
+	/*     10 11 12 13 14 15 16 17 18 19                                    */
+	/*     20 21 22 23 24 25 26 27 28 29                                    */
+	/*     30 31 32 33 34 35 36 37 38 39                                    */
+	/*     40 41 42 43 44 45 46 47 48 49                                    */
+	/*     50 51 52 53 54 55 56 57 58 59                                    */
+	/*     60 61 62 63 64 65 66 67 68 69                                    */
+	/*     70 71 72 73 74 75 76 77 78 79                                    */
+	/*     80 81 82 83 84 85 86 87 88 89                                    */
+	/*     90 91 92 93 94 95 96 97 98 99                                    */
+	/* 以m_objBezierPatchFace[0]为例，对应的四个坐标恰好                    */
+	/* 是(0, 1, 11, 10)，也就是上面的左上角的四个点。                       */
+	/* 以m_objBezierPatchFace[80]为例，对应的四个坐标恰好                   */
+	/* 是(88, 89, 99, 98)，也就是上面的左上角的四个点。                     */
+	/************************************************************************/
 	for (int nFacet = 0; nFacet < 81; nFacet++)
 	{
 		F[nFacet].SetPtNumber(4);		

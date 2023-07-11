@@ -42,7 +42,8 @@ void CRationalQuadraticBezierSphere::ReadVertex(void)//读入点表
 	Ver[25].x = 0, Ver[25].y = -1, Ver[25].z = 0;
 }
 
-void CRationalQuadraticBezierSphere::ReadFace(void)//读入曲面表
+// 读入曲面表。也就是给出每一个卦限面片的顶点索引
+void CRationalQuadraticBezierSphere::ReadFace(void)
 {
 	//第1卦限面片
 	Pat[0].ptIndex[0] = 2, Pat[0].ptIndex[1] = 4, Pat[0].ptIndex[2] = 6;
@@ -80,20 +81,31 @@ void CRationalQuadraticBezierSphere::ReadFace(void)//读入曲面表
 
 void CRationalQuadraticBezierSphere::Draw(CDC* pDC)//绘制图形
 {
-	CP3 P[3][3];//三维顶点
+	CP3 objCopyPoint[3][3];//三维顶点
 	double W[3][3];//权因子
 	const double c = sqrt(2.0) / 2.0;
+	// 四角控制点的权因子为W0 = W2 = W4 = W6 = 1
+	// 四边界控制点的权因子为W1 = W4 = W5 = sqrt(2.0) / 2.0
+	// 内控制点的全因子W3 = 1/2
 	W[0][0] = 1, W[0][1] = c,	  W[0][2] = 1;
 	W[1][0] = c, W[1][1] = c * c, W[1][2] = c;
 	W[2][0] = 1, W[2][1] = c,	  W[2][2] = 1;
 	for (int nPatch = 0; nPatch < 8; nPatch++)
 	{
 		for (int i = 0; i < 3; i++)
+		{
 			for (int j = 0; j < 3; j++)
-				P[i][j] = Ver[Pat[nPatch].ptIndex[i * 3 + j]]; 
-		bezier.ReadControlPoint(P);
+			{
+				objCopyPoint[i][j] = Ver[Pat[nPatch].ptIndex[i * 3 + j]]; 
+			}
+		}
+		// 设定控制点。
+		bezier.ReadControlPoint(objCopyPoint);
+		// 设定权重
 		bezier.ReadWeight(W);
+		// 根据控制点绘制面片。
 		bezier.DrawCurvedPatch(pDC);
+		// 绘制控制点
 		bezier.DrawControlGrid(pDC);
 	}
 }

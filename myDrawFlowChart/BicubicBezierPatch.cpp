@@ -13,13 +13,13 @@ CBicubicBezierPatch::~CBicubicBezierPatch(void)
 
 // 双三次Bezier曲面由两组三次Bezier曲线交织而成，
 // 控制网格由16个控制点组成。
-void CBicubicBezierPatch::ReadControlPoint(CP3 P[4][4])
+void CBicubicBezierPatch::ReadControlPoint(CP3 objBezierControlPoint[4][4])
 {
    for(int i = 0;i < 4;i++)
    {
 	   for(int j = 0;j < 4;j++)
 	   {
-   			this->P[i][j]  = P[i][j];
+   			this->m_objBezierControlPoint[i][j]  = objBezierControlPoint[i][j];
 	   }
    }
 }
@@ -79,13 +79,13 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 	M[2][0] = -3, M[2][1] = 3,  M[2][2] = 0,  M[2][3] = 0;
 	// B3,3(v) = v^3
 	M[3][0] = 1,  M[3][1] = 0,  M[3][2] = 0,  M[3][3] = 0;
-	CP3 P3[4][4]; // 曲线计算用控制点数组
+	CP3 objCopyPoint[4][4]; // 曲线计算用控制点数组
 	// 复制一份控制点数组
-	for(int i=0;i < 4;i++)
+	for(int i = 0; i < 4; i++)
 	{
-		for(int j = 0;j < 4;j++)
+		for(int j = 0; j < 4; j++)
 		{
-			P3[i][j] = P[i][j];
+			objCopyPoint[i][j] = m_objBezierControlPoint[i][j];
 		}
 	}
 	//  系数矩阵右乘三维点矩阵
@@ -94,7 +94,7 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 	//       | P2,0 P2,1 P2,2 P2,3 |   | -3  3  0  0 |
 	//       | P3,0 P3,1 P3,2 P3,3 |   |  1  0  0  0 |
 	//  结果保存在P3中。
-	RightMultiplyMatrix(P3, M);
+	RightMultiplyMatrix(objCopyPoint, M);
 	//  计算转置矩阵。得到：
 	//     | -1  3 -3  1 |
 	//     |  3 -6  3  0 |
@@ -108,7 +108,7 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 	//    | -3  3  0  0 |   | P2,0 P2,1 P2,2 P2,3 |
 	//    |  1  0  0  0 |   | P3,0 P3,1 P3,2 P3,3 |
 	//  结果保存在P3中。
-	LeftMultiplyMatrix(M, P3);
+	LeftMultiplyMatrix(M, objCopyPoint);
 	double tStep = 0.1;//步长
 	// 这六个临时变量用于保存u，v参数的幂
 	double u0,u1,u2,u3,v0,v1,v2,v3;
@@ -124,10 +124,10 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 			// 计算v的三次方，二次方，一次方和零次方。
 			v3 = v * v * v, v2 = v * v, v1 = v, v0 = 1;
 			// 使用前面计算好的P3，算出p(u, v)。保存在pt中。
-			CP3 pt =  (u3 * P3[0][0] + u2 * P3[1][0] + u1 * P3[2][0] + u0 * P3[3][0]) * v3
-			         +(u3 * P3[0][1] + u2 * P3[1][1] + u1 * P3[2][1] + u0 * P3[3][1]) * v2
-			         +(u3 * P3[0][2] + u2 * P3[1][2] + u1 * P3[2][2] + u0 * P3[3][2]) * v1
-			         +(u3 * P3[0][3] + u2 * P3[1][3] + u1 * P3[2][3] + u0 * P3[3][3]) * v0;
+			CP3 pt =  (u3 * objCopyPoint[0][0] + u2 * objCopyPoint[1][0] + u1 * objCopyPoint[2][0] + u0 * objCopyPoint[3][0]) * v3
+			         +(u3 * objCopyPoint[0][1] + u2 * objCopyPoint[1][1] + u1 * objCopyPoint[2][1] + u0 * objCopyPoint[3][1]) * v2
+			         +(u3 * objCopyPoint[0][2] + u2 * objCopyPoint[1][2] + u1 * objCopyPoint[2][2] + u0 * objCopyPoint[3][2]) * v1
+			         +(u3 * objCopyPoint[0][3] + u2 * objCopyPoint[1][3] + u1 * objCopyPoint[2][3] + u0 * objCopyPoint[3][3]) * v0;
 			// 投影到二维。用于显示。
 			CP2 Point2 = projection.CustomProjection(pt); // 斜投影
 			// 绘制网格。
@@ -149,10 +149,10 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 			// 计算v的三次方，二次方，一次方和零次方。
 			v3 = v * v * v; v2 = v * v; v1 = v; v0 = 1;
 			// 使用前面计算好的P3，算出p(u, v)。保存在pt中。
-			CP3 pt = (u3 * P3[0][0] + u2 * P3[1][0] + u1 * P3[2][0] + u0 * P3[3][0]) * v3
-			        +(u3 * P3[0][1] + u2 * P3[1][1] + u1 * P3[2][1] + u0 * P3[3][1]) * v2
-			        +(u3 * P3[0][2] + u2 * P3[1][2] + u1 * P3[2][2] + u0 * P3[3][2]) * v1
-			        +(u3 * P3[0][3] + u2 * P3[1][3] + u1 * P3[2][3] + u0 * P3[3][3]) * v0;
+			CP3 pt = (u3 * objCopyPoint[0][0] + u2 * objCopyPoint[1][0] + u1 * objCopyPoint[2][0] + u0 * objCopyPoint[3][0]) * v3
+			        +(u3 * objCopyPoint[0][1] + u2 * objCopyPoint[1][1] + u1 * objCopyPoint[2][1] + u0 * objCopyPoint[3][1]) * v2
+			        +(u3 * objCopyPoint[0][2] + u2 * objCopyPoint[1][2] + u1 * objCopyPoint[2][2] + u0 * objCopyPoint[3][2]) * v1
+			        +(u3 * objCopyPoint[0][3] + u2 * objCopyPoint[1][3] + u1 * objCopyPoint[2][3] + u0 * objCopyPoint[3][3]) * v0;
 			// 投影到二维。用于显示。
 			CP2 Point2 = projection.CustomProjection(pt); // 斜投影
 			if(0 == u)
@@ -204,7 +204,7 @@ void CBicubicBezierPatch::DrawControlGrid(CDC* pDC)//绘制控制网格
 	{
 		for(int j = 0;j < 4;j++)
 		{
-			P2[i][j] = projection.CustomProjection(P[i][j]);
+			P2[i][j] = projection.CustomProjection(m_objBezierControlPoint[i][j]);
 		}
 	}
 	CPen NewPen,*pOldPen;

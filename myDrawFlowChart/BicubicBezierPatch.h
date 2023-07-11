@@ -22,7 +22,7 @@ private:
 public:
 	// 双三次Bezier曲面由两组三次Bezier曲线交织而成，
 	// 控制网格由16个控制点组成。
-	CP3 P[4][4];//三维控制点
+	CP3 m_objBezierControlPoint[4][4];//三维控制点
 	CProjection   projection; // 投影对象
 	
 };

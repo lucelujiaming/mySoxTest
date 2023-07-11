@@ -14,13 +14,13 @@ CGouraudBicubicBezierPatch::~CGouraudBicubicBezierPatch(void)
 
 // 双三次Bezier曲面由两组三次Bezier曲线交织而成，
 // 控制网格由16个控制点组成。
-void CGouraudBicubicBezierPatch::ReadControlPoint(CColorP3 P[4][4])
+void CGouraudBicubicBezierPatch::ReadControlPoint(CColorP3 objBezierControlPoint[4][4])
 {
    for(int i = 0;i < 4;i++)
    {
 	   for(int j = 0;j < 4;j++)
 	   {
-   			this->P[i][j]  = P[i][j];
+   			this->m_objBezierControlPoint[i][j]  = objBezierControlPoint[i][j];
 	   }
    }
 }
@@ -75,7 +75,7 @@ void CGouraudBicubicBezierPatch::SetLightingScene(CLightingScene* pScene)
 void CGouraudBicubicBezierPatch::SaveFacetData(void)
 {
 	double M[4][4]; // 系数矩阵M
-	// 这里给出的是这里给出的三次Bernstein基函数的系数。
+	// 这里给出的是前面提到的三次Bernstein基函数的系数。
 	// 以B0,3(v)，B1,3(v)，B2,3(v)，B3,3(v)为例。其中：
 	// B0,3(v) = -v^3 + 3v^2 - 3v + 1 
 	M[0][0] = -1, M[0][1] = 3, M[0][2] = -3, M[0][3] = 1;
@@ -85,13 +85,13 @@ void CGouraudBicubicBezierPatch::SaveFacetData(void)
 	M[2][0] = -3, M[2][1] = 3,  M[2][2] = 0,  M[2][3] = 0;
 	// B3,3(v) = v^3 
 	M[3][0] = 1,  M[3][1] = 0,  M[3][2] = 0,  M[3][3] = 0;
-	CColorP3 P3[4][4];//曲线计算用控制点数组
+	CColorP3 objCopyPoint[4][4]; // 曲线计算用控制点数组
 	// 复制一份控制点数组
-	for (int i = 0; i < 4; i++)
+	for(int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 4; j++)
+		for(int j = 0; j < 4; j++)
 		{
-			P3[i][j] = P[i][j];
+			objCopyPoint[i][j] = m_objBezierControlPoint[i][j];
 		}
 	}
 	//  系数矩阵右乘三维点矩阵
@@ -100,7 +100,7 @@ void CGouraudBicubicBezierPatch::SaveFacetData(void)
 	//       | P2,0 P2,1 P2,2 P2,3 |   | -3  3  0  0 |
 	//       | P3,0 P3,1 P3,2 P3,3 |   |  1  0  0  0 |
 	//  结果保存在P3中。
-	RightMultiplyMatrix(P3, M);
+	RightMultiplyMatrix(objCopyPoint, M);
 	//  计算转置矩阵。得到：
 	//     | -1  3 -3  1 |
 	//     |  3 -6  3  0 |
@@ -114,7 +114,7 @@ void CGouraudBicubicBezierPatch::SaveFacetData(void)
 	//    | -3  3  0  0 |   | P2,0 P2,1 P2,2 P2,3 |
 	//    |  1  0  0  0 |   | P3,0 P3,1 P3,2 P3,3 |
 	//  结果保存在P3中。
-	LeftMultiplyMatrix(M, P3); 
+	LeftMultiplyMatrix(M, objCopyPoint);
 	int nStep = 9; // 曲面细分的步长
 	// 这六个临时变量用于保存u，v参数的幂
 	double u0,u1,u2,u3,v0,v1,v2,v3; 
@@ -122,6 +122,7 @@ void CGouraudBicubicBezierPatch::SaveFacetData(void)
 	// 下面使用P3用两次循环，绘制由两组双三次贝塞尔曲线交叉组成的双三次贝塞尔曲面片。
 	// 下面这个两次循环，首先绘制上下方向的曲线。
 	for (int u = 0; u <= nStep; u ++)
+	{
 		for (int v = 0; v <= nStep; v ++)
 		{
 			// 计算u的三次方，二次方，一次方和零次方。
@@ -135,20 +136,40 @@ void CGouraudBicubicBezierPatch::SaveFacetData(void)
 			v1 = (v / double(nStep));
 			v0 = 1;
 			// 使用前面计算好的P3，算出p(u, v)。保存在V中。
-			V[u * (nStep + 1) + v] = (u3 * P3[0][0] + u2 * P3[1][0] + u1 * P3[2][0] + u0 * P3[3][0]) * v3
-				+ (u3 * P3[0][1] + u2 * P3[1][1] + u1 * P3[2][1] + u0 * P3[3][1]) * v2
-				+ (u3 * P3[0][2] + u2 * P3[1][2] + u1 * P3[2][2] + u0 * P3[3][2]) * v1
-				+ (u3 * P3[0][3] + u2 * P3[1][3] + u1 * P3[2][3] + u0 * P3[3][3]) * v0;
+			m_objBezierPatchPoint[u * (nStep + 1) + v] = 
+				  (u3 * objCopyPoint[0][0] + u2 * objCopyPoint[1][0] + u1 * objCopyPoint[2][0] + u0 * objCopyPoint[3][0]) * v3
+				+ (u3 * objCopyPoint[0][1] + u2 * objCopyPoint[1][1] + u1 * objCopyPoint[2][1] + u0 * objCopyPoint[3][1]) * v2
+				+ (u3 * objCopyPoint[0][2] + u2 * objCopyPoint[1][2] + u1 * objCopyPoint[2][2] + u0 * objCopyPoint[3][2]) * v1
+				+ (u3 * objCopyPoint[0][3] + u2 * objCopyPoint[1][3] + u1 * objCopyPoint[2][3] + u0 * objCopyPoint[3][3]) * v0;
 		}
-		// 9×9个平面片面表信息，定义每个平面片的索引号
-		for (int nFacet = 0; nFacet < 81; nFacet++)
-		{
-			F[nFacet].SetPtNumber(4);
-			F[nFacet].ptIndex[0] = nFacet / nStep + nFacet;
-			F[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;
-			F[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;
-			F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;
-		}
+	}
+	/************************************************************************/
+	/* 9×9个平面片面表信息，定义每个平面片的索引号。                        */
+	/* 下面的代码巧妙的给出了每一个小面对应的四个顶点坐标索引。             */
+	/* 只要手工列出这些点的索引就可以看明白代码了。100个顶点的索引如下：    */
+	/*      0  1  2  3  4  5  6  7  8  9                                    */
+	/*     10 11 12 13 14 15 16 17 18 19                                    */
+	/*     20 21 22 23 24 25 26 27 28 29                                    */
+	/*     30 31 32 33 34 35 36 37 38 39                                    */
+	/*     40 41 42 43 44 45 46 47 48 49                                    */
+	/*     50 51 52 53 54 55 56 57 58 59                                    */
+	/*     60 61 62 63 64 65 66 67 68 69                                    */
+	/*     70 71 72 73 74 75 76 77 78 79                                    */
+	/*     80 81 82 83 84 85 86 87 88 89                                    */
+	/*     90 91 92 93 94 95 96 97 98 99                                    */
+	/* 以m_objBezierPatchFace[0]为例，对应的四个坐标恰好                    */
+	/* 是(0, 1, 11, 10)，也就是上面的左上角的四个点。                       */
+	/* 以m_objBezierPatchFace[80]为例，对应的四个坐标恰好                   */
+	/* 是(88, 89, 99, 98)，也就是上面的左上角的四个点。                     */
+	/************************************************************************/
+	for (int nFacet = 0; nFacet < 81; nFacet++)
+	{
+		m_objBezierPatchFace[nFacet].SetPtNumber(4);
+		m_objBezierPatchFace[nFacet].ptIndex[0] = nFacet / nStep + nFacet;
+		m_objBezierPatchFace[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;
+		m_objBezierPatchFace[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;
+		m_objBezierPatchFace[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;
+	}
 }
 
 void CGouraudBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
@@ -163,11 +184,15 @@ void CGouraudBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 		for (int nPoint = 0; nPoint < 4; nPoint++)
 		{
 			// 取出平面片四边形的一个顶点的坐标。
-			Point[nPoint] = V[F[nFace].ptIndex[nPoint]];
+			Point[nPoint] = m_objBezierPatchPoint[
+								m_objBezierPatchFace[nFace].ptIndex[nPoint]];
 			// 把这个顶点使用三维透视投影投影到二维。用于显示。
-			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
+			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(
+									m_objBezierPatchPoint[
+										m_objBezierPatchFace[nFace].ptIndex[nPoint]]);
 			// 调用光照函数计算这个顶点的颜色。
-			ScreenPoint[nPoint].c = pScene->Illuminate(colorEye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
+			ScreenPoint[nPoint].c = pScene->Illuminate(colorEye, 
+						Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形
@@ -176,30 +201,32 @@ void CGouraudBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 		pZBuffer->FillTriangle(pDC);
 	}
 }
-
-
-void CGouraudBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4])//左乘矩阵M*P
+// 左乘矩阵M*P
+void CGouraudBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CColorP3 P[4][4])
 {
 	CColorP3 PTemp [4][4];//临时矩阵
 	for(int i = 0;i < 4;i++)
 		for(int j = 0;j < 4;j++)
-			PTemp [i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j] + M[i][3] * P[3][j];
+			PTemp [i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + 
+		                   M[i][2] * P[2][j] + M[i][3] * P[3][j];
 	for(i = 0;i < 4;i++)
 		for(int j =0;j < 4;j++)
 			P[i][j] = PTemp [i][j];
 }
-void CGouraudBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4])//右乘矩阵P*M
+// 右乘矩阵P*M
+void CGouraudBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],double M[4][4])
 {
 	CColorP3 PTemp [4][4];//临时矩阵
 	for(int i = 0;i < 4;i++)
 		for(int j = 0;j < 4;j++)
-			PTemp [i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j] + P[i][3] * M[3][j];
+			PTemp [i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + 
+		                   P[i][2] * M[2][j] + P[i][3] * M[3][j];
 	for(i=0;i < 4;i++)
 		for(int j=0;j < 4;j++)
 			P[i][j] = PTemp [i][j];
 }
-
-void CGouraudBicubicBezierPatch::TransposeMatrix(double M[4][4])//转置矩阵
+// 转置矩阵
+void CGouraudBicubicBezierPatch::TransposeMatrix(double M[4][4])
 {
 	double PTemp[4][4];//临时矩阵
 	for(int i = 0;i < 4;i++)

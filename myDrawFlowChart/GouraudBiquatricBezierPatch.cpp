@@ -13,6 +13,8 @@ CGouraudBiquatricBezierPatch::~CGouraudBiquatricBezierPatch(void)
 
 }
 
+// 有理双二次Bezier曲面由两组二次Bezier曲线交织而成，
+// 控制网格由9个控制点和9个权重因子组成。
 void CGouraudBiquatricBezierPatch::ReadControlPoint(CColorP3 objBezierControlPoint[3][3])
 {
    for(int i = 0; i < 3; i++)
@@ -24,11 +26,17 @@ void CGouraudBiquatricBezierPatch::ReadControlPoint(CColorP3 objBezierControlPoi
    }
 }
 
-void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
+// 双二次Bezier曲面由两组二次Bezier曲线交织而成，
+// 控制网格由9个控制点和9个权重因子组成。
+void CGouraudBiquatricBezierPatch::ReadWeight(double objWeightFactors[3][3])
 {
    for(int i = 0; i < 3; i++)
+   {
 	   for(int j = 0;j < 3; j++)
-   			this->W[i][j] = W[i][j];
+	   {
+   			this->m_objWeightFactors[i][j] = objWeightFactors[i][j];
+	   }
+   }
 }
 
 /************************************************************************/
@@ -40,10 +48,10 @@ void CGouraudBiquatricBezierPatch::ReadWeight(double W[3][3])
 /*                                | w0,0 w0,1 w0,2 |   | B0,2(v) |      */
 /*    [B0,2(u) B1,2(u) B2,2(u)] * | w1,0 w1,1 w1,2 | * | B1,2(v) |      */
 /*                                | w2,0 w2,1 w2,2 |   | B2,2(v) |      */
-/* 其中B0,2(u)，B1,2(u)，B2,2(u)                                        */
+/* 其中Px,x是控制点。wij是控制顶点的权因子。而B0,2(u)，B1,2(u)，B2,2(u) */
 /* 和B0,2(v)，B1,2(v)，B2,2(v)是二次Bernstein基函数。                   */
 /************************************************************************/
-/* 根据二次Bernstein基函数，也就是说：                                                           */
+/* 根据二次Bernstein基函数，也就是说：                                  */
 /*     B0,2(u) = (1 - u)^2 = u^2 - 2u + 1                               */
 /*     B1,2(u) = 2u(1 - u) = -2u^2 + 2u                                 */
 /*     B2,2(u) = u^2       = u^2                                        */
@@ -73,29 +81,59 @@ void CGouraudBiquatricBezierPatch::SaveFacetData(void)
  {
 	double M[3][3];//系数矩阵Mbe
 	// 这里给出的是前面提到的二次Bernstein基函数的系数。
-	// 以B0,2(v)，B1,2(v)，B2,2(v)为例。其中：
-    // B0,2(u) = (1 - u)^2 = u^2 - 2u + 1  
+	// 这里给出的是B0,2(v)，B1,2(v)，B2,2(v)。其中：
+	// B0,2(v) = (1 - v)^2 = v^2 - 2v + 1
 	M[0][0] = 1, M[0][1] =-2, M[0][2] = 1;
-    // B1,2(v) = 2v(1 - v) = -2v^2 + 2v 
+	// B1,2(v) = 2v(1 - v) = -2v^2 + 2v
 	M[1][0] =-2, M[1][1] = 2, M[1][2] = 0;
-    // B2,2(v) = v^2       = v^2
+	// B2,2(v) = v^2       = v^2
 	M[2][0] = 1, M[2][1] = 0, M[2][2] = 0;
 	CColorP3 Pw[3][3];//曲线计算用控制点数组
-	// 复制一份控制点数组
+	// 计算 | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |
+	//      | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 |
+	//      | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |
+	//  结果保存在Pw中。
 	for(int i = 0; i < 3; i++)
 	{
 		for(int j = 0;j < 3;j++)
 		{
-			Pw[i][j] = m_objBezierControlPoint[i][j] * W[i][j];
+			Pw[i][j] = m_objBezierControlPoint[i][j] * m_objWeightFactors[i][j];
 		}
 	}
-	RightMultiplyMatrix(Pw, M);//系数矩阵右乘三维点矩阵
-	RightMultiplyMatrix(W, M);//系数矩阵右乘权因子矩阵
+	//  系数矩阵右乘三维点矩阵
+	//  计算 | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |   | B0,2(v) |
+	//       | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 | * | B1,2(v) |
+	//       | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |   | B2,2(v) |
+	//  结果保存在Pw中。
+	RightMultiplyMatrix(Pw, M);
+	// 系数矩阵右乘权因子矩阵
+	//  计算  | w0,0 w0,1 w0,2 |   | B0,2(v) |
+	//        | w1,0 w1,1 w1,2 | * | B1,2(v) |
+	//        | w2,0 w2,1 w2,2 |   | B2,2(v) |
+	//  结果保存在W中。
+	RightMultiplyMatrix(m_objWeightFactors, M);
+	//  计算转置矩阵。得到：
+	//     [B0,2(u)，B1,2(u)，B2,2(u)]
 	TransposeMatrix(M);//计算转置矩阵
-	LeftMultiplyMatrix(M, Pw);//系数矩阵左乘三维点矩阵
-	LeftMultiplyMatrix(M, W);//系数矩阵左乘权因子矩阵
-	int nStep = 9;//曲面细分步长（10条线，9格）
-	double u0, u1, u2, v0, v1, v2;//u，v参数的幂
+	// 系数矩阵左乘三维点矩阵
+	//  计算 [B0,2(u) B1,2(u) B2,2(u)] *
+	//       | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |   | B0,2(v) |
+	//       | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 | * | B1,2(v) |
+	//       | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |   | B2,2(v) |
+	//  结果保存在Pw中。
+	LeftMultiplyMatrix(M, Pw);
+	// 系数矩阵左乘权因子矩阵
+	//  计算 [B0,2(u) B1,2(u) B2,2(u)] *
+	//        | w0,0 w0,1 w0,2 |   | B0,2(v) |
+	//        | w1,0 w1,1 w1,2 | * | B1,2(v) |
+	//        | w2,0 w2,1 w2,2 |   | B2,2(v) |
+	//  结果保存在W中。
+	LeftMultiplyMatrix(M, m_objWeightFactors);
+	int nStep = 9; // 曲面细分步长（10条线，9格）
+	// 这六个临时变量用于保存u，v参数的幂
+	double u0, u1, u2, v0, v1, v2;
+	// 代码执行到这里，结果已经保存到Pw和W中了。
+	// 下面使用Pw和W用两次循环，生成交叉曲面片的点。
 	for (int u = 0; u < nStep + 1; u++)
 	{
 		for (int v = 0; v < nStep + 1; v++)
@@ -111,11 +149,11 @@ void CGouraudBiquatricBezierPatch::SaveFacetData(void)
 				               + (u2 * Pw[0][1] + u1 * Pw[1][1] + u0 * Pw[2][1]) * v1
 				               + (u2 * Pw[0][2] + u1 * Pw[1][2] + u0 * Pw[2][2]) * v0;
 			// 使用前面计算好的W，算出p(u, v)的的分母。保存在denominator中。
-			double denominator = (u2 * W[0][0] + u1 * W[1][0] + u0 * W[2][0]) * v2
-			                   + (u2 * W[0][1] + u1 * W[1][1] + u0 * W[2][1]) * v1
-				               + (u2 * W[0][2] + u1 * W[1][2] + u0 * W[2][2]) * v0;
+			double denominator = (u2 * m_objWeightFactors[0][0] + u1 * m_objWeightFactors[1][0] + u0 * m_objWeightFactors[2][0]) * v2
+			                   + (u2 * m_objWeightFactors[0][1] + u1 * m_objWeightFactors[1][1] + u0 * m_objWeightFactors[2][1]) * v1
+				               + (u2 * m_objWeightFactors[0][2] + u1 * m_objWeightFactors[1][2] + u0 * m_objWeightFactors[2][2]) * v0;
 			// 使用前面计算好的分子和分母。计算p(u, v)的值。
-			V[u * (nStep + 1) + v] = numerator / denominator;
+			m_objBezierPatchPoint[u * (nStep + 1) + v] = numerator / denominator;
 		}
 	}
 	/************************************************************************/
@@ -139,11 +177,11 @@ void CGouraudBiquatricBezierPatch::SaveFacetData(void)
 	/************************************************************************/
 	for (int nFacet = 0; nFacet < 81; nFacet++)
 	{
-		F[nFacet].SetPtNumber(4);		
-		F[nFacet].ptIndex[0] = nFacet / nStep + nFacet;//0
-		F[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;//1
-		F[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;//11
-		F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10		
+		m_objBezierPatchFace[nFacet].SetPtNumber(4);		
+		m_objBezierPatchFace[nFacet].ptIndex[0] = nFacet / nStep + nFacet;//0
+		m_objBezierPatchFace[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;//1
+		m_objBezierPatchFace[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;//11
+		m_objBezierPatchFace[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10		
 	}
 }
 
@@ -164,11 +202,13 @@ void CGouraudBiquatricBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 		for (int nPoint = 0; nPoint < 4; nPoint++)
 		{
 			// 取出平面片四边形的一个顶点的坐标。
-			Point[nPoint] = V[F[nFace].ptIndex[nPoint]];
+			Point[nPoint] = m_objBezierPatchPoint[m_objBezierPatchFace[nFace].ptIndex[nPoint]];
 			// 把这个顶点使用三维透视投影投影到二维。用于显示。
-			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
+			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(
+									m_objBezierPatchPoint[m_objBezierPatchFace[nFace].ptIndex[nPoint]]);
 			// 调用光照函数计算这个顶点的颜色。
-			ScreenPoint[nPoint].c = pScene->Illuminate(colorEye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
+			ScreenPoint[nPoint].c = pScene->Illuminate(
+					colorEye, Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形
@@ -182,53 +222,93 @@ void CGouraudBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColorP3 P
 {
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];			
+		{
+			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			P[i][j] = T[i][j];
+		}
+	}
 }
 
 void CGouraudBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double W[3][3])//左乘矩阵M*W
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];		
+		{
+			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];
+		}
+	}
 	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
 void CGouraudBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])//右乘矩阵P*M
 {
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3; i++)
-		for(int j = 0;j < 3;j++)	
-			T[i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j];
-	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
+			T[i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j];
+		}
+	}
+	for(i = 0;i < 3; i++)
+	{
+		for(int j = 0;j < 3;j++)
+		{
 			P[i][j] = T[i][j];
+		}
+	}
 }
 
 void CGouraudBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])//右乘矩阵W*M
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[i][j] = W[i][0] * M[0][j] + W[i][1] * M[1][j] + W[i][2] * M[2][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
 void CGouraudBiquatricBezierPatch::TransposeMatrix(double M[3][3])//转置矩阵
 {
-	double T[3][3];//临时矩阵
+	double T[3][3]; // 临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[j][i] = M[i][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			M[i][j] = T[i][j];
+		}
+	}
 }

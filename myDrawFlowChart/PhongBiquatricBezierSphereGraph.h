@@ -18,6 +18,7 @@
 #include "Triangle.h"
 #include "LightingScene.h"
 
+// 使用Phong明暗处理算法绘有理双二次Bezier球图元
 class CPhongBiquatricBezierSphereGraph : public CGraph  
 {
 //		DECLARE_SERIAL(CPhongBiquatricBezierSphereGraph)
@@ -27,6 +28,7 @@ public:
 	CString GetTypeName() { return CString("CPhongBiquatricBezierSphereGraph"); }
 	
 protected:
+	// 使用Phong明暗处理算法绘制的有理双二次Bezier球
 	CPhongZBufferBiquatricBezierSphere sphere;//球体对象
 	CColorTransform3 transform;//变换
 	int	nLightSourceNumber;//光源数量

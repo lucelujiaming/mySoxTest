@@ -15,16 +15,24 @@ CPhongBiquatricBezierPatch::~CPhongBiquatricBezierPatch(void)
 
 void CPhongBiquatricBezierPatch::ReadControlPoint(CColorP3 P[3][3])
 {
-   for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
+    {
 	   for(int j = 0;j < 3; j++)
+	   {
    			this->P[i][j] = P[i][j];
+	   }
+   }
 }
 
 void CPhongBiquatricBezierPatch::ReadWeight(double W[3][3])
 {
-   for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
+	{
 	   for(int j = 0;j < 3; j++)
+	   {
    			this->W[i][j] = W[i][j];
+	   }
+    }
 }
 
 /************************************************************************/
@@ -52,7 +60,7 @@ void CPhongBiquatricBezierPatch::ReadWeight(double W[3][3])
 /* 我们需要把u和v分离出来。于是我们把上面的展开式写成如下的形式。       */
 /*                             |  1 -2  1 |                             */
 /*   p(u, v) = [u^2 u^1 u^0] * | -2  2  0 | *                           */
-/*                             |  1  0  0 |                             */ 
+/*                             |  1  0  0 |                             */
 /*   | w0,0 * P0,0 w0,1 * P0,1 w0,2 * P0,2 |   |  1 -2  1 |   | v^2 |   */
 /*   | w1,0 * P1,0 w1,1 * P1,1 w1,2 * P1,2 | * | -2  2  0 | * | v   | / */
 /*   | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |   |  1  0  0 |   | 1   |   */
@@ -127,11 +135,11 @@ void CPhongBiquatricBezierPatch::SaveFacetData(void)
 	/************************************************************************/
 	for (int nFacet = 0; nFacet < 81; nFacet++)
 	{
-		F[nFacet].SetPtNumber(4);		
+		F[nFacet].SetPtNumber(4);
 		F[nFacet].ptIndex[0] = nFacet / nStep + nFacet;//0
 		F[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;//1
 		F[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;//11
-		F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10		
+		F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10
 	}
 }
 
@@ -144,82 +152,132 @@ void CPhongBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
 {
 	SaveFacetData();//读取平面片的点表与面表
 	CColorP3 colorEye = projection.GetColorEye();
-	CColorP3 Point[4], ScreenPoint[4];//当前点与投影点
-	CVector3 N[4];//点法矢量
+	// 当前点与投影点
+	CColorP3 Point[4], ScreenPoint[4];
+	CVector3 N[4]; // 点法矢量
 	// 曲面片划分为81个平面片
 	for (int nFace = 0; nFace < 81; nFace++)
 	{
 		// 每个平面片为四边形
 		for (int nPoint = 0; nPoint < 4; nPoint++)
-		{				
+		{
 			Point[nPoint] = V[F[nFace].ptIndex[nPoint]];
-			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);//三维透视投影
+			// 三维透视投影
+			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
 			// 这里是整个绘制过程的核心逻辑。也就是Phong明暗处理。
 			// 我们不再简单地调用光照函数计算这个顶点的颜色。
 	        // 1. 计算多边形网格的每个顶点的法向量。
-			N[nPoint] = CVector3(Point[nPoint]);		
+			N[nPoint] = CVector3(Point[nPoint]);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		// 把刚才计算出来的每个顶点的法向量和每个顶点一起传入。
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3], N[0], N[2], N[3]);//上三角形
+		// 绘制上三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3], N[0], N[2], N[3]);
 		// 三角形绘制函数也修改为传入视点和光照对象。在里面调用光照计算光强并获得颜色。
 		pZBuffer->FillTriangle(pDC, colorEye, pScene);
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2], N[0], N[1], N[2]);//下三角形
+		// 下三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2], N[0], N[1], N[2]);
+		// 三角形绘制函数也修改为传入视点和光照对象。在里面调用光照计算光强并获得颜色。
 		pZBuffer->FillTriangle(pDC, colorEye, pScene);
 	}
 }
 
-void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColorP3 P[3][3])//左乘矩阵M*P
+// 左乘矩阵M*P
+void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColorP3 P[3][3])
 {
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];			
+		{
+			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			P[i][j] = T[i][j];
+		}
+	}
 }
 
-void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double W[3][3])//左乘矩阵M*W
+// 左乘矩阵M*W
+void CPhongBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double W[3][3])
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];		
+		{
+			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];
+		}
+	}
 	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
-void CPhongBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])//右乘矩阵P*M
+// 右乘矩阵P*M
+void CPhongBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])
 {
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3; i++)
-		for(int j = 0;j < 3;j++)	
+	{
+		for(int j = 0;j < 3;j++)
+		{
 			T[i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j];
+		}
+	}
 	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			P[i][j] = T[i][j];
+		}
+	}
 }
 
-void CPhongBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])//右乘矩阵W*M
+// 右乘矩阵W*M
+void CPhongBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[i][j] = W[i][0] * M[0][j] + W[i][1] * M[1][j] + W[i][2] * M[2][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
-void CPhongBiquatricBezierPatch::TransposeMatrix(double M[3][3])//转置矩阵
+// 转置矩阵
+void CPhongBiquatricBezierPatch::TransposeMatrix(double M[3][3])
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[j][i] = M[i][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			M[i][j] = T[i][j];
+		}
+	}
 }

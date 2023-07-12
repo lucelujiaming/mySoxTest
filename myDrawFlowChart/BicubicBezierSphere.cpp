@@ -140,10 +140,12 @@ void CBicubicBezierSphere::Draw(CDC* pDC)//ªÊ÷∆Õº–Œ
 	for(int nPatch = 0; nPatch < 8; nPatch++)
 	{
 		for(int i = 0; i < 4; i++)
+		{
 			for (int j = 0; j < 4; j++)
 			{
 				P[i][j] = Ver[Pat[nPatch].ptIndex[i * 4 + j]];
 			}
+		}
 		bezier.ReadControlPoint(P);
 		bezier.DrawCurvedPatch(pDC);
         bezier.DrawControlGrid(pDC);

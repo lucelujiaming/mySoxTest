@@ -226,21 +226,37 @@ void CGouraudBicubicBezierPatch::RightMultiplyMatrix(CColorP3 P[4][4],double M[4
 {
 	CColorP3 PTemp [4][4];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 4;i++)
+	{
 		for(int j = 0;j < 4;j++)
+		{
 			PTemp [i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + 
 		                   P[i][2] * M[2][j] + P[i][3] * M[3][j];
+		}
+	}
 	for(i=0;i < 4;i++)
+	{
 		for(int j=0;j < 4;j++)
+		{
 			P[i][j] = PTemp [i][j];
+		}
+	}
 }
 // ◊™÷√æÿ’Û
 void CGouraudBicubicBezierPatch::TransposeMatrix(double M[4][4])
 {
 	double PTemp[4][4];//¡Ÿ ±æÿ’Û
 	for(int i = 0;i < 4;i++)
+	{
 		for(int j = 0;j < 4;j++)
+		{
 			PTemp[j][i] = M[i][j];
+		}
+	}
 	for(i = 0;i < 4;i++)
+	{
 		for(int j = 0;j < 4;j++)
+		{
 			M[i][j] = PTemp[i][j];
+		}
+	}
 }

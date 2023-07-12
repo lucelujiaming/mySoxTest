@@ -15,16 +15,24 @@ CBumpTextureBiquatricBezierPatch::~CBumpTextureBiquatricBezierPatch(void)
 
 void CBumpTextureBiquatricBezierPatch::ReadControlPoint(CColorP3 P[3][3])
 {
-   for(int i = 0; i < 3; i++)
-	   for(int j = 0;j < 3; j++)
+	for(int i = 0; i < 3; i++)
+	{
+	    for(int j = 0;j < 3; j++)
+	    {
    			this->P[i][j] = P[i][j];
+		}
+	}
 }
 
 void CBumpTextureBiquatricBezierPatch::ReadWeight(double W[3][3])
 {
    for(int i = 0; i < 3; i++)
+	{
 	   for(int j = 0;j < 3; j++)
+	    {
    			this->W[i][j] = W[i][j];
+		}
+	}
 }
 
 void CBumpTextureBiquatricBezierPatch::SaveFacetData(void)
@@ -59,15 +67,15 @@ void CBumpTextureBiquatricBezierPatch::SaveFacetData(void)
 			V[u * (nStep + 1) + v] = numerator / denominator;
 			T[u * (nStep + 1) + v].u = (pTexture->bmp.bmWidth - 1) * u / double(nStep);
 			T[u * (nStep + 1) + v].v = (pTexture->bmp.bmHeight - 1) * v / double(nStep);
-		}		
+		}
 	}
 	for (int nFacet = 0; nFacet < 81; nFacet++)//9×9个平面片面表信息，定义每个平面片的索引号
 	{
-		F[nFacet].SetPtNumber(4);		
+		F[nFacet].SetPtNumber(4);
 		F[nFacet].ptIndex[0] = nFacet / nStep + nFacet;//0
 		F[nFacet].ptIndex[1] = nFacet / nStep + nFacet + 1;//1
 		F[nFacet].ptIndex[2] = nFacet / nStep + nFacet + nStep + 2;//11
-		F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10		
+		F[nFacet].ptIndex[3] = nFacet / nStep + nFacet + nStep + 1;//10
 	}
 }
 
@@ -92,7 +100,7 @@ void CBumpTextureBiquatricBezierPatch::Draw(CDC* pDC, CBumpTextureZBuffer* pZBuf
 	{
 		// 每个平面片为四边形
 		for (int nPoint = 0; nPoint < 4; nPoint++)
-		{				
+		{
 			int nVertexIndex = F[nFace].ptIndex[nPoint];
 			ScreenPoint4[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[nVertexIndex]);//三维透视投影
 			N4[nPoint] = CVector3(V[nVertexIndex]);
@@ -119,7 +127,7 @@ void CBumpTextureBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], CColor
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];			
+			T[i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j];
 	for(i = 0;i < 3;i++)
 		for(int j = 0;j < 3;j++)
 			P[i][j] = T[i][j];
@@ -129,42 +137,74 @@ void CBumpTextureBiquatricBezierPatch::LeftMultiplyMatrix(double M[3][3], double
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
-			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];		
+		{
+			T[i][j] = M[i][0] * W[0][j] + M[i][1] * W[1][j] + M[i][2] * W[2][j];
+		}
+	}
 	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
 void CBumpTextureBiquatricBezierPatch::RightMultiplyMatrix(CColorP3 P[3][3], double M[3][3])//右乘矩阵P*M
 {
 	CColorP3 T[3][3];//临时矩阵
 	for(int i = 0;i < 3; i++)
-		for(int j = 0;j < 3;j++)	
-			T[i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j];
-	for(i = 0;i < 3; i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
+			T[i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j];
+		}
+	}
+	for(i = 0;i < 3; i++)
+	{
+		for(int j = 0;j < 3;j++)
+		{
 			P[i][j] = T[i][j];
+		}
+	}
 }
 
 void CBumpTextureBiquatricBezierPatch::RightMultiplyMatrix(double W[3][3], double M[3][3])//右乘矩阵W*M
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[i][j] = W[i][0] * M[0][j] + W[i][1] * M[1][j] + W[i][2] * M[2][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			W[i][j] = T[i][j];
+		}
+	}
 }
 
 void CBumpTextureBiquatricBezierPatch::TransposeMatrix(double M[3][3])//转置矩阵
 {
 	double T[3][3];//临时矩阵
 	for(int i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			T[j][i] = M[i][j];
+		}
+	}
 	for(i = 0;i < 3;i++)
+	{
 		for(int j = 0;j < 3;j++)
+		{
 			M[i][j] = T[i][j];
+		}
+	}
 }

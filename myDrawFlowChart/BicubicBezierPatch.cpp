@@ -167,33 +167,59 @@ void CBicubicBezierPatch::LeftMultiplyMatrix(double M[4][4],CP3 P[4][4])//×ó³Ë¾Ø
 {
 	CP3 PTemp [4][4];//ÁÙÊ±¾ØÕó
 	for(int i = 0;i < 4;i++)
+    {
 		for(int j = 0;j < 4;j++)
-			PTemp [i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + M[i][2] * P[2][j] + M[i][3] * P[3][j];
+	    {
+			PTemp [i][j] = M[i][0] * P[0][j] + M[i][1] * P[1][j] + 
+			               M[i][2] * P[2][j] + M[i][3] * P[3][j];
+	    }
+    }
 	for(i = 0;i < 4;i++)
+    {
 		for(int j =0;j < 4;j++)
+	    {
 			P[i][j] = PTemp [i][j];
+	    }
+    }
 }
 
 void CBicubicBezierPatch::RightMultiplyMatrix(CP3 P[4][4],double M[4][4])//ÓÒ³Ë¾ØÕóP*M
 {
 	CP3 PTemp [4][4];//ÁÙÊ±¾ØÕó
 	for(int i = 0;i < 4;i++)
+    {
 		for(int j = 0;j < 4;j++)
-			PTemp [i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + P[i][2] * M[2][j] + P[i][3] * M[3][j];
+	    {
+			PTemp [i][j] = P[i][0] * M[0][j] + P[i][1] * M[1][j] + 
+			               P[i][2] * M[2][j] + P[i][3] * M[3][j];
+	    }
+    }
 	for(i=0;i < 4;i++)
+    {
 		for(int j=0;j < 4;j++)
+	    {
 			P[i][j] = PTemp [i][j];
+	    }
+    }
 }
 
 void CBicubicBezierPatch::TransposeMatrix(double M[][4])//×ªÖÃ¾ØÕó
 {
 	double PTemp[4][4];//ÁÙÊ±¾ØÕó
 	for(int i = 0;i < 4;i++)
+    {
 		for(int j = 0;j < 4;j++)
+	    {
 			PTemp[j][i] = M[i][j];
+	    }
+    }
 	for(i = 0;i < 4;i++)
+    {
 		for(int j = 0;j < 4;j++)
+	    {
 			M[i][j] = PTemp[i][j];
+	    }
+    }
 }
 
 void CBicubicBezierPatch::DrawControlGrid(CDC* pDC)//»æÖÆ¿ØÖÆÍø¸ñ

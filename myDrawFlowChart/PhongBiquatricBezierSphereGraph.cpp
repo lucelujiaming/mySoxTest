@@ -99,8 +99,8 @@ void CPhongBiquatricBezierSphereGraph::InitializeLightingScene(void)//初始化光照
 	pScene->pMaterial = new CMaterial;
 	pScene->pMaterial->SetAmbient(CRGB(0.847, 0.10, 0.075));//环境反射率
 	pScene->pMaterial->SetDiffuse(CRGB(0.852, 0.006, 0.026));//漫反射率
-	pScene->pMaterial->SetSpecular(CRGB(1.0, 1.0, 1.0));//镜面反射率
-	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//自身辐射的颜色
+	pScene->pMaterial->SetSpecular(CRGB(1.0, 1.0, 1.0));//镜面反射率。为白色。
+	pScene->pMaterial->SetEmission(CRGB(0.0, 0.0, 0.0));//自身辐射的颜色。为黑色。
 	pScene->pMaterial->SetExponent(10);//高光指数
 }
 

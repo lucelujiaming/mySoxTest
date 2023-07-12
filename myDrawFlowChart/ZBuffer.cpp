@@ -232,8 +232,8 @@ CRGB CZBuffer::Interp(double m, double m0, double m1, CRGB c0, CRGB c1)//ÑÕÉ«ÏßÐ
 	color = (m1 - m) / (m1 - m0) * c0 + (m - m0) / (m1 - m0) * c1;
 	return color;
 }
-
-CVector3 CZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1)//·¨Ê¸Á¿ÏßÐÔ²åÖµ
+// ·¨Ê¸Á¿ÏßÐÔ²åÖµ
+CVector3 CZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1)
 {
 	CVector3 vector;
 	vector = (m1 - m) / (m1 - m0) * N0 + (m - m0) / (m1 - m0) * N1;

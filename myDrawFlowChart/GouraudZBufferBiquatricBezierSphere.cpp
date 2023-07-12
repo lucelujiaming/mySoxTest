@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "GouraudZBufferBiquatricBezierSphere.h"
 #include "math.h"
@@ -82,7 +83,7 @@ void CGouraudZBufferBiquatricBezierSphere::ReadFace(void)
 
 void CGouraudZBufferBiquatricBezierSphere::Draw(CDC* pDC, CZBuffer* pZBuffer)//绘制图形
 {
-	CColorP3 objCopyPoint[3][3];//三维顶点
+	CColorP3 objCopyPoint[3][3]; // 三维顶点
 	double W[3][3];//权因子
 	const double c = sqrt(2.0) / 2.0;
 	// 四角控制点的权因子为W0 = W2 = W4 = W6 = 1

@@ -131,7 +131,7 @@ void CBicubicBezierPatch::DrawCurvedPatch(CDC* pDC)
 			// 投影到二维。用于显示。
 			CP2 Point2 = projection.CustomProjection(pt); // 斜投影
 			// 绘制网格。
-			if(0 == v)
+			if(v == 0)
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
 			else
 				pDC->LineTo(ROUND(Point2.x), ROUND(Point2.y));

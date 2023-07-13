@@ -39,8 +39,8 @@ CGouraudBicubicBezierSphereGraph::CGouraudBicubicBezierSphereGraph()
 	double nScale = 100;
 	transform.SetMatrix(sphere.Ver, 62);
 	transform.Scale(nScale, nScale, nScale);
-	InitializeLightingScene();//初始化光照场景
-	sphere.bezier.SetLightingScene(pScene);//设置光照场景
+	InitializeLightingScene();					//初始化光照场景
+	sphere.bezier.SetLightingScene(pScene);		//设置光照场景
 }
 
 CGouraudBicubicBezierSphereGraph::~CGouraudBicubicBezierSphereGraph()

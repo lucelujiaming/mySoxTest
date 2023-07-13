@@ -14,9 +14,11 @@ void CTexture::ReadBitmap(UINT nIDResource)//读入位图
 {
 	CBitmap NewBitmap;//DDB
 	NewBitmap.LoadBitmap(nIDResource);
-	NewBitmap.GetBitmap(&bmp);//将CBitmap的信息保存到Bitmap结构体中
+	// 将CBitmap的信息保存到Bitmap结构体中
+	NewBitmap.GetBitmap(&bmp);
 	int nbytesize = bmp.bmWidthBytes * bmp.bmHeight;
 	image = new BYTE[nbytesize];
+	// 将图像数据保存到image中
 	NewBitmap.GetBitmapBits(nbytesize, (LPVOID)image);
 }
 

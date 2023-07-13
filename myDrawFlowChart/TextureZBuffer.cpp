@@ -24,6 +24,7 @@ CTextureZBuffer::~CTextureZBuffer(void)
 	}
 }
 
+// 设置传入顶点P，法矢量N和纹理地址T。
 void CTextureZBuffer::SetPoint(CColorP3* P, CVector3* N, CTextureCoordinate* T)
 {
 	for (int nPoint = 0; nPoint < 3; nPoint++)
@@ -38,7 +39,8 @@ void CTextureZBuffer::SetPoint(CColorP3* P, CVector3* N, CTextureCoordinate* T)
 	}
 }
 
-void CTextureZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)//初始化深度缓冲
+// 初始化深度缓冲
+void CTextureZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 {
 	this->nWidth = nWidth, this->nHeight = nHeight;
 	zBuffer = new double* [nWidth];
@@ -59,36 +61,61 @@ void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScen
 	SpanLeft = new CColorPoint2[nTotalScanLine];
 	SpanRight = new CColorPoint2[nTotalScanLine];
 	//判断P1点位于P0P2边的左侧还是右侧
-	int nDeltz = (point[2].x - point[0].x) * (point[1].y - point[0].y) - (point[2].y - point[0].y) * (point[1].x - point[0].x);//点矢量叉积的z分量
-	if (nDeltz > 0)//左三角形
+	int nDeltz = (point[2].x - point[0].x) * (point[1].y - point[0].y) 
+	           - (point[2].y - point[0].y) * (point[1].x - point[0].x); // 点矢量叉积的z分量
+	if (nDeltz > 0) // 左三角形。说明：
 	{
+		// 从0开始计算画线的起始点。
 		nIndex = 0;
+		// P[0]到P[1]为画线的起始点。
 		EdgeFlag(point[0], point[1], LEFT);
+		// P[1]到P[2]为画线的起始点。
 		EdgeFlag(point[1], point[2], LEFT);
+		// 从0开始计算画线的结束点。
 		nIndex = 0;
+		// P[0]到P[2]为画线的结束点。
 		EdgeFlag(point[0], point[2], RIGHT);
 	}
-	else//右三角形
+	else // 右三角形。说明：
 	{
+		// 从0开始计算画线的起始点。
 		nIndex = 0;
+		// P[0]到P[2]为画线的起始点。
 		EdgeFlag(point[0], point[2], LEFT);
+		// 从0开始计算画线的结束点。
 		nIndex = 0;
+		// P[0]到P[1]为画线的结束点。
 		EdgeFlag(point[0], point[1], RIGHT);
+		// P[1]到P[2]为画线的结束点。
 		EdgeFlag(point[1], point[2], RIGHT);
 	}
+	// 1. 根据多边形表面顶点坐标可以计算出两个边向量。
 	CVector3 Vector01(P[0], P[1]), Vector02(P[0], P[2]);
+	// 2. 调用ColorVector3.cpp中的CrossProduct函数来
+	//    计算两个边向量的叉乘。得到法向量。参见公式(7-2)。
 	CVector3 fNormal = CrossProduct(Vector01, Vector02);
-	double A = fNormal.x, B = fNormal.y, C = fNormal.z;//平面方程Ax+By+Cz＋D=0的系数
-	double D = -A * P[0].x - B * P[0].y - C * P[0].z;//系数D
+	// 平面方程Ax+By+Cz＋D=0(7-1)的系数ABC就是法向量的系数。
+	double A = fNormal.x, B = fNormal.y, C = fNormal.z;
+	// 而系数D使用下面的公式计算。参见公式(7-3)。
+	double D = -A * P[0].x - B * P[0].y - C * P[0].z;
+	// 如果C等于零，说明多边形表面的法向量和Z轴垂直。
+	// 投影变成一条直线。在算法中可以不考虑。
 	if (fabs(C) < 1e-4)
 		C = 1.0;
+	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;//扫描线深度步长
-	for (int y = point[0].y; y < point[2].y; y++)//下闭上开
+	// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
+	// 下闭上开。开始扫描y坐标范围内的每一行。
+	for (int y = point[0].y; y < point[2].y; y++)
 	{
+		// 得到y坐标在Span中对应的索引。
 		int n = y - point[0].y;
-		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++)//左闭右开
+		// 左闭右开。开始扫描每一行中的每一个点。
+		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++) 
 		{
-			double CurrentDepth = -(A * x + B * y + D) / C;//z=-(Ax+By+D)/C
+			// 计算当前像素点(x, y)处的深度值。
+			// z = -(Ax + By + D) / C。参见公式(7-4)。
+			double CurrentDepth = -(A * x + B * y + D) / C;
 			CVector3 ptNormal = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].n, SpanRight[n].n);
 			CTextureCoordinate T = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].t, SpanRight[n].t);
 			CRGB Texel = GetTexture(ROUND(T.u), ROUND(T.v), pTexture);
@@ -97,11 +124,12 @@ void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScen
 			CRGB I = pScene->Illuminate(Eye, CColorP3(x, y, CurrentDepth), ptNormal, pScene->pMaterial);
 			if (CurrentDepth <= zBuffer[x + nWidth / 2][y + nHeight / 2])//如果当前采样点的深度小于帧缓冲器中原采样点的深度
 			{
-				zBuffer[x + nWidth / 2][y + nHeight / 2] = CurrentDepth;//使用当前采样点的深度更新深度缓冲器
+				// 使用当前采样点的深度更新深度缓冲器。
+				zBuffer[x + nWidth / 2][y + nHeight / 2] = CurrentDepth;
 				pDC->SetPixelV(m_ptDrawPosition.x + x, m_ptDrawPosition.y + y, 
 					RGB(I.red * 255, I.green * 255, I.blue * 255));
 			}
-			CurrentDepth += DepthStep;
+			// CurrentDepth += DepthStep;
 		}
 	}
 	if(SpanLeft)

@@ -41,9 +41,10 @@ void CZBufferCube::ReadVertex(void)//点表
 	V[7].x = 0, V[7].y = 1, V[7].z = 1;
 }
 
-// 根据上面的分析可知，X轴向右，Y轴向上，Z轴指向我们。因此可知：
+// 根据上面的分析可知，X轴向右，Y轴向上，Z轴指向我们。
 void CZBufferCube::ReadFace(void) // 面表
 {
+    // 根据上面的分析可知：
 	// 朝向我们的立方体表面由4,5,6,7四个点组成。
 	F[0].ptNumber = 4;
 	F[0].ptIndex[0] = 4, F[0].ptIndex[1] = 5;
@@ -97,7 +98,7 @@ void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 	for (int nFace = 0; nFace < 6; nFace++)
 	{
 		// 得到这个面所有顶点的坐标。
-		for (int nPoint = 0; nPoint < F[nFace].ptNumber; nPoint++)//顶点循环
+		for (int nPoint = 0; nPoint < F[nFace].ptNumber; nPoint++) // 顶点循环
 		{
 			// 使用三维透视投影得到透视坐标。
 			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
@@ -112,9 +113,11 @@ void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 				ScreenPoint[nPoint].c = F[nFace].c;
 		}
 		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形
+        // 上三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); 
 		pZBuffer->FillTriangle(pDC);
-		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]); // 下三角形
+        // 下三角形
+		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[1], ScreenPoint[2]);
 		pZBuffer->FillTriangle(pDC);
 	}
 }

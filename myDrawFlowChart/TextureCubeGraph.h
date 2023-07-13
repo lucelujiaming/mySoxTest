@@ -19,6 +19,7 @@
 #include "Triangle.h"
 #include "LightingScene.h"
 
+// 使用图像纹理算法算法绘制立方体图元
 class CTextureCubeGraph : public CGraph  
 {
 //		DECLARE_SERIAL(CTextureCubeGraph)
@@ -28,16 +29,16 @@ public:
 	CString GetTypeName() { return CString("CTextureCubeGraph"); }
 	
 protected:
-	CTextureCube cube;//立方体对象
-	CColorTransform3 transform;//变换
-	int	nLightSourceNumber;//光源数量
-	CLightingScene* pScene;//光照场景
-	CTexture texture;//纹理
+	CTextureCube cube;						// 立方体对象
+	CColorTransform3 transform;				// 变换
+	int	nLightSourceNumber;					// 光源数量
+	CLightingScene* pScene;					// 光照场景
+	CTexture texture;						// 纹理
 	
 public:
-	void DoubleBuffer(CDC* pDC);//双缓冲
-	void DrawObject(CDC* pDC);//绘制图形
-	void InitializeLightingScene(void);//初始化光照场景	
+	void DoubleBuffer(CDC* pDC);			// 双缓冲
+	void DrawObject(CDC* pDC);				// 绘制图形
+	void InitializeLightingScene(void);		// 初始化光照场景	
 public:
 	void Draw( CDC *pdc, BOOL bShowSelectBorder = TRUE );
 	void DrawFocus( CDC *pdc );

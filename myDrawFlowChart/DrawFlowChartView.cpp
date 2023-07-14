@@ -368,7 +368,9 @@ void CDrawFlowChartView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	Invalidate();
 	if(!m_IsControlFlow)
+    {
 		m_OperateType = SELECT; // 修改操作类型为默认值
+    }
 	m_LBtnSignal = false; // 设置鼠标左键为up
 
 	CView::OnLButtonUp(nFlags, point);

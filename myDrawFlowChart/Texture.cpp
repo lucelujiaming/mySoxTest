@@ -25,5 +25,7 @@ void CTexture::ReadBitmap(UINT nIDResource)//读入位图
 void CTexture::DeleteObject(void)//释放位图
 {
 	if(NULL != image)
+    {
 		delete []image;
+    }
 }

@@ -154,9 +154,13 @@ void CRationalBiquatricBezierPatch::DrawCurvedPatch(CDC* pDC)
 			CP2 Point2 = projection.PerspectiveProjection(pt); // 投影
 			// 绘制网格。
 			if(v == 0)
+            {
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
+            }
 			else
+            {
 				pDC->LineTo(ROUND(Point2.x), ROUND(Point2.y));
+            }
 		}
 	}
 	// 下面这个两层循环，交换u和v顺序，绘制左右方向的曲线。
@@ -184,9 +188,13 @@ void CRationalBiquatricBezierPatch::DrawCurvedPatch(CDC* pDC)
 			CP2 Point2 = projection.PerspectiveProjection(pt);//投影
 			// 绘制网格。
 			if(0 == u)
+            {
 				pDC->MoveTo(ROUND(Point2.x), ROUND(Point2.y));
+            }
 			else
+            {
 				pDC->LineTo(ROUND(Point2.x), ROUND(Point2.y));
+            }
 		}
 	}
 }
@@ -290,8 +298,12 @@ void CRationalBiquatricBezierPatch::DrawControlGrid(CDC* pDC) // 绘制控制网格
 {
 	CP2 P2[3][3];//二维控制点
 	for(int i = 0;i < 3;i++)
+    {
 		for(int j = 0;j < 3;j++)
+        {
 			P2[i][j] = projection.PerspectiveProjection(m_objBezierControlPoint[i][j]);
+        }
+    }
 	CPen NewPen,*pOldPen;
 	NewPen.CreatePen(PS_SOLID,3,RGB(0, 0, 255));
 	pOldPen=pDC->SelectObject(&NewPen);

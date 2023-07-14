@@ -68,7 +68,9 @@ CRGB operator *(double scalar, const CRGB &clr)//*运算符重载
 CRGB operator /(const CRGB &clr, double scalar)///运算符重载
 {
 	if(fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CRGB color;
 	color.red = clr.red / scalar;
 	color.green = clr.green / scalar;

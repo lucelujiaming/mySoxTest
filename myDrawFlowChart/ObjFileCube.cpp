@@ -72,7 +72,9 @@ void CObjFileCube::ReadNumber(void)
 			nTotalTexture++;
 		}
 		if (strLine[0] == 'f' && strLine[1] == ' ')//当前行以"f+空格"开头时读取
+        {
 			nTotalFace++;
+        }
 	}
 	file.Close();
 }
@@ -81,7 +83,9 @@ void CObjFileCube::ReadVertex(void)//读入点表
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	V = new CP3[nTotalVertex];
 	int index = 0;
 	CString strLine;//存放文件中每行字符串的缓冲区
@@ -91,7 +95,9 @@ void CObjFileCube::ReadVertex(void)//读入点表
 		{
 			CString str[3];//将strLine以'空格'为间隔符分割 并把第i+1段赋值给str[i](开头字符'v'为第0段)			
 			for (int i = 0; i < 3; i++)
+            {
 				AfxExtractSubString(str[i], strLine, i + 1, ' ');
+            }
 //			V[index].x = _wtol(str[0]);//_wtof函数将CSting类型转换为double类型
 //			V[index].y = _wtol(str[1]);
 //			V[index].z = _wtol(str[2]);
@@ -108,7 +114,9 @@ void CObjFileCube::ReadTexture(void)//读入纹理
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	/*T = new CT2[nTotalTexture];*/
 	file.Close();
 }
@@ -117,7 +125,9 @@ void CObjFileCube::ReadNormal(void)//读入法矢量
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	/*N = new CVector3[nTotalNormal];*/
 	file.Close();
 }
@@ -126,7 +136,9 @@ void CObjFileCube::ReadFace(void)//读入面表
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	F = new CFace[nTotalFace];
 	int index = 0;
 	CString strLine;//行字符串

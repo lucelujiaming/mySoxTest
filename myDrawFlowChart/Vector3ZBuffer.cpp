@@ -45,15 +45,22 @@ void CVector3ZBuffer::SetPoint(CColorP3 P0, CColorP3 P1, CColorP3 P2, CVector3 N
 	point2.n = N2;
 }
 
-void CVector3ZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)//初始化深度缓冲
+//初始化深度缓冲
+void CVector3ZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 {
 	this->nWidth = nWidth, this->nHeight = nHeight;
 	zBuffer = new double* [nWidth];
 	for (int i = 0; i < nWidth; i++)
+    {
 		zBuffer[i] = new double[nHeight];
+    }
 	for (i = 0; i < nWidth; i++)//初始化深度缓冲
+    {
 		for (int j = 0; j < nHeight; j++)
-			zBuffer[i][j] = nDepth;
+        {
+			zBuffer[i][j] = nDepth;  // 将深度缓冲区的每一个元素设置为nDepth。
+        }
+    }
 }
 
 // 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
@@ -107,7 +114,9 @@ void CVector3ZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScen
 	// 如果C等于零，说明多边形表面的法向量和Z轴垂直。
 	// 投影变成一条直线。在算法中可以不考虑。
 	if (fabs(C) < 1e-4)
+    {
 		C = 1.0;
+    }
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;
 	// 下面开始填充三角形。
@@ -175,9 +184,13 @@ void CVector3ZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFea
 		// 2. 而是使用双线性插值计算多边形边上各点的法向量。
 		CVector3 ptNormal = Interp(y, PStart.y, PEnd.y, PStart.n, PEnd.n);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, ptNormal);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint2(ROUND(x), y,ptNormal);
+        }
 		x += m;
 	}
 }

@@ -36,7 +36,9 @@ void CBucketTableFill::SetPoint(CColorPoint* p, int n)
 	m_PolygonPoints = new CColorPoint[n];//创建一维动态数组
 	m_nPointNumber = n;
 	for(int i = 0;i < m_nPointNumber;i++)
+	{
 		m_PolygonPoints[i] = p[i];
+	}
 }
 
 /************************************************************************/
@@ -58,9 +60,13 @@ void CBucketTableFill::CreateBucketTable(void)
 	for(int i = 0;i < m_nPointNumber; i++)
 	{
 		if(m_PolygonPoints[i].y < yMin)
+        {
 			yMin = m_PolygonPoints[i].y; // 扫描线的最小值
+        }
 		if(m_PolygonPoints[i].y > yMax)
+        {
 			yMax = m_PolygonPoints[i].y; // 扫描线的最大值		
+        }
 	}
 	// 根据最小和最大扫描线创建桶链表。链表长度为最大扫描线数。
 	for(int y = yMin; y <= yMax; y++)
@@ -276,7 +282,9 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 		// 取出排序后的活动边表。
 		pT1 = m_pHeadEdge;
 		if(NULL == pT1)
+        {
 			return;
+        }
 		// 4. 下面我们需要删除所有的位于当前桶表元素对应的扫描线下方的活动边。
 		//    分为三步：
 		//    4.1. 删除活动边链表开头的位于当前桶表元素对应的扫描线下方的活动边。
@@ -292,7 +300,9 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 			// 更新链表头位置。
 			m_pHeadEdge = pT1;
 			if(NULL == m_pHeadEdge)
+            {
 				return;
+            }
 		}
 		// 代码执行到这里，我们找到了一条位于当前桶表元素对应的扫描线上方的边pT1。
 		// 4.2. 我们让pT2指向pT1，让pT1指向下一条边。
@@ -355,7 +365,9 @@ void CBucketTableFill::FillPolygon(CDC* pDC)
 			}
 		}
 		for(pT1 = m_pHeadEdge;pT1 != NULL;pT1 = pT1->pNext)//边的连续性
+        {
 			pT1->x = pT1->x + pT1->m;
+        }
 	}
 }
 
@@ -386,7 +398,9 @@ void CBucketTableFill::SortEdgeTable(void)
 	int Count = 1;
 	pT1 = m_pHeadEdge;
 	if(NULL == pT1)
+    {
 		return;
+    }
 	// 如果该活动边没有下一个活动边
 	if(NULL == pT1->pNext) 
 	{

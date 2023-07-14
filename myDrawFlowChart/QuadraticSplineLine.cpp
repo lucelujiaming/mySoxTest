@@ -52,9 +52,13 @@ double CQuadraticSplineLine::BasicFunctionValue(double t, int i, int k)
 	if(k==0)
 	{
 		if(t>=m_doubleKnots[i]&&t<m_doubleKnots[i+1])
+        {
 			return 1.0;
+        }
 		else 
+        {
 			return 0.0;
+        }
 	}
 
 	//次数不为0时的基函数计算
@@ -63,7 +67,9 @@ double CQuadraticSplineLine::BasicFunctionValue(double t, int i, int k)
 	{
 		//节点矢量位于定义域之外
 		if(t<m_doubleKnots[i]||t>m_doubleKnots[i+k+1])
+        {
 			return 0.0;
+        }
 
 		//节点矢量位于定义域之外
 		else
@@ -74,16 +80,24 @@ double CQuadraticSplineLine::BasicFunctionValue(double t, int i, int k)
 			//递推公式第一项
 			denominator=m_doubleKnots[i+k]-m_doubleKnots[i];
 			if(denominator==0.0)
+            {
 				coff1=0.0;                  //重节点分母为0
+            }
 			else
+            {
 				coff1=(t-m_doubleKnots[i])/denominator;
+            }
 
 			//递推公式第二项
 			denominator=m_doubleKnots[i+k+1]-m_doubleKnots[i+1];
 			if(denominator==0.0)
+            {
 				coff2=0.0;                  //重节点分母为0
+            }
 			else
+            {
 				coff2=(m_doubleKnots[i+k+1]-t)/denominator;
+            }
 
 			//递推公式第一、二项的值
 			value1=coff1*BasicFunctionValue(t,i,k-1);
@@ -120,9 +134,13 @@ void CQuadraticSplineLine::DrawCurve(CDC*pDC, int iNum)
 			p = p + m_objQuadraticSplineControlPoint[i]*BValue;
 		}
 		if(t==0)
+        {
 			pDC->MoveTo(ROUND(p.x), ROUND(p.y));
+        }
 		else
+        {
 			pDC->LineTo(ROUND(p.x), ROUND(p.y));
+        }
 	}
 
 	//还原画笔，删除创建的画笔
@@ -170,7 +188,10 @@ void CQuadraticSplineLine::DrawControlPoint(CDC*pDC, int iNum)
 
 void CQuadraticSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2)
+     {
+         return;
+     }
 
 	// printAllPoints("CQuadraticSplineLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -235,13 +256,19 @@ void CQuadraticSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CQuadraticSplineLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	// printAllPoints("CQuadraticSplineLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -319,7 +346,10 @@ void CQuadraticSplineLine::AdjustSize(CPoint &pt)
 
 void CQuadraticSplineLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+    }
 
 	// printAllPoints("CQuadraticSplineLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -439,7 +469,10 @@ bool CQuadraticSplineLine::IsControlFlow()
 
 bool CQuadraticSplineLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < 2) return false;
+	if(m_Points.size() < 2) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CQuadraticSplineLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -531,7 +564,9 @@ double CQuadraticSplineLine::GetDistance(int x1, int y1, int x2,int y2)
 void CQuadraticSplineLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < 2) 
+    {
 		return;
+    }
 	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();

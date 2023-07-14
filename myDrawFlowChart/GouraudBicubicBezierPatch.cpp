@@ -190,9 +190,12 @@ void CGouraudBicubicBezierPatch::Draw(CDC* pDC, CZBuffer* pZBuffer)
 			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(
 									m_objBezierPatchPoint[
 										m_objBezierPatchFace[nFace].ptIndex[nPoint]]);
-			// 调用光照函数计算这个顶点的颜色。
+            // 调用光照函数计算这个顶点的颜色。
 			ScreenPoint[nPoint].c = pScene->Illuminate(colorEye, 
-						Point[nPoint], CVector3(Point[nPoint]), pScene->pMaterial);
+						Point[nPoint], 
+			            // 我们使用该点的位置矢量作为法向量。这是由于球体的对称性决定的。
+                        CVector3(Point[nPoint]), 
+                        pScene->pMaterial);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。
 		pZBuffer->SetPoint(ScreenPoint[0], ScreenPoint[2], ScreenPoint[3]); // 上三角形

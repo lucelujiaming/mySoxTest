@@ -75,13 +75,21 @@ void CEdgeFillPolygon::DrawObject(CDC* pDC)
 	for (int i = 0; i < 7; i++)
 	{
 		if (m_P[i].x > m_xMax)
+        {
 			m_xMax = m_P[i].x;
+        }
 		if (m_P[i].x < m_xMin)
+        {
 			m_xMin = m_P[i].x;
+        }
 		if (m_P[i].y > m_yMax)
+        {
 			m_yMax = m_P[i].y;
+        }
 		if (m_P[i].y < m_yMin)
+        {
 			m_yMin = m_P[i].y;
+        }
 	}
 	CColorPoint t;
 	// 2. 绘制多边形
@@ -148,9 +156,13 @@ void CEdgeFillPolygon::EdgeFill(CDC* pDC)
 			for (int x = ROUND(x_ymin); x < m_xMax; x++)
 			{
 				if (m_fillClr == pDC->GetPixel(x, y)) // 如果原来是填充色
+                {
 					pDC->SetPixelV(x, y, m_backClr);  // 置为背景色
+                }
 				else                                // 如果原来是背景色
+                {
 					pDC->SetPixelV(x, y, m_fillClr);  // 置为填充色
+                }
 			}
 			x_ymin += m;                            // 计算下一条扫描线的x起点坐标
 		}

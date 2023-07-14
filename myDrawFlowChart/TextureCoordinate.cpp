@@ -48,7 +48,9 @@ CTextureCoordinate operator * (double scalar, const CTextureCoordinate &t)//³£Á¿
 CTextureCoordinate operator / (const CTextureCoordinate &t, double scalar)//Êý³ý
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CTextureCoordinate result;
 	result.u = t.u / scalar;
 	result.v = t.v / scalar;
@@ -79,8 +81,11 @@ CTextureCoordinate operator *= (CTextureCoordinate &t, double scalar)
 CTextureCoordinate operator /= (CTextureCoordinate &t, double scalar)
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	t.u = t.u / scalar;
 	t.v = t.v / scalar;
 	return t;
 }
+

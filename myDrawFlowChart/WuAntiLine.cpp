@@ -34,7 +34,9 @@ void CWuAntiLine::BresenhamWuAntiLine(CDC* pDC, CPoint P0, CPoint P1)
 	int dx = abs(P1.x - P0.x);
 	int dy = abs(P1.y - P0.y);
 	if(dy == 0)
+    {
 		return;
+    }
 	bool bInterchange = false;
 	int e, signX, signY, temp;
 	// 计算X累加方向和Y累加方向
@@ -85,9 +87,13 @@ void CWuAntiLine::BresenhamWuAntiLine(CDC* pDC, CPoint P0, CPoint P1)
 		{
 			// 在递增方向上递增。否则就不递增。
 			if (bInterchange == false)
+            {
 				y += signY;
+            }
 			else
+            {
 				x += signX;
+            }
 			// 并且更新误差为前一个误差减去2 * dx。
 			e -= 2 * dx;
 		}

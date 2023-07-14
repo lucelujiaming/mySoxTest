@@ -98,9 +98,14 @@ bool CPath::IsInclude(CGraph *graph, int count)
 	{
 		CGraph *currentGraph = (CGraph*)m_Graphs[i];
 		if(currentGraph == graph) 
+        {
 			iCounter++;
+        }
 	}
-	if(iCounter == count) return true;
+	if(iCounter == count) 
+    {
+        return true;
+	}
 
 	return false;
 }

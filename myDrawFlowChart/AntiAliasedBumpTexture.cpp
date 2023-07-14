@@ -51,17 +51,23 @@ void CAntiAliasedBumpTexture::ReadBitmap(UINT nIDResource)//读入位图
 	NewBitmap.GetBitmapBits(nbytesize, (LPVOID)image);
 	SrcImage = new CRGB * [bmp.bmHeight];//动态定义纹理的二维数组
 	for (int i = 0; i < bmp.bmHeight; i++)
+    {
 		SrcImage[i] = new CRGB[bmp.bmWidth];
+    }
 	for (int v = 0; v < bmp.bmHeight; v++)
+    {
 		for (int u = 0; u < bmp.bmWidth; u++)
 		{
 			int pos = v * bmp.bmWidthBytes + 4 * u;//颜色分量位置
 			v = bmp.bmHeight - 1 - v;//位图从左下角向右上角绘制
 			SrcImage[v][u] = CRGB(image[pos + 2] / 255.0, image[pos + 1] / 255.0, image[pos] / 255.0);
 		}
+    }
 	DestImage = new CRGB *[nDestHeight];
 	for (i = 0; i < nDestHeight; i++)
+    {
 		DestImage[i] = new CRGB[nDestWidth];
+    }
 	AntiAliasedBumpTextureAntialiasing(DestImage, nDestWidth, nDestHeight, SrcImage, bmp.bmWidth, bmp.bmHeight);
 	Bu = new double*[nDestHeight];
 	Bv = new double*[nDestHeight];
@@ -71,19 +77,33 @@ void CAntiAliasedBumpTexture::ReadBitmap(UINT nIDResource)//读入位图
 		Bv[i] = new double[nDestWidth];
 	}
 	for (v = 0; v < nDestHeight; v++)
+    {
 		for (int u = 0; u < nDestWidth; u++)
 		{
 			int forwardU, forwardV, backwardU, backwardV;//一阶中心差分
 			forwardU = u + 1, backwardU = u - 1;
 			forwardV = v + 1, backwardV = v - 1;
 			//检测图片的边界，防止越界
-			if (backwardU < 0) 	backwardU = 0;
-			if (forwardU > nDestWidth - 1) 	forwardU = nDestWidth - 1;
-			if (backwardV < 0)	backwardV = 0;
-			if (forwardV > nDestHeight - 1) forwardV = nDestHeight - 1;
+			if (backwardU < 0) 	
+            {
+                backwardU = 0;
+            }
+			if (forwardU > nDestWidth - 1) 	
+            {
+                forwardU = nDestWidth - 1;
+            }
+			if (backwardV < 0)	
+            {
+                backwardV = 0;
+            }
+			if (forwardV > nDestHeight - 1) 
+            {
+                forwardV = nDestHeight - 1;
+            }
 			Bu[v][u] = DestImage[v][backwardU].red - DestImage[v][forwardU].red;
 			Bv[v][u] = DestImage[backwardV][u].red - DestImage[forwardV][u].red;
 		}
+    }
 	delete[]image;
 }
 
@@ -102,9 +122,13 @@ void CAntiAliasedBumpTexture::AntiAliasedBumpTextureAntialiasing(CRGB** DestImag
 			int tx = int(Sx);
 			double u = fabs(Sx - tx);
 			if (tx >= nSrcWidth - 2)
+            {
 				tx = nSrcWidth - 2;
+            }
 			if (ty >= nSrcHeight - 2)
+            {
 				ty = nSrcHeight - 2;
+            }
 			DestImage[i][j] = (1 - u) * (1 - v) * SrcImage[ty][tx] + v * (1 - u) * SrcImage[ty + 1][tx]
 				+ u * (1 - v) * SrcImage[ty][tx + 1] + u * v * SrcImage[ty + 1][tx + 1];//双线性插值
 		}

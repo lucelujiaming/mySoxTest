@@ -34,7 +34,9 @@ CLightingScene::~CLightingScene(void)
 void CLightingScene::SetLightNumber(int nLightNumber)
 {
 	if (pLightSource)
+    {
 		delete[]pLightSource;
+    }
 	this->nLightNumber = nLightNumber;
 	pLightSource = new CLightSource[nLightNumber];
 }
@@ -78,7 +80,9 @@ void CLightingScene::SetLightNumber(int nLightNumber)
 /************************************************************************/
 CRGB CLightingScene::Illuminate(CColorP3 ViewPoint, CColorP3 Point, CVector3 ptNormal, CMaterial* pMaterial)
 {
-	CRGB ResultI = pMaterial->M_Emission;//材质自身发光为初始值
+    // 定义材质自身发光为反射光强ResultI的初始值
+    // M_Emission是材质自身的底色，并不会照射到其他物体。
+	CRGB ResultI = pMaterial->M_Emission;
 	for (int loop = 0; loop < nLightNumber; loop++)//检查光源开关状态
 	{
 		if (pLightSource[loop].L_OnOff)//光源开
@@ -87,12 +91,14 @@ CRGB CLightingScene::Illuminate(CColorP3 ViewPoint, CColorP3 Point, CVector3 ptN
 			CRGB I = CRGB(0.0, 0.0, 0.0);
 			// L为光矢量。也就是Point和光源位置的相对矢量。
 			CVector3 L(Point, pLightSource[loop].L_Position);
-			// d为光传播的距离
+			// 取光矢量的模长d作为光传播的距离
 			double d = L.Magnitude(); 
-			L = L.Normalize();//归一化光矢量、
-			// N为顶点的向量
+            // 归一化光矢量
+			L = L.Normalize();
+			// N为顶点的法向量
 			CVector3 N = ptNormal;
-			N = N.Normalize();//归一化法矢量
+            // 归一化法矢量
+			N = N.Normalize();
 
 			// 第1步，加入漫反射光。参考公式(8-3)。
 			// 如果为正说明入射角为0 - 90度。否则如果为负，
@@ -100,31 +106,36 @@ CRGB CLightingScene::Illuminate(CColorP3 ViewPoint, CColorP3 Point, CVector3 ptN
 			// 这就是这个max函数的含义。参考公式(8-5)。
 			// 因为N和L都是归一化后的单位向量，因此上，N和L的点积就是夹角的余弦。
 			double NdotL = max(DotProduct(N, L), 0);
-			// 计算“反射”光强 = 光源颜色 * 材质漫反射率 * 漫反射光的光强
+			// 计算“漫反射”光强 = 光源颜色 * 材质漫反射率 * 漫反射光的光强
 			I += pLightSource[loop].L_Diffuse * pMaterial->M_Diffuse * NdotL;
 
-			//第2步，加入镜面反射光。参见公式(8-6)
-			CVector3 V(Point, ViewPoint);  // V为观察矢量
-			V = V.Normalize();             // 归一化观察矢量
-			CVector3 H = (L + V) / (L + V).Magnitude();  // H为中值矢量
+			// 第2步，加入镜面反射光。参见公式(8-6)
+            // V为由当前点指向视点的观察矢量
+			CVector3 V(Point, ViewPoint); 
+            // 归一化观察矢量
+			V = V.Normalize();
+            // H为中值矢量 
+			CVector3 H = (L + V) / (L + V).Magnitude();  
 			// 设镜面反射向量为R，表面到视点的向量为V。
 			// 因为N和L都是归一化后的单位向量，使用点积可以计算R和V的夹角的余弦。
 			double NdotH = max(DotProduct(N, H), 0);
 			// 计算(cos(Alpha)^n)来近似的描述镜面反射光的空间分布。
 			double Rs = pow(NdotH, pMaterial->M_n);
 			// 使用公式(8-6)计算镜面反射光强
+            //   = 材质对于镜面光的反射率Ks * 入射光强Ip * max((N和H的点积), 0)^n
 			I += pLightSource[loop].L_Specular * pMaterial->M_Specular * Rs;
 
 			//第3步，光强衰减
-			double c0 = pLightSource[loop].L_C0;//c0为常数衰减因子
-			double c1 = pLightSource[loop].L_C1;//c1为线性衰减因子
-			double c2 = pLightSource[loop].L_C2;//c2为二次衰减因子
+			double c0 = pLightSource[loop].L_C0; // c0为常数衰减因子
+			double c1 = pLightSource[loop].L_C1; // c1为线性衰减因子
+			double c2 = pLightSource[loop].L_C2; // c2为二次衰减因子
 			// 对于点光源，光强衰减为d的二次函数的倒数。参见公式(8-14)
 			double f = (1.0 / (c0 + c1 * d + c2 * d * d));//光强衰减函数
 			f = min(1.0, f);
+            // 对漫反射光和镜面反射光进行衰减。
 			ResultI += I * f;
 		}
-		else
+		else // 如果光源没有打开
 		{
 			ResultI += Point.c;//物体自身颜色
 		}
@@ -136,3 +147,4 @@ CRGB CLightingScene::Illuminate(CColorP3 ViewPoint, CColorP3 Point, CVector3 ptN
 	//第6步，返回所计算顶点的最终的光强颜色
 	return ResultI;
 }
+

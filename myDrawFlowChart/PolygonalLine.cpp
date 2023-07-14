@@ -604,7 +604,10 @@ void CPolygonalLine::DrawArrow( CDC *pdc )
 	double flLength = 10;
 	double flAngle = 40;
 
-	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;
+	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
+    {
+        return;
+    }
 
 	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);
 	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);
@@ -702,7 +705,9 @@ void CPolygonalLine::AdjustFocusPoint()
 	connPoint->SetPoint(m_End);
 	// Calculate middle point
 	if((m_iPreviousConnPointIdx == -1) || (m_iNextConnPointIdx == -1))
+    {
 		return;
+    }
 
 	m_StartStub = calculateStartLineStub(m_Start, m_iPreviousConnPointIdx);
 	m_EndStub   = calculateEndLineStub(m_End, m_iNextConnPointIdx);

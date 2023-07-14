@@ -56,7 +56,9 @@ void CGraphManager::DrawAll( CDC *pdc, BOOL bShowSelectBorder )
 		// 调用每一个图形对象的Draw函数
 		GetGraphAt(i)->Draw(pdc, bShowSelectBorder);
 		//if(GetGraphAt(i)->IsControlFlow())
+        //{
 			//CheckLinkGraph(GetGraphAt(i));
+        //}
 	}
 
 	// 获得当前选中的图形对象
@@ -125,7 +127,9 @@ void CGraphManager::DeleteGraphAt( int ID )
 	{
 		//CGraph* objGraph = (CGraph*)m_Graphs.GetAt(ID);
 		//if(objGraph != NULL)
+        //{
 		//	delete objGraph;
+        //}
 		m_Graphs.erase( m_Graphs.begin() + ID );
 	}
 }
@@ -141,7 +145,9 @@ CGraph* CGraphManager::GetFocusGraph()
 		objGraph = (CGraph*)m_Graphs[m_FocusID];
 
 		if(objGraph->IsControlFlow())
+        {
 			CheckLinkGraph(objGraph);
+        }
 	}
 	return objGraph;
 }
@@ -283,7 +289,10 @@ void CGraphManager::Move(int cx, int cy)
 /************************************************************************/
 void CGraphManager::CheckLinkGraph(CGraph* graph)
 {
-	//if(graph == NULL && !graph->IsControlFlow()) return;
+	//if(graph == NULL && !graph->IsControlFlow()) 
+    //{
+    //    return;
+    //}
 
 	for(int j = 0; j < GetGraphSum(); j++)
 	{
@@ -439,11 +448,15 @@ int CGraphManager::SearchPath()
 			m_PathManager.InitPaths(objGraph);
 			//copyAllBordersTemp.RemoveAt(i);
 			if(objGraph->GetNextgraph() != NULL && objGraph->GetNextgraph() != endGraph)
+            {
 				obArrayBorders.push_back(objGraph);
+            }
 		}
 	}
 	if(obArrayBorders.size() == 0 && m_PathManager.GetSum() == 0) 
+    {
 		return 0;
+    }
 	//copyAllBorders.RemoveAll();
 	//copyAllBorders.Append(copyAllBordersTemp);
 
@@ -464,13 +477,21 @@ int CGraphManager::SearchPath()
 						break;
 					}
 					if(currentGraph->GetNextgraph() != NULL && currentGraph->GetNextgraph() != endGraph)
+                    {
 						obArrayBs.push_back(currentGraph);
+                    }
 				}
 			}
-			//if(flag) continue;
+			//if(flag) 
+            //{
+            //  continue;
+            //}
 		}
 
-		if(obArrayBs.size() == 0) break;
+		if(obArrayBs.size() == 0) 
+        {
+            break;
+        }
 
 		obArrayBorders.clear();	
 		obArrayBorders.insert(obArrayBorders.end(), obArrayBs.begin(), obArrayBs.end());

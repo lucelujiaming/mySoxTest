@@ -48,7 +48,9 @@ CP3 operator * (double scalar, const CP3 &p)//点和常量的积
 CP3 operator / (const CP3 &p0, double scalar)//数除
 {
 	if(fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CP3 p;
 	p.x = p0.x / scalar;
 	p.y = p0.y / scalar;
@@ -83,7 +85,9 @@ CP3 operator *= (CP3 &p, double scalar)
 CP3 operator /= (CP3 &p, double scalar)
 {
 	if(fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	p.x = p.x / scalar;
 	p.y = p.y / scalar;
 	p.z = p.z / scalar;

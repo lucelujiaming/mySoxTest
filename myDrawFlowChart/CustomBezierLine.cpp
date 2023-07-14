@@ -79,9 +79,13 @@ int CCustomBezierLine::Factorial(int n)
 {
 	int factorial;
 	if(n==0||n==1)
+    {
 		factorial=1;
+    }
 	else
+    {
 		factorial=n*Factorial(n-1);
+    }
 	return factorial;
 }
 
@@ -131,7 +135,9 @@ void CCustomBezierLine::smoothBezierLine()
 		float slope1To2 = (float)point1To2Diff.y / (float)point1To2Diff.x;
 
 		if(abs(slope0To1 - slope1To2) < BEZIERLINE_SMOOTH_DEVIATION)
+        {
 			continue;
+        }
 		
 		pointAdjustGroup[2] = pointAdjustGroup[1] + point0To1Diff;
 		pNext->SetPoint(pointAdjustGroup[2]);
@@ -140,7 +146,10 @@ void CCustomBezierLine::smoothBezierLine()
 
 void CCustomBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCustomBezierLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -206,13 +215,19 @@ void CCustomBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CCustomBezierLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCustomBezierLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -227,13 +242,11 @@ void CCustomBezierLine::DrawSelectBorderArea( CDC *pdc )
 	CPen* oldpen = pdc->SelectObject(&greenPen);
 	CBrush* oldbrush = pdc->SelectObject( pBrush );
 
-
 	bool flag = false;
 	CPoint points[4];
 	for(int i = 0; i < m_Points.size()-1; i++)
 	{
 		CRgn cr;
-
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
 		CPoint connStart = pConnPoint->GetPoint();
 		pConnPoint = (CAdjustPoint*)m_Points[i+1];
@@ -305,7 +318,10 @@ void CCustomBezierLine::AdjustSize(CPoint &pt)
 
 void CCustomBezierLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCustomBezierLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -425,7 +441,10 @@ bool CCustomBezierLine::IsControlFlow()
 
 bool CCustomBezierLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return false;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CCustomBezierLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -528,9 +547,13 @@ double CCustomBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 void CCustomBezierLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
 		return;
+    }
 	else if ((m_Points.size() - 1) % (BEZIERLINE_POINTS_COUNT - 1) != 0)
+    {
 		return;
+    }
 	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();

@@ -42,7 +42,10 @@ CBrokenLine::~CBrokenLine()
 
 void CBrokenLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	// printAllPoints("CBrokenLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -78,13 +81,19 @@ void CBrokenLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CBrokenLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	// printAllPoints("CBrokenLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -162,7 +171,10 @@ void CBrokenLine::AdjustSize(CPoint &pt)
 
 void CBrokenLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+	}
 
 	// printAllPoints("CBrokenLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -276,7 +288,10 @@ bool CBrokenLine::IsControlFlow()
 
 bool CBrokenLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < 1) return false;
+	if(m_Points.size() < 1) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CBrokenLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -365,7 +380,10 @@ double CBrokenLine::GetDistance(int x1, int y1, int x2,int y2)
 
 void CBrokenLine::DrawArrow( CDC *pdc )
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();

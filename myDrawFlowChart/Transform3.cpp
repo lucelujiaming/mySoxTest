@@ -283,7 +283,9 @@ void CTransform3::MultiplyMatrix(void)//矩阵相乘
 	}
 	CP3* PTemp = new CP3[ptNumber];
 	for (int i = 0; i < ptNumber; i++)
+    {
 		PTemp[i] = P[i];
+    }
 	for (i = 0; i < ptNumber; i++)
 	{
 		P[i].x = M[0][0] * PTemp[i].x + M[0][1] * PTemp[i].y
@@ -391,7 +393,11 @@ void CTransform3::ArbitraryDirection(double beta, double nx, double ny, double n
 	LeftMultiplyMatrix(M2, M1);
 	// 将矩阵连乘结果转储到变换矩阵M中
 	for (int i = 0; i < 4; i++)
+    {
 		for (int j = 0; j < 4; j++)
+        {
 			M[i][j] = M1[i][j];	
+        }
+    }
 	MultiplyMatrix();
 }

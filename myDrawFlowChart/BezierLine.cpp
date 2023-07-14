@@ -70,7 +70,9 @@ void CBezierLine::smoothBezierLine()
 		float slope1To2 = (float)point1To2Diff.y / (float)point1To2Diff.x;
 
 		if(abs(slope0To1 - slope1To2) < BEZIERLINE_SMOOTH_DEVIATION)
+        {
 			continue;
+        }
 		
 		pointAdjustGroup[2] = pointAdjustGroup[1] + point0To1Diff;
 		pNext->SetPoint(pointAdjustGroup[2]);
@@ -79,7 +81,10 @@ void CBezierLine::smoothBezierLine()
 
 void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT)
+    {
+         return;
+    }
 
 	// printAllPoints("CBezierLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -141,13 +146,19 @@ void CBezierLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CBezierLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
+        return;
+    }
 
 	// printAllPoints("CBezierLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -240,7 +251,10 @@ void CBezierLine::AdjustSize(CPoint &pt)
 
 void CBezierLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+    }
 
 	// printAllPoints("CBezierLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -360,7 +374,10 @@ bool CBezierLine::IsControlFlow()
 
 bool CBezierLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) return false;
+	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CBezierLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -463,9 +480,13 @@ double CBezierLine::GetDistance(int x1, int y1, int x2,int y2)
 void CBezierLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < BEZIERLINE_POINTS_COUNT) 
+    {
 		return;
+    }
 	else if ((m_Points.size() - 1) % (BEZIERLINE_POINTS_COUNT - 1) != 0)
+    {
 		return;
+    }
 	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();

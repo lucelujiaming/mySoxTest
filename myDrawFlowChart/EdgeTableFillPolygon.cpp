@@ -61,7 +61,9 @@ void CEdgeTableFillPolygon::ReadPoint(void)//顶点表
 void CEdgeTableFillPolygon::DrawObject(CDC* pDC)
 {
 	for (int i = 0; i < 7; i++)//转储顶点坐标为整数坐标
+    {
 		P[i].c = P[i].c;
+    }
 	CBucketTableFill* pFill = new CBucketTableFill;//动态分配内存 
 	pFill->SetPoint(P, 7);//初始化Fill对象
 	TRACE("Before CreateBucketTable\r\n");

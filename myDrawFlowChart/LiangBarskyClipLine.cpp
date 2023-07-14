@@ -227,10 +227,14 @@ BOOL CLiangBarskyClipLine::calcSegmentRatio(
 		t = q / p;
 		// 如果，计算结果大于tmin，说明裁剪位置出现交错。报错返回。
 		if (t > tmin)
+        {
 			ReturnValue = FALSE;
+        }
 		// 如果计算结果小于tmin，大于tmax。说明需要裁剪。更新tmax的值。
 		else if (t > tmax)
+        {
 			tmax = t;
+        }
 		// 如果计算结果小于tmax，说明线段和裁剪边界或者是裁剪边界延长线没有相交。
 		// 此时，本次不需要进行裁剪。什么都不用做。
 	}
@@ -242,10 +246,14 @@ BOOL CLiangBarskyClipLine::calcSegmentRatio(
 		t = q / p;
 		// 如果，计算结果小于tmax，说明裁剪位置出现交错。报错返回。
 		if (t < tmax)
+        {
 			ReturnValue = FALSE;
+        }
 		// 如果计算结果小于tmin，大于tmax。说明需要裁剪。更新tmin的值。
 		else if (t < tmin)
+        {
 			tmin = t;
+        }
 		// 如果计算结果大于tmin，说明线段和裁剪边界或者是裁剪边界延长线没有相交。
 		// 此时，本次不需要进行裁剪。什么都不用做。
 	}

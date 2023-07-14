@@ -63,7 +63,9 @@ CVector3 CVector3::Normalize(void)
 	CVector3 vector;
 	double magnitude = sqrt(x * x + y * y + z * z);
 	if(fabs(magnitude) < 1e-4)
+    {
 		magnitude  = 1.0;
+    }
 	vector.x = x / magnitude;
 	vector.y = y / magnitude;
 	vector.z = z / magnitude;
@@ -114,7 +116,9 @@ CVector3 operator * (double scalar, const CVector3 &v)
 CVector3 operator / (const CVector3 &v, double scalar)
 {
 	if(fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CVector3 vector;
 	vector.x = v.x / scalar;
 	vector.y = v.y / scalar;

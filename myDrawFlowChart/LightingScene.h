@@ -9,6 +9,7 @@
 #include"Material.h"
 #include"Vector3.h"
 
+// 光照类
 // 这个类实现了简单光照模型。
 class CLightingScene
 {

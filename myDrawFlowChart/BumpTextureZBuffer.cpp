@@ -49,6 +49,7 @@ void CBumpTextureZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDe
 			zBuffer[i][j] = nDepth;
 }
 
+// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 void CBumpTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene, CTexture* pTexture)
 {
 	//顶点按照y坐标由小到大排序

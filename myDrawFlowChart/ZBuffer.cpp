@@ -138,13 +138,14 @@ void CZBuffer::FillTriangle(CDC* pDC)
 		C = 1.0;
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;
+	// 下面开始填充三角形。
 	// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 	// 下闭上开。开始扫描y坐标范围内的每一行。
 	for (int y = point0.y; y < point2.y; y++)
 	{
 		// 得到y坐标在Span中对应的索引。
 		int n = y - point0.y;
-		// 左闭右开。开始扫描每一行中的每一个点。
+		// 左闭右开。从跨度的左标志数组到右标志数组扫描每一行中的每一个点。
 		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++) 
 		{
 			// 计算当前像素点(x, y)处的深度值。
@@ -226,12 +227,14 @@ void CZBuffer::SortPoint(void)//排序
 	}
 }
 
-CRGB CZBuffer::Interp(double m, double m0, double m1, CRGB c0, CRGB c1)//颜色线性插值
+// 颜色线性插值
+CRGB CZBuffer::Interp(double m, double m0, double m1, CRGB c0, CRGB c1)
 {
 	CRGB color;
 	color = (m1 - m) / (m1 - m0) * c0 + (m - m0) / (m1 - m0) * c1;
 	return color;
 }
+
 // 法矢量线性插值
 CVector3 CZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1)
 {
@@ -240,7 +243,8 @@ CVector3 CZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 
 	return vector;
 }
 
-double CZBuffer::Interp(double m, double m0, double m1, double z0, double z1)//深度线性插值
+// 深度线性插值
+double CZBuffer::Interp(double m, double m0, double m1, double z0, double z1)
 {
 	double z = (m1 - m) / (m1 - m0) * z0 + (m - m0) / (m1 - m0) * z1;
 	return z;

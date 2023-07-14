@@ -14,15 +14,26 @@ class CBumpTextureZBuffer//三角形填充类
 public:
 	CBumpTextureZBuffer(void);
 	virtual ~CBumpTextureZBuffer(void);
-	void SetPoint(CColorP3* P, CVector3* N, CTextureCoordinate* T);//三顶点构造三角形
-	void InitialDepthBuffer(int nWidth, int nHeight, double zDepth);//初始化深度缓冲器
-	void FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene, CTexture* pTexture);//填充三角形
+	void SetPoint(CColorP3* P, CVector3* N, 
+				CTextureCoordinate* T);					// 三顶点构造三角形
+	void InitialDepthBuffer(int nWidth, int nHeight, 
+								double zDepth);			// 初始化深度缓冲器
+	void FillTriangle(CDC* pDC, CColorP3 Eye, 
+					CLightingScene* pScene, 
+					CTexture* pTexture);				// 填充三角形
 private:
-	void EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature);//边标记算法
+	void EdgeFlag(CColorPoint2 PStart, 
+				CColorPoint2 PEnd, BOOL bFeature);		// 边标记算法
 	void SortPoint(void);//顶点排序
-	CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值
-	CTextureCoordinate Interp(double m, double m0, double m1, CTextureCoordinate T0, CTextureCoordinate T1);//纹理地址线性插值
-	CRGB GetTexture(int u, int v, CTexture* pTexture);//读取纹理
+	CVector3 Interp(double m, double m0, double m1, 
+					CVector3 N0, CVector3 N1);			// 法矢量线性插值。用于PhongShader算法。
+	CTextureCoordinate Interp(
+			double m, double m0, double m1, 
+			CTextureCoordinate T0, 
+			CTextureCoordinate T1);						// 纹理地址线性插值。用于贴图。
+	double Interp(double m, double m0, double m1, 
+							double z0, double z1);		// 深度线性插值
+	CRGB GetTexture(int u, int v, CTexture* pTexture);	// 读取纹理
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:

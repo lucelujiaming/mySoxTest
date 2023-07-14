@@ -14,18 +14,23 @@ class CAntiAliasedBumpTextureZBuffer//三角形填充类
 public:
     CAntiAliasedBumpTextureZBuffer(void);
     virtual ~CAntiAliasedBumpTextureZBuffer(void);
-    void SetPoint(CColorP3* P, CVector3* N, 
-                  CTextureCoordinate* T);            // 三顶点构造三角形
-    void ReadGradient(double** Bu, double** Bv);     // 读入图像的梯度
-    void InitialDepthBuffer(
-		int nWidth, int nHeight, double zDepth);     // 初始化深度缓冲器
+	void SetPoint(CColorP3* P, CVector3* N, 
+				CTextureCoordinate* T);					// 三顶点构造三角形
+    void ReadGradient(double** Bu, double** Bv);        // 读入图像的梯度
+	void InitialDepthBuffer(int nWidth, int nHeight, 
+								double zDepth);			// 初始化深度缓冲器
     void FillTriangle(CDC* pDC, CColorP3 Eye, 
-		CLightingScene* pScene, CRGB** DestImage);   // 填充三角形
+		CLightingScene* pScene, CRGB** DestImage);      // 填充三角形
 private:
-    void EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature);//边标记算法
-    void SortPoint(void);//顶点排序
-    CVector3 Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1);//法矢量线性插值
-    CTextureCoordinate Interp(double m, double m0, double m1, CTextureCoordinate T0, CTextureCoordinate T1);//纹理地址线性插值
+	void EdgeFlag(CColorPoint2 PStart, 
+				CColorPoint2 PEnd, BOOL bFeature);		// 边标记算法
+	void SortPoint(void);//顶点排序
+	CVector3 Interp(double m, double m0, double m1, 
+					CVector3 N0, CVector3 N1);			// 法矢量线性插值。用于PhongShader算法。
+	CTextureCoordinate Interp(
+			double m, double m0, double m1, 
+			CTextureCoordinate T0, 
+			CTextureCoordinate T1);						// 纹理地址线性插值。用于贴图。
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:

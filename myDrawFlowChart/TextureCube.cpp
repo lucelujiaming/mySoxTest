@@ -43,23 +43,23 @@ void CTextureCube::ReadVertex(void)//点表
 
 /************************************************************************/
 /* 根据上面的分析可知，X轴向右，Y轴向上，Z轴指向我们。                  */
-/* 这个函数除了给出了6个面的顶点以外，                                  */
-/* 还给出了6个面贴图坐标。也就是一副位图映射到立方体6个面的uv贴图坐标。 */
+/* 这个函数除了给出了6个面的顶点以外，还给出了6个面贴图坐标。           */
+/* 也就是将位图的uv贴图坐标绑定到立方体6个面的表面表中。                */
 /************************************************************************/
 /* 下面来看如何生成uv贴图坐标。首先为了讨论方便，我们首先进行归一化，   */
 /* 也就是假设位图是一个长宽都为1的图片。                                */
 /* 之后把立方体展开。一个立方体展开有很多种方法。我们常用的是这种：     */
 /*              +--------+                                              */
 /*              |        |                                              */
-/*              |        |                                              */
+/*              |   顶   |                                              */
 /*              |        |                                              */
 /*     +--------+--------+--------+--------+                            */
 /*     |        |        |        |        |                            */
-/*     |        |        |        |        |                            */
+/*     |  左    |   前   |   右   |   后   |                            */
 /*     |        |        |        |        |                            */
 /*     +--------+--------+--------+--------+                            */
 /*              |        |                                              */
-/*              |        |                                              */
+/*              |   底   |                                              */
 /*              |        |                                              */
 /*             -+--------+                                              */
 /* 把这种展开方式放在如下长宽都为1的位图上。                            */
@@ -157,52 +157,59 @@ void CTextureCube::SetTexture(CTexture* pTexture)
 /************************************************************************/
 void CTextureCube::Draw(CDC* pDC, CTextureZBuffer* pZBuffer)
 {
-	CColorP3 ScreenPoints[4];//三维投影点
-	CColorP3 Eye = projection.GetColorEye();   // 视点
-	CVector3 N4[4];            // 顶点的法矢量
-	CTextureCoordinate T4[4];  // 顶点的纹理坐标
+	CColorP3 ScreenPoints[4];						// 每一个面的三维投影点
+	CColorP3 Eye = projection.GetColorEye();		// 视点
+	CVector3 vectorVertexsOfFace[4];				// 每一个面的四个顶点的法矢量
+	CTextureCoordinate objCoordinateOfFace[4];		// 每一个面的四个顶点的纹理坐标
 	// 虽然我们现在绘制的立方体是最简单的三维物体。
 	// 但是我们也需要按照绘制复杂三维物体的步骤进行绘制。
     // 也就是一个面一个面绘制。
 	// 面循环：也就是一个面一个面绘制。
 	for (int nFace = 0; nFace < 6; nFace++)
 	{
-		CVector3 Vector01(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[1]]);//面的一个边矢量
-		CVector3 Vector02(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[2]]);//面的另一个边矢量
-		CVector3 FaceNormal = CrossProduct(Vector01, Vector02);//面的法矢量
-		FaceNormal = FaceNormal.Normalize();//归一化法矢量
+		// 一个面包括四个顶点。求第0个顶点到第1个顶点的这条边的矢量
+		CVector3 Vector01(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[1]]);
+		// 求第0个顶点到第2个顶点的另一个边的矢量
+		CVector3 Vector02(V[F[nFace].ptIndex[0]], V[F[nFace].ptIndex[2]]);
+		// 求上面两条边的叉乘，得到面的法矢量
+		CVector3 FaceNormal = CrossProduct(Vector01, Vector02);
+		// 归一化法矢量
+		FaceNormal = FaceNormal.Normalize();
 		// 得到这个面所有顶点的坐标。
 		for (int nPoint = 0; nPoint < F[nFace].ptNumber; nPoint++) // 顶点循环
 		{
 			// 使用三维透视投影得到透视坐标。
 			ScreenPoints[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
-			N4[nPoint] = FaceNormal;
+			// 每个面的四个顶点法矢量都设定为这个面的法矢量。
+			vectorVertexsOfFace[nPoint] = FaceNormal;
 			// 为了进行纹理映射，我们需要将u坐标乘以位图的宽度。
-			T4[nPoint].u = F[nFace].t[nPoint].u * (pTexture->bmp.bmWidth - 1);
+			objCoordinateOfFace[nPoint].u = F[nFace].t[nPoint].u * (pTexture->bmp.bmWidth - 1);
 			// 将v坐标乘以位图的高度。
-			T4[nPoint].v = F[nFace].t[nPoint].v * (pTexture->bmp.bmHeight - 1);
+			objCoordinateOfFace[nPoint].v = F[nFace].t[nPoint].v * (pTexture->bmp.bmHeight - 1);
 		}
 		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。
 		// 准备绘制左上三角形，为左上三角形生成顶点P
-		CColorP3 TLP[3] = { ScreenPoints[0] ,ScreenPoints[2] ,ScreenPoints[3] };
+		CColorP3 objTopLeftPoint[3] = { ScreenPoints[0] ,ScreenPoints[2] ,ScreenPoints[3] };
 		// 为左上三角形生成法矢量N
-		CVector3 TLN[3] = { N4[0], N4[2], N4[3] };
+		CVector3 objTopLeftNormal[3] = 
+				{ vectorVertexsOfFace[0], vectorVertexsOfFace[2], vectorVertexsOfFace[3] };
 		// 为左上三角形生成纹理地址T
-		CTextureCoordinate TLT[3] = { T4[0], T4[2], T4[3] };
+		CTextureCoordinate objTopLeftTexture[3] = 
+				{ objCoordinateOfFace[0], objCoordinateOfFace[2], objCoordinateOfFace[3] };
 		// 为左上三角形传入顶点P，法矢量N和纹理地址T
-		pZBuffer->SetPoint(TLP, TLN, TLT);
-		// 绘制左上三角形
+		pZBuffer->SetPoint(objTopLeftPoint, objTopLeftNormal, objTopLeftTexture);
+		// 使用视点场景和纹理绘制左上三角形
 		pZBuffer->FillTriangle(pDC, Eye, pScene, pTexture);
 		
 		// 准备绘制右下三角形，为右下三角形生成顶点P
-		CColorP3 DRP[3] = { ScreenPoints[0] ,ScreenPoints[1] ,ScreenPoints[2] };
+		CColorP3 objDownRightPoint[3] = { ScreenPoints[0] ,ScreenPoints[1] ,ScreenPoints[2] };
 		// 为右下三角形生成法矢量N
-		CVector3 DRN[3] = { N4[0], N4[1], N4[2] };
+		CVector3 objDownRightNormal[3] = { vectorVertexsOfFace[0], vectorVertexsOfFace[1], vectorVertexsOfFace[2] };
 		// 为右下三角形生成纹理地址T
-		CTextureCoordinate DRT[3] = { T4[0], T4[1], T4[2] };
+		CTextureCoordinate objDownRightTexture[3] = { objCoordinateOfFace[0], objCoordinateOfFace[1], objCoordinateOfFace[2] };
 		// 为右下三角形传入顶点P，法矢量N和纹理地址T
-		pZBuffer->SetPoint(DRP, DRN, DRT);
-		// 绘制右下三角形
+		pZBuffer->SetPoint(objDownRightPoint, objDownRightNormal, objDownRightTexture);
+		// 使用视点场景和纹理绘制右下三角形
 		pZBuffer->FillTriangle(pDC, Eye, pScene, pTexture);
 	}
 }

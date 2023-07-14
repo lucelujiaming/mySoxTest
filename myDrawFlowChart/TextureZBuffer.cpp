@@ -24,18 +24,19 @@ CTextureZBuffer::~CTextureZBuffer(void)
 	}
 }
 
-// 设置传入顶点P，法矢量N和纹理地址T。
-void CTextureZBuffer::SetPoint(CColorP3* P, CVector3* N, CTextureCoordinate* T)
+// 使用顶点P，法矢量N和纹理地址T构造三角形。
+void CTextureZBuffer::SetPoint(CColorP3* objPoint, 
+		CVector3* objNormal, CTextureCoordinate* objTexture)
 {
 	for (int nPoint = 0; nPoint < 3; nPoint++)
 	{
-		this->P[nPoint] = P[nPoint];
-		point[nPoint].x = ROUND(P[nPoint].x);
-		point[nPoint].y = ROUND(P[nPoint].y);
-		point[nPoint].z = P[nPoint].z;
-		point[nPoint].c = P[nPoint].c;
-		point[nPoint].n = N[nPoint];
-		point[nPoint].t = T[nPoint];
+		this->P[nPoint] = objPoint[nPoint];
+		point[nPoint].x = ROUND(objPoint[nPoint].x);
+		point[nPoint].y = ROUND(objPoint[nPoint].y);
+		point[nPoint].z = objPoint[nPoint].z;
+		point[nPoint].c = objPoint[nPoint].c;
+		point[nPoint].n = objNormal[nPoint];
+		point[nPoint].t = objTexture[nPoint];
 	}
 }
 
@@ -45,13 +46,21 @@ void CTextureZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 	this->nWidth = nWidth, this->nHeight = nHeight;
 	zBuffer = new double* [nWidth];
 	for (int i = 0; i < nWidth; i++)
+	{
 		zBuffer[i] = new double[nHeight];
-	for (i = 0; i < nWidth; i++)//初始化深度缓冲
+	}
+	for (i = 0; i < nWidth; i++) // 初始化深度缓冲
+	{
 		for (int j = 0; j < nHeight; j++)
-			zBuffer[i][j] = nDepth;
+		{
+			zBuffer[i][j] = nDepth;  // 将深度缓冲区的每一个元素设置为nDepth。
+		}
+	}
 }
 
-void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene, CTexture* pTexture)
+// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
+void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, 
+								   CLightingScene* pScene, CTexture* pTexture)
 {
 	//顶点按照y坐标由小到大排序
 	SortPoint();
@@ -104,25 +113,38 @@ void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScen
 		C = 1.0;
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;//扫描线深度步长
+	// 下面开始填充三角形。
 	// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 	// 下闭上开。开始扫描y坐标范围内的每一行。
 	for (int y = point[0].y; y < point[2].y; y++)
 	{
 		// 得到y坐标在Span中对应的索引。
 		int n = y - point[0].y;
-		// 左闭右开。开始扫描每一行中的每一个点。
+		// 左闭右开。从跨度的左标志数组到右标志数组扫描每一行中的每一个点。
 		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++) 
 		{
 			// 计算当前像素点(x, y)处的深度值。
 			// z = -(Ax + By + D) / C。参见公式(7-4)。
 			double CurrentDepth = -(A * x + B * y + D) / C;
+			// 法矢量线性插值。
 			CVector3 ptNormal = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].n, SpanRight[n].n);
+			// 纹理地址线性插值。
 			CTextureCoordinate T = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].t, SpanRight[n].t);
+			// 使用前面得到的纹理地址来获得纹理中对应位置的颜色。
 			CRGB Texel = GetTexture(ROUND(T.u), ROUND(T.v), pTexture);
+			// 将纹理颜色设置为漫反射率。
 			pScene->pMaterial->SetDiffuse(Texel);
+			// 将纹理颜色设置为环境反射率。
 			pScene->pMaterial->SetAmbient(Texel);
-			CRGB I = pScene->Illuminate(Eye, CColorP3(x, y, CurrentDepth), ptNormal, pScene->pMaterial);
-			if (CurrentDepth <= zBuffer[x + nWidth / 2][y + nHeight / 2])//如果当前采样点的深度小于帧缓冲器中原采样点的深度
+			// 调用线性插值获得深度。
+			// double CurrentDepth = Interp(x, SpanLeft[n].x, SpanRight[n].x, 
+			//  	SpanLeft[n].z, SpanRight[n].z);
+			// 计算当前像素点的光照。
+			CRGB I = pScene->Illuminate(Eye, CColorP3(x, y, CurrentDepth), 
+				ptNormal, pScene->pMaterial);
+			// 下面开始消隐
+			// 如果当前采样点的深度小于帧缓冲器中原采样点的深度
+			if (CurrentDepth <= zBuffer[x + nWidth / 2][y + nHeight / 2])
 			{
 				// 使用当前采样点的深度更新深度缓冲器。
 				zBuffer[x + nWidth / 2][y + nHeight / 2] = CurrentDepth;
@@ -185,28 +207,50 @@ void CTextureZBuffer::SortPoint(void)//排序
 	}
 }
 
-CVector3 CTextureZBuffer::Interp(double m, double m0, double m1, CVector3 N0, CVector3 N1)//法矢量线性插值
+// 法矢量线性插值
+CVector3 CTextureZBuffer::Interp(double m, 
+						double m0, double m1, CVector3 N0, CVector3 N1)
 {
 	CVector3 vector;
 	vector = (m1 - m) / (m1 - m0) * N0 + (m - m0) / (m1 - m0) * N1;
 	return vector;
 }
 
-CTextureCoordinate CTextureZBuffer::Interp(double m, double m0, double m1, CTextureCoordinate T0, CTextureCoordinate T1)//纹理地址线性插值
+// 纹理地址线性插值
+CTextureCoordinate CTextureZBuffer::Interp(double m, 
+		double m0, double m1, CTextureCoordinate T0, CTextureCoordinate T1)
 {
 	CTextureCoordinate texture;
 	texture = (m1 - m) / (m1 - m0) * T0 + (m - m0) / (m1 - m0) * T1;
 	return texture;
 }
 
-CRGB CTextureZBuffer::GetTexture(int u, int v, CTexture* pTexture)//读取纹素
+// 深度线性插值
+double CTextureZBuffer::Interp(double m, double m0, double m1, double z0, double z1)
 {
+	double z = (m1 - m) / (m1 - m0) * z0 + (m - m0) / (m1 - m0) * z1;
+	return z;
+}
+
+// 使用uv读取纹理中对应位置的颜色。
+CRGB CTextureZBuffer::GetTexture(int u, int v, CTexture* pTexture) // 读取纹素
+{
+	// 定义v访问的顺序。默认的访问顺序从左下角开始。这句话调整为从左上角开始。
 	v = pTexture->bmp.bmHeight - 1 - v;
 	/*检测图片的边界，防止越界*/
-	if (u < 0) u = 0; if (v < 0) v = 0;
-	if (u > pTexture->bmp.bmWidth - 1) 	u = pTexture->bmp.bmWidth - 1;
-	if (v > pTexture->bmp.bmHeight - 1)	v = pTexture->bmp.bmHeight - 1;
+	if (u < 0) 
+		u = 0; 
+	if (v < 0) 
+		v = 0;
+	if (u > pTexture->bmp.bmWidth - 1) 	
+		u = pTexture->bmp.bmWidth - 1;
+	if (v > pTexture->bmp.bmHeight - 1)	
+		v = pTexture->bmp.bmHeight - 1;
 	/*查找对应纹理空间的颜色值*/
-	int position = v * pTexture->bmp.bmWidthBytes + 4 * u;//循环每一列，每行读四个字节
-	return  CRGB(pTexture->image[position + 2] / 255.0, pTexture->image[position + 1] / 255.0, pTexture->image[position] / 255.0);
+	// 循环每一列，每行读四个字节。
+	// 包含RGB和透明度
+	int position = v * pTexture->bmp.bmWidthBytes + 4 * u;
+	return  CRGB(pTexture->image[position + 2] / 255.0, 
+		         pTexture->image[position + 1] / 255.0, 
+				 pTexture->image[position] / 255.0);
 }

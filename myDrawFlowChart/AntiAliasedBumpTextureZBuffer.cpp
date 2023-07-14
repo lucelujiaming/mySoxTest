@@ -55,6 +55,7 @@ void CAntiAliasedBumpTextureZBuffer::ReadGradient(double** Bu, double** Bv)
 	this->Bv = Bv;
 }
 
+// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 void CAntiAliasedBumpTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene, CRGB** DestImage)
 {
 	// 顶点按照y坐标由小到大排序

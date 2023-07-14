@@ -105,12 +105,13 @@ void CDepthLinearInterpZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingSc
 	{
 		// 得到y坐标在Span中对应的索引。
 		int n = y - point[0].y;
-		// 左闭右开。开始扫描每一行中的每一个点。
+		// 左闭右开。从跨度的左标志数组到右标志数组扫描每一行中的每一个点。
 		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++)
 		{
 			CVector3 ptNormal = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].n, SpanRight[n].n);
 			// 对于深度，沿着跨度两侧进行线性插值。
 			double depth = Interp(x, SpanLeft[n].x, SpanRight[n].x, SpanLeft[n].z, SpanRight[n].z); 
+			// 计算当前像素点的光照。
 			CRGB I = pScene->Illuminate(Eye, CColorP3(x, y, depth), ptNormal, pScene->pMaterial);
 			// 如果当前采样点的深度小于帧缓冲器中原采样点的深度
 			if (depth <= zBuffer[x + nWidth / 2][y + nHeight / 2])

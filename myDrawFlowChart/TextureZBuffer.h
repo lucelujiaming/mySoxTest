@@ -5,10 +5,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "ColorPoint3.h"//带颜色的三维整数点类
-#include "LightingScene.h"//Blinn-Phong模型
-#include "Texture.h"//图像纹理
-#include "TextureCoordinate.h"//图像纹理
+#include "ColorPoint3.h"		// 带颜色的三维整数点类
+#include "LightingScene.h"		// Blinn-Phong模型
+#include "Texture.h"			// 图像纹理
+#include "TextureCoordinate.h"	// 图像纹理坐标
 
 class CTextureZBuffer//三角形填充类
 {
@@ -27,22 +27,24 @@ private:
 				CColorPoint2 PEnd, BOOL bFeature);		// 边标记算法
 	void SortPoint(void);//顶点排序
 	CVector3 Interp(double m, double m0, double m1, 
-					CVector3 N0, CVector3 N1);			// 法矢量线性插值
+					CVector3 N0, CVector3 N1);			// 法矢量线性插值。用于PhongShader算法。
 	CTextureCoordinate Interp(
 			double m, double m0, double m1, 
 			CTextureCoordinate T0, 
-			CTextureCoordinate T1);						// 纹理地址线性插值
-	CRGB GetTexture(int u, int v, CTexture* pTexture);	// 读取纹理
+			CTextureCoordinate T1);						// 纹理地址线性插值。用于贴图。
+	double Interp(double m, double m0, double m1, 
+							double z0, double z1);		// 深度线性插值
+	CRGB GetTexture(int u, int v, CTexture* pTexture);	// 使用uv读取纹理中对应位置的颜色。
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:
-    CColorP3 P[3];					//三角形的浮点坐标
-    CColorPoint3 point[3];			//三角形的整数顶点坐标。是P[3]的整数化结果。
-    CColorPoint2* SpanLeft;			//跨度的起点数组标志
-    CColorPoint2* SpanRight;		//跨度的终点数组标志
-    int nIndex;						//记录扫描线条数
-    double** zBuffer;				//深度缓冲区
-    int nWidth, nHeight;			//缓冲区宽度和高度
+    CColorP3 P[3];					// 三角形的浮点坐标
+    CColorPoint3 point[3];			// 三角形的整数顶点坐标。是P[3]的整数化结果。
+    CColorPoint2* SpanLeft;			// 跨度的起点数组标志
+    CColorPoint2* SpanRight;		// 跨度的终点数组标志
+    int nIndex;						// 记录扫描线条数
+    double** zBuffer;				// 深度缓冲区
+    int nWidth, nHeight;			// 缓冲区宽度和高度
 private:
 	CPoint m_ptDrawPosition;
 };

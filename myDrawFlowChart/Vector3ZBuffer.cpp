@@ -56,6 +56,7 @@ void CVector3ZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 			zBuffer[i][j] = nDepth;
 }
 
+// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 void CVector3ZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScene)
 {
 	//顶点按照y坐标由小到大排序
@@ -109,13 +110,14 @@ void CVector3ZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLightingScene* pScen
 		C = 1.0;
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;
+	// 下面开始填充三角形。
 	// 本算法的实质就是对于一个给定视线上的(x, y)，查找距离视点最近的z(x, y)值。
 	// 下闭上开。开始扫描y坐标范围内的每一行。
 	for (int y = point0.y; y < point2.y; y++)
 	{
 		// 得到y坐标在Span中对应的索引。
 		int n = y - point0.y;
-		// 左闭右开。开始扫描每一行中的每一个点。
+		// 左闭右开。从跨度的左标志数组到右标志数组扫描每一行中的每一个点。
 		for (int x = SpanLeft[n].x; x < SpanRight[n].x; x++) 
 		{
 			// 计算当前像素点(x, y)处的深度值。

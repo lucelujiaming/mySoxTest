@@ -5,6 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+// 这个类定义为纹理地址，也就是物体的一个面在纹理位图上的位置坐标。
 class CTextureCoordinate
 {
 public:
@@ -21,6 +22,7 @@ public:
 	friend CTextureCoordinate operator *= (CTextureCoordinate &t, double scalar);
 	friend CTextureCoordinate operator /= (CTextureCoordinate &t, double scalar);
 public:
+	// 归一化后的在纹理位图上的位置坐标。
 	double u, v;
 };
 

@@ -103,9 +103,13 @@ void CFlatFillTriangle::EdgeFlag(CPoint PStart, CPoint PEnd, BOOL bFeature)
 	for (int y = PStart.y; y < PEnd.y; y++)
 	{
 		if (bFeature)
+        {
 			m_SpanLeft[m_nIndex++] = CPoint(ROUND(x), y);
+        }
 		else
+        {
 			m_SpanRight[m_nIndex++] = CPoint(ROUND(x), y);
+        }
 		x += m;
 	}
 }

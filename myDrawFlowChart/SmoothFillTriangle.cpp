@@ -104,9 +104,13 @@ void CSmoothFillTriangle::EdgeFlag(CColorPoint PStart, CColorPoint PEnd, BOOL bF
 	{
 		CRGB crColor = Interp(y, PStart.y, PEnd.y, PStart.c, PEnd.c);
 		if (bFeature)
+        {
 			m_SpanLeft[m_nIndex++] = CColorPoint(ROUND(x), y, crColor);
+        }
 		else
+        {
 			m_SpanRight[m_nIndex++] = CColorPoint(ROUND(x), y, crColor);
+        }
 		x += m;
 	}
 }

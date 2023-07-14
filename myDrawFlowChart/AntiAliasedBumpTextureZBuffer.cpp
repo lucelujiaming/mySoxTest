@@ -43,10 +43,16 @@ void CAntiAliasedBumpTextureZBuffer::InitialDepthBuffer(int nWidth, int nHeight,
 	this->nWidth = nWidth, this->nHeight = nHeight;
 	zBuffer = new double* [nWidth];
 	for (int i = 0; i < nWidth; i++)
+    {
 		zBuffer[i] = new double[nHeight];
+    }
 	for (i = 0; i < nWidth; i++)//初始化深度缓冲
+    {
 		for (int j = 0; j < nHeight; j++)
-			zBuffer[i][j] = nDepth;
+        {
+			zBuffer[i][j] = nDepth;  // 将深度缓冲区的每一个元素设置为nDepth。
+        }
+    }
 }
 
 void CAntiAliasedBumpTextureZBuffer::ReadGradient(double** Bu, double** Bv)
@@ -89,7 +95,9 @@ void CAntiAliasedBumpTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye, CLight
 	double A = fNormal.x, B = fNormal.y, C = fNormal.z;//平面方程Ax+By+Cz＋D=0的系数
 	double D = -A * P[0].x - B * P[0].y - C * P[0].z;//系数D
 	if (fabs(C) < 1e-4)
+    {
 		C = 1.0;
+    }
 	double DepthStep = -A / C;//扫描线深度步长
 	for (int y = point[0].y; y < point[2].y; y++)//下闭上开
 	{
@@ -138,9 +146,13 @@ void CAntiAliasedBumpTextureZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 
 		CVector3 ptNormal = Interp(y, PStart.y, PEnd.y, PStart.n, PEnd.n);
 		CTextureCoordinate T = Interp(y, PStart.y, PEnd.y, PStart.t, PEnd.t);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, ptNormal, T);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint2(ROUND(x), y, ptNormal, T);
+        }
 		x += m;
 	}
 }

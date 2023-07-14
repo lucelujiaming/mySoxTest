@@ -122,7 +122,9 @@ void CMeshSphere::ReadFacet(void)
 	{
 		int tempi=i+1;
 		if(N2==tempi)
+        {
 			tempi=0;
+        }
 		int NorthIndex[3];
 		NorthIndex[0]=0;
 		NorthIndex[1]=i+1;
@@ -140,7 +142,9 @@ void CMeshSphere::ReadFacet(void)
 			int tempi=i+1;
 			int tempj=j+1;
 			if(tempj==N2)
+            {
 				tempj=0;
+            }
 			int BodyIndex[4];
 			BodyIndex[0]=(i-1)*N2+j+1;	
 			BodyIndex[1]=(tempi-1)*N2+j+1;
@@ -158,7 +162,9 @@ void CMeshSphere::ReadFacet(void)
 	{
 		int tempj=j+1;
 		if(N2==tempj)
+        {
 			tempj=0;
+        }
 		int SouthIndex[3];
 		SouthIndex[0]=(N1-2)*N2+j+1;
 		SouthIndex[1]=(N1-1)*N2+1;
@@ -195,7 +201,9 @@ void CMeshSphere::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	DrawGraph(pdc, ptMiddle);
 
 	if(m_IsMark)
+    {
 		pdc->SelectObject(oldPen);
+    }
 
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 12), m_End+CPoint(-8, -12)), DT_CENTER);
 }

@@ -95,10 +95,14 @@ void CBresenhamLine::BresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//通用整数Bres
 		pDC->SetPixelV(x, y, crColor);
 		// 如果没有交换递增方向，那么在X方向上进行累加。
 		if (bInterchange == false)
+        {
 			x += signX;
+        }
 		// 否则在Y方向上进行累加。
 		else
+        {
 			y += signY;
+        }
 		// 我们沿递增方向每递增一个单位，误差累加2 * dy。
 		e += 2 * dy;
 		// 当误差大于零。
@@ -106,9 +110,13 @@ void CBresenhamLine::BresenhamLine(CDC* pDC, CPoint P0, CPoint P1)//通用整数Bres
 		{
 			// 在递增方向上递增。否则就不递增。
 			if (bInterchange == false)
+            {
 				y += signY;
+            }
 			else
+            {
 				x += signX;
+            }
 			// 我们沿递增方向的垂直方向每递增一个单位，误差减去2 * dx。
 			e -= 2 * dx;
 		}
@@ -175,10 +183,14 @@ void CBresenhamLine::MidPointLine(CDC* pDC, CPoint P0, CPoint P1)//定义中点算法
 			// 每一步。无论如何，我们都会沿递增方向递增一个单位，
 			// 如果没有交换递增方向，那么在X方向上进行累加。
 			if (bInterchange == false)
+            {
 				x += signX;
+            }
 			// 否则在Y方向上进行累加。
 			else
+            {
 				y += signY;
+            }
 			// 如果上一轮的误差小于零，则本轮会同时减少2 * dy和增加2 * dx。
 			if (e < 0)
 			{
@@ -208,10 +220,14 @@ void CBresenhamLine::MidPointLine(CDC* pDC, CPoint P0, CPoint P1)//定义中点算法
 			pDC->SetPixelV(x, y, crClr);
 			// 如果没有交换递增方向，那么在X方向上进行累加。
 			if (bInterchange == false)
+            {
 				x += signX;
+            }
 			// 否则在Y方向上进行累加。
 			else
+            {
 				y += signY;
+            }
 			// 当误差大于零。
 			if (e < 0)
 			{

@@ -90,8 +90,12 @@ void CPhongBiquatricBezierPatch::SaveFacetData(void)
 	//      | w2,0 * P2,0 w2,1 * P2,1 w2,2 * P2,2 |
 	//  结果保存在Pw中。
 	for(int i = 0; i < 3; i++)
+    {
 		for(int j = 0;j < 3;j++)
+        {
 			Pw[i][j] = P[i][j] * W[i][j];
+        }
+    }
 	RightMultiplyMatrix(Pw, M);//系数矩阵右乘三维点矩阵
 	RightMultiplyMatrix(W, M);//系数矩阵右乘权因子矩阵
 	TransposeMatrix(M);//计算转置矩阵
@@ -167,6 +171,7 @@ void CPhongBiquatricBezierPatch::Draw(CDC* pDC, CVector3ZBuffer* pZBuffer)
 			// 这里是整个绘制过程的核心逻辑。也就是Phong明暗处理。
 			// 我们不再简单地调用光照函数计算这个顶点的颜色。
 	        // 1. 计算多边形网格的每个顶点的法向量。
+            //    对于球体来说，球面上一点的法矢量可以用球面上一点到球心的矢量代替。
 			N[nPoint] = CVector3(Point[nPoint]);
 		}
 		// 每个平面片为一个四边形，我们把他分成两个三角形进行显示。

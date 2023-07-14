@@ -67,7 +67,9 @@ void CMidPointDividLine::MidPointDivider(void)
 	while (P0.areaCode != 0 || P1.areaCode != 0) 
 	{
 		if ((P0.areaCode & P1.areaCode) != 0)//简弃之
+        {
 			return;
+        }
 		if (0 == P0.areaCode)//确保P0位于窗口之外
 		{
 			CEnhanceAreaPoint Temp;
@@ -80,9 +82,13 @@ void CMidPointDividLine::MidPointDivider(void)
 		while (fabs(pm.x - p0.x) > 1e-4 || fabs(pm.y - p0.y) > 1e-4) // 判断算法结束
 		{
 			if ((p0.areaCode & pm.areaCode) != 0)
+            {
 				p0 = pm;
+            }
 			else
+            {
 				p1 = pm;
+            }
 			pm = (p0 + p1) / 2; 
 			Encode(pm);
 		}
@@ -98,22 +104,38 @@ void CMidPointDividLine::Encode(CEnhanceAreaPoint &pt)
 {
 //	pt.areaCode = 0;
 //	if (pt.x < WXL)
+//  {
 //		pt.areaCode = pt.areaCode | AREA_LEFT;
+//  }
 //	else if (pt.x > WXR)
+//  {
 //		pt.areaCode = pt.areaCode | AREA_RIGHT;
+//  }
 //	if (pt.y < WYB)
+//  {
 //		pt.areaCode = pt.areaCode | AREA_BOTTOM;
+//  }
 //	else if (pt.y > WYT)
+//  {
 //		pt.areaCode = pt.areaCode | AREA_TOP;
+//  }
 	pt.areaCode = 0;
 	if (pt.x < m_Start.x)
+    {
 		pt.areaCode = pt.areaCode | AREA_LEFT;
+    }
 	else if (pt.x > m_End.x)
+    {
 		pt.areaCode = pt.areaCode | AREA_RIGHT;
+    }
 	if (pt.y < m_Start.y)
+    {
 		pt.areaCode = pt.areaCode | AREA_BOTTOM;
+    }
 	else if (pt.y > m_End.y)
+    {
 		pt.areaCode = pt.areaCode | AREA_TOP;
+    }
 }
 
 /************************************************************************/

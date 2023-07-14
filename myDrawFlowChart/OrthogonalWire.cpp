@@ -47,13 +47,21 @@ void COrthogonalWire::calculateDirectVector(CPoint& startPos, CPoint& endPos)
 int COrthogonalWire::calculateDirection(CWirePoint& point)
 {
 	if(point.endDirection == m_objDirectVector.x_direction)
+    {
 		return m_objDirectVector.x_direction;
+	}
 	else if(point.endDirection == m_objDirectVector.y_direction)
+    {
 		return m_objDirectVector.y_direction;
+	}
 	else if(point.endDirection == m_objDirectVector.x_direction * (-1))
+    {
 		return m_objDirectVector.y_direction;
+	}
 	else if(point.endDirection == m_objDirectVector.y_direction * (-1))
+    {
 		return m_objDirectVector.x_direction;
+	}
 	else
 	{
 		printf("NOTICE:We can not find the direction");

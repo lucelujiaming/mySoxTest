@@ -4,7 +4,7 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
+   
 #include "ColorPoint3.h"		// 带颜色的三维整数点类
 #include "LightingScene.h"		// Blinn-Phong模型
 #include "Texture.h"			// 图像纹理

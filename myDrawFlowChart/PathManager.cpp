@@ -101,7 +101,10 @@ void CPathManager::DeleteAll()
 CPath* CPathManager::GetPath()
 {
 	CPath *currentPath = NULL;
-	if(m_Paths.GetSize() == 0) return NULL;
+	if(m_Paths.GetSize() == 0) 
+    {
+        return NULL;
+    }
 	m_CurrentID++;
 	if(m_CurrentID >=0 && m_CurrentID < m_Paths.GetSize())
 	{

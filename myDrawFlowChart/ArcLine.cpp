@@ -137,7 +137,9 @@ POINT CArcLine::calcTangentPosition(POINT center, POINT point, BOOL iDirection)
 void CArcLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
 	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
+    {
 		return;
+    }
 
 	// printAllPoints("CArcLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -212,13 +214,19 @@ void CArcLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CArcLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < ARCLINE_POINTS_COUNT) return;
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
+    {
+        return;
+    }
 
 	// printAllPoints("CArcLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -296,7 +304,10 @@ void CArcLine::AdjustSize(CPoint &pt)
 
 void CArcLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+    }
 
 	// printAllPoints("CArcLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -416,7 +427,10 @@ bool CArcLine::IsControlFlow()
 
 bool CArcLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < ARCLINE_POINTS_COUNT) return false;
+	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CArcLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -519,9 +533,13 @@ double CArcLine::GetDistance(int x1, int y1, int x2,int y2)
 void CArcLine::DrawArrow( CDC *pdc, CPoint pointLast )
 {
 	if(m_Points.size() < ARCLINE_POINTS_COUNT) 
+    {
 		return;
+    }
 	else if ((m_Points.size() - 1) % (ARCLINE_POINTS_COUNT - 1) != 0)
+    {
 		return;
+    }
 	
 	// CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pointLast;

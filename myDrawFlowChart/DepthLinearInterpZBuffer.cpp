@@ -46,7 +46,7 @@ void CDepthLinearInterpZBuffer::InitialDepthBuffer(int nWidth, int nHeight, doub
 	{
 		for (int j = 0; j < nHeight; j++)
 		{
-			zBuffer[i][j] = nDepth;
+			zBuffer[i][j] = nDepth;   // 将深度缓冲区的每一个元素设置为nDepth。
 		}
 	}
 }
@@ -149,9 +149,13 @@ void CDepthLinearInterpZBuffer::EdgeFlag(CColorPoint3 PStart, CColorPoint3 PEnd,
 		// 采用双线性差值算法计算多边形内一个像素点的深度。
 		double zDepth = Interp(y, PStart.y, PEnd.y, PStart.z, PEnd.z);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint3(ROUND(x), y, zDepth, ptNormal);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint3(ROUND(x), y, zDepth, ptNormal);
+        }
 		x += m;
 	}
 }

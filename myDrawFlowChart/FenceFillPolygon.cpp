@@ -128,17 +128,25 @@ void CFenceFillPolygon::EdgeFill(CDC* pDC)
 			for (int x = ROUND(x_ymin); x <= P[4].x; x++)
 			{
 				if (fillClr == pDC->GetPixel(x, y))//如果是填充色
+                {
 					pDC->SetPixelV(x, y, backClr);//置为背景色
+                }
 				else
+                {
 					pDC->SetPixelV(x, y, fillClr);//置为填充色
+                }
 			}
 			// 如果在栅栏右边。这个读写像素操作应该可以替换成为画线操作。
 			for (x = ROUND(P[4].x); x < ROUND(x_ymin); x++)
 			{
 				if (fillClr == pDC->GetPixel(x, y))//如果是填充色
+                {
 					pDC->SetPixelV(x, y, backClr);//置为背景色
+                }
 				else
+                {
 					pDC->SetPixelV(x, y, fillClr);//置为填充色
+                }
 			}
 			x_ymin += 10 * m;//计算下一条扫描线的x起点坐标
 		}

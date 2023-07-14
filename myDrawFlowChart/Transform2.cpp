@@ -180,7 +180,9 @@ void CTransform2::MultiplyMatrix(void) // ¾ØÕóÏà³Ë
 {
 	CP2* pointReplica = new CP2[m_iPointNumber];
 	for(int i = 0;i < m_iPointNumber;i++)
+    {
 		pointReplica[i] = m_pointVertex[i];
+    }
 	for( i = 0;i < m_iPointNumber;i++)
 	{
 		m_pointVertex[i].x = m_matrixTransform[0][0] * pointReplica[i].x 

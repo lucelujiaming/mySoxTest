@@ -90,7 +90,7 @@ void CZBufferCube::ReadFace(void) // 面表
 /************************************************************************/
 void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 {
-	CColorP3 ScreenPoint[4];//三维投影点
+	CColorP3 ScreenPoint[4];  // 三维投影点
 	// 虽然我们现在绘制的立方体是最简单的三维物体。
 	// 但是我们也需要按照绘制复杂三维物体的步骤进行绘制。
     // 也就是一个面一个面绘制。
@@ -103,14 +103,22 @@ void CZBufferCube::Draw(CDC* pDC, CZBuffer* pZBuffer, int nSign)
 			// 使用三维透视投影得到透视坐标。
 			ScreenPoint[nPoint] = projection.ThreeDimColorPerspectiveProjection(V[F[nFace].ptIndex[nPoint]]);
 			// 根据立方体编号分配不同的颜色。 
-//			if (nSign == 0)
-//				ScreenPoint[nPoint].c = CRGB(0.5, 0.0, 0.0);   // 红
-//			else if (nSign == 1)
-//				ScreenPoint[nPoint].c = CRGB(0.0, 0.5, 0.0);   // 绿
-//			else if (nSign == 2)
-//				ScreenPoint[nPoint].c = CRGB(0.0, 0.0, 0.5);   // 蓝
-//			else
+			if (nSign == 0)
+            {
+				ScreenPoint[nPoint].c = CRGB(0.5, 0.0, 0.0);   // 红
+            }
+			else if (nSign == 1)
+            {
+				ScreenPoint[nPoint].c = CRGB(0.0, 0.5, 0.0);   // 绿
+            }
+			else if (nSign == 2)
+            {
+				ScreenPoint[nPoint].c = CRGB(0.0, 0.0, 0.5);   // 蓝
+            }
+			else
+            {
 				ScreenPoint[nPoint].c = F[nFace].c;
+            }
 		}
 		// 立方体的每一个面都是一个矩形，我们把他分成两个三角形进行显示。
         // 上三角形

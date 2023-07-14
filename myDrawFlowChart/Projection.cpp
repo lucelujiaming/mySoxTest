@@ -15,15 +15,25 @@ CProjection::~CProjection(void)
 CP2  CProjection::CustomProjection(CP3 pt)
 {
 	if(projectionMode == ORTHOGONAL_PROJECTION)
+    {
 		return OrthogonalProjection(pt);
+    }
 	else if(projectionMode == CABINET_PROJECTION)
+    {
 		return CabinetProjection(pt);
+    }
 	else if(projectionMode == CAVALIER_PROJECTION)
+    {
 		return CavalierProjection(pt);
+    }
 	else if(projectionMode == PERSPECTIVE_PROJECTION)
+    {
 		return PerspectiveProjection(pt);
+    }
 	else 
+    {
 		return CP2();
+    }
 }
 
 // 所谓的投影，其实就是把一个三维坐标变成一个二维坐标。用于屏幕显示。

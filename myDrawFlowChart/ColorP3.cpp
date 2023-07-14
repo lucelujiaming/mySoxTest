@@ -49,7 +49,9 @@ CColorP3 operator * (double scalar, const CColorP3 &p)//点和常量的积
 CColorP3 operator / (const CColorP3 &p0, double scalar)//数除
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CColorP3 p;
 	p.x = p0.x / scalar;
 	p.y = p0.y / scalar;
@@ -84,7 +86,9 @@ CColorP3 operator *= (CColorP3 &p, double scalar)
 CColorP3 operator /= (CColorP3 &p, double scalar)
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	p.x = p.x / scalar;
 	p.y = p.y / scalar;
 	p.z = p.z / scalar;

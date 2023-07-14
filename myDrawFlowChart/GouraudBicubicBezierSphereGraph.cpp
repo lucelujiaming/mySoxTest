@@ -82,7 +82,7 @@ void CGouraudBicubicBezierSphereGraph::DrawObject(CDC* pDC)//绘制图形
 
 void CGouraudBicubicBezierSphereGraph::InitializeLightingScene(void)//初始化光照环境
 {
-	//设置光源属性
+	// 设置光源属性
 	nLightSourceNumber = 1;//光源个数
 	pScene = new CLightingScene(nLightSourceNumber);//一维光源动态数组
 	pScene->pLightSource[0].SetPosition(1000, 1000, 1000);//设置光源位置坐标

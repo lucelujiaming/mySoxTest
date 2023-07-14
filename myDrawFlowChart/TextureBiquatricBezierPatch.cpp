@@ -43,8 +43,12 @@ void CTextureBiquatricBezierPatch::SaveFacetData(void)
 	M[2][0] = 1, M[2][1] = 0, M[2][2] = 0;
 	CColorP3 Pw[3][3];//曲线计算用控制点数组
 	for(int i = 0; i < 3; i++)
+    {
 		for(int j = 0;j < 3;j++)
+        {
 			Pw[i][j] = P[i][j] * W[i][j];
+        }
+    }
 	RightMultiplyMatrix(Pw, M);//系数矩阵右乘三维点矩阵
 	RightMultiplyMatrix(W, M);//系数矩阵右乘权因子矩阵
 	TransposeMatrix(M);//计算转置矩阵

@@ -42,7 +42,9 @@ CDrawFlowChartDoc::~CDrawFlowChartDoc()
 BOOL CDrawFlowChartDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
+    {
 		return FALSE;
+    }
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
@@ -72,7 +74,9 @@ void CDrawFlowChartDoc::Dump(CDumpContext& dc) const
 BOOL CDrawFlowChartDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
 	if (!CDocument::OnOpenDocument(lpszPathName))
+    {
 		return FALSE;
+    }
 	
 	// TODO: Add your specialized creation code here
 	// POSITION pos = GetFirstViewPosition();

@@ -68,7 +68,9 @@ void CObjFileTeapot::ReadNumber(void)
 	while (file.ReadString(strLine))//按行读取
 	{
 		if(strLine.GetLength() == 0)
+        {
 			continue;
+        }
 		if (strLine[0] == 'v' && strLine[1] == ' ')//当前行以"v+空格"开头时读取
 		{
 			nTotalVertex++;
@@ -82,7 +84,9 @@ void CObjFileTeapot::ReadNumber(void)
 			nTotalNormal++;
 		}
 		if (strLine[0] == 'f' && strLine[1] == ' ')//当前行以"f+空格"开头时读取
+        {
 			nTotalFace++;
+        }
 	}
 	file.Close();
 }
@@ -91,19 +95,25 @@ void CObjFileTeapot::ReadVertex(void)//读入点表
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	V = new CColorP3[nTotalVertex];
 	int index = 0;
 	CString strLine;//存放文件中每行字符串的缓冲区
 	while (file.ReadString(strLine))//按行读取
 	{
 		if(strLine.GetLength() == 0)
+        {
 			continue;
+        }
 		if (strLine[0] == 'v' && strLine[1] == ' ')//当前行以"v+空格"开头时读取点表
 		{
 			CString str[3];//将strLine以'空格'为间隔符分割 并把第i+1段赋值给str[i](开头字符'v'为第0段)			
 			for (int i = 0; i < 3; i++)
+            {
 				AfxExtractSubString(str[i], strLine, i + 1, ' ');
+            }
 //			V[index].x = _wtof(str[0]); //_wtof函数将CSting类型转换为double类型
 //			V[index].y = _wtof(str[1]);
 //			V[index].z = _wtof(str[2]);
@@ -120,7 +130,9 @@ void CObjFileTeapot::ReadTexture(void)//读入纹理
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	T = new CTextureCoordinate[nTotalTexture];
 	int index = 0;
 	CString strLine;//行字符串
@@ -148,14 +160,18 @@ void CObjFileTeapot::ReadNormal(void)//读入法矢量
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	N = new CVector3[nTotalNormal];
 	int index = 0;
 	CString strLine;//行字符串
 	while (file.ReadString(strLine))//按行读取
 	{
 		if(strLine.GetLength() == 0)
+        {
 			continue;
+        }
 		if (strLine[0] == 'v' && strLine[1] == 'n' && strLine[2] == ' ')//当前行以"vn+空格"开头时读取面表
 		{
 			CString str[3];
@@ -180,14 +196,18 @@ void CObjFileTeapot::ReadFace(void)//读入面表
 {
 	CStdioFile file;//文件流对象
 	if (!file.Open(FileName, CFile::modeRead))//只读方式打开文件
+    {
 		return;
+    }
 	F = new CColorFace[nTotalFace];
 	int index = 0;
 	CString strLine;//行字符串
 	while (file.ReadString(strLine))//按行读取
 	{
 		if(strLine.GetLength() == 0)
+        {
 			continue;
+        }
 		if (strLine[0] == 'f' && strLine[1] == ' ')//当前行以"f+空格"开头时读取面表
 		{
 			CString str[3];

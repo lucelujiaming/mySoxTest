@@ -90,8 +90,12 @@ void CTextureSphere::Draw(CDC* pDC, CTextureZBuffer* pZBuffer)//ªÊ÷∆Õº–Œ
 	for (int nPatch = 0; nPatch < 8; nPatch++)
 	{
 		for (int i = 0; i < 3; i++)
+        {
 			for (int j = 0; j < 3; j++)
+            {
 				P[i][j] = Ver[Pat[nPatch].ptIndex[i * 3 + j]]; 
+            }
+        }
 		bezier.ReadControlPoint(P);
 		bezier.ReadWeight(W);
 		bezier.Draw(pDC, pZBuffer);

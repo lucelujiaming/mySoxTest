@@ -101,7 +101,9 @@ void CDDALine::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	}
 
 	if(m_IsMark)
+    {
 		pdc->SelectObject(oldPen);
+    }
 
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(8, 12), m_End+CPoint(-8, -12)), DT_CENTER);
 }

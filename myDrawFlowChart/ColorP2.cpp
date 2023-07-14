@@ -58,7 +58,9 @@ CColorP2 operator * (double scalar, const CColorP2 &p)//常量和点的积
 CColorP2 operator / (const CColorP2 &p, double scalar)//数除
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	CColorP2 result;
 	result.x = p.x / scalar;
 	result.y = p.y / scalar;
@@ -89,8 +91,11 @@ CColorP2 operator *= (CColorP2 &p, double scalar)
 CColorP2 operator /= (CColorP2 &p, double scalar)
 {
 	if (fabs(scalar) < 1e-4)
+    {
 		scalar = 1.0;
+    }
 	p.x /= scalar;
 	p.y /= scalar;
 	return p;
 }
+

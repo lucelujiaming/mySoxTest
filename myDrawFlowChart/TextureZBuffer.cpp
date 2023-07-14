@@ -110,7 +110,9 @@ void CTextureZBuffer::FillTriangle(CDC* pDC, CColorP3 Eye,
 	// 如果C等于零，说明多边形表面的法向量和Z轴垂直。
 	// 投影变成一条直线。在算法中可以不考虑。
 	if (fabs(C) < 1e-4)
+    {
 		C = 1.0;
+    }
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;//扫描线深度步长
 	// 下面开始填充三角形。
@@ -177,9 +179,13 @@ void CTextureZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFea
 		CVector3 ptNormal = Interp(y, PStart.y, PEnd.y, PStart.n, PEnd.n);
 		CTextureCoordinate T = Interp(y, PStart.y, PEnd.y, PStart.t, PEnd.t);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, ptNormal, T);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint2(ROUND(x), y, ptNormal, T);
+        }
 		x += m;
 	}
 }
@@ -239,13 +245,21 @@ CRGB CTextureZBuffer::GetTexture(int u, int v, CTexture* pTexture) // 读取纹素
 	v = pTexture->bmp.bmHeight - 1 - v;
 	/*检测图片的边界，防止越界*/
 	if (u < 0) 
+    {
 		u = 0; 
+    }
 	if (v < 0) 
+    {
 		v = 0;
+    }
 	if (u > pTexture->bmp.bmWidth - 1) 	
+    {
 		u = pTexture->bmp.bmWidth - 1;
+    }
 	if (v > pTexture->bmp.bmHeight - 1)	
+    {
 		v = pTexture->bmp.bmHeight - 1;
+    }
 	/*查找对应纹理空间的颜色值*/
 	// 循环每一列，每行读四个字节。
 	// 包含RGB和透明度

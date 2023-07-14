@@ -23,9 +23,9 @@ public:
 private:
     void EdgeFlag(CColorPoint2 PStart, 
                   CColorPoint2 PEnd, BOOL bFeature);      // 边标记算法
-	void SortPoint(void);//顶点排序
+	void SortPoint(void);                                 // 顶点排序
 	CVector3 Interp(double m, double m0, double m1, 
-				CVector3 N0, CVector3 N1);				// 法矢量线性插值	
+				CVector3 N0, CVector3 N1);			      // 法矢量线性插值	
 public:
 	void SetDrawPosition(CPoint ptStart) { m_ptDrawPosition = ptStart; }
 private:

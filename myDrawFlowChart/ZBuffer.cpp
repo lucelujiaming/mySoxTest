@@ -45,7 +45,7 @@ void CZBuffer::InitialDepthBuffer(int nWidth, int nHeight, double nDepth)
 	{
 		for (int j = 0; j < nHeight; j++)
 		{
-			zBuffer[i][j] = nDepth;
+			zBuffer[i][j] = nDepth;   // 将深度缓冲区的每一个元素设置为nDepth。
 		}
 	}
 }
@@ -135,7 +135,9 @@ void CZBuffer::FillTriangle(CDC* pDC)
 	// 如果C等于零，说明多边形表面的法向量和Z轴垂直。
 	// 投影变成一条直线。在算法中可以不考虑。
 	if (fabs(C) < 1e-4)
+    {
 		C = 1.0;
+    }
 	// 扫描线深度步长。也就是x每移动一个像素增加的深度值。参见公式(7-5)。
 	double DepthStep = -A / C;
 	// 下面开始填充三角形。
@@ -157,6 +159,9 @@ void CZBuffer::FillTriangle(CDC* pDC)
 			// 表明当前像素更靠近观察者 并遮挡了原像素。
 			// 因此上，ZBuffer算法的实质就是对于一个给定视线上的(x, y)，
 			// 查找距离视点最近的z(x, y)值。
+            // 注意： 
+            //     我们的数组定义从0开始。而我们的深度值则有正有负。
+            //     因此上，我们做了半宽和半高处理。
 			if (CurrentDepth <= zBuffer[x + nWidth / 2][y + nHeight / 2])
 			{
 				// 使用当前采样点的深度更新深度缓冲器。
@@ -196,9 +201,13 @@ void CZBuffer::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature)
 		// // 采用双线性差值算法计算多边形内一个像素点的深度。
 		// double zDepth = Interp(y, PStart.y, PEnd.y, PStart.z, PEnd.z);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, crColor);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint2(ROUND(x), y, crColor);
+        }
 		x += m;
 	}
 }

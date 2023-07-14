@@ -172,7 +172,9 @@ void CColorTransform3::printPointInfo(CString strHeadInfo)
 	{
 		TRACE("\tP[%d] = (%.4f, %.4f, %.4f)", i, P[i].x, P[i].y, P[i].z, P[i].c);
 		if((i + 1) % 4 == 0)
+        {
 			TRACE("\r\n");
+        }
 	}
 }
 
@@ -184,7 +186,9 @@ void CColorTransform3::MultiplyMatrix(void)//æÿ’Ûœ‡≥À
 	}
 	CColorP3* PTemp = new CColorP3[ptNumber];
 	for (int i = 0; i < ptNumber; i++)
+    {
 		PTemp[i] = P[i];
+    }
 	for (i = 0; i < ptNumber; i++)
 	{
 		P[i].x = M[0][0] * PTemp[i].x + M[0][1] * PTemp[i].y + M[0][2] * PTemp[i].z + M[0][3] * PTemp[i].w;
@@ -199,11 +203,20 @@ void CColorTransform3::LeftMultiplyMatrix(double M1[4][4], double M2[4][4])//◊Û≥
 {
 	double MTemp[4][4];//¡Ÿ ±æÿ’Û
 	for (int i = 0; i < 4; i++)
+    {
 		for (int j = 0; j < 4; j++)
-			MTemp[i][j] = M1[i][0] * M2[0][j] + M1[i][1] * M2[1][j] + M1[i][2] * M2[2][j] + M1[i][3] * M2[3][j];
+        {
+			MTemp[i][j] = M1[i][0] * M2[0][j] + M1[i][1] * M2[1][j] + 
+                          M1[i][2] * M2[2][j] + M1[i][3] * M2[3][j];
+        }
+    }
 	for (i = 0; i < 4; i++)
+    {
 		for (int j = 0; j < 4; j++)
+        {
 			M2[i][j] = MTemp[i][j];
+        }
+    }
 }
 
 //»∆»Œ“‚∑ΩœÚµƒ–˝◊™
@@ -246,7 +259,11 @@ void CColorTransform3::ArbitraryDirection(double beta, double nx, double ny, dou
 	M1[3][0] = 0,        M1[3][1] = 0, M1[3][2] = 0,         M1[3][3] = 1;
 	LeftMultiplyMatrix(M2, M1);
 	for (int i = 0; i < 4; i++)//Ω´æÿ’Û¡≥≥ÀΩ·π˚◊™¥¢µΩ±‰ªªæÿ’ÛM÷–
+    {
 		for (int j = 0; j < 4; j++)
+        {
 			M[i][j] = M1[i][j];	
+        }
+    }
 	MultiplyMatrix();
 }

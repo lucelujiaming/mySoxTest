@@ -63,13 +63,21 @@ void CCohenSutherlandClipLine::Encode(CAreaPoint &pt)
 {
 	pt.areaCode = 0;
 	if (pt.x < m_Start.x)
+    {
 		pt.areaCode = pt.areaCode | AREA_LEFT;
+    }
 	else if (pt.x > m_End.x)
+    {
 		pt.areaCode = pt.areaCode | AREA_RIGHT;
+    }
 	if (pt.y < m_Start.y)
+    {
 		pt.areaCode = pt.areaCode | AREA_BOTTOM;
+    }
 	else if (pt.y > m_End.y)
+    {
 		pt.areaCode = pt.areaCode | AREA_TOP;
+    }
 }
 
 /************************************************************************/

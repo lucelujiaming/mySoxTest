@@ -91,9 +91,13 @@ void CTriangle::EdgeFlag(CColorPoint2 PStart, CColorPoint2 PEnd, BOOL bFeature)/
 	{
 		CRGB crColor = Interp(y, PStart.y, PEnd.y, PStart.c, PEnd.c);
 		if (bFeature)
+        {
 			SpanLeft[nIndex++] = CColorPoint2(ROUND(x), y, crColor);
+        }
 		else
+        {
 			SpanRight[nIndex++] = CColorPoint2(ROUND(x), y, crColor);
+        }
 		x += m;
 	}
 }

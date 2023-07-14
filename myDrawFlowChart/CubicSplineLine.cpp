@@ -133,7 +133,10 @@ void CCubicSplineLine::DrawCubicSpline(CDC*pDC, int n)//绘制三次样条线
 
 void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCubicSplineLine::Draw");
 	CAdjustPoint *pStart = (CAdjustPoint*)m_Points[0];
@@ -189,13 +192,19 @@ void CCubicSplineLine::Draw( CDC *pdc, BOOL bShowSelectBorder )
 
 void CCubicSplineLine::DrawFocus(CDC *pdc)
 {
-	if(m_Points.size() < 2) return;
+	if(m_Points.size() < 2) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCubicSplineLine::DrawFocus");
 	for(int i = 0; i < m_Points.size(); i++)
 	{
 		CAdjustPoint *pConnPoint = (CAdjustPoint*)m_Points[i];
-		if(i == 0 || i == m_Points.size()-1) pConnPoint->SetType(false);
+		if(i == 0 || i == m_Points.size()-1) 
+        {
+            pConnPoint->SetType(false);
+        }
 		pConnPoint->Draw(pdc);
 	}
 }
@@ -273,7 +282,10 @@ void CCubicSplineLine::AdjustSize(CPoint &pt)
 
 void CCubicSplineLine::SetStartPoint(CPoint &pt)
 {
-	if(m_Points.size() <= 0) return;
+	if(m_Points.size() <= 0) 
+    {
+        return;
+    }
 
 	// printAllPoints("CCubicSplineLine::SetStartPoint Before");
 	// CAdjustPoint *pStart = (CAdjustPoint*)m_Points.GetAt(m_Points.size()-1);
@@ -393,7 +405,10 @@ bool CCubicSplineLine::IsControlFlow()
 
 bool CCubicSplineLine::IsIn(CPoint &pt)
 {
-	if(m_Points.size() < 2) return false;
+	if(m_Points.size() < 2) 
+    {
+        return false;
+    }
 
 	// printAllPoints("CCubicSplineLine::IsIn Before");
 	if(!m_IsCreateEnd)
@@ -485,7 +500,9 @@ double CCubicSplineLine::GetDistance(int x1, int y1, int x2,int y2)
 void CCubicSplineLine::DrawArrow( CDC *pdc )
 {
 	if(m_Points.size() < 2) 
+    {
 		return;
+    }
 	
 	CAdjustPoint *pArrowPoint = (CAdjustPoint*)m_Points[m_Points.size()-2];
 	CPoint Start = pArrowPoint->GetPoint();

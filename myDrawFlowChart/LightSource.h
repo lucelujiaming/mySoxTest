@@ -16,7 +16,7 @@ public:
 	void SetSpecular(CRGB specular);                            // 设置光源的镜面反射光
 	void SetPosition(double x, double y, double z);             // 设置光源的位置
 	void SetAttenuationFactor(double c0, double c1, double c2); // 设置光强的衰减因子
-	void SetOnOff(BOOL onoff);//设置光源开关状态	
+	void SetOnOff(BOOL onoff);                                  //设置光源开关状态	
 public:
 	CRGB L_Diffuse;              //漫反射光颜色	
 	CRGB L_Specular;             //镜面反射光颜色

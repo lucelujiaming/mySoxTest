@@ -264,7 +264,10 @@ void CArrowLine::DrawArrow( CDC *pdc )
 	double flLength = 10;
 	double flAngle = 40;
 
-	if(GetDistance(flSx, flSy, flEx, flEy) == 0) return;
+	if(GetDistance(flSx, flSy, flEx, flEy) == 0) 
+    {
+        return;
+    }
 
 	double tmpX = flEx + (flSx - flEx) * flLength/GetDistance(flSx, flSy, flEx, flEy);
 	double tmpY = flEy + (flSy - flEy) * flLength/GetDistance(flSx, flSy, flEx, flEy);

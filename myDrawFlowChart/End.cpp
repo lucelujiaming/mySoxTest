@@ -75,7 +75,9 @@ void CEnd::Draw(CDC *pdc, BOOL bShowSelectBorder)
 	pdc->Polygon(points, 6);
 
 	if(m_IsMark)
+    {
 		pdc->SelectObject(oldPen);
+    }
 
 	pdc->DrawText(m_text, CRect(m_Start+CPoint(10, 15), m_End+CPoint(-8, -8)), DT_CENTER);
 }

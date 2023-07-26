@@ -12,6 +12,13 @@
 rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
 {
     auto id = get_next_id();
+	// map::emplace()是C++ STL中的内置函数，它将键及其元素插入到映射容器中。有效地将容器尺寸增加了一个。
+    // 如果多次放置同一个键，则映射仅存储第一个元素，因为映射是不存储多个相同值的键的容器。
+    // 用法:
+    //     map_name.emplace(key, element)
+    // 参数：该函数接受两个强制性参数，如下所述：
+    //     key –指定要在多图容器中插入的键。
+    //     element –指定要插入Map容器的键元素。
     pos_buf.emplace(id, positions);
 
     return {id};
@@ -20,6 +27,13 @@ rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3
 rst::ind_buf_id rst::rasterizer::load_indices(const std::vector<Eigen::Vector3i> &indices)
 {
     auto id = get_next_id();
+	// map::emplace()是C++ STL中的内置函数，它将键及其元素插入到映射容器中。有效地将容器尺寸增加了一个。
+    // 如果多次放置同一个键，则映射仅存储第一个元素，因为映射是不存储多个相同值的键的容器。
+    // 用法:
+    //     map_name.emplace(key, element)
+    // 参数：该函数接受两个强制性参数，如下所述：
+    //     key –指定要在多图容器中插入的键。
+    //     element –指定要插入Map容器的键元素。
     ind_buf.emplace(id, indices);
 
     return {id};
@@ -29,6 +43,10 @@ rst::ind_buf_id rst::rasterizer::load_indices(const std::vector<Eigen::Vector3i>
 // Code taken from a stack overflow answer: https://stackoverflow.com/a/16405254
 void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 {
+	// auto关键字用于声明自动存储类别的变量。
+    // 当我们在函数内部定义变量时，如果没有指定该变量的存储类型，则默认为auto类型。
+    // 这意味着，该变量将被自动分配存储空间，并在函数执行结束后自动释放。
+    // 因此，我们不需要手动管理变量的存储空间，也不需要担心变量泄露的问题。
     auto x1 = begin.x();
     auto y1 = begin.y();
     auto x2 = end.x();
@@ -134,10 +152,12 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
 
 void rst::rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer, rst::Primitive type)
 {
+    // 只能用于绘制三角形
     if (type != rst::Primitive::Triangle)
     {
         throw std::runtime_error("Drawing primitives other than triangle is not implemented yet!");
     }
+    // 
     auto& buf = pos_buf[pos_buffer.pos_id];
     auto& ind = ind_buf[ind_buffer.ind_id];
 

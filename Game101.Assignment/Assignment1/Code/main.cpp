@@ -44,6 +44,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     return projection;
 }
 
+// 在 main.cpp 中，我们模拟了图形管线。
 int main(int argc, const char** argv)
 {
     float angle = 0;
@@ -59,11 +60,11 @@ int main(int argc, const char** argv)
         else
             return 0;
     }
-
+    // 我们首先定义了光栅化器类的实例，然后设置了其必要的变量。
     rst::rasterizer r(700, 700);
 
     Eigen::Vector3f eye_pos = {0, 0, 5};
-
+    // 然后我们得到一个带有三个顶点的硬编码三角形 (请不要修改它)。
     std::vector<Eigen::Vector3f> pos{{2, 0, -2}, {0, 2, -2}, {-2, 0, -2}};
 
     std::vector<Eigen::Vector3i> ind{{0, 1, 2}};
@@ -76,11 +77,14 @@ int main(int argc, const char** argv)
 
     if (command_line) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
-
+        // 在主函数上，我们定义了三个分别计算模型、视图和投影矩阵的函数，
+        // 每一个函数都会返回相应的矩阵。
+        // 接着，这三个函数的返回值会被 set_model(), set_view() 和 set_projection() 三个函数传入光栅化器中。
         r.set_model(get_model_matrix(angle));
         r.set_view(get_view_matrix(eye_pos));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
+        // 最后，光栅化器在屏幕上显示出变换的结果。
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
         cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
         image.convertTo(image, CV_8UC3, 1.0f);

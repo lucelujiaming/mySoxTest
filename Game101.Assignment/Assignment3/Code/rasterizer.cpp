@@ -259,29 +259,72 @@ static Eigen::Vector2f interpolate(float alpha, float beta, float gamma, const E
 //Screen space rasterization
 void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eigen::Vector3f, 3>& view_pos) 
 {
-    // TODO: From your HW3, get the triangle rasterization code.
-    // TODO: Inside your rasterization loop:
-    //    * v[i].w() is the vertex view space depth value z.
-    //    * Z is interpolated view space depth for the current pixel
-    //    * zp is depth between zNear and zFar, used for z-buffer
+    auto v = t.toVector4(); //v[0],v[1],v[2]分别为三角形的三个顶点，是四维向量
+    //比较三个顶点的横纵坐标，确定包围盒的边界并取整
+    double min_x = std::min(v[0][0], std::min(v[1][0], v[2][0]));
+    double max_x = std::max(v[0][0], std::max(v[1][0], v[2][0]));
+    double min_y = std::min(v[0][1], std::min(v[1][1], v[2][1]));
+    double max_y = std::max(v[0][1], std::max(v[1][1], v[2][1]));
+    min_x = static_cast<int>(std::floor(min_x));
+    min_y = static_cast<int>(std::floor(min_y));
+    max_x = static_cast<int>(std::ceil(max_x));
+    max_y = static_cast<int>(std::ceil(max_y));
+    //此处实现的是MSAA
+    std::vector<Eigen::Vector2f> pos
+    {                               //对一个像素分割四份 当然你还可以分成4x4 8x8等等甚至你还可以为了某种特殊情况设计成不规则的图形来分割单元
+        {0.25,0.25},                //左下
+        {0.75,0.25},                //右下
+        {0.25,0.75},                //左上
+        {0.75,0.75}                 //右上
+    };
+    for (int i = min_x; i <= max_x; ++i)
+    {
+        for (int j = min_y; j <= max_y; ++j)
+        {
+            int count = 0; //开始遍历四个小格子，获得平均值
+            for (int MSAA_4 = 0; MSAA_4 < 4; ++MSAA_4)
+            {
+                if (insideTriangle(static_cast<float>(i+pos[MSAA_4][0]), static_cast<float>(j+pos[MSAA_4][1]),t.v))
+                    ++count;
+            }
+            if(count) //至少有一个小格子在三角形内
+            {
+                //此处是框架中代码，获得z，见原程序注释：
+                //    * v[i].w() is the vertex view space depth value z.
+                //    * Z is interpolated view space depth for the current pixel
+                //    * zp is depth between zNear and zFar, used for z-buffer
+                auto[alpha, beta, gamma] = computeBarycentric2D(i + 0.5, j + 0.5, t.v);
+                float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                zp *= Z;
+                //end
+                if (depth_buf[get_index(i, j)] > zp)
+                {
+                    depth_buf[get_index(i, j)] = zp;//更新深度
+                    //这里注意，虽然说明上说"反转了z，保证都是正数，并且越大表示离视点越远"，
+                    //但经过我的查看，实际上并没有反转，因此还是按照-z近大远小来做，当然也可以在上面补一个负号不过没必要
 
-    // float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-    // float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-    // zp *= Z;
+                    //利用重心坐标插值各种值
+					auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1);
+					auto interpolated_normal = interpolate(alpha, beta, gamma, t.normal[0], t.normal[1], t.normal[2], 1).normalized();
+					auto interpolated_texcoords = interpolate(alpha, beta, gamma, t.tex_coords[0], t.tex_coords[1], t.tex_coords[2], 1);
+					auto interpolated_shadingcoords = interpolate(alpha, beta, gamma, view_pos[0], view_pos[1], view_pos[2], 1);
+                    //shadingcoords是由view_pos插值得到，也就是物体表面的点在相机坐标系的位置。他们会在shader中被用到，来计算光照等信息。
 
-    // TODO: Interpolate the attributes:
-    // auto interpolated_color
-    // auto interpolated_normal
-    // auto interpolated_texcoords
-    // auto interpolated_shadingcoords
+                    //此处是框架中代码，获得z，见原程序注释：
+					fragment_shader_payload payload(interpolated_color, interpolated_normal, interpolated_texcoords, texture ? &*texture : nullptr);
+					payload.view_pos = interpolated_shadingcoords;
+					auto pixel_color = fragment_shader(payload);
+                    //end
 
-    // Use: fragment_shader_payload payload( interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
-    // Use: payload.view_pos = interpolated_shadingcoords;
-    // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
-    // Use: auto pixel_color = fragment_shader(payload);
-
- 
+					// 设置颜色
+					set_pixel(Eigen::Vector2i(i, j), pixel_color * (count / 4.0));
+                }
+            }
+        }
+    }
 }
+
 
 void rst::rasterizer::set_model(const Eigen::Matrix4f& m)
 {

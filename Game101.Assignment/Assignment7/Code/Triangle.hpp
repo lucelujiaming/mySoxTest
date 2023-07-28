@@ -229,33 +229,56 @@ inline bool Triangle::intersect(const Ray& ray, float& tnear,
 
 inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
 
+/*inline 函数仅仅是一个对编译器的建议，所以最后能否真正内联，看编译器的意思，
+它如果认为函数不复杂，能在调用点展开，就会真正内联，并不是说声明了内联就会内联，声明内联只是一个建议而已。
+为了解决一些频繁调用的小函数大量消耗栈空间（栈内存）的问题，特别的引入了 inline 修饰符，表示为内联函数。
+栈空间就是指放置程序的局部数据（也就是函数内数据）的内存空间。
+*/
 inline Intersection Triangle::getIntersection(Ray ray)
 {
     Intersection inter;
-
+    //如果结果大于0，那么这两个向量的夹角小于90度；
+    //这里normal是从三角指向眼的，因此若同方向则不可能穿过三角
     if (dotProduct(ray.direction, normal) > 0)
-        return inter;
+        return inter; // happen = false;
+    /*
+    Intersection的定义
+        Intersection(){
+        happened=false;
+        coords=Vector3f();
+        normal=Vector3f();
+        distance= std::numeric_limits<double>::max();
+        obj =nullptr;
+        m=nullptr;
+    }
+    */
     double u, v, t_tmp = 0;
-    Vector3f pvec = crossProduct(ray.direction, e2);
-    double det = dotProduct(e1, pvec);
-    if (fabs(det) < EPSILON)
+    Vector3f pvec = crossProduct(ray.direction, e2); //S1
+    double det = dotProduct(e1, pvec);               //S1*E1(顺便说一句，能推出S1*E1=-D*N)
+    if (fabs(det) < EPSILON) //const float EPSILON = 0.00001; 分母特别小将导致t特别大，相当于很远很远，看不见
+        return inter;
+    double det_inv = 1. / det;                      // 1/S1*E1
+    Vector3f tvec = ray.origin - v0;                //S
+    u = dotProduct(tvec, pvec) * det_inv;           //b1
+    if (u < 0 || u > 1)  
+        return inter;
+    Vector3f qvec = crossProduct(tvec, e1);         //S2
+    v = dotProduct(ray.direction, qvec) * det_inv;  //b2
+    if (v < 0 || u + v > 1) 
+        return inter;
+    t_tmp = dotProduct(e2, qvec) * det_inv;         //t
+    if(t_tmp<0) 
         return inter;
 
-    double det_inv = 1. / det;
-    Vector3f tvec = ray.origin - v0;
-    u = dotProduct(tvec, pvec) * det_inv;
-    if (u < 0 || u > 1)
-        return inter;
-    Vector3f qvec = crossProduct(tvec, e1);
-    v = dotProduct(ray.direction, qvec) * det_inv;
-    if (v < 0 || u + v > 1)
-        return inter;
-    t_tmp = dotProduct(e2, qvec) * det_inv;
-
-    // TODO find ray triangle intersection
-
+    inter.distance = t_tmp;
+    inter.happened = true;
+    inter.m = m;
+    inter.obj = this;
+    inter.normal = normal;
+    inter.coords = ray(t_tmp);
     return inter;
 }
+
 
 inline Vector3f Triangle::evalDiffuseColor(const Vector2f&) const
 {

@@ -40,29 +40,19 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
 }
 
 
-//x,yÊÇ¹Û²âµãµÄxºÍyÖµ
-static bool insideTriangle(double x, double y, const Vector3f* _v)
-{   
-    // TODO : Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
-	Eigen::Vector2f p;	//¼ì²âÄ¿±ê
-	p << x, y;
-	
-	//.head(2)£ºÈ¡ÏòÁ¿µÄÇ°Á½¸öÊıÖµ
-	Eigen::Vector2f AB = _v[1].head(2) - _v[0].head(2);//AB = B - A  ¼´A->B£¬ºóÃæÒÔ´ËÀàÍÆ
-	Eigen::Vector2f BC = _v[2].head(2) - _v[1].head(2);
-	Eigen::Vector2f CA = _v[0].head(2) - _v[2].head(2);
-
-	Eigen::Vector2f AP = p - _v[0].head(2);	//¸÷¸ö¶¥µãµ½¹Û²âµãµÄÏòÁ¿
-	Eigen::Vector2f BP = p - _v[1].head(2);
-	Eigen::Vector2f CP = p - _v[2].head(2);
-	
-	// ×öÏòÁ¿²æ»ı£¬·µ»ØÖµÎªÅĞ¶Ï½á¹ûÊÇ·ñÎªÏàÍ¬·ûºÅ£¬ÅĞ¶ÏÃ¿¸öz×ø±êÊÇ·ñÍ³Ò»¡£
-	return AB[0] * AP[1] - AB[1] * AP[0] > 0 
-		&& BC[0] * BP[1] - BC[1] * BP[0] > 0
-		&& CA[0] * CP[1] - CA[1] * CP[0] > 0;
+static bool insideTriangle(int x, int y, const Vector3f* _v)
+{     
+    Eigen::Vector2f p, a, b, c, AP, BP, CP;  
+    p << x, y;	//.head(2)æŒ‡è¿™ä¸ªç‚¹çš„å‰ä¸¤ä¸ªæ•°å€¼ï¼Œå³x,y
+    a = _v[0].head(2) - _v[1].head(2);          //a = A - B  å³B->A
+    b = _v[1].head(2) - _v[2].head(2);          //b = B - C  å³C->B
+    c = _v[2].head(2) - _v[0].head(2);          //c = C - A  å³A->C  
+    AP = p - _v[0].head(2);
+    BP = p - _v[1].head(2);
+    CP = p - _v[2].head(2);
+    return ((AP[0] * c[1] - AP[1] * c[0] > 0 && BP[0] * a[1] - BP[1] * a[0] > 0 && CP[0] * b[1] - CP[1] * b[0] > 0)||
+    (AP[0] * c[1] - AP[1] * c[0] < 0 && BP[0] * a[1] - BP[1] * a[0] < 0 && CP[0] * b[1] - CP[1] * b[0] < 0));
 }
-
-
 
 static std::tuple<float, float, float> computeBarycentric2D(float x, float y, const Vector3f* v)
 {
@@ -121,106 +111,60 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
     }
 }
 
-//Screen space rasterization
 void rst::rasterizer::rasterize_triangle(const Triangle& t) {
-    auto v = t.toVector4();//ÕâÀïÊÇ°ÑÈı½ÇĞÎ½á¹¹Ìå»»³ÉÈı¸ö¶¥µãÈç£¨x1,y1,z1,1£©,×îºóµÄ1±íÊ¾ËüÊÇÒ»¸öµã,ÓÃÓÚÆë´Î×ø±ê
-			   
-    //bounding box
-    float min_x = std::min(v[0][0], std::min(v[1][0], v[2][0]));
-    float max_x = std::max(v[0][0], std::max(v[1][0], v[2][0]));
-    float min_y = std::min(v[0][1], std::min(v[1][1], v[2][1]));
-    float max_y = std::max(v[0][1], std::max(v[1][1], v[2][1]));
+    auto v = t.toVector4(); //v[0],v[1],v[2]åˆ†åˆ«ä¸ºä¸‰è§’å½¢çš„ä¸‰ä¸ªé¡¶ç‚¹ï¼Œæ˜¯å››ç»´å‘é‡
 
+    //æ¯”è¾ƒä¸‰ä¸ªé¡¶ç‚¹çš„æ¨ªçºµåæ ‡ï¼Œç¡®å®šåŒ…å›´ç›’çš„è¾¹ç•Œå¹¶å–æ•´
+    double min_x = std::min(v[0][0], std::min(v[1][0], v[2][0]));
+    double max_x = std::max(v[0][0], std::max(v[1][0], v[2][0]));
+    double min_y = std::min(v[0][1], std::min(v[1][1], v[2][1]));
+    double max_y = std::max(v[0][1], std::max(v[1][1], v[2][1]));
     min_x = static_cast<int>(std::floor(min_x));
     min_y = static_cast<int>(std::floor(min_y));
     max_x = static_cast<int>(std::ceil(max_x));
     max_y = static_cast<int>(std::ceil(max_y));
+    
+    //æ­¤å¤„å®ç°çš„æ˜¯MSAA
+    std::vector<Eigen::Vector2f> pos
+    {                               //å¯¹ä¸€ä¸ªåƒç´ åˆ†å‰²å››ä»½ å½“ç„¶ä½ è¿˜å¯ä»¥åˆ†æˆ4x4 8x8ç­‰ç­‰ç”šè‡³ä½ è¿˜å¯ä»¥ä¸ºäº†æŸç§ç‰¹æ®Šæƒ…å†µè®¾è®¡æˆä¸è§„åˆ™çš„å›¾å½¢æ¥åˆ†å‰²å•å…ƒ
+        {0.25,0.25},                //å·¦ä¸‹
+        {0.75,0.25},                //å³ä¸‹
+        {0.25,0.75},                //å·¦ä¸Š
+        {0.75,0.75}                 //å³ä¸Š
+    };
 
-	//×ó±ß½çĞ¡Êı²¿·ÖÈ«²¿Ö±½ÓÉá£¬ÓÒ±ß½çĞ¡Êı²¿·ÖÖ±½ÓÈë£¬È·±£µ¥Ôª±ß½ç×ø±ê¶¼ÊÇÕûÊı£¬Èı½ÇĞÎÒ»¶¨ÔÚbounding boxÄÚ¡£
-
-    bool MSAA = true;//MSAAÊÇ·ñÆôÓÃ
-
-    if (MSAA)
+    for (int i = min_x; i <= max_x; ++i)
     {
-        std::vector<Eigen::Vector2f> pos
-        {                               //¶ÔÒ»¸öÏñËØ·Ö¸îËÄ·İ µ±È»Äã»¹¿ÉÒÔ·Ö³É4x4 8x8µÈµÈÉõÖÁÄã»¹¿ÉÒÔÎªÁËÄ³ÖÖÌØÊâÇé¿öÉè¼Æ³É²»¹æÔòµÄÍ¼ĞÎÀ´·Ö¸îµ¥Ôª
-            {0.25,0.25},                //×óÏÂ
-            {0.75,0.25},                //ÓÒÏÂ
-            {0.25,0.75},                //×óÉÏ
-            {0.75,0.75}                 //ÓÒÉÏ
-        };
-        for (int i = min_x; i <= max_x; ++i)
+        for (int j = min_y; j <= max_y; ++j)
         {
-            for (int j = min_y; j <= max_y; ++j)
+            int count = 0; //å¼€å§‹éå†å››ä¸ªå°æ ¼å­ï¼Œè·å¾—å¹³å‡å€¼
+            for (int MSAA_4 = 0; MSAA_4 < 4; ++MSAA_4)
             {
-                int count = 0;
-                float minDepth = FLT_MAX;
-                for (int MSAA_4 = 0; MSAA_4 < 4; ++MSAA_4)
+                if (insideTriangle(static_cast<float>(i+pos[MSAA_4][0]), static_cast<float>(j+pos[MSAA_4][1]),t.v))
+                    ++count;
+            }
+            if(count) //è‡³å°‘æœ‰ä¸€ä¸ªå°æ ¼å­åœ¨ä¸‰è§’å½¢å†…
+            {
+                //æ­¤å¤„æ˜¯æ¡†æ¶ä¸­ä»£ç ï¼Œè·å¾—zï¼Œè§åŸç¨‹åºæ³¨é‡Šï¼š
+                auto [alpha, beta, gamma] = computeBarycentric2D(static_cast<float>(i + 0.5), static_cast<float>(j + 0.5), t.v);
+                float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                z_interpolated *= w_reciprocal;
+                //end
+                if (depth_buf[get_index(i, j)] > z_interpolated)
                 {
-                    if (insideTriangle(static_cast<float>(i+pos[MSAA_4][0]), static_cast<float>(j+pos[MSAA_4][1]),t.v))
-                    {
-			    		auto[alpha, beta, gamma] = computeBarycentric2D(static_cast<float>(i + pos[MSAA_4][0]), static_cast<float>(j + pos[MSAA_4][1]), t.v);
-	                    float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-	                    float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-	                    z_interpolated *= w_reciprocal;
-
-                        minDepth = std::min(minDepth, z_interpolated);
-                        ++count;
-                    }
-                }
-                if (count)
-                {
-		    if(get_index(i, j) >= 0)
-		    {
-		            if (depth_buf[get_index(i, j)] > minDepth)
-		            {
-		                depth_buf[get_index(i, j)] = minDepth;//¸üĞÂÉî¶È
-
-		                Eigen::Vector3f color = t.getColor() * (count / 4.0);//¶ÔÑÕÉ«½øĞĞÆ½¾ù£¬Ê¹µÃ±ß½ç¸üÆ½»¬£¬Ò²ÊÇÒ»ÖÖÄ£ºıµÄÊÖ¶Î
-		                Eigen::Vector3f point;
-		                point << static_cast<float>(i), static_cast<float>(j), minDepth;
-		                set_pixel(point, color);//ÉèÖÃÑÕÉ«
-		            }
-                    }
+                    depth_buf[get_index(i, j)] = z_interpolated;//æ›´æ–°æ·±åº¦
+                    //è¿™é‡Œæ³¨æ„ï¼Œè™½ç„¶è¯´æ˜ä¸Šè¯´"åè½¬äº†zï¼Œä¿è¯éƒ½æ˜¯æ­£æ•°ï¼Œå¹¶ä¸”è¶Šå¤§è¡¨ç¤ºç¦»è§†ç‚¹è¶Šè¿œ"ï¼Œ
+                    //ä½†ç»è¿‡æˆ‘çš„æŸ¥çœ‹ï¼Œå®é™…ä¸Šå¹¶æ²¡æœ‰åè½¬ï¼Œå› æ­¤è¿˜æ˜¯æŒ‰ç…§-zè¿‘å¤§è¿œå°æ¥åšï¼Œå½“ç„¶ä¹Ÿå¯ä»¥åœ¨ä¸Šé¢è¡¥ä¸€ä¸ªè´Ÿå·ä¸è¿‡æ²¡å¿…è¦
+                    Eigen::Vector3f color = t.getColor() * (count / 4.0);//å¯¹é¢œè‰²è¿›è¡Œå¹³å‡
+                    Eigen::Vector3f point;
+                    point << static_cast<float>(i), static_cast<float>(j), z_interpolated;
+                    set_pixel(point, color);//è®¾ç½®é¢œè‰²
                 }
             }
         }
     }
-    else
-    {
-	for (int i = min_x; i <= max_x; ++i)
-	{
-		for (int j = min_y; j <= max_y; ++j)
-		{
-			if (insideTriangle(static_cast<float>(i+0.5), static_cast<float>(j+0.5),t.v))
-			{
-				auto [alpha, beta, gamma] = computeBarycentric2D(static_cast<float>(i), static_cast<float>(j), t.v);
-				float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-				float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-				z_interpolated *= w_reciprocal;
-				if(get_index(i, j) >= 0)
-				{
-					if (depth_buf[get_index(i, j)] > z_interpolated)
-					{
-						depth_buf[get_index(i, j)] = z_interpolated;//¸üĞÂÉî¶È
-						Eigen::Vector3f color = t.getColor();
-						Eigen::Vector3f point;
-						point << static_cast<float>(i), static_cast<float>(j), z_interpolated;
-						set_pixel(point, color);//ÉèÖÃÑÕÉ«
-					}
-				}
-				else
-				{
-					printf("get_index(%d, %d) return %d", i, j, get_index(i, j));
-				}
-			}
-		}
-	}
-   }
 }
-
-
-
 
 void rst::rasterizer::set_model(const Eigen::Matrix4f& m)
 {

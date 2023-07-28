@@ -90,12 +90,13 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
     // 
     std::vector<Eigen::Vector3f> vectorPosotionsBuffer = pos_buf[pos_buffer.pos_id];
     std::vector<Eigen::Vector3i> vectorIndices = ind_buf[ind_buffer.ind_id];
-    auto& col = col_buf[col_buffer.col_id];
+	std::vector<Eigen::Vector3f> col = col_buf[col_buffer.col_id];
 
     float f1 = (50 - 0.1) / 2.0;
     float f2 = (50 + 0.1) / 2.0;
 
     Eigen::Matrix4f mvp = projection * view * model;
+	std::cout << "mvp = " << mvp << std::endl;
 	for (Eigen::Vector3i objIndice : vectorIndices)
     {
 		Triangle objTriangle;
@@ -109,7 +110,7 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
 		for (Eigen::Vector4f& vec : v) {
 			float wTemp = vec.w();
             vec /= vec.w();
-			std::cout << vec << std::endl;
+			// std::cout << vec << std::endl;
 
 		}
 		// 转换为屏幕坐标。
@@ -127,9 +128,9 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
 			objTriangle.setVertex(i, v[i].head<3>());
         }
 
-		auto col_x = col[objIndice[0]];
-		auto col_y = col[objIndice[1]];
-		auto col_z = col[objIndice[2]];
+		Eigen::Vector3f col_x = col[objIndice[0]];
+		Eigen::Vector3f col_y = col[objIndice[1]];
+		Eigen::Vector3f col_z = col[objIndice[2]];
 		// 为三个顶点指定颜色。
         objTriangle.setColor(0, col_x[0], col_x[1], col_x[2]);
         objTriangle.setColor(1, col_y[0], col_y[1], col_y[2]);
@@ -140,7 +141,7 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
 }
 
 void rst::rasterizer::rasterize_triangle(const Triangle& t) {
-    auto v = t.toVector4(); //v[0],v[1],v[2]分别为三角形的三个顶点，是四维向量
+	std::array<Vector4f, 3> v = t.toVector4(); //v[0],v[1],v[2]分别为三角形的三个顶点，是四维向量
 
     //比较三个顶点的横纵坐标，确定包围盒的边界并取整
     double min_x = std::min(v[0][0], std::min(v[1][0], v[2][0]));
@@ -168,9 +169,13 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
             int count = 0; //开始遍历四个小格子，获得平均值
             for (int MSAA_4 = 0; MSAA_4 < 4; ++MSAA_4)
             {
+			    // 1. 创建三角形的 2 维 bounding box。
+				// 2. 遍历此 bounding box 内的所有像素（使用其整数索引）。
+				//    然后，使用像素中心的屏幕空间坐标来检查中心点是否在三角形内。
                 if (insideTriangle(static_cast<float>(i+pos[MSAA_4][0]), static_cast<float>(j+pos[MSAA_4][1]),t.v))
                     ++count;
             }
+			// 3. 如果在内部，
             if(count) //至少有一个小格子在三角形内
             {
                 //此处是框架中代码，获得z，见原程序注释：
@@ -183,8 +188,10 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal;
                 //end
+				// 则将其位置处的插值深度值 (interpolated depth value) 与深度缓冲区 (depth buffer) 中的相应值进行比较。
                 if (depth_buf[get_index(i, j)] > z_interpolated)
                 {
+                    // 4. 如果当前点更靠近相机，请设置像素颜色并更新深度缓冲区 (depth buffer)。
                     depth_buf[get_index(i, j)] = z_interpolated;//更新深度
                     //这里注意，虽然说明上说"反转了z，保证都是正数，并且越大表示离视点越远"，
                     //但经过我的查看，实际上并没有反转，因此还是按照-z近大远小来做，当然也可以在上面补一个负号不过没必要
@@ -248,7 +255,7 @@ void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vecto
     //old index: auto ind = point.y() + point.x() * width;
     if (point.x() < 0 || point.x() >= width ||
         point.y() < 0 || point.y() >= height) return;
-    auto ind = (height-1-point.y())*width + point.x();
+    int ind = (height-1-point.y())*width + point.x();
     frame_buf[ind] = color;
 }
 

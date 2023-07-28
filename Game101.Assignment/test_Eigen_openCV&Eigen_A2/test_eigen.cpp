@@ -133,8 +133,10 @@ int main(int argc, const char** argv)
     rst::pos_buf_id pos_id = objRasterizer.load_positions(pos);
 	// 将一个三角形的顶点顺序放入光栅化器。返回这个三角形在光栅化器中的序号。
 	// 一个光栅化器可以绘制多个三角形。
-    rst::ind_buf_id ind_id = objRasterizer.load_indices(ind);
-    auto col_id = objRasterizer.load_colors(cols);
+	rst::ind_buf_id ind_id = objRasterizer.load_indices(ind);
+	// 将一个三角形的顶点颜色放入光栅化器。返回这个三角形在光栅化器中的序号。
+	// 一个光栅化器可以绘制多个三角形。
+	rst::col_buf_id col_id = objRasterizer.load_colors(cols);
 
     int key = 0;
     int frame_count = 0;
@@ -186,6 +188,15 @@ int main(int argc, const char** argv)
 		// 等待按键输入
         key = cv::waitKey(10);
         std::cout << "frame count: " << frame_count++ << '\n';
+		// 使用A和D两个按键调整旋转角度。
+		if (key == 'a') {
+			angle += 10;
+			std::cout << "angle: " << angle << '\n';
+		}
+		else if (key == 'd') {
+			angle -= 10;
+			std::cout << "angle: " << angle << '\n';
+		}
     }
 
     return 0;

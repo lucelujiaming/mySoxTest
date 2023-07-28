@@ -222,19 +222,17 @@ void Renderer::Render(const Scene& scene)
     {
         for (int i = 0; i < scene.width; ++i)
         {
-            // generate primary ray direction
-            float x;
-            float y;
-            // TODO: Find the x and y positions of the current pixel to get the direction
-            // vector that passes through it.
-            // Also, don't forget to multiply both of them with the variable *scale*, and
-            // x (horizontal) variable with the *imageAspectRatio*            
-
-            Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
+            //这里的过程实际上相当于把屏幕空间先缩小到左下角为0，0的2*2格子里，然后移动到0，0处。
+            //和框架规定有关，作业一直有上下颠倒的问题，这里面可以在y填一个负号来解决。
+            //最后乘的系数是生成图片的大小。
+            float x =  (2 * (i + 0.5) / scene.width  - 1) * scale * imageAspectRatio; //正常需要减eye_pos的，但这里eye_pos是000向量，就略去不写了。
+            float y = -(2 * (j + 0.5) / scene.height - 1) * scale;   
+            Vector3f dir = normalize(Vector3f(x, y, -1)); //归一化可以看这个类的声明
             framebuffer[m++] = castRay(eye_pos, dir, scene, 0);
         }
         UpdateProgress(j / (float)scene.height);
     }
+
 
     // save framebuffer to file
     FILE* fp = fopen("binary.ppm", "wb");

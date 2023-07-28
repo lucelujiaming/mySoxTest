@@ -25,70 +25,35 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-
-    // TODO: Implement this function
-    // Create the model matrix for rotating the triangle around the Z axis.
-    // Then return it.
-	rotation_angle = (rotation_angle / 180.0) * MY_PI;//½Ç¶È×ª»¡¶È
-	Eigen::Matrix4f translate;
-	translate << cos(rotation_angle), -sin(rotation_angle), 0, 0,
-		 sin(rotation_angle), cos(rotation_angle), 0, 0,
-		 0, 0, 1.0f, 0,
-		 0, 0, 0, 1.0f;
-	//PS£ºÈÆX¡¢ZÖáÐý×ªµÄÐý×ª¾ØÕóÍ¬Àí£¬ÈÆYÖáµÄÐý×ª¾ØÕóÂÔÓÐ²»Í¬£¬sinºÍ-sinµÄÎ»ÖÃ»á»¥»»
-	model = translate * model;
-
-
     return model;
 }
 
-Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, 
-					float zNear, float zFar)
+Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,float n, float f)
 {
-    // Students will implement this function
-
     Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+    float t = -tan((eye_fov/360)*MY_PI)*(abs(n)); //top
+    float r = t/aspect_ratio;
 
-    // TODO: Implement this function
-    // Create the projection matrix for the given parameters.
-    // Then return it.
-
-	//Í¸ÊÓÍ¼£¬½ü´óÔ¶Ð¡£¬ÊÇ¸öÊÓ×¶  ´Ë¾ØÕóÊÇÒ»¸ö¹«Ê½
-	Eigen::Matrix4f pto = Eigen::Matrix4f::Identity();//½«Í¸ÊÓ¾ØÕó¼·Ñ¹³ÉÕý½»¾ØÕó
-	pto << zNear, 0, 0, 0,
-		0, zNear, 0, 0,
-		0, 0, zNear + zFar, - zFar * zNear,
-		0, 0, 1.0, 0;
-
-	float halfAngle = (eye_fov / 2.0 / 180.0) * MY_PI; //ÊÓ½ÇµÄÒ»°ë
-	float top = -1.0f * zNear * tan(halfAngle);//yÖáÕý·½ÏòÖµ = ÏÔÊ¾ÊÓ¿ÚµÄÒ»°ë¸ß¶È
-	float right= top * aspect_ratio;
-	float bottom = -top;
-	float left = -right;
-
-	//¹¹ÔìËõ·Å¾ØÕó£¬Ê¹ÊÓ¿Ú´óÐ¡µÈÍ¬´°¿Ú´óÐ¡
-	Eigen::Matrix4f m_s = Eigen::Matrix4f::Identity();
-	m_s << 2 / (right - left), 0, 0, 0, //½«ÖÐÐÄÊÓÎªÔ­µã£¬Ôò´°¿ÚµÄÈýÎ¬·½ÏòÖµÓò¾ùÎª[-1,1]
-			0, 2 / (top - bottom), 0, 0,	//Ëõ·ÅµÄ±¶ÊýÎª ÆÚÍûÖµ/µ±Ç°Öµ
-			0, 0, 2 / (zNear - zFar), 0,	//ËùÒÔËõ·ÅµÄ±¶ÊýÎª (1+1)/Ä³Ò»Î¬¶ÈµÄµ±Ç°Öµ
-			0, 0, 0, 1;
-
-	//¹¹ÔìÆ½ÒÆ¾ØÕó£¬½«ÊÓ¿Ú×óÏÂ½ÇÒÆ¶¯µ½Ô­µã
-	Eigen::Matrix4f m_t = Eigen::Matrix4f::Identity();
-	
-	//×óÏÂ½ÇµÄµãÔ­±¾Îª £¨x_left,y_down£¬zNear£©
-	//×¢Òâ£¡´ËÊ±ÒÑ¾­¾­¹ýÁËËõ·Å£¬ËùÒÔ×óÏÂ½ÇµÄµãµÄÎ»ÖÃÒÑ¾­±ä»¯
-	//×óÏÂ½ÇµÄµãÏÖÔÚÎª £¨-1£¬-1£¬zNear£©
-	//¼´ÆäÊµ¿ÉÒÔ²»ÓÃ¹ÜxºÍyÖá£¬±È½Ï³ß´çÒÑ¾­ºÍ´°¿ÚÆ¥ÅäÁË
-	//×ó²à+ÓÒ²à»òÕßÉÏ²à+ÏÂ²à£¬½á¹û¶¼ÊÇ0,µ«ÕâÀïÎªÁË±ãÓÚÀí½â»òÕß·ÀÖ¹²ÎÊý±ä¶¯Ö®ºó»á²úÉúµÄÒ»ÏµÁÐ±ä»¯»¹ÊÇÑ¡ÓÃ¹«Ê½µÄÐ´·¨
-	m_t << 1, 0, 0, -(left+right)/2.0f,					
-			0, 1, 0, -(top+bottom)/2.0f,					
-			0, 0, 1, -(zNear+zFar)/2.0f,
-			0, 0, 0, 1;
-	
-	projection = m_s * m_t * pto * projection;
-
-
+    Eigen::Matrix4f Mp;//é€è§†çŸ©é˜µ
+    Mp << 
+        n, 0, 0,   0,
+        0, n, 0,   0,
+        0, 0, n+f, -n*f,
+        0, 0, 1,   0;
+    Eigen::Matrix4f Mo_tran;//å¹³ç§»çŸ©é˜µ
+    Mo_tran <<
+        1, 0, 0, 0,
+        0, 1, 0, 0,  //b=-t;
+        0, 0, 1, -(n+f)/2 ,
+        0, 0, 0, 1;
+    Eigen::Matrix4f Mo_scale;//ç¼©æ”¾çŸ©é˜µ
+    Mo_scale << 
+        1/r,     0,       0,       0,
+        0,       1/t,     0,       0,
+        0,       0,       2/(n-f), 0,
+        0,       0,       0,       1;
+    projection = (Mo_scale*Mo_tran)* Mp;//æŠ•å½±çŸ©é˜µ
+    //è¿™é‡Œä¸€å®šè¦æ³¨æ„é¡ºåºï¼Œå…ˆé€è§†å†æ­£äº¤;æ­£äº¤é‡Œé¢å…ˆå¹³ç§»å†ç¼©æ”¾ï¼›å¦åˆ™åšå‡ºæ¥ä¼šæ˜¯ä¸€æ¡ç›´çº¿ï¼
     return projection;
 }
 

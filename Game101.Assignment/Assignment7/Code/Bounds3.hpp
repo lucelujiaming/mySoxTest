@@ -88,16 +88,44 @@ class Bounds3
                            const std::array<int, 3>& dirisNeg) const;
 };
 
-
-
 inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
                                 const std::array<int, 3>& dirIsNeg) const
-{
-    // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
-    // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
-    // TODO test if ray bound intersects
+{   
+    //invDir = 1 / D; t = (Px - Ox) / dx
+    float t_Min_x = (pMin.x - ray.origin.x)*invDir[0];
+    float t_Min_y = (pMin.y - ray.origin.y)*invDir[1];
+    float t_Min_z = (pMin.z - ray.origin.z)*invDir[2];
+    float t_Max_x = (pMax.x - ray.origin.x)*invDir[0];
+    float t_Max_y = (pMax.y - ray.origin.y)*invDir[1];
+    float t_Max_z = (pMax.z - ray.origin.z)*invDir[2];
 
+    //如果发现射线的方向是反的，调换t_min和t_max的位置。
+    if(dirIsNeg[0])
+    {
+        float t = t_Min_x;
+        t_Min_x = t_Max_x;
+        t_Max_x = t;
+    }
+    if(dirIsNeg[1])
+    {
+        float t = t_Min_y;
+        t_Min_y = t_Max_y;
+        t_Max_y = t;
+    }
+    if(dirIsNeg[2])
+    {
+        float t = t_Min_z;
+        t_Min_z = t_Max_z;
+        t_Max_z = t;
+    }
+ 
+    float t_enter = std::max(t_Min_x, std::max(t_Min_y, t_Min_z));
+    float t_exit  = std::min(t_Max_x, std::min(t_Max_y, t_Max_z));
+    if(t_enter <= t_exit && t_exit >= 0)
+        return true;
+    return false;     
 }
+
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)
 {

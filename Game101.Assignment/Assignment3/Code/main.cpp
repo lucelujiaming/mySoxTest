@@ -49,8 +49,33 @@ Eigen::Matrix4f get_model_matrix(float angle)
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
-    // TODO: Use the same projection matrix from the previous assignments
+    float n = zNear;
+    float f = zFar;
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+    float t = -tan((eye_fov/360)*MY_PI)*(abs(n)); //top
+    float r = t/aspect_ratio;
 
+    Eigen::Matrix4f Mp;//透视矩阵
+    Mp << 
+        n, 0, 0,   0,
+        0, n, 0,   0,
+        0, 0, n+f, -n*f,
+        0, 0, 1,   0;
+    Eigen::Matrix4f Mo_tran;//平移矩阵
+    Mo_tran <<
+        1, 0, 0, 0,
+        0, 1, 0, 0,  //b=-t;
+        0, 0, 1, -(n+f)/2 ,
+        0, 0, 0, 1;
+    Eigen::Matrix4f Mo_scale;//缩放矩阵
+    Mo_scale << 
+        1/r,     0,       0,       0,
+        0,       1/t,     0,       0,
+        0,       0,       2/(n-f), 0,
+        0,       0,       0,       1;
+    projection = (Mo_scale*Mo_tran)* Mp;//投影矩阵
+    //这里一定要注意顺序，先透视再正交;正交里面先平移再缩放；否则做出来会是一条直线！
+    return projection;
 }
 
 Eigen::Vector3f vertex_shader(const vertex_shader_payload& payload)
@@ -82,9 +107,8 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 {
     Eigen::Vector3f return_color = {0, 0, 0};
     if (payload.texture)
-    {
-        // TODO: Get the texture value at the texture coordinates of the current fragment
-
+    {   //payload是之前返回的一个结构体，texture是payload的成员，是个类，getcolor是公有函数，接收两个float,u,v坐标
+        return_color = payload.texture->getColor(payload.tex_coords.x(), payload.tex_coords.y()); 
     }
     Eigen::Vector3f texture_color;
     texture_color << return_color.x(), return_color.y(), return_color.z();
@@ -110,11 +134,15 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 
     for (auto& light : lights)
     {
-        // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
-        // components are. Then, accumulate that result on the *result_color* object.
-
+        Eigen::Vector3f l = (light.position - point).normalized();      // 光
+		Eigen::Vector3f v = (eye_pos - point).normalized();		        // 眼
+        Eigen::Vector3f h = (l + v).normalized();                       // 半程向量
+	    double r_2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f Ld = kd.cwiseProduct(light.intensity / r_2) * std::max(0.0f, normal.dot(l));    //cwiseProduct()函数允许Matrix直接进行点对点乘法,而不用转换至Array。
+        Eigen::Vector3f Ls = ks.cwiseProduct(light.intensity / r_2) * std::pow(std::max(0.0f, normal.dot(h)), p);
+        Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
+		result_color += (La + Ld + Ls);     
     }
-
     return result_color * 255.f;
 }
 
@@ -140,15 +168,18 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     Eigen::Vector3f result_color = {0, 0, 0};
     for (auto& light : lights)
     {
-        // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
-        // components are. Then, accumulate that result on the *result_color* object.
-        
+		Eigen::Vector3f l = (light.position - point).normalized();      // 光
+		Eigen::Vector3f v = (eye_pos - point).normalized();		        // 眼
+        Eigen::Vector3f h = (l + v).normalized();                       // 半程向量
+	    double r_2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f Ld = kd.cwiseProduct(light.intensity / r_2) * std::max(0.0f, normal.dot(l));    //cwiseProduct()函数允许Matrix直接进行点对点乘法,而不用转换至Array。
+        Eigen::Vector3f Ls = ks.cwiseProduct(light.intensity / r_2) * std::pow(std::max(0.0f, normal.dot(h)), p);
+        Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
+		result_color += (La + Ld + Ls);        
     }
-
+    //这里注意一下.cwiseProduct和.dot的用法。
     return result_color * 255.f;
 }
-
-
 
 Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payload)
 {
@@ -172,28 +203,39 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
 
     float kh = 0.2, kn = 0.1;
     
-    // TODO: Implement displacement mapping here
-    // Let n = normal = (x, y, z)
-    // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
-    // Vector b = n cross product t
-    // Matrix TBN = [t b n]
-    // dU = kh * kn * (h(u+1/w,v)-h(u,v))
-    // dV = kh * kn * (h(u,v+1/h)-h(u,v))
-    // Vector ln = (-dU, -dV, 1)
-    // Position p = p + kn * n * h(u,v)
-    // Normal n = normalize(TBN * ln)
-
-
+    float x = normal.x();
+	float y = normal.y();
+	float z = normal.z();
+	Eigen::Vector3f t{ x * y / std::sqrt(x * x + z * z), std::sqrt(x * x + z * z), z*y / std::sqrt(x * x + z * z) };
+	Eigen::Vector3f b = normal.cross(t);
+	Eigen::Matrix3f TBN;
+	TBN <<  t.x(), b.x(), normal.x(),
+		    t.y(), b.y(), normal.y(),
+		    t.z(), b.z(), normal.z();
+	float u = payload.tex_coords.x();
+	float v = payload.tex_coords.y();
+	float w = payload.texture->width;
+	float h = payload.texture->height;
+	float dU = kh * kn * (payload.texture->getColor(u + 1 / w , v).norm() - payload.texture->getColor(u, v).norm());
+	float dV = kh * kn * (payload.texture->getColor(u, v + 1 / h).norm() - payload.texture->getColor(u, v).norm());
+	Eigen::Vector3f ln{-dU, -dV, 1};
+    //与凹凸贴图的区别就在于这句话
+    point += (kn * normal * payload.texture->getColor(u , v).norm());
+	normal = (TBN * ln).normalized();
     Eigen::Vector3f result_color = {0, 0, 0};
 
     for (auto& light : lights)
     {
-        // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
-        // components are. Then, accumulate that result on the *result_color* object.
-
-
+        Eigen::Vector3f l = (light.position - point).normalized();      // 光
+		Eigen::Vector3f v = (eye_pos - point).normalized();		        // 眼
+        Eigen::Vector3f h = (l + v).normalized();                       // 半程向量
+	    double r_2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f Ld = kd.cwiseProduct(light.intensity / r_2) * std::max(0.0f, normal.dot(l));    //cwiseProduct()函数允许Matrix直接进行点对点乘法,而不用转换至Array。
+        Eigen::Vector3f Ls = ks.cwiseProduct(light.intensity / r_2) * std::pow(std::max(0.0f, normal.dot(h)), p);
+		result_color += (Ld + Ls);   
     }
-
+    Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
+    result_color += La; 
     return result_color * 255.f;
 }
 
@@ -221,22 +263,28 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
 
     float kh = 0.2, kn = 0.1;
 
-    // TODO: Implement bump mapping here
-    // Let n = normal = (x, y, z)
-    // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
-    // Vector b = n cross product t
-    // Matrix TBN = [t b n]
-    // dU = kh * kn * (h(u+1/w,v)-h(u,v))
-    // dV = kh * kn * (h(u,v+1/h)-h(u,v))
-    // Vector ln = (-dU, -dV, 1)
-    // Normal n = normalize(TBN * ln)
-
-
-    Eigen::Vector3f result_color = {0, 0, 0};
-    result_color = normal;
-
+    // TODO: Implement bump mapping here 按照todo写：
+    // 这个地方是为了后面用局部坐标系，让n始终朝向001，课上讲过
+	float x = normal.x();
+	float y = normal.y();
+	float z = normal.z();
+	Eigen::Vector3f t{ x * y / std::sqrt(x * x + z * z), std::sqrt(x * x + z * z), z*y / std::sqrt(x * x + z * z) };
+	Eigen::Vector3f b = normal.cross(t);
+	Eigen::Matrix3f TBN;
+	TBN <<  t.x(), b.x(), normal.x(),
+		    t.y(), b.y(), normal.y(),
+		    t.z(), b.z(), normal.z();
+	float u = payload.tex_coords.x();
+	float v = payload.tex_coords.y();
+	float w = payload.texture->width;
+	float h = payload.texture->height;
+	float dU = kh * kn * (payload.texture->getColor(u + 1 / w , v).norm() - payload.texture->getColor(u, v).norm());
+	float dV = kh * kn * (payload.texture->getColor(u, v + 1 / h).norm() - payload.texture->getColor(u, v).norm());
+	Eigen::Vector3f ln{-dU, -dV, 1};
+	Eigen::Vector3f result_color = (TBN * ln).normalized();
     return result_color * 255.f;
 }
+
 
 int main(int argc, const char** argv)
 {

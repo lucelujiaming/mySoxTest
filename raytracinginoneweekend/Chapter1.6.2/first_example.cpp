@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+// 分子和分母都除以2得到的简化形式
 double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();

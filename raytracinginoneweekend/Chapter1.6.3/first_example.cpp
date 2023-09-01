@@ -15,6 +15,7 @@ color ray_color(const ray& r, const hittable& world) {
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
+
 int main() {
 
     // Image

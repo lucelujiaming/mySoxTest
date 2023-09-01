@@ -49,6 +49,7 @@ class metal : public material {
 
     public:
         color albedo;
+        // 模糊系数fuzz表示小球半径，为0~1，fuzz越大，越趋于漫反射；fuzz越小，越趋于镜面反射。
         double fuzz;
 };
 

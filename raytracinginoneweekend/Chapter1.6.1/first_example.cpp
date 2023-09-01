@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+// 返回一元二次方程的解。
 double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
     auto a = dot(r.direction(), r.direction());
@@ -19,7 +20,9 @@ double hit_sphere(const point3& center, double radius, const ray& r) {
 
 color ray_color(const ray& r) {
     auto t = hit_sphere(point3(0,0,-1), 0.5, r);
+    // 如果命中，
     if (t > 0.0) {
+        // 可视化法线方向。
         vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));
         return 0.5*color(N.x()+1, N.y()+1, N.z()+1);
     }

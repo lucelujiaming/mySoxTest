@@ -126,6 +126,7 @@ inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 }
 
+// 1. 在单位球面内随机取方向（“如何在球面内取随机点”的方法是通用的）
 vec3 random_in_unit_sphere() {
    while (true) {
        auto p = vec3::random(-1,1);
@@ -134,13 +135,22 @@ vec3 random_in_unit_sphere() {
    }
 }
 
+// 2. 在单位球面上随机取方向（经典的Lambertian反射模型）
+//    在球内随机取点 & 规范化
 vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
 }
 
+// 3. 在单位半球面内部随机取方向：（Shirley说的所谓 the initial hack）
+// 对理想 Lambertian 漫反射的不正确近似。错误持续这么久的重要原因可能是：
+//    1、很难从数学上证明这种概率分布不正确；
+//    2、很难直观地解释为什么 cos(ϕ) 分布是可取的（以及它呈现的效果）
 vec3 random_in_hemisphere(const vec3& normal) {
+    // 还有另一种方法让出射方向均匀取值，
+    // 那就是不让法向量参与计算，而是直接用随机的方向来作为出射方向
     vec3 in_unit_sphere = random_in_unit_sphere();
-    if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+    // In the same hemisphere as the normal
+    if (dot(in_unit_sphere, normal) > 0.0) 
         return in_unit_sphere;
     else
         return -in_unit_sphere;

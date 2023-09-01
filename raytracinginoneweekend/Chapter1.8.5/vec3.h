@@ -135,6 +135,10 @@ vec3 random_in_unit_sphere() {
 }
 
 vec3 random_unit_vector() {
+    // random_in_unit_sphere在单位球中取的随机方向实际上是不均匀的，越靠近法线的概率越大
+    //（直观的想象一下，取以交点（P）为原点的某条射线上的任意一点（S）最后返回的方向
+    // 是相同的，而越靠近法线，这条射线在球内的长度就越长，点就越“多”，
+    // 因此取到的概率也就越大）通过在球面上取点可以解决这种不均匀的问题
     return unit_vector(random_in_unit_sphere());
 }
 

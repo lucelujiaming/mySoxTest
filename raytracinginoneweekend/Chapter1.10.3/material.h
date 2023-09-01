@@ -65,15 +65,21 @@ class dielectric : public material {
             vec3 unit_direction = unit_vector(r_in.direction());
             double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
             double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
-
+            
+            // 判断此种材质的表面是否发生全反射
             bool cannot_refract = refraction_ratio * sin_theta > 1.0;
-            vec3 direction;
+            vec3 direction;   // 折射光方向，待计算
 
             if (cannot_refract)
+            {
+                // Must Reflect 全反射
                 direction = reflect(unit_direction, rec.normal);
-            else
+            }
+            else{
+                // Can Refract 发生折射
                 direction = refract(unit_direction, rec.normal, refraction_ratio);
-
+            }
+            // 得到折射光的起点+方向
             scattered = ray(rec.p, direction);
             return true;
         }

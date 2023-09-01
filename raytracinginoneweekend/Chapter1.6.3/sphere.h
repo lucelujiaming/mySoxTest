@@ -17,6 +17,11 @@ class sphere : public hittable {
         double radius;
 };
 
+// 有了前面的基础，这个函数就比较容易理解了。
+// 首先用判别式判断光线和物体是否相交。
+// 如果相交，填充hit_record结构体。
+// t为方程的解。p为A + tb的结果。
+// normal是p的法线方向。
 bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();

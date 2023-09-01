@@ -17,10 +17,16 @@ color ray_color(const ray& r, const hittable& world, int depth) {
     if (depth <= 0)
         return color(0,0,0);
     if (world.hit(r, 0.001, infinity, rec)) {
+        // 定义散射光
         ray scattered;
+        // 定义衰减系数
         color attenuation;
+        // 如果有散射
         if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        {
+            // 对于散射光进行递归，并乘以反射系数
             return attenuation * ray_color(scattered, world, depth-1);
+        }
         return color(0,0,0);
     }
     vec3 unit_direction = unit_vector(r.direction());

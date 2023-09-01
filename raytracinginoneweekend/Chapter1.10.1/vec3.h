@@ -156,7 +156,11 @@ vec3 reflect(const vec3& v, const vec3& n) {
     return v - 2*dot(v,n)*n;
 }
 
+// 折射向量  【需要画图+推导】
+// Snell's Law （仅用于各向同性介质构成的静止界面）
+// 参数1.入射光  参数2.法向量  参数3.光在介质中的折射率n1/n2
 vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
+    // 光从折射率较大的介质进入折射率较小的介质时可能发生全反射。判断条件就是看折射角有没有达到90度。
     auto cos_theta = fmin(dot(-uv, n), 1.0);
     vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
     vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;

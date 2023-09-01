@@ -16,12 +16,11 @@ inline double vec3_random_double() {
     return distribution(generator);
 }
 
+// 取一个位于(min, max)的随机值。
 inline double vec3_random_double(double min, double max) {
     // Returns a random real in [min,max).
     return min + (max-min)*vec3_random_double();
 }
-
-
 
 using std::sqrt;
 
@@ -126,6 +125,9 @@ inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 }
 
+// 使用“拒绝法”找单位球以内的向量：
+// 随机找一个点。让其长度小于1。找不到就继续找。找到就返回。
+// 目的是为了了返回的向量加一个随机扰动。
 vec3 random_in_unit_sphere() {
    while (true) {
        auto p = vec3::random(-1,1);

@@ -3,6 +3,9 @@
 #include "vec3.h"
 #include "color.h"
 
+// 这个例子主要演示了如何使用我们定义的颜色类Color绘制。
+// 同时这个例子中也给出了我们定义的三维向量运算类Vec3。
+// 还包含了点乘和叉乘的操作。
 int main() {
 
     // Image

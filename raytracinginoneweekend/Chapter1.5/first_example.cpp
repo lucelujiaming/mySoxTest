@@ -4,6 +4,30 @@
 
 #include <iostream>
 
+// 这一章引入球体。
+// 首先球体的定义非常简单。
+//     x * x + y * y + z * z = R * R
+// 因此上，如果一个点(x, y, z)位于球面上，则：
+//     x * x + y * y + z * z = R * R
+// 如果一个点(x, y, z)位于球里面，则：
+//     x * x + y * y + z * z < R * R
+// 如果一个点(x, y, z)位于球外面，则：
+//     x * x + y * y + z * z > R * R
+// 如果球心位于(Cx, Cy, Cz)则：
+//     (x - Cx) * (x - Cx) + (y - Cy) * (y - Cy) + (z - Cz) * (z - Cz) = R * R
+// 下面写成向量格式。令C = (Cx, Cy, Cz)。空间中一个点P = (x, y, z)。
+// 则可以写成：
+//     (P - C) ● (P - C) = R * R
+// 代入光线公式：
+//      P(t)=A + tb
+// 有：
+//     (A + tb - C) ● (A + tb - C) = R * R
+// 可以得到下面的一元二次方程。
+// 		t * t * b * b + 2 * t * b ● (A - C) + (A - C) ● (A - C) - R * R = 0
+// 这个一元二次方程是否有解。取决于判别式 b * b - 4 * a * c是否大于零。
+// 如果判别式判别式大于零，就是有解。说明光线和这个球相交。
+// 否则就是不相交。
+// 这既是下面这个函数的逻辑。
 bool hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
     auto a = dot(r.direction(), r.direction());
@@ -13,6 +37,7 @@ bool hit_sphere(const point3& center, double radius, const ray& r) {
     return (discriminant > 0);
 }
 
+// 如果命中球就返回红色
 color ray_color(const ray& r) {
     if (hit_sphere(point3(0,0,-1), 0.5, r))
         return color(1, 0, 0);

@@ -8,7 +8,7 @@ class camera {
         camera() {
             auto aspect_ratio = 16.0 / 9.0;
             // 我们规定：
-            //   1. 视口高度为2。
+            //   1. 视口高度为2。（相机视口很小的）
             auto viewport_height = 2.0;
             auto viewport_width = aspect_ratio * viewport_height;
             //   2. 投影点到投影平面的距离为1。称作focal length。
@@ -24,6 +24,8 @@ class camera {
         }
 
         ray get_ray(double u, double v) const {
+			// 光线起点：为原点(0,0)屏幕中心，也就是相机/人眼的位置（z = 0）；
+			// 光线方向：像素点坐标 - 相机坐标
             return ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
         }
 

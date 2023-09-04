@@ -60,7 +60,7 @@ class metal : public material {
         }
 
     public:
-        color albedo;
+        color albedo;  // RGB 反射率 [反射率+吸收率=1]
 };
 
 #endif

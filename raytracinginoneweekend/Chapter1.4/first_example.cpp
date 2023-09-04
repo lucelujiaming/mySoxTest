@@ -4,9 +4,10 @@
 
 #include <iostream>
 
+// 设置光的颜色
 // 在把方向归一化以后，根据y的坐标高度线性混合白色和蓝色。
 color ray_color(const ray& r) {
-    // 归一化方向
+    // 将光线向量归一化
     vec3 unit_direction = unit_vector(r.direction());
     // 使用标准图形化技巧让t位于0和1之间。
     auto t = 0.5*(unit_direction.y() + 1.0);
@@ -24,8 +25,11 @@ color ray_color(const ray& r) {
 int main() {
 
     // Image
+	// 最终成像（图像）的宽高比
     const auto aspect_ratio = 16.0 / 9.0;
+	// 图像宽度（像素个数）
     const int image_width = 400;
+	// 图像高度（像素个数）
     const int image_height = static_cast<int>(image_width / aspect_ratio);
 
     // Camera
@@ -50,15 +54,21 @@ int main() {
 
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     // 从左上角遍历整个屏幕
+	// j：竖向移动的横向扫描线，j的值从大到小。（输出像素是从上到下，与j的值相反）
     for (int j = image_height-1; j >= 0; --j) {
+		// 剩余扫描线数
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+		// i：横向移动的竖向扫描线，i的值从小到大。（输出像素是从左到右，与i的值一致）
         for (int i = 0; i < image_width; ++i) {
             // 计算纹理坐标
             auto u = double(i) / (image_width-1);
             auto v = double(j) / (image_height-1);
             // 根据纹理坐标计算出来光线方向，并根据该方向创建一根光线。
+			// 光线起点：为原点(0,0)屏幕中心，也就是相机/人眼的位置（z=0）；
+            // 光线方向：终点 - 起点，光线的终点为成像上的点（z=-focalLength）
             ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            // 计算这根光线的颜色。
+            // 对成像上的每一个像素发出光线，并使用光线向量的 y 分量设置像素颜色值。
+			// 来计算这根光线的颜色。
             color pixel_color = ray_color(r);
             // 输出光线颜色。
             write_color(std::cout, pixel_color);

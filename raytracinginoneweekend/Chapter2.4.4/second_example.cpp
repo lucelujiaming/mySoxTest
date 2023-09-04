@@ -50,6 +50,7 @@ hittable_list random_scene() {
                     // diffuse
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
+					// 将random_scene()产生的材质为漫反射的球体改为moving_sphere对象，并设定相应参数
                     auto center2 = center + vec3(0, random_double(0,.5), 0);
                     world.add(make_shared<moving_sphere>(
                         center, center2, 0.0, 1.0, 0.2, sphere_material));
@@ -91,6 +92,24 @@ hittable_list two_spheres() {
     return objects;
 }
 
+// 整个主函数包含四个部分。逻辑如下：
+//   1. Image：这个部分定义了一些基本参数。包括生成图片的大小。
+//             每一个像素采样了几根光线。还有就是光线反射次数。
+//   2. World：这个部分是一个对象列表。也就是一个std::vector<hittable>。
+// 			   每一个对象是一个hittable对象。包含一个hit函数用于判断是否和光线相交。
+//   3. Camera：顾名思义，这个部分定义了视口。
+//   4. Render：有了前面的设定，我们就可以进行绘制了。
+//              步骤就是
+//              1. 计算每一个像素。
+//              2. 通过像素内多次采样的的方式抗锯齿。
+//              2. 对于每一次采样，需要根据光线反射次数，把每一个像素的光照采样累加起来。
+//                 计算函数就是ray_color函数。
+//              4. 之后输出第二步的计算结果。因为前面的计算结果是采样累加值。
+//                 因此上，结果需要除以光线反射次数。
+//   经过上面的分析可以知道，这个的计算量是非常大的。
+//   首先就是一帧图像包含很多的像素点。而每一个像素点都需要做多次采样。
+//   而每一次采样都需要使用当前采样光线判断是否和物体相交。
+//   并且每一次相交计算都需要模拟计算迭代光线跳跃过程。
 int main() {
 
     // Image

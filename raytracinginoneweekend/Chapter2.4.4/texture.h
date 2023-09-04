@@ -24,7 +24,7 @@ class solid_color : public texture {
         color color_value;
 };
 
-// 如果要实现棋盘纹理的话，就要让表面的反射率跟射线命中点的位置关联起来
+// 棋盘纹理
 class checker_texture : public texture {
     public:
         checker_texture() {}
@@ -37,7 +37,9 @@ class checker_texture : public texture {
             : even(make_shared<solid_color>(c1)) , odd(make_shared<solid_color>(c2)) {}
 
         virtual color value(double u, double v, const point3& p) const override {
+			// 如果要实现棋盘纹理的话，就要让表面的反射率跟射线命中点的位置关联起来
 			// sines为了区分球体纹理位置。
+			// 利用正余弦函数的周期二值性来实现棋盘纹理。
             auto sines = sin(10*p.x())*sin(10*p.y())*sin(10*p.z());
             if (sines < 0)
                 return odd->value(u, v, p);

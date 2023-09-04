@@ -39,6 +39,9 @@ class checker_texture : public texture {
             : even(make_shared<solid_color>(c1)) , odd(make_shared<solid_color>(c2)) {}
 
         virtual color value(double u, double v, const point3& p) const override {
+			// 如果要实现棋盘纹理的话，就要让表面的反射率跟射线命中点的位置关联起来
+			// sines为了区分球体纹理位置。
+			// 利用正余弦函数的周期二值性来实现棋盘纹理。
             auto sines = sin(10*p.x())*sin(10*p.y())*sin(10*p.z());
             if (sines < 0)
                 return odd->value(u, v, p);
@@ -51,12 +54,16 @@ class checker_texture : public texture {
         shared_ptr<texture> even;
 };
 
+// 柏林噪声纹理
 class noise_texture : public texture {
     public:
         noise_texture() {}
+		// 对参数施加一定的缩放比例，加速它的变化
         noise_texture(double sc) : scale(sc) {}
 
         virtual color value(double u, double v, const point3& p) const override {
+			// 产生噪声值，并加入缩放比例。让噪声值位于-1~1。
+			// 用turb函数来代替noise函数
             return color(1,1,1) * noise.turb(scale * p);
         }
 
@@ -65,6 +72,7 @@ class noise_texture : public texture {
         double scale;
 };
 
+// 图片纹理
 class image_texture : public texture {
     public:
         const static int bytes_per_pixel = 3;

@@ -7,6 +7,7 @@ class perlin {
     public:
         perlin() {
             ranvec = new vec3[point_count];
+			// 总随机序列由第一种方法生成，序列中的每一个元素均为0~1的随机数向量
             for (int i = 0; i < point_count; ++i) {
                 ranvec[i] = unit_vector(vec3::random(-1,1));
             }
@@ -22,7 +23,9 @@ class perlin {
             delete[] perm_y;
             delete[] perm_z;
         }
-
+		// 产生噪声值的函数
+		// 之前的算法生成的图片看起来有点生硬粗糙，不是很光滑，
+		// 所以，我们采用线性插值光滑一下
         double noise(const point3& p) const {
             auto u = p.x() - floor(p.x());
             auto v = p.y() - floor(p.y());
@@ -44,7 +47,8 @@ class perlin {
 
             return perlin_interp(c, u, v, w); 
         }
-
+		// 将光线追踪提高图片质量的惯用伎俩——采样，用在噪声值生成上面，即：
+		// 使用具有多个相加频率的复合噪声。 这通常称为turbulence
         double turb(const point3& p, int depth=7) const {
             auto accum = 0.0;
             auto temp_p = p;
@@ -61,23 +65,24 @@ class perlin {
 
     private:
         static const int point_count = 256;
-        vec3* ranvec;
+        vec3* ranvec;   // 把浮点数改为向量。
         int* perm_x;
         int* perm_y;
         int* perm_z;
-
+		// 分量的随机序列生成方法，即，
         static int* perlin_generate_perm() {
             auto p = new int[point_count];
-
+			// 初始序列为1-255，
             for (int i = 0; i < perlin::point_count; i++)
                 p[i] = i;
-
+			
             permute(p, point_count);
 
-            return p; 
+            return p;
         }
-
+		
         static void permute(int* p, int n) {
+			// 之后遍历整个序列，当前位置和一个随机生成的位置进行交换，已达到序列随机化
             for (int i = n-1; i > 0; i--) {
                 int target = random_int(0, i);
                 int tmp = p[i];

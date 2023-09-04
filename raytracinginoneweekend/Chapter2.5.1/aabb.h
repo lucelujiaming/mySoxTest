@@ -3,6 +3,7 @@
 
 #include "rtweekend.h"
 
+// 轴对齐包围盒：axis-aligned bounding box, 缩写为 AABB
 class aabb {
     public:
         aabb() {}
@@ -27,25 +28,28 @@ class aabb {
             return true;
         }
  */
-        point3 minimum;
-        point3 maximum;
+        point3 minimum;   // 左下角顶点
+        point3 maximum;   // 右上角顶点
 };
 
+//判断射线是否在t区间
 inline bool aabb::hit(const ray& r, double t_min, double t_max) const {
+    //xyz三个方向分别判断
     for (int a = 0; a < 3; a++) {
         auto invD = 1.0f / r.direction()[a];
         auto t0 = (min()[a] - r.origin()[a]) * invD;
         auto t1 = (max()[a] - r.origin()[a]) * invD;
         if (invD < 0.0f)
             std::swap(t0, t1);
-        t_min = t0 > t_min ? t0 : t_min;
-        t_max = t1 < t_max ? t1 : t_max;
+        t_min = t0 > t_min ? t0 : t_min;  // F为两者终点的最小值
+        t_max = t1 < t_max ? t1 : t_max;  // f为两者起点的最大值
         if (t_max <= t_min)
             return false;
     }
     return true;
 }
 
+// 此外我们还需要计算2个box的包围盒
 aabb surrounding_box(aabb box0, aabb box1) {
     point3 small(fmin(box0.min().x(), box1.min().x()),
                  fmin(box0.min().y(), box1.min().y()),

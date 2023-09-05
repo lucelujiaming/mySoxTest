@@ -82,7 +82,7 @@ class image_texture : public texture {
 
         image_texture(const char* filename) {
             auto components_per_pixel = bytes_per_pixel;
-
+			// 采用stb图片读取处理库s
             data = stbi_load(
                 filename, &width, &height, &components_per_pixel, components_per_pixel);
 
@@ -90,14 +90,14 @@ class image_texture : public texture {
                 std::cerr << "ERROR: Could not load texture image file '" << filename << "'.\n";
                 width = height = 0;
             }
-
+			// 得到每一行扫描线包含多少字节。
             bytes_per_scanline = bytes_per_pixel * width;
         }
 
         ~image_texture() {
             delete data;
         }
-
+		// 根据uv坐标获得图片颜色值。
         virtual color value(double u, double v, const vec3& p) const override {
             // If we have no texture data, then return solid cyan as a debugging aid.
             if (data == nullptr)
@@ -106,23 +106,29 @@ class image_texture : public texture {
             // Clamp input texture coordinates to [0,1] x [1,0]
             u = clamp(u, 0.0, 1.0);
             v = 1.0 - clamp(v, 0.0, 1.0);  // Flip V to image coordinates
-
+			// 使用uv坐标得到纹理贴图的坐标。
             auto i = static_cast<int>(u * width);
             auto j = static_cast<int>(v * height);
 
             // Clamp integer mapping, since actual coordinates should be less than 1.0
+			// 大小限制一下。
             if (i >= width)  i = width-1;
             if (j >= height) j = height-1;
 
             const auto color_scale = 1.0 / 255.0;
+			// 根据纹理贴图的坐标返回纹理贴图对应位置的颜色。
             auto pixel = data + j*bytes_per_scanline + i*bytes_per_pixel;
-
+			// 每个元素的rgb是顺序存储的，所以每个像素点有三个值。
             return color(color_scale*pixel[0], color_scale*pixel[1], color_scale*pixel[2]);
         }
 
     private:
+		// 纹理图片数据指针。
+		// 图片信息是有一维数组存储的，每个元素的rgb是顺序存储的，所以每个像素点有三个值。
         unsigned char *data;
+		// 纹理图片尺寸
         int width, height;
+		// 每一行扫描线包含多少字节。
         int bytes_per_scanline;
 };
 

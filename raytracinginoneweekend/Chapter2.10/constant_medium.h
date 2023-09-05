@@ -7,6 +7,7 @@
 #include "material.h"
 #include "texture.h"
 
+// 烟雾体
 class constant_medium : public hittable {
     public:
         constant_medium(shared_ptr<hittable> b, double d, shared_ptr<texture> a)
@@ -31,24 +32,27 @@ class constant_medium : public hittable {
     public:
         shared_ptr<hittable> boundary;
         shared_ptr<material> phase_function;
-        double neg_inv_density;
+        double neg_inv_density;    // 烟雾密度的倒数
 };
 
+// hit函数里面是一些边界合法性检测
 bool constant_medium::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     // Print occasional samples when debugging. To enable, set enableDebug true.
     const bool enableDebug = false;
     const bool debugging = enableDebug && random_double() < 0.00001;
 
     hit_record rec1, rec2;
-
+	// 如果没有命中，返回FALSE
     if (!boundary->hit(r, -infinity, infinity, rec1))
         return false;
 
+	// 如果没有命中，返回FALSE
     if (!boundary->hit(r, rec1.t+0.0001, infinity, rec2))
         return false;
 
-    if (debugging) std::cerr << "\nt_min=" << rec1.t << ", t_max=" << rec2.t << '\n';
-
+    if (debugging) 
+		std::cerr << "\nt_min=" << rec1.t << ", t_max=" << rec2.t << '\n';
+	// 调整hit_record时间段
     if (rec1.t < t_min) rec1.t = t_min;
     if (rec2.t > t_max) rec2.t = t_max;
 

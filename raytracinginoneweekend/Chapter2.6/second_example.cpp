@@ -105,6 +105,7 @@ hittable_list two_perlin_spheres() {
     return objects;
 }
 
+// 绘制纹理贴图的球。
 hittable_list earth() {
     auto earth_texture = make_shared<image_texture>("earthmap.jpg");
     auto earth_surface = make_shared<lambertian>(earth_texture);
@@ -173,6 +174,7 @@ int main() {
             vfov = 20.0;
             break;
 	    default:
+		// 显示一个纹理贴图的球体
         case 4:
             world = earth();
             lookfrom = point3(13,2,3);

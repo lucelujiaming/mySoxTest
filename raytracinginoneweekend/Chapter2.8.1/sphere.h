@@ -8,8 +8,9 @@ class sphere : public hittable {
     public:
         sphere() {}
         sphere(point3 cen, double r) : center(cen), radius(r) {};
+		// 增加一个建构函数，初始化材质指针。
         sphere(point3 cen, double r, shared_ptr<material> m) : center(cen), radius(r), mat_ptr(m) {};
-
+		// 关键字override表示该函数复写了一个纯虚函数
         virtual bool hit(
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
         virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
@@ -17,7 +18,7 @@ class sphere : public hittable {
     public:
         point3 center;
         double radius;
-        shared_ptr<material> mat_ptr;
+        shared_ptr<material> mat_ptr;	// 材质指针。
     private:
         static void get_sphere_uv(const point3& p, double& u, double& v) {
             // p: a given point on the sphere of radius one, centered at the origin.
@@ -35,6 +36,12 @@ class sphere : public hittable {
         }
 };
 
+// 表面是否与光线碰撞，且碰撞点范围合理。
+// 有了前面的基础，这个函数就比较容易理解了。
+// 首先用判别式判断光线和物体是否相交。
+// 如果相交，填充hit_record结构体。
+// t为方程的解。p为A + tb的结果。
+// normal是p的法线方向。
 bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();
@@ -57,8 +64,11 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
     rec.p = r.at(rec.t);
     // rec.normal = (rec.p - center) / radius;
     vec3 outward_normal = (rec.p - center) / radius;
+	// 为本次相交设置表面法向量
     rec.set_face_normal(r, outward_normal);
+	// 记录纹理坐标
     get_sphere_uv(outward_normal, rec.u, rec.v);
+ 	// 记录材质指针
     rec.mat_ptr = mat_ptr;
 
     return true;

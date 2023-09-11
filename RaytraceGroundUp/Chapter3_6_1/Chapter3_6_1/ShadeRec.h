@@ -16,6 +16,7 @@ class World;
 #include "Ray.h"
 #include "RGBColor.h"
 
+// ShadeRec对象在光线跟踪器的着色过程中扮演着重要的角色。
 class ShadeRec {
 
 	public:

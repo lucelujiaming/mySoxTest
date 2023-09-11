@@ -30,7 +30,10 @@ class GeometricObject {
 
 		virtual 												
 		~GeometricObject(void);	
-			
+		
+		// hit() 函数参数列表中的Shade Rec对象充当一个工具类，
+		// 用以存储光线跟踪器所需的全部信息，并对光线-对象间的碰撞点进行着色。
+		// 简单地讲，着色将会计算反射光线的颜色值，这一过程将会在本书中多次出现。
 		virtual bool 												 
 		hit(const Ray& ray, double& t, ShadeRec& s) const = 0;	
 

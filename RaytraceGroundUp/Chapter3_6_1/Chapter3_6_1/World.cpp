@@ -49,15 +49,20 @@ World::~World(void) {
 //------------------------------------------------------------------ render_scene
 
 // This uses orthographic viewing along the zw axis
-
+// 函数render_scene()负责渲染场景。
+// 
 void World::render_scene() const
 {
     RGBColor pixel_color;
-    Ray ray;
+	Ray ray;
+	// 在该例子中，视平面被设置在zw=100处。当然，这只是一个临时性的设置方案。
     double zw = 200.0;
     double x, y;
 
     ray.d = Vector3D(0, 0, -1);
+	// 函数的主要工作都体现在for循环体内，该循环体将负责计算各像素的颜色值。
+	// 在该函数中，场景将在窗口的左下角处被逐行渲染。
+	// 但前者可将像素的颜色值写入一个离屏数组中，并可缓冲输出数据。
     for (int r = 0; r < vp.vres; r++) {
         for (int c = 0; c < vp.hres; c++) {
             pixel_color = background_color;
@@ -112,6 +117,9 @@ World::clamp_to_color(const RGBColor& raw_color) const {
 // the system-dependent code is in the function convert_to_display_color
 // the function SetCPixel is a Mac OS function
 // explained on page 72
+// display_pixel() 函数将各个像素的颜色值转换为显示器可支持的颜色。
+// 这一过程涉及到3个步骤：色调映射、gamma值修正以及整数映射。
+//   
 void
 World::display_pixel(const int row, const int column, const RGBColor& raw_color) const {
 
@@ -121,7 +129,7 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
 		mapped_color = clamp_to_color(raw_color);
 	else
 		mapped_color = max_to_one(raw_color);
-	
+	// 显示器的亮度值通常与工作电压呈非线性关系， 因而gamma值修正往往是必要的。
 	if (vp.gamma != 1.0)
 		mapped_color = mapped_color.powc(vp.inv_gamma);
 
@@ -137,7 +145,7 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
 }
 
 
-
+// 函数hit_objects()将在光线与场景中的全部对象之间进行相交测试，并返回一个ShadeRec对象。
 ShadeRec
 World::hit_objects(const Ray& ray) {
 
@@ -148,7 +156,10 @@ World::hit_objects(const Ray& ray) {
     double      tmin            = kHugeValue;
     int         num_objects     = objects.size();
 
-    for (int j = 0; j < num_objects; j++)
+	for (int j = 0; j < num_objects; j++)
+		// 代码并未定义特定的几何对象类型，因而适用于几何对象继承层次结构中的任意对象类型，
+		// 并实现了基于hit()函数的公共接口。
+		// 考虑到对象数量的增加，应适当地采用不同的颜色值描述相关对象，并将其存储于GeometricObject对象中。
         if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
             sr.hit_an_object    = true;
             tmin                = t;
@@ -156,6 +167,7 @@ World::hit_objects(const Ray& ray) {
             sr.hit_point        = ray.o + t * ray.d;
             normal              = sr.normal;
 			local_hit_point = sr.local_hit_point;
+			// 将最近对象间颜色值存储于ShadeRec对象中的计算过程。
 			sr.color = objects[j]->get_color();
         }
 

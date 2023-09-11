@@ -23,7 +23,7 @@ SingleSphere::~SingleSphere(void) {}
 
 
 // -------------------------------------------------------------------- trace_ray
-
+// 该函数将对一个红色球体实施光线跟踪计算，其中心位置和半径在程序清单3.11中所示的函数中加以定义。
 RGBColor
 SingleSphere::trace_ray(const Ray& ray) const {
 	ShadeRec	sr(*world_ptr); 	// not used

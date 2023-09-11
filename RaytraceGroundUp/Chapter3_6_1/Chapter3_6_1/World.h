@@ -52,6 +52,9 @@ class World {
                 hit_objects(const Ray& ray);
 };
 
+// 若光线跟踪器只能渲染单一球体，则该光线跟踪器不具备太多的实用价值。
+// 因此，需要添加相关内容以对任意数量且不同类型的对象进行光线跟踪计算。
+// 这里，将使用vector存储几何对象，并增加一个向当前场景添加对象的函数。
 inline void
 World::add_object(GeometricObject* object_ptr) {
         objects.push_back(object_ptr);

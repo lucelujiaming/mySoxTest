@@ -15,6 +15,7 @@
 #include "GeometricObject.h"
 #include "Sphere.h"
 #include "Tracer.h"
+#include "Plane.h"
 
 class World {
 	public:

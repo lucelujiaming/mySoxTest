@@ -85,6 +85,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MultipleObjects.h" />
     <ClInclude Include="Normal.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Point2D.h" />
     <ClInclude Include="Point3D.h" />
     <ClInclude Include="Ray.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="MultipleObjects.cpp" />
     <ClCompile Include="Normal.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Point2D.cpp" />
     <ClCompile Include="Point3D.cpp" />
     <ClCompile Include="Ray.cpp" />

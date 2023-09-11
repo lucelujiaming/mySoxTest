@@ -185,30 +185,36 @@ void World::build()
    //sphere->set_color(RGBColor(1,0,0));
    //add_object(sphere);
 
-    vp.set_hres(400);
-    vp.set_vres(400);
-    vp.set_pixel_size(1);
-    vp.set_gamma(1.0);
-    background_color = blue;
+	vp.set_hres(400);
+	vp.set_vres(400);
+	vp.set_pixel_size(1);
+	vp.set_gamma(1.0);
+	background_color = blue;
 
-    //
-    //tracer_ptr = new SingleSphere(this);
-    //sphere.set_center(0.0);
-    //sphere.set_radius(200);
+	//
+	//tracer_ptr = new SingleSphere(this);
+	//sphere.set_center(0.0);
+	//sphere.set_radius(200);
 
-    tracer_ptr = new MultipleObjects(this);
-    Sphere *sphere_ptr = new Sphere;
-    sphere_ptr->set_center(-10, -40, 0);
-    sphere_ptr->set_radius(100.0);
-    sphere_ptr->set_color(1.0, 0.0, 0.0);
-    add_object(sphere_ptr);
+	tracer_ptr = new MultipleObjects(this);
+	Sphere *sphere_ptr = new Sphere;
+	sphere_ptr->set_center(-10, -40, 0);
+	sphere_ptr->set_radius(100.0);
+	sphere_ptr->set_color(1.0, 0.0, 0.0);
+	add_object(sphere_ptr);
 
-//  sphere_ptr = new Sphere(Vector3D(0, 60, 0), 80.0);
+//	sphere_ptr = new Sphere(Vector3D(0, 60, 0), 80.0);
 
-    sphere_ptr = new Sphere;
-    sphere_ptr->set_center(0, 60, 0);
-    sphere_ptr->set_radius(80.0);
-    sphere_ptr->set_color(1.0, 1.0, 0.0);
-    add_object(sphere_ptr);
+	sphere_ptr = new Sphere;
+	sphere_ptr->set_center(0, 60, 0);
+	sphere_ptr->set_radius(80.0);
+	sphere_ptr->set_color(1.0, 1.0, 0.0);
+	add_object(sphere_ptr);
+
+	Plane *plane_ptr = new Plane;
+	plane_ptr->a = Vector3D(0.0);
+	plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+	plane_ptr->set_color(0.0, 0.30, 0.0);
+	add_object(plane_ptr);
 }
 

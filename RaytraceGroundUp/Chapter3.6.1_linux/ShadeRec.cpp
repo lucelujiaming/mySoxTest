@@ -39,5 +39,6 @@ ShadeRec::ShadeRec(const ShadeRec& sr)
 		dir(sr.dir),
 		t(sr.t),
 		w(sr.w),
-        color(sr.color)
+		color(sr.color)
+
 {}

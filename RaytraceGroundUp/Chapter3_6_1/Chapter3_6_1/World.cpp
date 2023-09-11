@@ -208,5 +208,11 @@ void World::build()
 	sphere_ptr->set_radius(80.0);
 	sphere_ptr->set_color(1.0, 1.0, 0.0);
 	add_object(sphere_ptr);
+
+	Plane *plane_ptr = new Plane;
+	plane_ptr->a = Vector3D(0.0);
+	plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+	plane_ptr->set_color(0.0, 0.30, 0.0);
+	add_object(plane_ptr);
 }
 

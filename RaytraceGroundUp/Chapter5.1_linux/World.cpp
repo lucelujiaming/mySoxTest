@@ -25,6 +25,7 @@
 using namespace std;
 extern ofstream out;
 
+#include "Jittered.h"
 
 // -------------------------------------------------------------------- default constructor
 
@@ -56,9 +57,12 @@ void World::render_scene() const
 {
     RGBColor pixel_color;
 	Ray ray;
+
 	// 在该例子中，视平面被设置在zw=100处。当然，这只是一个临时性的设置方案。
     double zw = 200.0;
-    double x, y;
+    // double x, y;
+    Point2D sp;                                 // sample point in [0, 1] x [0, 1]
+    Point2D pp;                                 // sample point on a pixel
 
     ray.d = Vector3D(0, 0, -1);
 	// 函数的主要工作都体现在for循环体内，该循环体将负责计算各像素的颜色值。
@@ -67,10 +71,17 @@ void World::render_scene() const
     for (int r = 0; r < vp.vres; r++) {
         for (int c = 0; c < vp.hres; c++) {
             pixel_color = background_color;
-            x = vp.s * (c - 0.5 * (vp.hres - 1.0));
-            y = vp.s * (r - 0.5 * (vp.vres - 1.0));
-            ray.o = Point3D(x, y, zw);
-            pixel_color = tracer_ptr->trace_ray(ray);
+            
+            for(int j=0; j < vp.num_samples; j++) {
+                sp = vp.sampler_ptr->sample_unit_square();
+                pp.x = vp.s*(c-0.5*vp.hres + sp.x);
+                pp.y = vp.s*(r-0.5*vp.vres + sp.y);
+                ray.o = Point3D(pp.x, pp.y, zw);
+                pixel_color += tracer_ptr->trace_ray(ray);
+            }
+
+            pixel_color /= vp.num_samples; // average the colors
+
             display_pixel(r, c, pixel_color);
         }
     }
@@ -138,11 +149,11 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
 	int x = column;
 	int y = vp.vres - row - 1;
 
-    // printf("%d %d %d\n", (int)(mapped_color.r * 255), (int)(mapped_color.g * 255), (int)(mapped_color.b * 255));
 	// paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-       out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    // cout << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
 
@@ -197,8 +208,12 @@ void World::build()
    //sphere->set_color(RGBColor(1,0,0));
    //add_object(sphere);
 
+    int num_samples = 25;
+    Sampler * objSampler = new Jittered(num_samples);
+
 	vp.set_hres(400);
 	vp.set_vres(400);
+    vp.set_sampler(objSampler);
 	vp.set_pixel_size(1);
 	vp.set_gamma(1.0);
 	background_color = blue;

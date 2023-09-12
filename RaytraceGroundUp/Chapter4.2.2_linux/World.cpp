@@ -56,9 +56,12 @@ void World::render_scene() const
 {
     RGBColor pixel_color;
 	Ray ray;
+
 	// 在该例子中，视平面被设置在zw=100处。当然，这只是一个临时性的设置方案。
     double zw = 200.0;
-    double x, y;
+    // double x, y;
+    int n=(int)sqrt((float) vp.num_samples);
+    Point2D pp;                                 // sample point on a pixel
 
     ray.d = Vector3D(0, 0, -1);
 	// 函数的主要工作都体现在for循环体内，该循环体将负责计算各像素的颜色值。
@@ -67,10 +70,25 @@ void World::render_scene() const
     for (int r = 0; r < vp.vres; r++) {
         for (int c = 0; c < vp.hres; c++) {
             pixel_color = background_color;
-            x = vp.s * (c - 0.5 * (vp.hres - 1.0));
-            y = vp.s * (r - 0.5 * (vp.vres - 1.0));
-            ray.o = Point3D(x, y, zw);
-            pixel_color = tracer_ptr->trace_ray(ray);
+
+            //    x = vp.s * (c - 0.5 * (vp.hres - 1.0));
+            //    y = vp.s * (r - 0.5 * (vp.vres - 1.0));
+            //    ray.o = Point3D(x, y, zw);
+            //    pixel_color = tracer_ptr->trace_ray(ray);
+            // 下面显示了均匀采样的实现过程，该程序代码在前一章的基础上进行了相应的修改，
+            // 其中，在视平面内存储了一定数量的像素采样点。这里所采用的均匀采样模式提供了相同的采样
+            // 行和采样列，因此，各像素的采样数量均为平方级别，即针对某一整数n，num_samples = n x n。
+            for(int p=0; p<n; p++)  //up pixel 
+            {
+                for(int q=0; q<n; q++) {  //across pixel 
+                    pp.x = vp.s*(c-0.5*vp.hres+(q+0.5)/n);
+                    pp.y = vp.s*(r-0.5*vp.vres+(p+0.5)/n);
+                    ray.o = Point3D(pp.x, pp.y, zw);
+                    pixel_color += tracer_ptr->trace_ray(ray);
+                }
+            }
+            pixel_color /= vp.num_samples; // average the colors
+
             display_pixel(r, c, pixel_color);
         }
     }

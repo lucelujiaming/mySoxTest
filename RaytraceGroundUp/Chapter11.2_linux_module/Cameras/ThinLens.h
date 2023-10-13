@@ -47,11 +47,11 @@ class ThinLens: public Camera {
 
     private:
 
-        float        lens_radius;    // lens radius
+        float        lens_radius;      // lens radius
         float        d;                // view plane distance
         float        f;                // focal distance
-        float        zoom;            // zoom factor
-        Sampler*    sampler_ptr;    // sampler object
+        float        zoom;             // zoom factor
+        Sampler*    sampler_ptr;       // sampler object
 };
 
 

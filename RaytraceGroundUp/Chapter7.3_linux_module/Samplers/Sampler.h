@@ -59,8 +59,8 @@ class Sampler {
 
     protected:
         // Sampler的继承类包含下列特征：相关类将在场景构造时计算并存储全部采样点。
-		// 与在光线跟踪计算中获取采样点相比，该方式将更加高效。
-		// 同时，这也将是某些特定采样算法所必须的操作方式。
+        // 与在光线跟踪计算中获取采样点相比，该方式将更加高效。
+        // 同时，这也将是某些特定采样算法所必须的操作方式。
         int                     num_samples;            // the number of sample points in a set
         int                     num_sets;               // the number of sample sets
         vector<Point2D>         samples;                // sample points on a unit square

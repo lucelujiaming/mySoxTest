@@ -60,10 +60,13 @@ void World::render_scene() const
     // 在该例子中，视平面被设置在zw=100处。当然，这只是一个临时性的设置方案。
     double zw = 200.0;
     // double x, y;
-	// 因为需要映射到三维的半球体，因此上，这里修改为Point3D
+    // 因为需要映射到三维的半球体，因此上，这里修改为Point3D
     Point3D sp;                                 // sample point in [0, 1] x [0, 1]
     Point2D pp;                                 // sample point on a pixel
-
+    
+    // 作为默认渲染函数，光线方向指向Z轴的反方向，垂直于XY平面。
+    // 因为视平面被设置在zw=100处，且平行于XY平面。
+    // 光线方向指向Z轴的反方向相当于从视平面发出一道一道光线。
     ray.d = Vector3D(0, 0, -1);
     // 函数的主要工作都体现在for循环体内，该循环体将负责计算各像素的颜色值。
     // 在该函数中，场景将在窗口的左下角处被逐行渲染。
@@ -71,22 +74,24 @@ void World::render_scene() const
     for (int r = 0; r < vp.vres; r++) {
         for (int c = 0; c < vp.hres; c++) {
             pixel_color = background_color;
-            
+            // 多次采样。
             for(int j=0; j < vp.num_samples; j++) {
-			    // 返回存储于采样器对象中的下一个采样点，映射到半球体。
-			    // 其中sp.z不使用。
+                // 返回存储于采样器对象中的下一个采样点，映射到半球体。
+                // 其中sp.z不使用。
                 sp = vp.sampler_ptr->sample_hemisphere();
                 pp.x = vp.s*(c-0.5*vp.hres + sp.x);
                 pp.y = vp.s*(r-0.5*vp.vres + sp.y);
+                
+                // 使用计算出来的XY坐标和默认的视平面的Z坐标位置作为光线起点。
                 ray.o = Point3D(pp.x, pp.y, zw);
-	            // 待光线的源点和投射方向计算完毕后， 函数trace_ray() 将被调用。
-	            // 该函数是光线跟踪器中的核心函数，并负责对当前场景实施光线跟踪，
-	            // 同时，还将返回各像素的颜色值。
-	            // 但此处采取了一种间接的调用方案， 
-	            // 即对该函数通过指向Tracer对象的tracer_ptr指针加以调用。
+                // 待光线的源点和投射方向计算完毕后， 函数trace_ray() 将被调用。
+                // 该函数是光线跟踪器中的核心函数，并负责对当前场景实施光线跟踪，
+                // 同时，还将返回各像素的颜色值。
+                // 但此处采取了一种间接的调用方案， 
+                // 即对该函数通过指向Tracer对象的tracer_ptr指针加以调用。
                 pixel_color += tracer_ptr->trace_ray(ray);
             }
-
+            // 计算采样的平均值。
             pixel_color /= vp.num_samples; // average the colors
             // 循环体中最后一行代码将调用display_pixel() 函数以在窗口中显示像素。
             // 这将会把RGBColor转换为当前计算机支持的显示格式。
@@ -261,7 +266,7 @@ void World::build()
     // add_object(sphere);
 
     int num_samples = 25;
-	// 采用了n-Rooks采样技术
+    // 采用了n-Rooks采样技术
     Sampler * objSampler = new NRooks(num_samples);
     // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);

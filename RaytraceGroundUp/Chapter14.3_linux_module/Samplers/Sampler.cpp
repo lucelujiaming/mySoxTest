@@ -7,7 +7,12 @@
 // ------------------------------------------------------------------ default constructor
 
 Sampler::Sampler(void)
-    :     num_samples(1),
+    :   num_samples(1),
+        // 当我们使用sample_unit_square的时候，
+        // 对于当各像素上均采用同一采样点集时，仍会发生锯齿失真现象。
+        // 为了消除这一问题，默认情况下将在samples数组中存储83个采样点。
+        // 这里，数字83并没有其他特殊含义，该数字为一个质数且其值能够满足多数应用的要求。
+        // 该方案可避免各行中相邻像素间使用同一模式。
         num_sets(83),
         count(0),
         jump(0) {
@@ -126,7 +131,8 @@ Sampler::shuffle_y_coordinates(void) {
 
 // ------------------------------------------------------------------- setup_shuffled_indices
 // sets up randomly shuffled indices for the samples array
-
+// 针对各个集合对函数sample_unit_square() 中的索引进行随机混合操作，并确保使用全部采样点。
+// 结果保存在shuffled_indices数组中。其中，random_shuffle() 为C++中的一个通用算法。
 void
 Sampler::setup_shuffled_indices(void) {
     shuffled_indices.reserve(num_samples * num_sets);
@@ -148,6 +154,8 @@ Sampler::setup_shuffled_indices(void) {
 // Maps the 2D sample points in the square [-1,1] X [-1,1] to a unit disk, using Peter Shirley's
 // concentric map function
 // explained on page 122
+// 同心映射(Shirley): 将位于正方形内的采样点映射至对应的同心圆上，
+// 并且可将映射偏差控制在较低的范围内。
 void
 Sampler::map_samples_to_unit_disk(void) {
     int size = samples.size();
@@ -202,6 +210,8 @@ Sampler::map_samples_to_unit_disk(void) {
 // Maps the 2D sample points to 3D points on a unit hemisphere with a cosine power
 // density distribution in the polar angle
 // explained on page 129
+// 将位于正方形内的采样点映射至对应的半球体上。
+// 计算公式参见P103。
 void
 Sampler::map_samples_to_hemisphere(const float exp) {
     int size = samples.size();
@@ -249,6 +259,8 @@ Sampler::map_samples_to_sphere(void) {
 // ------------------------------------------------------------------- sample_unit_square
 // the final version in Listing 5.13
 // explained on page 101
+// Chapter5.4：当数组shuffled_indices构造完毕后，
+//             函数sample_unit_square() 的修改过程则变得十分简单。
 Point2D
 Sampler::sample_unit_square(void) {
     if (count % num_samples == 0)                                    // start of a new pixel

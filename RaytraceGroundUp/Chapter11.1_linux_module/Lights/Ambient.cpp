@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Ambient.h"
 
 // ---------------------------------------------------------------------- default constructor

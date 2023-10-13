@@ -5,30 +5,30 @@
 
 class Hammersley: public Sampler {
 
-	public:
+    public:
 
-		Hammersley(void);
+        Hammersley(void);
 
-		Hammersley(const int num);
+        Hammersley(const int num);
 
-		Hammersley(const Hammersley& r);
+        Hammersley(const Hammersley& r);
 
-		Hammersley& 
-		operator= (const Hammersley& rhs);
+        Hammersley& 
+        operator= (const Hammersley& rhs);
 
-		virtual Hammersley*
-		clone(void) const;
+        virtual Hammersley*
+        clone(void) const;
 
-		virtual
-		~Hammersley(void);
+        virtual
+        ~Hammersley(void);
 
-		double 
-		phi(int j);
+        double 
+        phi(int j);
 
-	private:
+    private:
 
-		virtual void
-		generate_samples(void);
+        virtual void
+        generate_samples(void);
 };
 
 #endif

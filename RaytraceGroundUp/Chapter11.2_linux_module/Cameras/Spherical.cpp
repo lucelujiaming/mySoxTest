@@ -59,16 +59,21 @@ Spherical::ray_direction(    const Point2D&    pp,
                             const float     s    ) const {
 
     // compute the normalised device coordinates
-
+    // 为了更好地执行任务， 首先：
+    // 1. 将采样点的视见(观察) 坐标转换为标准的设备坐标。
+    //    参见公式11.1和图11.5
     Point2D pn( 2.0 / (s * hres) * pp.x, 2.0 / (s * vres) * pp.y);
 
     // compute the angles lambda and phi in radians
-
+    // 把像素点的标准设备坐标定义方位分离角lambda以及极角psi
+    // 转换为角度。
     float lambda     = pn.x * lambda_max * PI_ON_180;
     float psi         = pn.y * psi_max * PI_ON_180;
 
     // compute the regular azimuth and polar angles
-
+    // 像素点的标准设备坐标定义方位分离角lambda以及极角psi
+	// 与球体坐标角度phi和theta之间存在下列简单的计算关系。
+    //    参见公式11.5
     float phi         = PI - lambda;
     float theta     = 0.5 * PI - psi;
 
@@ -78,8 +83,10 @@ Spherical::ray_direction(    const Point2D&    pp,
     float cos_theta = cos(theta);
 
     // equation 11.6
+	// 通过将lambda和psi与式(11.5)中的标准球体坐标角度相关联，
+	// 并利用r=1)，可计算光线方向为：
+    //    参见公式11.6
     Vector3D dir     = sin_theta * sin_phi * u + cos_theta * v + sin_theta * cos_phi * w;
-
     return (dir);
 }
 

@@ -1,0 +1,151 @@
+cd Chapter1.10.1 && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.10.3 && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.10.4 && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.11.1 && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.11.2 && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.12   && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.2    && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.3    && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.4    && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.5    && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.6.1  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.6.2  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.6.3  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.7    && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.8.1  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.8.3  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.8.4  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.8.5  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.8.6  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.9.1  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+cd Chapter1.9.6  && g++ -o first_example *.cpp  && ./first_example > image1.ppm && cd -
+
+cd Chapter2.2    && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+cd Chapter2.3    && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+cd Chapter2.4.4  && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+cd Chapter2.5.1  && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+                 && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+                 && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+                 && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+                 && g++ -o second_example *.cpp  && ./second_example > image2.ppm && cd -
+
+
+cd Chapter2.2    && g++ -o second_example *.cpp  && cd -
+cd Chapter2.3    && g++ -o second_example *.cpp  && cd -
+cd Chapter2.4.4  && g++ -o second_example *.cpp  && cd -
+cd Chapter2.5.1  && g++ -o second_example *.cpp  && cd -
+				 
+				 
+				 
+cd Chapter2.2    && ./second_example > image2.ppm && cd -
+cd Chapter2.3    && ./second_example > image2.ppm && cd -
+cd Chapter2.4.4  && ./second_example > image2.ppm && cd -
+cd Chapter2.5.1  && ./second_example > image2.ppm && cd -
+				 
+				 
+
+// 这一章引入球体。
+// 首先球体的定义非常简单。
+//     x * x + y * y + z * z = R * R
+// 因此上，如果一个点(x, y, z)位于球面上，则：
+//     x * x + y * y + z * z = R * R
+// 如果一个点(x, y, z)位于球里面，则：
+//     x * x + y * y + z * z < R * R
+// 如果一个点(x, y, z)位于球外面，则：
+//     x * x + y * y + z * z > R * R
+// 如果球心位于(Cx, Cy, Cz)则：
+//     (x - Cx) * (x - Cx) + (y - Cy) * (y - Cy) + (z - Cz) * (z - Cz) = R * R
+// 下面写成向量格式。令C = (Cx, Cy, Cz)。空间中一个点P = (x, y, z)。
+// 则可以写成：
+//     (P - C) ● (P - C) = R * R
+// 代入光线公式：
+//      P(t)=A + tb 
+// 有：
+//     (A + tb - C) ● (A + tb - C) = R * R
+// 可以得到下面的一元二次方程。	
+// 		t * t * b * b + 2 * t * b ● (A - C) + (A - C) ● (A - C) - R * R = 0
+// 这个一元二次方程是否有解。取决于判别式 b * b - 4 * a * c是否大于零。
+// 如果判别式判别式大于零，就是有解。说明光线和这个球相交。
+// 否则就是不相交。
+
+
+// 有了前面的基础，这个函数就比较容易理解了。
+// 首先用判别式判断光线和物体是否相交。
+// 如果相交，填充hit_record结构体。
+// t为方程的解。p为A + tb的结果。
+// normal是p的法线方向。
+
+// 这个函数给出了向场景发射光线的过程。并使用了光路可逆原理。
+// 光线追踪器通过像素发射光线，并计算沿着这些光线的方向上看到的颜色。
+// 包括：
+//   1. 计算出一条从眼睛到像素的光线。
+//   2. 计算那些物体和这条光线相交。
+//   2. 计算相交点的颜色。
+// 为此，我们需要设定一个视口。我们规定：
+//   1. 视口高度为2。
+//   2. 投影点到投影平面的距离为1。称作focal length。
+// 进一步规定：
+//   1. 视点也就是眼睛位于原点。Y指向上，X指向右，则Z轴指向屏幕里面。
+//      也就是右手坐标系。
+
+// 从左上角遍历整个屏幕
+// 两个沿着屏幕边的偏移量向量，用于移动光线的末端穿过屏幕。
+// 指向屏幕左下角的坐标。
+
+// 根据纹理坐标计算出来光线方向，并根据该方向创建一根光线。
+// 计算这根光线的颜色。
+// 输出光线颜色。
+
+这个函数叫ray_color，顾名思义，就是用光线给物体上色。说的更清楚一点就是，用我从眼睛中发射的光线，扫描眼前图片大小的矩形屏幕。给这个矩形屏幕中的每一个物体表面的点上色。这也就相当于生成图片大小的矩形屏幕的每一个像素。
+根据函数逻辑。反射多次，就会变黑，反射次数越多，衰减参数乘的次数就越多。颜色就越暗。这也恰好符合我们的直觉。
+
+多次采样得到的
+
+// 整个main函数的注释来自于<4.2 Sending Rays Into the Scene>。
+// 整个主函数包含四个部分。逻辑如下：
+//   1. Image：这个部分定义了一些基本参数。包括生成图片的大小。
+//             每一个像素采样了几根光线。还有就是光线反射次数。
+//   2. World：这个部分是一个对象列表。也就是一个std::vector<hittable>。
+// 			   每一个对象是一个hittable对象。包含一个hit函数用于判断是否和光线相交。
+//   3. Camera：顾名思义，这个部分定义了视口。
+//   4. Render：有了前面的设定，我们就可以进行绘制了。
+//              步骤就是
+//              1. 计算每一个像素。
+//              2. 对于每一个像素根据光线反射次数，把每一个像素的光照累加起来。
+//                 计算函数就是ray_color函数。
+//              4. 之后输出第二步的计算结果。因为前面的计算结果是累加值。
+//                 因此上，结果需要除以光线反射次数。
+//   经过上面的分析可以知道，这个的计算量是非常大的。
+//   首先就是一帧图像包含很多的像素点。而每一个像素点都需要判断是否和物体相交。
+// 
+
+// 整个主函数包含四个部分。逻辑如下：
+//   1. Image：这个部分定义了一些基本参数。包括生成图片的大小。
+//             每一个像素采样了几根光线。还有就是光线反射次数。
+//   2. World：这个部分是一个对象列表。也就是一个std::vector<hittable>。
+// 			   每一个对象是一个hittable对象。包含一个hit函数用于判断是否和光线相交。
+//   3. Camera：顾名思义，这个部分定义了视口。
+//   4. Render：有了前面的设定，我们就可以进行绘制了。
+//              步骤就是
+//              1. 计算每一个像素。
+//              2. 通过像素内多次采样的的方式抗锯齿。
+//              2. 对于每一次采样，需要根据光线反射次数，把每一个像素的光照采样累加起来。
+//                 计算函数就是ray_color函数。
+//              4. 之后输出第二步的计算结果。因为前面的计算结果是采样累加值。
+//                 因此上，结果需要除以光线反射次数。
+//   经过上面的分析可以知道，这个的计算量是非常大的。
+//   首先就是一帧图像包含很多的像素点。而每一个像素点都需要做多次采样。
+//   而每一次采样都需要使用当前采样光线判断是否和物体相交。
+//   并且每一次相交计算都需要模拟计算迭代光线跳跃过程。
+//   
+//   
+//   
+//   
+
+设备维护网页开发。完成后端开发和前端网页开发。包括IP修改，MAC地址修改，时间设置，应用程序升级，固件升级等功能。
+基于Sedona平台的BacNet协议栈开发和Modbus协议栈开发。该系统使用类Java语言编写业务逻辑。使用C语言开发的Naive接口调用Linux功能。
+BacNet协议栈包括设备发现，子设备发现，设备信息获取，设备属性读写，设备属性多读多写。 
+Modbus协议栈包括离散量，线圈布尔量，寄存器的读写。
+基于Sedona平台的低代码平台开发，包括Modbus总线，BacNet总线，数学计算，数学比较，比特位比较，位操作，延时等功能。
+移植基于Sedona平台的Java虚拟机到Windows平台。
+

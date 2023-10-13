@@ -70,13 +70,16 @@ void World::render_scene() const
 {
     RGBColor pixel_color;
     Ray ray;
-
     // 在该例子中，视平面被设置在zw=100处。当然，这只是一个临时性的设置方案。
     double zw = 200.0;
     // double x, y;
+    // 因为需要映射到三维的半球体，因此上，这里修改为Point3D
     Point3D sp;                                 // sample point in [0, 1] x [0, 1]
     Point2D pp;                                 // sample point on a pixel
-
+    
+    // 作为默认渲染函数，光线方向指向Z轴的反方向，垂直于XY平面。
+    // 因为视平面被设置在zw=100处，且平行于XY平面。
+    // 光线方向指向Z轴的反方向相当于从视平面发出一道一道光线。
     ray.d = Vector3D(0, 0, -1);
     // 函数的主要工作都体现在for循环体内，该循环体将负责计算各像素的颜色值。
     // 在该函数中，场景将在窗口的左下角处被逐行渲染。
@@ -84,22 +87,33 @@ void World::render_scene() const
     for (int r = 0; r < vp.vres; r++) {
         for (int c = 0; c < vp.hres; c++) {
             pixel_color = background_color;
-            
+            // 多次采样。
             for(int j=0; j < vp.num_samples; j++) {
+                // 返回存储于采样器对象中的下一个采样点，映射到半球体。
+                // 其中sp.z不使用。
                 sp = vp.sampler_ptr->sample_hemisphere();
                 pp.x = vp.s*(c-0.5*vp.hres + sp.x);
                 pp.y = vp.s*(r-0.5*vp.vres + sp.y);
+                
+                // 使用计算出来的XY坐标和默认的视平面的Z坐标位置作为光线起点。
                 ray.o = Point3D(pp.x, pp.y, zw);
+                // 待光线的源点和投射方向计算完毕后， 函数trace_ray() 将被调用。
+                // 该函数是光线跟踪器中的核心函数，并负责对当前场景实施光线跟踪，
+                // 同时，还将返回各像素的颜色值。
+                // 但此处采取了一种间接的调用方案， 
+                // 即对该函数通过指向Tracer对象的tracer_ptr指针加以调用。
                 pixel_color += tracer_ptr->trace_ray(ray);
             }
-
+            // 计算采样的平均值。
             pixel_color /= vp.num_samples; // average the colors
-
+            // 循环体中最后一行代码将调用display_pixel() 函数以在窗口中显示像素。
+            // 这将会把RGBColor转换为当前计算机支持的显示格式。
             display_pixel(r, c, pixel_color);
         }
     }
 }
 
+// 投影视图。
 void World::render_perspective(void) const {
     RGBColor pixel_color;
     Ray ray;
@@ -113,6 +127,7 @@ void World::render_perspective(void) const {
     
     for(int r=0; r < vp.vres; r++) { // up
         for(int c=0; c<=vp.hres; c++) { //across
+            // 计算公式参见P114
             ray.d = Vector3D(s*(c-0.5*(vp.hres-1.0) ),
                         s*(r-0.5*(vp.vres-1.0)), -d);
             ray.d.normalize();
@@ -190,6 +205,28 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
 
 }
 
+// 这个函数将在光线与场景中的全部对象之间进行相交测试，并返回一个Shade Rec对象。
+// 函数显示了将最近对象间颜色值存储于Shade Rec对象中的计算过程。
+ShadeRec World::hit_bare_bones_objects(const Ray & ray) const
+{
+   ShadeRec sr (*this);
+   double t;
+   double tmin = kHugeValue;
+   int num_objects = objects.size();
+   for(int i = 0; i < num_objects; i++)
+   {   
+      // 代码并未定义特定的几何对象类型，因而适用于几何对象继承层次结构中的任意对象类型，
+      // 并实现了基于hit() 函数的公共接口。
+      if(objects[i]->hit(ray,t,sr) && t < tmin)
+      {   
+         sr.hit_an_object = true;
+         tmin = t;
+         // 考虑到对象数量的增加，应适当地采用不同的颜色值描述相关对象，
+         sr.color = objects[i]->get_color();
+      }   
+   }   
+   return sr; 
+}
 
 // 函数hit_objects()将在光线与场景中的全部对象之间进行相交测试，并返回一个ShadeRec对象。
 ShadeRec
@@ -231,6 +268,7 @@ void World::build()
 {
     int num_samples = 100;
 
+    // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);
     vp.set_vres(400);
     vp.set_pixel_size(0.05);
@@ -251,7 +289,7 @@ void World::build()
     Pinhole* left_camera_ptr = new Pinhole;
     left_camera_ptr->set_view_distance(vpd);
 
-    Pinhole*right_camera_ptr = new Pinhole; 
+    Pinhole* right_camera_ptr = new Pinhole; 
     right_camera_ptr->set_view_distance(vpd);
 
     StereoCamera* stereo_ptr = new StereoCamera; 
@@ -261,30 +299,36 @@ void World::build()
     stereo_ptr->set_viewing_type(parallel);
     // stereo_ptr->use_transverse_viewing();
     stereo_ptr->set_pixel_gap(5);
-    stereo_ptr->set_eye(5, 0, 100);
-    stereo_ptr->set_lookat(0) ;
+    // stereo_ptr->set_eye(5, 0, 100);
+    stereo_ptr->set_eye(300, 400, 500);
+    // stereo_ptr->set_lookat(0) ;
+    stereo_ptr->set_lookat(-500) ;
     stereo_ptr->compute_uvw();
     // stereo_ptr->set_stereo_angle(0.75);
     stereo_ptr->set_beta(0.75);
+	// 调用setup_cameras() 函数并建立左、右相机
     stereo_ptr->setup_cameras();
     set_camera(stereo_ptr);
     //in pixels //in degrees
 
     Sphere *sphere_ptr = new Sphere;
     sphere_ptr->set_center(-10, -40, 0);
-    sphere_ptr->set_radius(100.0);
+    // sphere_ptr->set_radius(100.0);
+    sphere_ptr->set_radius(50.0);
     sphere_ptr->set_color(1.0, 0.0, 0.0);
     add_object(sphere_ptr);
 
     sphere_ptr = new Sphere;
     sphere_ptr->set_center(0, 60, 0);
-    sphere_ptr->set_radius(80.0);
+	// sphere_ptr->set_radius(80.0);
+    sphere_ptr->set_radius(20.0);
     sphere_ptr->set_color(1.0, 1.0, 0.0);
     add_object(sphere_ptr);
 
     Plane *plane_ptr = new Plane;
     plane_ptr->a = Vector3D(0.0);
     plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+    // plane_ptr->set_color(0.0, 0.0, 1.0);
     plane_ptr->set_color(0.0, 0.30, 0.0);
     add_object(plane_ptr);
 

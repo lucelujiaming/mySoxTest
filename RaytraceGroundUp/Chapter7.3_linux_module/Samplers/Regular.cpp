@@ -12,7 +12,7 @@ Regular::Regular(void)
 
 Regular::Regular(const int num)
     :     Sampler(num) {
-	// 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
+    // 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
     generate_samples();
 }
 
@@ -21,7 +21,7 @@ Regular::Regular(const int num)
 
 Regular::Regular(const Regular& u)
     : Sampler(u) {
-	// 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
+    // 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
     generate_samples();
 }
 
@@ -56,13 +56,13 @@ Regular::generate_samples(void) {
     int n = (int) sqrt((float)num_samples);
 
     for (int j = 0; j < num_sets; j++)
-	{
+    {
         for (int p = 0; p < n; p++)
-		{
+        {
             for (int q = 0; q < n; q++) {
-			    // 计算逻辑参见4.2.2 均匀采样中程序清单4。1
+                // 计算逻辑参见4.2.2 均匀采样中程序清单4。1
                 samples.push_back(Point2D((q + 0.5) / n, (p + 0.5) / n));
             }
-		}
-	}
+        }
+    }
 }

@@ -12,7 +12,7 @@ NRooks::NRooks(void)
 
 NRooks::NRooks(const int num_samples)
     :     Sampler(num_samples) {
-	// 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
+    // 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
     generate_samples();
 }
 
@@ -21,7 +21,7 @@ NRooks::NRooks(const int num_samples)
 
 NRooks::NRooks(const int num_samples, const int m)
     :     Sampler(num_samples, m) {
-	// 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
+    // 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
     generate_samples();
 }
 
@@ -30,7 +30,7 @@ NRooks::NRooks(const int num_samples, const int m)
 
 NRooks::NRooks(const NRooks& nr)
     : Sampler(nr) {
-	// 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
+    // 全部继承类只需实现generate_samples()函数，并在构造函数中加以调用。
     generate_samples();
 }
 
@@ -75,6 +75,6 @@ NRooks::generate_samples(void) {
     // 在保持n-rooks状态下随机混合x， y坐标，从而生成2D分布状态
     // shuffle the x coordinates of the points within each set
     shuffle_x_coordinates();
-	// shuffle the y coordinates of the points within set
+    // shuffle the y coordinates of the points within set
     shuffle_y_coordinates();
 }

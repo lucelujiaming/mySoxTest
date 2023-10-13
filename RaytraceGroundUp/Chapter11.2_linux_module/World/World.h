@@ -23,18 +23,18 @@
 
 class World {
     public:
-
-        ViewPlane                    vp;
+        ViewPlane                   vp;
         RGBColor                    background_color;
-        Sphere sphere; // just for chapt 3
+        Sphere                      sphere; // just for chapter 3
+        // 使用一个特定的数据结构存储几何对象
         vector<GeometricObject*>    objects;
-        Tracer*                        tracer_ptr;
+        Tracer*                     tracer_ptr;
         Light*                      ambient_ptr;
         Camera *                    camera_ptr;
 
         World(void);
-        ~World();
-
+            ~World();
+        // 向当前场景添加对象的函数
         void
         add_object(GeometricObject* object_ptr);
 
@@ -50,7 +50,7 @@ class World {
 
         void render_perspective(void) const;
 
-//        void open_window(const int vRes, const int hRes) const;
+        // void open_window(const int vRes, const int hRes) const;
 
         RGBColor
         max_to_one(const RGBColor& c) const;
@@ -60,8 +60,10 @@ class World {
         void
         display_pixel(const int row, const int column, const RGBColor& pixel_color) const;
 
+        ShadeRec hit_bare_bones_objects(const Ray& ray) const;
+        // 在光线和全部对象之间进行相交测试的函数。
         ShadeRec
-                hit_objects(const Ray& ray);
+        hit_objects(const Ray& ray);
 };
 
 // 若光线跟踪器只能渲染单一球体，则该光线跟踪器不具备太多的实用价值。

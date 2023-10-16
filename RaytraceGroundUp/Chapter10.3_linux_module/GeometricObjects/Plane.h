@@ -17,14 +17,18 @@ class Plane: public GeometricObject {
         operator= (const Plane& rhs);    
         virtual                                                        // destructor
         ~Plane(void);
+        // 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+        // 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
         virtual bool
         hit(const Ray& ray, double& tmin, ShadeRec& sr) const;        // 定义了光线-对象间的碰撞检测函数。
+        // 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+        // 只判断是否相交。不计算碰撞点。
         virtual bool
         shadow_hit(const Ray& ray, float& tmin) const;
 
     public:
 
-        Vector3D     a;                   // point through which plane passes
+        Vector3D         a;                    // point through which plane passes
         Vector3D         n;                    // normal to the plane
         static const double kEpsilon;   // for shadows and secondary rays
 };

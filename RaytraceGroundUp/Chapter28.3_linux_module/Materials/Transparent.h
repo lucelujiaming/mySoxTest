@@ -8,52 +8,52 @@
 
 class Transparent : public Phong
 {
-	public:
+    public:
 
-		Transparent(void);
+        Transparent(void);
 
-		Transparent(const Transparent& tm);
+        Transparent(const Transparent& tm);
 
-		Transparent&
-		operator= (const Transparent& rhs);
+        Transparent&
+        operator= (const Transparent& rhs);
 
-		virtual Transparent*
-		clone(void) const;
+        virtual Transparent*
+        clone(void) const;
 
-		~Transparent(void);
+        ~Transparent(void);
 
-		void
-		set_kr(const float k);
+        void
+        set_kr(const float k);
 
-		void
-		set_cr(const RGBColor& c);
+        void
+        set_cr(const RGBColor& c);
 
-		void
-		set_cr(const float r, const float g, const float b);
+        void
+        set_cr(const float r, const float g, const float b);
 
-		void
-		set_cr(const float c);
+        void
+        set_cr(const float c);
 
-		void
-		set_kt(const float k);
+        void
+        set_kt(const float k);
 
         void
         set_ior(const float i);
 
-		virtual RGBColor
-		shade(ShadeRec& s);
+        virtual RGBColor
+        shade(ShadeRec& s);
 
-	private:
+    private:
 
-		PerfectSpecular* reflective_brdf;
-		PerfectTransmitter* specular_btdf;
+        PerfectSpecular* reflective_brdf;
+        PerfectTransmitter* specular_btdf;
 };
 
 // ---------------------------------------------------------------- set_kr
 
 inline void
 Transparent::set_kr(const float k) {
-	reflective_brdf->set_kr(k);
+    reflective_brdf->set_kr(k);
 }
 
 
@@ -61,7 +61,7 @@ Transparent::set_kr(const float k) {
 
 inline void
 Transparent::set_cr(const RGBColor& c) {
-	reflective_brdf->set_cr(c);
+    reflective_brdf->set_cr(c);
 
 }
 
@@ -70,7 +70,7 @@ Transparent::set_cr(const RGBColor& c) {
 
 inline void
 Transparent::set_cr(const float r, const float g, const float b) {
-	reflective_brdf->set_cr(r, g, b);
+    reflective_brdf->set_cr(r, g, b);
 }
 
 
@@ -78,21 +78,21 @@ Transparent::set_cr(const float r, const float g, const float b) {
 
 inline void
 Transparent::set_cr(const float c) {
-	reflective_brdf->set_cr(c);
+    reflective_brdf->set_cr(c);
 }
 
 // ---------------------------------------------------------------- set_kt
 
 inline void
 Transparent::set_kt(const float k) {
-	specular_btdf->set_kt(k);
+    specular_btdf->set_kt(k);
 }
 
 // ---------------------------------------------------------------- set_ior
 
 inline void
 Transparent::set_ior(const float i) {
-	specular_btdf->set_ior(i);
+    specular_btdf->set_ior(i);
 }
 
 #endif

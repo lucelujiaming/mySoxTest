@@ -4,45 +4,45 @@
 #include "BTDF.h"
 
 class FresnelTransmitter: public BTDF {
-	public:
+    public:
 
-		FresnelTransmitter(void);
+        FresnelTransmitter(void);
 
-		FresnelTransmitter(const FresnelTransmitter& ft);
+        FresnelTransmitter(const FresnelTransmitter& ft);
 
-		virtual FresnelTransmitter*
-		clone(void);
+        virtual FresnelTransmitter*
+        clone(void);
 
-		~FresnelTransmitter(void);
+        ~FresnelTransmitter(void);
 
-		FresnelTransmitter&
-		operator= (const FresnelTransmitter& rhs);
+        FresnelTransmitter&
+        operator= (const FresnelTransmitter& rhs);
 
-		void
-		set_eta_in(const float ei);
+        void
+        set_eta_in(const float ei);
 
-		void
-		set_eta_out(const float eo);
+        void
+        set_eta_out(const float eo);
 
-		bool
-		tir(const ShadeRec& sr) const;
+        bool
+        tir(const ShadeRec& sr) const;
 
-		virtual RGBColor
-		f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
+        virtual RGBColor
+        f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
 
-		virtual RGBColor
-		sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wt) const;
+        virtual RGBColor
+        sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wt) const;
 
-		virtual RGBColor
-		rho(const ShadeRec& sr, const Vector3D& wo) const;
+        virtual RGBColor
+        rho(const ShadeRec& sr, const Vector3D& wo) const;
 
         virtual float
         fresnel(const ShadeRec& sr) const;
 
-	private:
+    private:
 
-		float	eta_in;
-		float	eta_out;
+        float    eta_in;
+        float    eta_out;
 };
 
 
@@ -51,7 +51,7 @@ class FresnelTransmitter: public BTDF {
 
 inline void
 FresnelTransmitter::set_eta_in(const float ei) {
-	eta_in = ei;
+    eta_in = ei;
 }
 
 
@@ -59,6 +59,6 @@ FresnelTransmitter::set_eta_in(const float ei) {
 
 inline void
 FresnelTransmitter::set_eta_out(const float eo) {
-	eta_out = eo;
+    eta_out = eo;
 }
 #endif // FRESNELTRANSMITTER_H

@@ -25,10 +25,10 @@ class Light {
 
         virtual
         ~Light(void);
-
+        // 返回碰撞点处的光线方向
         virtual Vector3D
         get_direction(ShadeRec& sr) = 0;
-
+        // 返回入射辐射度
         virtual RGBColor
         L(ShadeRec& sr);
 

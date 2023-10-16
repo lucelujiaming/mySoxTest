@@ -26,8 +26,10 @@ class Tracer {
         // 继承于Tracer基类的相关子类应重写trace_ray() 函数
         virtual RGBColor
         trace_ray(const Ray& ray) const;
+        // 加入depth，用于模拟反射和透明度。
         virtual RGBColor
         trace_ray(const Ray ray, const int depth) const;
+        // 加入tmin，用于Dielectric材质。
         virtual RGBColor
         trace_ray(const Ray ray, float& tmin, const int depth) const;
 

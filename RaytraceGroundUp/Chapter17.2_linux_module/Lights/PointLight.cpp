@@ -54,15 +54,16 @@ PointLight::~PointLight (void) {}
 
 
 // ---------------------------------------------------------------------- get_direction
-
+// 返回一个背向碰撞点的单位向量。
 Vector3D
 PointLight::get_direction(ShadeRec& sr) {
+    // 该类使用了存储于ShadeRec对象中的碰撞点坐标。
     return ((location - sr.hit_point).hat());
 }
 
 
 // ---------------------------------------------------------------------- L
-
+// 和Ambient类一样，入射辐射度也是光源缩放系数，乘以光源颜色值。参见公式14.1。
 RGBColor
 PointLight::L(ShadeRec& sr) {
     return (ls * color);
@@ -70,7 +71,7 @@ PointLight::L(ShadeRec& sr) {
 
 
 // ---------------------------------------------------------------------- in_shadow
-
+// 判断自己发出的光是否会撞到物体。只要撞到一个物体，就返回真。
 bool
 PointLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 

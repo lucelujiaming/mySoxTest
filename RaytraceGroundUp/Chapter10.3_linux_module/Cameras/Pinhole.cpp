@@ -100,9 +100,11 @@ Pinhole::render_stereo(const World& w, float x, int pixel_offset) {
                 // 同时，还将返回各像素的颜色值。
                 // 但此处采取了一种间接的调用方案， 
                 // 即对该函数通过指向Tracer对象的tracer_ptr指针加以调用。
+                // 对于我们现在拥有两个Tracer来说，
+                // trace_ray(ray, depth)和trace_ray(ray)的实现相同。因此上，调用哪一个都可以。
                 L += w.tracer_ptr->trace_ray(ray, depth);
             }
-
+            // 计算采样的平均值。
             L /= vp.num_samples;
             // 处理曝光强度系数，默认为1。
             L *= exposure_time;    
@@ -150,7 +152,7 @@ Pinhole::render_scene(const World& w) {
                 // L += w.tracer_ptr->trace_ray(ray, depth);
                 L += w.tracer_ptr->trace_ray(ray);
             }
-
+            // 计算采样的平均值。
             L /= vp.num_samples;
             // 处理曝光强度系数，默认为1。
             L *= exposure_time;

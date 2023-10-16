@@ -27,19 +27,20 @@ class BRDF {
         clone(void) const = 0;
 
         ~BRDF(void);
-        // 针对于反射材质以及漫反射-漫反射光线模拟计算。 
+        // 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
         // 如果不包含delta()函数，将返回BRDF自身。
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
-        // 用于计算反射光线的方向。
+        // 用于计算反射光线的方向，并且返回计算出来的颜色值。
         // 参数wi；用于返回最终的方向，因而不可为常量。
         // 顾名思义，相关方向将通过对BRDF采样计算得到。
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const;
-
+        // 用于计算反射光线的方向，并且返回计算出来的颜色值。
+        // 使用Monte Calo积分实现。
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
-
+        // 返回双半球反射系数。 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
 
@@ -47,8 +48,10 @@ class BRDF {
 
         BRDF&
         operator= (const BRDF& rhs);
-        // 这也是BRDF基类包含一个采样器对象指针的原因。
-        Sampler* sampler_ptr;
+        // 因为反射光线方向将过对BRDF采样计算得到，
+        // 这就是BRDF基类包含一个采样器对象指针的原因。
+        // 但是BRDF自己没有使用这个成员变量。而是把它留给子类使用。
+        Sampler* sampler_ptr;    // for use in sample_f
 };
 
 #endif

@@ -28,9 +28,12 @@ class World {
         Camera*                     camera_ptr;
         Tracer*                     tracer_ptr;
         RGBColor                    background_color;
+        // 环境光照直接存储在World类中。
+        // 注意：环境光照指针采用了Light指针，而并非Ambient指针，以适应各种环境光照。
         Light*                      ambient_ptr;
         // 使用一个特定的数据结构存储几何对象
         vector<GeometricObject*>    objects;
+        // 使用一个特定的数据结构存储World中的光照。
         vector<Light*>              lights;
 
         World(void);
@@ -92,6 +95,8 @@ World::set_camera(Camera* c_ptr) {
 
 inline void
 World::set_ambient_light(Light* light_ptr) {
+        // 好像存在Memory Leak
+        // 应该是： if(ambient_ptr) delete ambient_ptr
         ambient_ptr = light_ptr;
 }
 

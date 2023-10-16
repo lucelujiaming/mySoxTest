@@ -42,8 +42,8 @@ class Pinhole: public Camera {
 
     private:
 
-        float    d;        // view plane distance
-        float    zoom;    // zoom factor
+        float        d;                // 视平面距离：view plane distance
+        float        zoom;             // 缩放系数：zoom factor
 
 };
 

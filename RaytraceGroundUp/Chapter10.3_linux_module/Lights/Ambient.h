@@ -2,7 +2,7 @@
 #define __AMBIENT__
 
 #include "Light.h"
-
+// Ambient可视为最简单的一类光照类。该类不涉及方向问题。
 class Ambient: public Light {
 
     public:
@@ -54,8 +54,9 @@ class Ambient: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-
+        // 光源缩放系数，也就是亮度值。
         float        ls;
+        // 光源颜色值。
         RGBColor    color;
 };
 
@@ -96,7 +97,6 @@ Ambient::set_color(const float r, const float g, const float b) {
 
 inline bool
 Ambient::casts_shadows() const {
-
     return Light::casts_shadows();
 }
 

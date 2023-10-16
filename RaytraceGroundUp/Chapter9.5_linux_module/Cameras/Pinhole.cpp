@@ -88,6 +88,7 @@ Pinhole::render_stereo(const World& w, float x, int pixel_offset) {
     for (int r = 0; r < vp.vres; r++)              // up
         for (int c = 0; c < vp.hres; c++) {        // across
             L = black;
+            // 多次采样。
             for (int j = 0; j < vp.num_samples; j++) {
                 // 返回存储于采样器对象中的下一个采样点，映射到单位矩形。
                 sp = vp.sampler_ptr->sample_unit_square();

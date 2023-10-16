@@ -66,6 +66,8 @@ Sphere::~Sphere(void) {}
 
 //---------------------------------------------------------------- hit
 // explained on page 57
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
 bool
 Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
@@ -106,7 +108,8 @@ Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 
 //---------------------------------------------------------------- shadow_hit
-
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 只判断是否相交。不计算碰撞点
 bool
 Sphere::shadow_hit(const Ray& ray, float& tmin) const {
 

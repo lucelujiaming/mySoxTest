@@ -11,6 +11,7 @@
 GeometricObject::GeometricObject(void)
     :     color(black),
         material_ptr(NULL),
+        // 初始状态下，GeometricObject默认将shadows设置为true。
         shadows(true)
 {}
 

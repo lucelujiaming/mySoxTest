@@ -127,7 +127,7 @@ void World::render_perspective(void) const {
     
     for(int r=0; r < vp.vres; r++) { // up
         for(int c=0; c<=vp.hres; c++) { //across
-            // 计算公式参见P114
+            // P114：参见公式8.1
             ray.d = Vector3D(s*(c-0.5*(vp.hres-1.0) ),
                         s*(r-0.5*(vp.vres-1.0)), -d);
             ray.d.normalize();

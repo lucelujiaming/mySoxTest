@@ -1,5 +1,6 @@
 // This file contains the definition of the FishEye class
 
+#include "stdafx.h"
 #include "Constants.h"
 #include "Point3D.h"
 #include "Vector3D.h"

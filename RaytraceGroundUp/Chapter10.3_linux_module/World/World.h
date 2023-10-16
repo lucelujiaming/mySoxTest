@@ -25,11 +25,13 @@ class World {
     public:
         ViewPlane                   vp;
         RGBColor                    background_color;
+        // 环境光照直接存储在World类中。
+        // 注意：环境光照指针采用了Light指针，而并非Ambient指针，以适应各种环境光照。
+        Light*                      ambient_ptr;
         Sphere                      sphere; // just for chapter 3
         // 使用一个特定的数据结构存储几何对象
         vector<GeometricObject*>    objects;
         Tracer*                     tracer_ptr;
-        Light*                      ambient_ptr;
         Camera *                    camera_ptr;
 
         World(void);
@@ -81,6 +83,8 @@ World::set_camera(Camera* c_ptr) {
 
 inline void
 World::set_ambient_light(Light* light_ptr) {
+        // 好像存在Memory Leak
+        // 应该是： if(ambient_ptr) delete ambient_ptr
         ambient_ptr = light_ptr;
 }
 

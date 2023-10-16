@@ -9,55 +9,55 @@
 
 class Dielectric : public Phong
 {
-	public:
+    public:
 
-		Dielectric(void);
+        Dielectric(void);
 
-		Dielectric(const Dielectric& dm);
+        Dielectric(const Dielectric& dm);
 
-		Dielectric&
-		operator= (const Dielectric& rhs);
+        Dielectric&
+        operator= (const Dielectric& rhs);
 
-		virtual Dielectric*
-		clone(void) const;
+        virtual Dielectric*
+        clone(void) const;
 
-		~Dielectric(void);
+        ~Dielectric(void);
 
 
-		void
-		set_eta_in(const float ei);
+        void
+        set_eta_in(const float ei);
 
-		void
-		set_eta_out(const float eo);
+        void
+        set_eta_out(const float eo);
 
-		void
-		set_cf_in(const RGBColor& ci);
+        void
+        set_cf_in(const RGBColor& ci);
 
-		void
-		set_cf_in(const float ri, const float gi, const float bi);
+        void
+        set_cf_in(const float ri, const float gi, const float bi);
 
-		void
-		set_cf_in(const float ci);
+        void
+        set_cf_in(const float ci);
 
-		void
-		set_cf_out(const RGBColor& co);
+        void
+        set_cf_out(const RGBColor& co);
 
-		void
-		set_cf_out(const float ro, const float go, const float bo);
+        void
+        set_cf_out(const float ro, const float go, const float bo);
 
-		void
-		set_cf_out(const float co);
+        void
+        set_cf_out(const float co);
 
-		virtual RGBColor
-		shade(ShadeRec& s);
+        virtual RGBColor
+        shade(ShadeRec& s);
 
-	private:
+    private:
 
-		RGBColor 			cf_in;			// interior filter color
-		RGBColor 			cf_out;			// exterior filter color
+        RGBColor             cf_in;            // interior filter color
+        RGBColor             cf_out;            // exterior filter color
 
-		FresnelReflector* fresnel_brdf;
-		FresnelTransmitter* fresnel_btdf;
+        FresnelReflector* fresnel_brdf;
+        FresnelTransmitter* fresnel_btdf;
 };
 
 
@@ -66,8 +66,8 @@ class Dielectric : public Phong
 
 inline void
 Dielectric::set_eta_in(const float ei) {
-	fresnel_brdf->set_eta_in(ei);
-	fresnel_btdf->set_eta_in(ei);
+    fresnel_brdf->set_eta_in(ei);
+    fresnel_btdf->set_eta_in(ei);
 }
 
 
@@ -75,8 +75,8 @@ Dielectric::set_eta_in(const float ei) {
 
 inline void
 Dielectric::set_eta_out(const float eo) {
-	fresnel_brdf->set_eta_out(eo);
-	fresnel_btdf->set_eta_out(eo);
+    fresnel_brdf->set_eta_out(eo);
+    fresnel_btdf->set_eta_out(eo);
 }
 
 
@@ -84,7 +84,7 @@ Dielectric::set_eta_out(const float eo) {
 
 inline void
 Dielectric::set_cf_in(const RGBColor& ci) {
-	cf_in = ci;
+    cf_in = ci;
 }
 
 
@@ -92,7 +92,7 @@ Dielectric::set_cf_in(const RGBColor& ci) {
 
 inline void
 Dielectric::set_cf_in(const float ri, const float gi, const float bi) {
-	cf_in.r = ri; cf_in.g = gi; cf_in.b = bi;
+    cf_in.r = ri; cf_in.g = gi; cf_in.b = bi;
 }
 
 
@@ -100,7 +100,7 @@ Dielectric::set_cf_in(const float ri, const float gi, const float bi) {
 
 inline void
 Dielectric::set_cf_in(const float ci) {
-	cf_in.r = ci; cf_in.g = ci; cf_in.b = ci;
+    cf_in.r = ci; cf_in.g = ci; cf_in.b = ci;
 }
 
 
@@ -108,7 +108,7 @@ Dielectric::set_cf_in(const float ci) {
 
 inline void
 Dielectric::set_cf_out(const RGBColor& co) {
-	cf_out = co;
+    cf_out = co;
 }
 
 
@@ -116,7 +116,7 @@ Dielectric::set_cf_out(const RGBColor& co) {
 
 inline void
 Dielectric::set_cf_out(const float ro, const float go, const float bo) {
-	cf_out.r = ro; cf_out.g = go; cf_out.b = bo;
+    cf_out.r = ro; cf_out.g = go; cf_out.b = bo;
 }
 
 
@@ -124,7 +124,7 @@ Dielectric::set_cf_out(const float ro, const float go, const float bo) {
 
 inline void
 Dielectric::set_cf_out(const float co) {
-	cf_out.r = co; cf_out.g = co; cf_out.b = co;
+    cf_out.r = co; cf_out.g = co; cf_out.b = co;
 }
 
 #endif // DIELECTRIC_H

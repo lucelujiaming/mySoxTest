@@ -48,6 +48,7 @@ extern ofstream out;
 World::World(void)
     :      background_color(black),
         tracer_ptr(NULL),
+        // 环境光照被默认初始化为Ambient类型
         ambient_ptr(new Ambient),
         camera_ptr(NULL)
 {}
@@ -131,7 +132,7 @@ void World::render_perspective(void) const {
     
     for(int r=0; r < vp.vres; r++) { // up
         for(int c=0; c<=vp.hres; c++) { //across
-            // 计算公式参见P114
+            // P114：参见公式8.1
             ray.d = Vector3D(s*(c-0.5*(vp.hres-1.0) ),
                         s*(r-0.5*(vp.vres-1.0)), -d);
             ray.d.normalize();
@@ -143,6 +144,7 @@ void World::render_perspective(void) const {
 
 // ------------------------------------------------------------------ clamp
 // explained on page 274
+// 使用全局色阶映射因子解决溢色问题。
 RGBColor
 World::max_to_one(const RGBColor& c) const {
 
@@ -158,6 +160,7 @@ World::max_to_one(const RGBColor& c) const {
 // ------------------------------------------------------------------ clamp_to_color
 // Set color to red if any component is greater than one
 // explained on page 275
+// 把溢出值设定为指定颜色用来辨别色溢位置。
 RGBColor
 World::clamp_to_color(const RGBColor& raw_color) const {
 
@@ -188,11 +191,19 @@ void
 World::display_pixel(const int row, const int column, const RGBColor& raw_color) const {
 
     RGBColor mapped_color;
-
+    // 解决溢色问题。
+    // 如果需要辨别色溢位置，
     if (vp.show_out_of_gamut)
+    {
+        // 把溢出值设定为指定颜色用来辨别色溢位置。
         mapped_color = clamp_to_color(raw_color);
+    }
+    // 如果不需要辨别色溢位置，
     else
+    {
+        // 使用全局色阶映射因子解决溢色问题。
         mapped_color = max_to_one(raw_color);
+    }
     // 显示器的亮度值通常与工作电压呈非线性关系， 因而gamma值修正往往是必要的。
     if (vp.gamma != 1.0)
         mapped_color = mapped_color.powc(vp.inv_gamma);
@@ -240,26 +251,34 @@ World::hit_objects(const Ray& ray) {
     double      t;
     Normal normal;
     Point3D local_hit_point;
+    // 首先把tmin初始化为一个非常大的值。
     double      tmin            = kHugeValue;
     int         num_objects     = objects.size();
 
     for (int j = 0; j < num_objects; j++)
+    {
         // 代码并未定义特定的几何对象类型，因而适用于几何对象继承层次结构中的任意对象类型，
         // 并实现了基于hit()函数的公共接口。
         // 考虑到对象数量的增加，应适当地采用不同的颜色值描述相关对象，并将其存储于GeometricObject对象中。
         if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
             sr.hit_an_object    = true;
+            // 如果找到一个比当前的tmin更靠近视点的t，就把tmin更新为这个值。
             tmin                = t;
             //  We can use material now
             // Lujiaming uncomment at 230913
+            // 记下材质指针。
             sr.material_ptr     = objects[j]->get_material();
+            // 算出世界坐标系中的碰撞点坐标。
             sr.hit_point        = ray.o + t * ray.d;
+            // 我们使用局部变量保存法线和局部碰撞点坐标。
             normal              = sr.normal;
+            // 这个sr.local_hit_point是objects[j]计算出来的碰撞点坐标。
             local_hit_point = sr.local_hit_point;
             // 将最近对象间颜色值存储于ShadeRec对象中的计算过程。
             sr.color = objects[j]->get_color();
         }
-
+    }
+    // 在循环结束以后，把前面保存的法线和objects[j]计算出来的碰撞点存回ShadeRec对象中。
     if(sr.hit_an_object) {
         sr.t = tmin;
         sr.normal = normal;
@@ -272,6 +291,7 @@ World::hit_objects(const Ray& ray) {
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
+    // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);
     vp.set_vres(400);
     vp.set_pixel_size(1.0);
@@ -296,6 +316,7 @@ void World::build()
     light_ptr2->scale_radiance(3.0);
     add_light(light_ptr2);
 
+    // 使用Matte材质。对于环境光反射和漫反射都采用完全漫反射Lambertian反射
     Matte * matte_ptrl = new Matte;
     matte_ptrl->set_ka(0.25);
     matte_ptrl->set_kd(0.65);
@@ -304,7 +325,5 @@ void World::build()
     Sphere* sphere_ptrl = new Sphere(Point3D(10, -5, 0), 57);
     sphere_ptrl->set_material(matte_ptrl);
     add_object(sphere_ptrl);
-
-
 }
 

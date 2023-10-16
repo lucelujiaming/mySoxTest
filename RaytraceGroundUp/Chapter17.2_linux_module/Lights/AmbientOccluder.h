@@ -3,11 +3,10 @@
 
 #include "Light.h"
 #include "Sampler.h"
-
+// 环境遮挡光源。
 class AmbientOccluder: public Light {
 
     public:
-
         AmbientOccluder(void);
 
         AmbientOccluder(const AmbientOccluder& a);
@@ -23,34 +22,34 @@ class AmbientOccluder: public Light {
 
         void
         scale_radiance(const float b);
-
+        // 设置光源颜色值。参数为RGB灰度值。
         void
         set_color(const float c);
-
+        // 设置光源颜色值。参数为RGBColor类型。
         void
         set_color(const RGBColor& c);
-
+        // 设置光源颜色值。参数为RGB三个值。
         void
         set_color(const float r, const float g, const float b);
 
         void
         set_min_amount(int n);
-
+        // 返回碰撞点处的光线方向
         virtual Vector3D
         get_direction(ShadeRec& sr);
 
         void
         set_sampler(Sampler* s_ptr);
-
+        // 返回入射辐射度
         virtual RGBColor
         L(ShadeRec& s);
-
+        // 测试阴影是否被某一个对象遮挡。
         bool
         in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
         virtual bool
         casts_shadows(void) const;
-
+        // 开启或关闭阴影。
         virtual void
         set_shadows(bool _s);
 
@@ -61,11 +60,14 @@ class AmbientOccluder: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-
+        // 光源缩放系数，也就是亮度值。
         float        ls;
+        // 光源颜色值。
         RGBColor    color;
+        // 阴影减弱因子。
         float        min_amount;
         Vector3D    u, v, w;
+        // 采样器指针
         Sampler*    sampler_ptr;
 };
 
@@ -77,7 +79,6 @@ AmbientOccluder::scale_radiance(const float b) {
     ls = b;
 }
 
-
 // ------------------------------------------------------------------------------- set_color
 
 inline void
@@ -85,9 +86,8 @@ AmbientOccluder::set_min_amount(int n) {
     min_amount = n;
 }
 
-
 // ------------------------------------------------------------------------------- set_color
-
+// 设置光源颜色值。参数为RGB灰度值。
 inline void
 AmbientOccluder::set_color(const float c) {
     color.r = c; color.g = c; color.b = c;
@@ -95,7 +95,7 @@ AmbientOccluder::set_color(const float c) {
 
 
 // ------------------------------------------------------------------------------- set_color
-
+// 设置光源颜色值。参数为RGBColor类型。
 inline void
 AmbientOccluder::set_color(const RGBColor& c) {
     color = c;
@@ -103,7 +103,7 @@ AmbientOccluder::set_color(const RGBColor& c) {
 
 
 // ------------------------------------------------------------------------------- set_color
-
+// 设置光源颜色值。参数为RGB三个值。
 inline void
 AmbientOccluder::set_color(const float r, const float g, const float b) {
     color.r = r; color.g = g; color.b = b;
@@ -120,7 +120,7 @@ AmbientOccluder::casts_shadows() const {
 
 
 // ---------------------------------------------------------------------- set_shadows
-
+// 开启或关闭阴影。
 inline void
 AmbientOccluder::set_shadows(bool _s) {
 

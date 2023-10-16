@@ -212,6 +212,11 @@ Sampler::map_samples_to_unit_disk(void) {
 // explained on page 129
 // 将位于正方形内的采样点映射至对应的半球体上。
 // 计算公式参见P103。
+// 参数exp含义(P102)如下：
+//     因为半球体采样点的表面密度值d与极角θ之间的关系为：
+//         d = cos(θ)^exp
+//     这个exp用于控制极角θ变大时，d值的下降速度。
+//     exp的值越大，下降的速度也越快。
 void
 Sampler::map_samples_to_hemisphere(const float exp) {
     int size = samples.size();

@@ -12,7 +12,7 @@
 
 // ------------------------------------------------------------------ constructor
 
-ShadeRec::ShadeRec(World& wr)
+ShadeRec::ShadeRec(const World& wr)
     :     hit_an_object(false),
         material_ptr(NULL),
         hit_point(),

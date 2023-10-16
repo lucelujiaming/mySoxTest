@@ -5,58 +5,58 @@
 
 class Ambient: public Light {
 
-	public:
+    public:
 
-		Ambient(void);
+        Ambient(void);
 
-		Ambient(const Ambient& a);
+        Ambient(const Ambient& a);
 
-		virtual Light*
-		clone(void) const;
+        virtual Light*
+        clone(void) const;
 
-		Ambient&
-		operator= (const Ambient& rhs);
+        Ambient&
+        operator= (const Ambient& rhs);
 
-		virtual
-		~Ambient(void);
+        virtual
+        ~Ambient(void);
 
-		void
-		scale_radiance(const float b);
+        void
+        scale_radiance(const float b);
 
-		void
-		set_color(const float c);
+        void
+        set_color(const float c);
 
-		void
-		set_color(const RGBColor& c);
+        void
+        set_color(const RGBColor& c);
 
-		void
-		set_color(const float r, const float g, const float b);
+        void
+        set_color(const float r, const float g, const float b);
 
-		virtual Vector3D
-		get_direction(ShadeRec& sr);
+        virtual Vector3D
+        get_direction(ShadeRec& sr);
 
-		virtual RGBColor
-		L(ShadeRec& s);
+        virtual RGBColor
+        L(ShadeRec& s);
 
-		bool
-		in_shadow(const Ray& ray, const ShadeRec& sr) const;
+        bool
+        in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
-		virtual bool
-		casts_shadows(void) const;
+        virtual bool
+        casts_shadows(void) const;
 
-		virtual void
-		set_shadows(bool _s);
+        virtual void
+        set_shadows(bool _s);
 
-		virtual float
-		G(const ShadeRec& sr) const;
+        virtual float
+        G(const ShadeRec& sr) const;
 
-		virtual float
-		pdf(const ShadeRec& sr) const;
+        virtual float
+        pdf(const ShadeRec& sr) const;
 
-	private:
+    private:
 
-		float		ls;
-		RGBColor	color;
+        float        ls;
+        RGBColor    color;
 };
 
 
@@ -64,7 +64,7 @@ class Ambient: public Light {
 
 inline void
 Ambient::scale_radiance(const float b) {
-	ls = b;
+    ls = b;
 }
 
 
@@ -72,7 +72,7 @@ Ambient::scale_radiance(const float b) {
 
 inline void
 Ambient::set_color(const float c) {
-	color.r = c; color.g = c; color.b = c;
+    color.r = c; color.g = c; color.b = c;
 }
 
 
@@ -80,7 +80,7 @@ Ambient::set_color(const float c) {
 
 inline void
 Ambient::set_color(const RGBColor& c) {
-	color = c;
+    color = c;
 }
 
 
@@ -88,7 +88,7 @@ Ambient::set_color(const RGBColor& c) {
 
 inline void
 Ambient::set_color(const float r, const float g, const float b) {
-	color.r = r; color.g = g; color.b = b;
+    color.r = r; color.g = g; color.b = b;
 }
 
 
@@ -97,7 +97,7 @@ Ambient::set_color(const float r, const float g, const float b) {
 inline bool
 Ambient::casts_shadows() const {
 
-	return Light::casts_shadows();
+    return Light::casts_shadows();
 }
 
 
@@ -106,7 +106,7 @@ Ambient::casts_shadows() const {
 inline void
 Ambient::set_shadows(bool _s) {
 
-	return Light::set_shadows(_s);
+    return Light::set_shadows(_s);
 }
 
 #endif

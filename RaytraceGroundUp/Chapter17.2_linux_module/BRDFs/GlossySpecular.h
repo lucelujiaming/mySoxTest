@@ -69,10 +69,10 @@ class GlossySpecular: public BRDF {
         float        exp;               // specular exponent
         // 镜面高光颜色值
         RGBColor     cs;                // specular color
-        // 因为反射光线方向将过对BRDF采样计算得到，
-        // 这就是BRDF基类包含一个采样器对象指针的原因。
-        // 因此上，我认为这里的声明不再需要。
-        // Sampler*    sampler_ptr;    // for use in sample_f
+        // 高光采用半球采样。 
+		// 虽然在父类BRDF中已经定义了这个成员变量。但是如果在子类中不定义这个成员变量。
+		// 就无法编译通过。让人十分不解。
+        Sampler*    sampler_ptr;    // for use in sample_f
 };
 
 

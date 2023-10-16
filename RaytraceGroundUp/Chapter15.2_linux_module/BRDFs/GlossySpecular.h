@@ -69,10 +69,8 @@ class GlossySpecular: public BRDF {
         float        exp;               // specular exponent
         // 镜面高光颜色值
         RGBColor     cs;                // specular color
-        // 因为反射光线方向将过对BRDF采样计算得到，
-        // 这就是BRDF基类包含一个采样器对象指针的原因。
-        // 因此上，我认为这里的声明不再需要。
-        // Sampler*    sampler_ptr;    // for use in sample_f
+        // 高光采用半球采样。 
+        Sampler*    sampler_ptr;    // for use in sample_f
 };
 
 

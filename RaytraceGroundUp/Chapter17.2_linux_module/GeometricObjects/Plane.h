@@ -30,7 +30,9 @@ class Plane: public GeometricObject {
 
         Vector3D         a;                    // point through which plane passes
         Vector3D         n;                    // normal to the plane
-        static const double kEpsilon;   // for shadows and secondary rays
+        // 精度是阴影光线计算中的隐患之一。
+        // 一种较好的方法是针对各几何对象图元，使用特定的静态类常量，这使得用户可对每一个对象定制相应的值。
+        static const double kEpsilon;          // for shadows and secondary rays
 };
 
 #endif

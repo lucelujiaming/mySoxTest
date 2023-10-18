@@ -46,6 +46,7 @@ BRDF::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const {
 
 
 // ------------------------------------------------------------------------ sample_f
+// 该函数用于模拟光泽反射。参见Chapter25.1。
 // 用于计算反射光线的方向，并且返回计算出来的颜色值。
 // 使用Monte Calo积分实现。
 RGBColor

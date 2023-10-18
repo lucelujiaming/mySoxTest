@@ -6,24 +6,17 @@
 class Regular: public Sampler {
 
     public:
-
         Regular(void);
-
         Regular(const int num);
-
         Regular(const Regular& u);
-
         Regular&
         operator= (const Regular& rhs);
 
-        virtual Regular*
-        clone(void) const;
+        virtual Regular*  clone(void) const;
 
-        virtual
-        ~Regular(void);
-
-        virtual void
-        generate_samples(void);
+        virtual   ~Regular(void);
+    private:
+        virtual void  generate_samples(void);
 };
 
 #endif

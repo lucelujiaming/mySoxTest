@@ -44,6 +44,7 @@ extern ofstream out;
 #include "MyRectangle.h"
 #include "Emissive.h"
 #include "AreaLight.h"
+#include "AreaLighting.h"
 
 // -------------------------------------------------------------------- default constructor
 
@@ -244,12 +245,13 @@ void World::build()
 {
 
     int num_samples=256;
-
+    // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);
     vp.set_vres(400);
     vp.set_samples(num_samples);
     
-    tracer_ptr=new RayCast(this);
+    // tracer_ptr=new RayCast(this);
+    tracer_ptr=new AreaLighting(this);
     MultiJittered* sampler_ptr=new MultiJittered(num_samples);
     
     Emissive*emissive_ptr=new Emissive;

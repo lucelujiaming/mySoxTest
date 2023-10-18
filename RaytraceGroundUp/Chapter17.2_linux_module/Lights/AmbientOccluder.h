@@ -34,10 +34,10 @@ class AmbientOccluder: public Light {
 
         void
         set_min_amount(int n);
-        // 返回碰撞点处的光线方向
+        // 返回各条阴影光线的方向。
         virtual Vector3D
         get_direction(ShadeRec& sr);
-
+        // 设置采样器对象sp
         void
         set_sampler(Sampler* s_ptr);
         // 返回入射辐射度
@@ -80,7 +80,8 @@ AmbientOccluder::scale_radiance(const float b) {
 }
 
 // ------------------------------------------------------------------------------- set_color
-
+// 当光线方向被阻挡时， 可使用数据成员min amount以返回最小的颜色值(非黑色) 。
+// 与返回黑色值相比，增加了着色结果的真实感。
 inline void
 AmbientOccluder::set_min_amount(int n) {
     min_amount = n;

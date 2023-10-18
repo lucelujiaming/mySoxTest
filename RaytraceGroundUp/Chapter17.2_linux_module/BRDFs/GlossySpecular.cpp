@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GlossySpecular.h"
 #include "MultiJittered.h"
 #include "Constants.h"

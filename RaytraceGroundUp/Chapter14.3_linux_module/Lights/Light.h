@@ -48,6 +48,7 @@ class Light {
         pdf(const ShadeRec& sr) const;
 
     private:
+        // 各光源可开启/关闭相应的阴影投射操作。
         bool    shadows;    // does the light cast shadows or not
         // 基类中不使用这两个成员变量，是因为对于区域光照和环境光照，
         // 光源缩放系数，也就是亮度值ls位于对应光照所使用的发射材质中，

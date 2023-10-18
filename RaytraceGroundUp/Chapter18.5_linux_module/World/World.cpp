@@ -317,10 +317,10 @@ void World::build()
     emissive_ptr->scale_radiance(40.0);
     emissive_ptr->set_ce(white.r, white.g, white.b);
 
-    Point3D  p0(0, 1, 0); 
-    Vector3D a(1, 1, 0); 
-    Vector3D b(2, 1, 0); 
-    Normal  normal(0, 1, 0);
+    Point3D  p0(100, 100, 50); 
+    Vector3D a(1, 0, 0); 
+    Vector3D b(0, 1, 0); 
+    Normal  normal(0, 0, 1);
     //define rectangle parameters p 0, a, b, normal
     MyRectangle* rectangle_ptr=new MyRectangle(p0, a, b, normal);
     rectangle_ptr->set_material(emissive_ptr);

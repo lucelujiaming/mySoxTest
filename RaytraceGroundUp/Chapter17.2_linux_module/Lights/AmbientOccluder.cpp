@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AmbientOccluder.h"
 #include "ShadeRec.h"
 #include "World.h"
@@ -69,35 +70,36 @@ AmbientOccluder::~AmbientOccluder (void) {}
 
 
 // ---------------------------------------------------------------------- get_direction
-
+// 返回各条阴影光线的方向。
 Vector3D
 AmbientOccluder::get_direction(ShadeRec& sr) {
     Point3D sp = sampler_ptr->sample_hemisphere();
+    // 该函数只是简单地将局部变量的相关分量投影至(u，v，w)上。
     // 参见公式17.4
     return (sp.x * u + sp.y * v + sp.z * w);
 }    
 
-
-
 // ---------------------------------------------------------------------- set_sampler
-
+// 设置采样器对象sp
 void
 AmbientOccluder::set_sampler(Sampler* s_ptr) {
     if (sampler_ptr) {
         delete sampler_ptr;
         sampler_ptr = NULL;
     }
-    
+    // 设置采样器对象sp(在build() 函数中加以构造)，
     sampler_ptr = s_ptr;
+    // 随后以余弦分布(e=1)的方式将采样映射至半球模型之上。
     sampler_ptr->map_samples_to_hemisphere(1);
 }
 
 
 // ---------------------------------------------------------------------- L
-// 计算入射辐射度
+// 计算入射辐射度。
+// 显示了正交基向量的构建过程以及get_direction() 函数和in_shadow() 函数的调用方式。
 RGBColor
 AmbientOccluder::L(ShadeRec& sr) {
-
+    // 首先构造(u，v，w)。
     // 1. w直接使用法线方向。
     w = sr.normal;
     // 2. u和v位于法线平面。
@@ -130,19 +132,25 @@ AmbientOccluder::L(ShadeRec& sr) {
     }
 }
 
-
-
 // ---------------------------------------------------------------------- in_shadow
-// 测试阴影是否被某一个对象遮挡。
+// 为了进一步测试阴影光线是否被某一对象所阻挡， 可使用标准的in_shadow() 函数，
+// 函数逻辑等同于有向光源的对应函数。
 bool
 AmbientOccluder::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
     float     t;
     int     num_objects = sr.w.objects.size();
     
+    // 遍历场景中的全部对象并调用各对象的shadow_hit() 函数，
+    // 以检测阴影光线是否与位于着色碰撞点和光源位置之间的对象产生碰撞。 
     for (int j = 0; j < num_objects; j++)
+    {
         if (sr.w.objects[j]->shadow_hit(ray, t))
+        {
+            // 若产生碰撞，则该函数即刻退出。
             return (true);
+        }
+    }
     
     return (false);
 }

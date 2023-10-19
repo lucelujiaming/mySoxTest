@@ -49,6 +49,7 @@ extern ofstream out;
 #include "EnvironmentLight.h"
 
 #include "Triangle.h"
+#include "Torus.h"
 
 // -------------------------------------------------------------------- default constructor
 
@@ -261,9 +262,9 @@ void World::build()
     emissive_ptr->set_ce(1.0, 1.0, 0.5);
     // emissive_ptr->set_brightness(1.0) ;
 
-    Triangle * triangle_ptr1 = new Triangle(Point3D(125, 125, 135), 
-                Point3D(51, 52, 53), Point3D(91, 92, 93));
-    add_object(triangle_ptr1);
+//    Triangle * triangle_ptr1 = new Triangle(Point3D(125, 125, 135), 
+//                Point3D(51, 52, 53), Point3D(91, 92, 93));
+//    add_object(triangle_ptr1);
 
 
     EnvironmentLight* light_ptr=new EnvironmentLight;
@@ -278,6 +279,29 @@ void World::build()
      pinhole_ptr->set_view_distance(5000);
      pinhole_ptr->compute_uvw();
      set_camera(pinhole_ptr);
+
+    Matte* matte_ptr1 = new Matte;
+    matte_ptr1->set_ka(0.75);
+    matte_ptr1->set_kd(0);
+    matte_ptr1->set_cd(1, 1, 0); //yellow
+    
+    Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
+    sphere_ptr1->set_material(matte_ptr1);
+    add_object(sphere_ptr1);
+
+
+    Torus* torus_ptr1=new Torus();
+    torus_ptr1->set_material(matte_ptr1);
+    add_object(torus_ptr1);
+
+    Matte* matte_ptr2=new Matte;
+    matte_ptr2->set_ka(0.75);
+    matte_ptr2->set_kd(0);
+    matte_ptr2->set_cd(1); //white
+    
+    Plane* plane_ptr1=new Plane(Point3D(0) , Normal(0, 1, 0) );
+    plane_ptr1->set_material(matte_ptr2);
+    add_object(plane_ptr1);
 
 }
 

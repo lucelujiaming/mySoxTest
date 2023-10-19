@@ -30,7 +30,7 @@ class Disk: public GeometricObject {
 		virtual bool
 		hit(const Ray& ray, double& tmin, ShadeRec& sr) const;
 
-        virtual bool                                                  
+        virtual bool
         shadow_hit(const Ray& ray, float& t) const;
 
 

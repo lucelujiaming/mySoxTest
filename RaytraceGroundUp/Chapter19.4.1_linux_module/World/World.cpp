@@ -44,6 +44,7 @@ extern ofstream out;
 #include "MyRectangle.h"
 #include "Emissive.h"
 #include "AreaLight.h"
+#include "AreaLighting.h"
 
 #include "SphereConcave.h"
 #include "EnvironmentLight.h"
@@ -314,48 +315,51 @@ void World::build()
     vp.set_vres(400);
     vp.set_samples(num_samples);
     
-    tracer_ptr=new RayCast(this);
+    // tracer_ptr=new RayCast(this);
+    tracer_ptr=new AreaLighting(this);
     MultiJittered* sampler_ptr=new MultiJittered(num_samples);
     
-    Emissive*emissive_ptr=new Emissive;
-    emissive_ptr->set_ce(1.0, 1.0, 0.5);
-    // emissive_ptr->set_brightness(1.0) ;
-
-    EnvironmentLight* light_ptr=new EnvironmentLight;
-    light_ptr->set_material(emissive_ptr);
-    light_ptr->set_sampler(new MultiJittered(num_samples) ) ;
-    light_ptr->set_shadows(true);
-    add_light(light_ptr) ;
-
-     Pinhole* pinhole_ptr = new Pinhole;
-     pinhole_ptr->set_eye(25, 20, 45);
-     pinhole_ptr->set_lookat(0, 1, 0);
-     pinhole_ptr->set_view_distance(5000);
-     pinhole_ptr->compute_uvw();
-     set_camera(pinhole_ptr);
-
-    Matte* matte_ptr1 = new Matte;
-    matte_ptr1->set_ka(0.75);
-    matte_ptr1->set_kd(0);
-    matte_ptr1->set_cd(1, 1, 0); //yellow
+    AmbientOccluder *occluder_ptr=new AmbientOccluder;
+    occluder_ptr->scale_radiance(1.0);
+    occluder_ptr->set_color(white);
+    occluder_ptr->set_min_amount(0.0);
+    occluder_ptr->set_sampler(sampler_ptr);
+    set_ambient_light(occluder_ptr);
     
-    Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
-    sphere_ptr1->set_material(matte_ptr1);
-    add_object(sphere_ptr1);
+    Pinhole*camera_ptr=new Pinhole;
+    camera_ptr->set_eye(25, 20, 45);
+    camera_ptr->set_lookat(0, 1, 0);
+    camera_ptr->set_view_distance(5000);
+    camera_ptr->compute_uvw();
+    set_camera(camera_ptr);
 
-    Disk * disk_ptr1 = new Disk(Point3D(0, 0, 0), 
-                2, Normal(0, 1, 0));
-    disk_ptr1->set_material(matte_ptr1);
-    add_object(disk_ptr1);
-
+//    Matte* matte_ptr1 = new Matte;
+//    matte_ptr1->set_ka(0.75);
+//    matte_ptr1->set_kd(0);
+//    matte_ptr1->set_cd(1, 1, 0); //yellow
+//    
+//    Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
+//    sphere_ptr1->set_material(matte_ptr1);
+//    add_object(sphere_ptr1);
 
     Matte* matte_ptr2=new Matte;
     matte_ptr2->set_ka(0.75);
     matte_ptr2->set_kd(0);
-    matte_ptr2->set_cd(1); //white
+    matte_ptr2->set_cd(0, 1, 0); // Green
+
+    Disk * disk_ptr1 = new Disk(Point3D(0, 0, 0), 
+                2, Normal(0, 1, 0));
+    disk_ptr1->set_material(matte_ptr2);
+    add_object(disk_ptr1);
+
+
+    Matte* matte_ptr3=new Matte;
+    matte_ptr3->set_ka(0.75);
+    matte_ptr3->set_kd(0);
+    matte_ptr3->set_cd(1); //white
     
     Plane* plane_ptr1=new Plane(Point3D(0) , Normal(0, 1, 0) );
-    plane_ptr1->set_material(matte_ptr2);
+    plane_ptr1->set_material(matte_ptr3);
     add_object(plane_ptr1);
 }
 

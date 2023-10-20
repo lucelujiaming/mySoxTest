@@ -338,6 +338,7 @@ double randf()
     return (double)(rand()/(double)RAND_MAX);
 }
 
+#define SCALE_FACTOR   5.0
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
@@ -346,7 +347,7 @@ void World::build()
     // int num_spheres=100000;
     int num_spheres=1000;
     float volume=0.1/num_spheres;
-    float radius=pow(0.75*volume/3.14159, 0.333333);
+    float radius=pow(0.75*volume/3.14159, 0.333333) * SCALE_FACTOR;
     // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);
     vp.set_vres(400);
@@ -365,9 +366,14 @@ void World::build()
         
         Sphere*sphere_ptr=new Sphere;
         sphere_ptr->set_radius(radius);
-        sphere_ptr->set_center(1.0-2.0*rand_float(),
-            1.0-2.0*rand_float(),
-            1.0-2.0*rand_float());
+        sphere_ptr->set_center(
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()),
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()),
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()));
+		//	printf("We at (%f, %f, %f). \r\n", 
+		//		sphere_ptr->center.x, 
+		//		sphere_ptr->center.y, 
+		//		sphere_ptr->center.z);
         sphere_ptr->set_material(matte_ptr);
         grid_ptr->add_object(sphere_ptr);
     }

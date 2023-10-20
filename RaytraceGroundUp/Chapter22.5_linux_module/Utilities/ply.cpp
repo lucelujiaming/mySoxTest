@@ -31,7 +31,7 @@ EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
 WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.   
 
 */
-
+#include "stdafx.h"
 #include <iostream>
 
 #include <stdio.h>
@@ -40,6 +40,9 @@ WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 #include <string.h>
 #include "ply.h"
 
+#ifdef _WIN32
+#pragma warning(disable:4996)
+#endif
 
 char *type_names[] = {
 "invalid",
@@ -163,7 +166,7 @@ PlyFile *ply_write(
   for (i = 0; i < nelems; i++) {
     elem = (PlyElement *) myalloc (sizeof (PlyElement));
     plyfile->elems[i] = elem;
-   	elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
+       elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
     elem->num = 0;
     elem->nprops = 0;
   }
@@ -708,10 +711,10 @@ PlyFile *ply_read(FILE *fp, int *nelems, char ***elem_names)
   /* check for NULL file pointer */
   if (fp == NULL)
   {
-//  	cout << "File is null" << endl;
-//  	while(!Button());
-//	ExitToShell();
-	
+//      cout << "File is null" << endl;
+//      while(!Button());
+//    ExitToShell();
+    
     return (NULL);
   }
 
@@ -837,6 +840,11 @@ PlyFile *ply_open_for_reading(
   /* create the PlyFile data structure */
 
   plyfile = ply_read (fp, nelems, elem_names);
+  if (plyfile == NULL)
+  {
+      printf("ply_open_for_reading::plyfile == NULL\n");
+      return (NULL);
+  }
 
   /* determine the file type and version */
 
@@ -1488,7 +1496,7 @@ void ascii_get_element(PlyFile *plyfile, char *elem_ptr)
   int nwords;
   int which_word;
   FILE *fp = plyfile->fp;
-  char *elem_data,*item;
+  char *elem_data,*item = NULL;
   char *item_ptr;
   int item_size;
   int int_val;
@@ -1498,7 +1506,7 @@ void ascii_get_element(PlyFile *plyfile, char *elem_ptr)
   int store_it;
   char **store_array;
   char *orig_line;
-  char *other_data;
+  char *other_data = NULL;
   int other_flag;
 
   /* the kind of element we're reading currently */
@@ -1607,7 +1615,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
   PlyElement *elem;
   PlyProperty *prop;
   FILE *fp = plyfile->fp;
-  char *elem_data,*item;
+  char *elem_data,*item = NULL;
   char *item_ptr;
   int item_size;
   int int_val;
@@ -1616,7 +1624,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
   int list_count;
   int store_it;
   char **store_array;
-  char *other_data;
+  char *other_data = NULL;
   int other_flag;
 
   /* the kind of element we're reading currently */
@@ -1666,7 +1674,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
        * properties.
        */ 
       if (store_it) {
-	item_size = ply_type_size[prop->internal_type];
+    item_size = ply_type_size[prop->internal_type];
       }
       store_array = (char **) (elem_data + prop->offset);
       if (list_count == 0) {
@@ -2550,8 +2558,8 @@ static char *my_alloc(int size, int lnum, char *fname)
 /*
 char* 
 strdup(const char* s) {
-   int   	len = strlen(s);
-   char*	r;
+   int       len = strlen(s);
+   char*    r;
 
    r = (char* )malloc(len + 1);  // KS: explicit cast to char* added 4/2/2005
    strcpy(r, s);

@@ -12,6 +12,8 @@
 #include "Ray.h"
 #include "ShadeRec.h"
 
+#include "BBox.h"
+
 //----------------------------------------------------------------------------------------------------- 
 // class GeometricObject
 

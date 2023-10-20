@@ -31,7 +31,7 @@ EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
 WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.   
 
 */
-
+#include "stdafx.h"
 #include <iostream>
 
 #include <stdio.h>
@@ -40,6 +40,9 @@ WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 #include <string.h>
 #include "ply.h"
 
+#ifdef _WIN32
+#pragma warning(disable:4996)
+#endif
 
 char *type_names[] = {
 "invalid",
@@ -837,6 +840,11 @@ PlyFile *ply_open_for_reading(
   /* create the PlyFile data structure */
 
   plyfile = ply_read (fp, nelems, elem_names);
+  if (plyfile == NULL)
+  {
+      printf("ply_open_for_reading::plyfile == NULL\n");
+      return (NULL);
+  }
 
   /* determine the file type and version */
 
@@ -1488,7 +1496,7 @@ void ascii_get_element(PlyFile *plyfile, char *elem_ptr)
   int nwords;
   int which_word;
   FILE *fp = plyfile->fp;
-  char *elem_data,*item;
+  char *elem_data,*item = NULL;
   char *item_ptr;
   int item_size;
   int int_val;
@@ -1498,7 +1506,7 @@ void ascii_get_element(PlyFile *plyfile, char *elem_ptr)
   int store_it;
   char **store_array;
   char *orig_line;
-  char *other_data;
+  char *other_data = NULL;
   int other_flag;
 
   /* the kind of element we're reading currently */
@@ -1607,7 +1615,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
   PlyElement *elem;
   PlyProperty *prop;
   FILE *fp = plyfile->fp;
-  char *elem_data,*item;
+  char *elem_data,*item = NULL;
   char *item_ptr;
   int item_size;
   int int_val;
@@ -1616,7 +1624,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
   int list_count;
   int store_it;
   char **store_array;
-  char *other_data;
+  char *other_data = NULL;
   int other_flag;
 
   /* the kind of element we're reading currently */

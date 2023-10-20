@@ -3,7 +3,7 @@
 //	This C++ code is licensed under the GNU General Public License Version 2.
 //	See the file COPYING.txt for the full license.
 
-
+#include "stdafx.h"
 #include <vector>
 
 #include "Constants.h"
@@ -151,6 +151,7 @@ Compound::shadow_hit(const Ray& ray, float& tmin) const {
 		if (objects[j]->shadow_hit(ray, t) && (t < tmin)) {
 			hit				= true;
 			tmin 			= t;
+            material_ptr    = objects[j]->get_material();    // lhs is GeometricObject::material_ptr
 		}
 
 	return (hit);

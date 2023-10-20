@@ -13,6 +13,7 @@ SphereConcave::SphereConcave(void)
         center(0.0),
         radius(1.0),
         area(4*PI),
+        //  pdf可表示为p =1/(4mr^2)，其中，r记为球体半径。
         inv_area(1.0 / area)
 {}
 
@@ -165,6 +166,7 @@ SphereConcave::shadow_hit(const Ray& ray, float& tmin) const {
 void
 SphereConcave::set_sampler(Sampler* sampler) {
     sampler_ptr = sampler;
+    // 使采样点均匀分布于球体表面上。
     sampler_ptr->map_samples_to_sphere();
 }
 

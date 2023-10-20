@@ -99,36 +99,50 @@ Grid::get_bounding_box(void) {
 void
 Grid::setup_cells(void) {
     // find the minimum and maximum coordinates of the grid
-
+    // 计算顶点p0和p1
     Point3D p0 = find_min_bounds();
     Point3D p1 = find_max_bounds();
-
+    // 第一步：设定所有对象的包围盒。
     bbox.x0 = p0.x;
     bbox.y0 = p0.y;
     bbox.z0 = p0.z;
     bbox.x1 = p1.x;
     bbox.y1 = p1.y;
     bbox.z1 = p1.z;
-
+    // 第二步：将栅格划分为栅格单元。
     // compute the number of grid cells in the x, y, and z directions
-
+    // n为栅格中的置入对象数量。
     int num_objects = objects.size();
 
     // dimensions of the grid in the x, y, and z directions
-
+    // 下面Wx、wy、Wz和nx、ny、nz的计算方法参见公式22.1
     double wx = p1.x - p0.x;
     double wy = p1.y - p0.y;
     double wz = p1.z - p0.z;
-
+    // m表示一个放大系数，从而保证栅格单元的数量可实现正确的变化。
+    // 通常情况下，栅格单元的数量可以满足该条件——则全部栅格单元的数量nx ny nz近似为m³n。
+    // 当m=1时，栅格单元的数量近似等于对象数量，但该值并非最佳值。
+    // 需要注意的是，若栅格单元的数量较多，光线跟踪器将会消耗过多的时间用于在空栅格单元中执行相交测试；
+    // 但如果栅格单元的数量过少，又将会导致过量的对象相交测试。
+    // 从本质上讲，在栅格单元的极限条件下(即nx=ny=nz=1)，栅格已无存在的必要。
+    // 当然，最终也无法获取相应的加速方案。
+    // 针对于此，当栅格单元的数量8~10倍于对象数量时，栅格对象将具有较好的结构，其计算性能也为最优。
+    // 默认情况下，将该倍数值设置为8，而其对应的m值为2。
+    // 此处，读者可尝试使用不同的m值并比较最终的渲染速度(参见练习22.5和22.6)。
     double multiplier = 2.0;      // multiplyer scales the number of grid cells relative to the number of objects
-
-    double s = pow(wx * wy * wz / num_objects, 0.3333333);    
+    double s = pow(wx * wy * wz / num_objects, 0.3333333);
+    // 令nx、ny、nz为xw、yw、zw方向上的栅格单元数量。
+    // 等式中的“+1”项确保栅格单元在任意方向上的数量不为0值。
     nx = multiplier * wx / s + 1;
     ny = multiplier * wy / s + 1;
     nz = multiplier * wz / s + 1;
 
     // set up the array of grid cells with null pointers
-
+    // 第三步：讨论索引数组问题。
+    // cells表示一个长度为(nx, ny, nz)的一维数组。
+    // (ix, iy, iz)处的栅格单元的索引可采用下式进行计算
+    //    index = ix + nx * iy + nx * ny * iz
+    // 同时，这也是C/C++语言中在1D数组中存储3D数据结构的标准方法。
     int num_cells = nx * ny * nz;
     cells.reserve(num_objects);
     
@@ -136,68 +150,85 @@ Grid::setup_cells(void) {
         cells.push_back(NULL);
 
     // set up a temporary array to hold the number of objects stored in each cell
-    
+    // 声明一个临时变量，记录各个栅格单元中的对象数量。
     vector<int> counts;
     counts.reserve(num_cells);
-
     for (int j = 0; j < num_cells; j++)
         counts.push_back(0);
-
-
+    
     // put the objects into the cells
-
     BBox obj_bBox;     // object's bounding box
     int index;      // cell's array index
 
+    // 最后一个步骤：将各个对象置入栅格单元中，首先针对每一个几何对象。
     for (int j = 0; j < num_objects; j++) {
+        // 获得每一个几何对象的包围盒。
         obj_bBox =  objects[j]->get_bounding_box();
 
         // compute the cell indices at the corners of the bounding box of the object
-
+        // 为了确定栅格单元的对象添加位置，将首先计算包含对象包围盒最大、最小坐标值的栅格单元。
+        // 参见图22.4和公式22.4。根据公式22.4可知，这是一个生成基于整数值的步进函数。
         int ixmin = clamp((obj_bBox.x0 - p0.x) * nx / (p1.x - p0.x), 0, nx - 1);
         int iymin = clamp((obj_bBox.y0 - p0.y) * ny / (p1.y - p0.y), 0, ny - 1);
         int izmin = clamp((obj_bBox.z0 - p0.z) * nz / (p1.z - p0.z), 0, nz - 1);
         int ixmax = clamp((obj_bBox.x1 - p0.x) * nx / (p1.x - p0.x), 0, nx - 1);
         int iymax = clamp((obj_bBox.y1 - p0.y) * ny / (p1.y - p0.y), 0, ny - 1);
         int izmax = clamp((obj_bBox.z1 - p0.z) * nz / (p1.z - p0.z), 0, nz - 1);
-
+        // 遍历当前这个几何对象的包围盒跨越的每一个栅格，
         // add the object to the cells
-
         for (int iz = izmin; iz <= izmax; iz++)                     // cells in z direction
+        {
             for (int iy = iymin; iy <= iymax; iy++)                    // cells in y direction
+            {
                 for (int ix = ixmin; ix <= ixmax; ix++) {            // cells in x direction
+                    // 根据公式22.3计算出(ix, iy, iz)处对应的栅格单元cells和counts索引。
                     index = ix + nx * iy + nx * ny * iz;
-
+                    // 如果栅格中没有包含对象，
                     if (counts[index] == 0) {
+                        // 把对象直接放入cells中。
                         cells[index] = objects[j];
+                        // 增加栅格单元中的对象计数值。
                         counts[index] += 1;                          // now = 1
                     }
+                    // 如果栅格中已经有对象，
                     else {
+                        // 如果栅格中有一个对象，
                         if (counts[index] == 1) {
+                            // 创建一个Compound对象，
                             Compound* compound_ptr = new Compound;    // construct a compound object
+                            // 把栅格中之前保存的对象放进去，
                             compound_ptr->add_object(cells[index]); // add object already in cell
+                            // 把新发现的对象放进去。
                             compound_ptr->add_object(objects[j]);      // add the new object
+                            // 把新创建的Compound对象放入cells中。
                             cells[index] = compound_ptr;            // store compound in current cell
+                            // 增加栅格单元中的对象计数值。
                             counts[index] += 1;                      // now = 2
                         }
+                        // 如果栅格中有多个对象，说明现在栅格中包含的是Compound对象，
                         else {                                        // counts[index] > 1
+                            // 把新发现的对象放进Compound对象。
                             cells[index]->add_object(objects[j]);    // just add current object
+                            // 增加栅格单元中的对象计数值。
                             counts[index] += 1;                        // for statistics only
                         }
                     }
                 }
+            }
+        }
     }  // end of for (int j = 0; j < num_objects; j++)
 
 
     // erase the Compound::vector that stores the object pointers, but don't delete the objects
-
+    // 我们已经成功把每一个子对象放入了栅格中，我们已经不在需要这个子对象列表了。
+    // 我们选择清空子对象列表。
     objects.erase (objects.begin(), objects.end());
 
 
-// display some statistics on counts
-// this is useful for finding out how many cells have no objects, one object, etc
-// comment this out if you don't want to use it
-
+    // display some statistics on counts
+    // this is useful for finding out how many cells have no objects, one object, etc
+    // comment this out if you don't want to use it
+    // 打印统计信息。看看有哪些栅格没有对象，那些栅格只有一个对象或多个对象。
     int num_zeroes     = 0;
     int num_ones     = 0;
     int num_twos     = 0;
@@ -216,13 +247,12 @@ Grid::setup_cells(void) {
         if (counts[j] > 3)
             num_greater += 1;
     }
-
     cout << "num_cells =" << num_cells << endl;
     cout << "numZeroes = " << num_zeroes << "  numOnes = " << num_ones << "  numTwos = " << num_twos << endl;  
     cout << "numThrees = " << num_threes << "  numGreater = " << num_greater << endl;
 
     // erase the temporary counts vector
-
+    // 清空栅格对象计数列表。
     counts.erase (counts.begin(), counts.end());  
 }
 
@@ -230,17 +260,18 @@ Grid::setup_cells(void) {
 //------------------------------------------------------------------ find_min_bounds
 
 // find the minimum grid coordinates, based on the bounding boxes of all the objects
-
+// 计算顶点p0和p1较简单。
+// 函数由setup_cells() 函数负责调用。需要注意的是，顶点p0和p1并不存储于栅格对象中。
 Point3D
 Grid::find_min_bounds(void) {
     BBox     object_box;
     Point3D p0(kHugeValue);
 
     int num_objects = objects.size();
-
+    // 计算各对象包围盒的并集。
     for (int j = 0; j < num_objects; j++) {
         object_box = objects[j]->get_bounding_box();
-
+        // 得到所有对象的XYZ坐标的最小值。
         if (object_box.x0 < p0.x)
             p0.x = object_box.x0;
         if (object_box.y0 < p0.y)
@@ -248,7 +279,7 @@ Grid::find_min_bounds(void) {
         if (object_box.z0 < p0.z)
             p0.z = object_box.z0;
     }
-
+    // 顶点p0将减去一个kEpsilon值，以使栅格稍大于各对象包围盒的并集。
     p0.x -= kEpsilon; p0.y -= kEpsilon; p0.z -= kEpsilon;
 
     return (p0);
@@ -258,17 +289,18 @@ Grid::find_min_bounds(void) {
 //------------------------------------------------------------------ find_max_bounds
 
 // find the maximum grid coordinates, based on the bounding boxes of the objects
-
+// 计算顶点p0和p1较简单
+// 函数由setup_cells() 函数负责调用。需要注意的是，顶点p0和p1并不存储于栅格对象中。
 Point3D
 Grid::find_max_bounds(void) {
     BBox object_box;
     Point3D p1(-kHugeValue);
 
     int num_objects = objects.size();
-
+    // 计算各对象包围盒的并集。
     for (int j = 0; j < num_objects; j++) {
         object_box = objects[j]->get_bounding_box();
-
+        // 得到所有对象的XYZ坐标的最大值。
         if (object_box.x1 > p1.x)
             p1.x = object_box.x1;
         if (object_box.y1 > p1.y)
@@ -276,7 +308,7 @@ Grid::find_max_bounds(void) {
         if (object_box.z1 > p1.z)
             p1.z = object_box.z1;
     }
-
+    // 顶点p0将加上一个kEpsilon值，以使栅格稍大于各对象包围盒的并集。
     p1.x += kEpsilon; p1.y += kEpsilon; p1.z += kEpsilon;    
 
     return (p1);
@@ -306,7 +338,6 @@ Grid::read_smooth_triangles(const char* file_name) {
       compute_mesh_normals();
 }
 
-
 // ----------------------------------------------------------------------------- read_ply_file
 
 // Most of this function was written by Greg Turk and is released under the licence agreement 
@@ -319,8 +350,9 @@ Grid::read_smooth_triangles(const char* file_name) {
 // triangle_type is either flat or smooth
 // Using the one function construct to flat and smooth triangles saves a lot of repeated code
 // The ply file is the same for flat and smooth triangles
-
-
+// 函数将针对某一特定的三角形数据类型、着色类型(固定着色或平滑着色
+// 并根据所提供的函数参数进行相应的读取操作。
+// 代码虽然较长，但却可以构造各种类型的三角形并避免了代码的重复使用，因而值得读者仔细研究。
 void
 Grid::read_ply_file(const char* file_name, const int triangle_type) {
     // Vertex definition 
@@ -357,21 +389,21 @@ Grid::read_ply_file(const char* file_name, const int triangle_type) {
     // local variables
 
     int             i,j;
-      PlyFile*        ply;
-      int             nelems;        // number of element types: 2 in our case - vertices and faces
-      char**            elist;
+    PlyFile*        ply;
+    int             nelems;        // number of element types: 2 in our case - vertices and faces
+    char**          elist;
     int             file_type;
-    float             version;
+    float           version;
     int             nprops;        // number of properties each element has
-    int             num_elems;    // number of each type of element: number of vertices or number of faces
-    PlyProperty**    plist;
+    int             num_elems;     // number of each type of element: number of vertices or number of faces
+    PlyProperty**   plist;
     Vertex**        vlist;
-    Face**            flist;
-    char*            elem_name;
-    int                num_comments;
-    char**            comments;
+    Face**          flist;
+    char*           elem_name;
+    int             num_comments;
+    char**          comments;
     int             num_obj_info;
-    char**            obj_info;
+    char**          obj_info;
 
 
       // open a ply file for reading
@@ -553,7 +585,9 @@ Grid::compute_mesh_normals(void) {
 
 // ------------------------------------------------------------------------------------------------  tesselate_flat_sphere
 // tesselate a unit sphere into flat triangles that are stored directly in the grid
-
+// 下面，首先介绍通用球体的嵌格操作，该操作体现了基于三角形的曲面的近似处理过程。
+// 根据式(2.3)，三角形的生成代码采用了球体的参数表达形式，其中r=1。
+// 嵌格参数定义为方位角和极角方向上的三角形数量，分别用m和n表示。
 void                                                
 Grid::tessellate_flat_sphere(const int horizontal_steps, const int vertical_steps) {
     double pi = 3.1415926535897932384;
@@ -652,7 +686,9 @@ Grid::tessellate_flat_sphere(const int horizontal_steps, const int vertical_step
 
 // ------------------------------------------------------------------------------------------------  tesselate_smooth_sphere
 // tesselate a unit sphere into smooth triangles that are stored directly in the grid
-
+// 通过对三角形内部碰撞点处的法线进行插值计算，进而可实现不同表面处的三角形着色渲染。最简单的法线差值计算是采用双线性组合方案
+// 如果采用此方式渲染三角形，可使球体看上去更加光滑，但这里不再使用Triangle类， 而是执行Smooth Triangle类。
+// 该类存储了3条法线以及顶点数据，并根据公式(23.1)计算法线，因此，这将占据更多的内存空间。但出于演示目的，这不会产生太大的问题。
 void                                                
 Grid::tessellate_smooth_sphere(const int horizontal_steps, const int vertical_steps) {
     double pi = 3.1415926535897932384;
@@ -764,28 +800,48 @@ Grid::tessellate_smooth_sphere(const int horizontal_steps, const int vertical_st
 
 // The following grid traversal code is based on the pseudo-code in Shirley (2000)    
 // The first part is the same as the code in BBox::hit
-
+// hit() 函数代码较复杂， 因而有必要详细考察其代码。
+// 这个地方书上写的有点问题，下面是原文：
+// if the ray misses the grid's bounding box 
+//    return fa1se 
+// if the ray starts inside the grid 
+//    find the ce11 that contains the ray origin 
+// e1se
+//    find the ce11 where the ray 
+//    hits the grid from the outside 
+// traverse the grid
+// 根据原文，其高层伪代码如下所示：
+// Line1. if(光线未与栅格对象的包围盒碰撞)
+// Line2.   return false 
+// Line3. if(如果光线始于栅格对象内部)
+// Line4.    计算光线源点所处的栅格单元
+// Line5. else
+// Line6.   计算光线从外部与栅格对象发生碰撞的栅格单元
+// Line7. 遍历栅格对象
 bool                              
 Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
+    // ox、oy、oz表示光线源点坐标。
     double ox = ray.o.x;
     double oy = ray.o.y;
     double oz = ray.o.z;
     double dx = ray.d.x;
     double dy = ray.d.y;
     double dz = ray.d.z;
-
+    // x0，y0，z0，x1，y1，z1表示所有对象组成的包围盒的顶点。
+    // 注意：是所有对象组成的包围盒。
     double x0 = bbox.x0;
     double y0 = bbox.y0;
     double z0 = bbox.z0;
     double x1 = bbox.x1;
     double y1 = bbox.y1;
     double z1 = bbox.z1;
-    
+    // 光线与包围盒x0，y0，z0，x1，y1，z1碰撞时的t值的最大值和最小值。
     double tx_min, ty_min, tz_min;
     double tx_max, ty_max, tz_max; 
     
     // the following code includes modifications from Shirley and Morley (2003)
-    
+    // 因为光线公式d * t + o = p，则：t = (p - o) / d。
+    // 计算光线与包围盒碰撞时的tx值的最大值和最小值。
     double a = 1.0 / dx;
     if (a >= 0) {
         tx_min = (x0 - ox) * a;
@@ -795,7 +851,7 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
         tx_min = (x1 - ox) * a;
         tx_max = (x0 - ox) * a;
     }
-    
+    // 计算光线与包围盒碰撞时的ty值的最大值和最小值。
     double b = 1.0 / dy;
     if (b >= 0) {
         ty_min = (y0 - oy) * b;
@@ -805,7 +861,7 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
         ty_min = (y1 - oy) * b;
         ty_max = (y0 - oy) * b;
     }
-    
+    // 计算光线与包围盒碰撞时的tz值的最大值和最小值。
     double c = 1.0 / dz;
     if (c >= 0) {
         tz_min = (z0 - oz) * c;
@@ -817,15 +873,21 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
     }
     
     double t0, t1;
-    
+    // t0为光线与包围盒碰撞时的t值。
+    // tx_min, ty_min, tz_min表明在和包围盒xyz方向的三个平面上碰撞时的t值。
+    // 因为和包围盒平面碰撞不等于和包围盒碰撞。
+    // 因此上，我们需要取这三个值中的最大值作为实际碰撞值。
     if (tx_min > ty_min)
         t0 = tx_min;
     else
         t0 = ty_min;
-        
     if (tz_min > t0)
         t0 = tz_min;
         
+    // t0为光线离开包围盒时的t值。
+    // tx_max, ty_max, tz_max表明在离开包围盒xyz方向的三个平面时的t值。
+    // 因为在包围盒平面的时候，我们可能早就离开包围盒了。
+    // 因此上，我们需要取这三个值中的最小值作为实际离开值。
     if (tx_max < ty_max)
         t1 = tx_max;
     else
@@ -833,21 +895,32 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
         
     if (tz_max < t1)
         t1 = tz_max;
-            
+    // Line1. 如果先离开后碰撞，说明光线未与栅格对象的包围盒碰撞。直接返回false。
     if (t0 > t1)
+    {
+        // Line2. 
         return(false);
-    
+    }
             
     // initial cell coordinates
-    
+    // 对于首个遍历栅格单元，其计算过程如下：
     int ix, iy, iz;
-    
+    // Line3. 如果是始于栅格内部的光线。
+    // 考虑到光线投射的诸多方式， 可以将相机置入栅格对象中，则全部主光线将始于栅格内部。
+    // 另外，当对栅格内的对象进行着色计算时，包含任意光线跟踪计算类型的阴影光线也将始于栅格内部。
+    // 其中nx, ny, nz是xw、yw、zw方向上的栅格单元数量。
+    //     ox、oy、oz表示光线源点坐标。
+    //     x0，y0，z0，x1，y1，z1表示栅格包围盒顶点。
     if (bbox.inside(ray.o)) {              // does the ray start inside the grid?
+        // Line4. 计算光线起点所在的栅格单元。
         ix = clamp((ox - x0) * nx / (x1 - x0), 0, nx - 1);
         iy = clamp((oy - y0) * ny / (y1 - y0), 0, ny - 1);
         iz = clamp((oz - z0) * nz / (z1 - z0), 0, nz - 1);
     }
+    // Line5. 如果是始于栅格外部的光线。
     else {
+        // t0为光线与包围盒碰撞时的t值。
+        // Line6. 计算光线碰撞点所在的栅格单元。
         Point3D p = ray.o + t0 * ray.d;  // initial hit point with grid's bounding box
         ix = clamp((p.x - x0) * nx / (x1 - x0), 0, nx - 1);
         iy = clamp((p.y - y0) * ny / (y1 - y0), 0, ny - 1);
@@ -855,20 +928,28 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
     }
     
     // ray parameter increments per cell in the x, y, and z directions
-    
+    // P366. 为了正确实现光线穿越栅格时的步进计算，下面将考察一类预测法，
+    // 详细内容可参考Amana tides-Woo(1987)。
+    // 因为光线与栅格单元表面之间的交点呈非均等间隔状态， 而x、y、z方向上的则呈均等相交间隔。
+    // 通过计算x、y、z方向上栅格单元间的参数增量，上述结论可适当地简化代码的复杂度。
+    // 针对某一栅格单元，有如下等式：
     double dtx = (tx_max - tx_min) / nx;
     double dty = (ty_max - ty_min) / ny;
     double dtz = (tz_max - tz_min) / nz;
-        
-    double     tx_next, ty_next, tz_next;
+    // 光线碰撞邻接x，y，z表面时的t值tx_next，ty_next，tz_next。
+    double  tx_next, ty_next, tz_next;
+    // XYZ方向的步进次数。可以为负。表示反方向步进。
     int     ix_step, iy_step, iz_step;
+    // 告知算法，光线何时在x，y，z方向上离开栅格对象。
     int     ix_stop, iy_stop, iz_stop;
-    
+    // 如果X方向的步进值为正向，
     if (dx > 0) {
+        // 根据碰撞点（如果光线始于栅格内部就是起点，后面不再重复）得到碰撞点所在的栅格。
         tx_next = tx_min + (ix + 1) * dtx;
         ix_step = +1;
         ix_stop = nx;
     }
+    // 如果X方向的步进值为负向，
     else {
         tx_next = tx_min + (nx - ix) * dtx;
         ix_step = -1;
@@ -881,8 +962,9 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
         ix_stop = -1;
     }
     
-    
+    // 如果Y方向的步进值为正向，
     if (dy > 0) {
+        // 根据碰撞点得到碰撞点所在的栅格。
         ty_next = ty_min + (iy + 1) * dty;
         iy_step = +1;
         iy_stop = ny;
@@ -899,6 +981,7 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
         iy_stop = -1;
     }
         
+    // 如果Z方向的步进值为正向，
     if (dz > 0) {
         tz_next = tz_min + (iz + 1) * dtz;
         iz_step = +1;
@@ -917,11 +1000,11 @@ Grid::hit(const Ray& ray, double& t, ShadeRec& sr) const {
     }
     
         
-    // traverse the grid
-    
+    // Line7. 遍历栅格对象。traverse the grid
     while (true) {    
         GeometricObject* object_ptr = cells[ix + nx * iy + nx * ny * iz];
-        
+        // 需要注意的是，当碰撞发生于t<tx_next或t<ty_next范围内时，
+        // 才有必要记录碰撞点的信息，以将其限制在当前栅格单元内。
         if (tx_next < ty_next && tx_next < tz_next) {
             if (object_ptr && object_ptr->hit(ray, t, sr) && t < tx_next) {
                 material_ptr = object_ptr->get_material();

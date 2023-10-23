@@ -12,7 +12,9 @@ Sphere::Sphere(void)
     :     GeometricObject(),
         center(0.0),
         radius(1.0)
-{}
+{    
+    inv_area = 1 / (radius * radius * PI);
+}
 
 
 // ---------------------------------------------------------------- constructor
@@ -21,7 +23,9 @@ Sphere::Sphere(Point3D c, double r)
     :     GeometricObject(),
         center(c),
         radius(r)
-{}
+{
+    inv_area = 1 / (radius * radius * PI);
+}
 
 
 // ---------------------------------------------------------------- clone
@@ -145,5 +149,8 @@ Sphere::shadow_hit(const Ray& ray, float& tmin) const {
 
 float
 Sphere::pdf(const ShadeRec& sr) {
-	return (1.0);
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
+    // 我这里写成返回圆面积的倒数。
+	// return (1.0);
+    return inv_area;
 }

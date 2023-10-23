@@ -18,10 +18,11 @@ class Material {
 
         virtual
         ~Material(void);
-
+        // 计算环境光照，并遍历全部光源以计算直接漫反射光照。
+        // 从而返回材质的颜色
         virtual RGBColor
         shade(ShadeRec& sr);
-
+        // 计算区域光照
         virtual RGBColor
         area_light_shade(ShadeRec& sr);
 

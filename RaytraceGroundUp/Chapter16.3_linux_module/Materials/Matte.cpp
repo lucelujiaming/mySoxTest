@@ -126,6 +126,8 @@ Matte::shade(ShadeRec& sr) {
             // 如果光线位于阴影中，就计算这个光源产生的漫反射光照。
             if (!in_shadow) {
                 // 计算公式参见14.6和14.10的第二部分。
+                // 单个光源的漫反射光照 = 漫反射计算出来的颜色值
+                //                      * 材质的发射辐射度 * 可见角度。
                 L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * ndotwi;
             }
         }
@@ -141,23 +143,46 @@ RGBColor
 Matte::area_light_shade(ShadeRec& sr) {
 
     Vector3D     wo             = -sr.ray.d;
+    // 计算环境光照。参见公式14.10
+    // 计算方法为由公式13.20给出的双半球反射系数(ka * cd)乘以
+    // 由公式14.1给出的入射环境光辐射度(ls * cl)
     RGBColor     L             = ambient_brdf->rho(sr, wo) * sr.w.ambient_ptr->L(sr);
     int         num_lights    = sr.w.lights.size();
-
+    // 遍历全部光源以计算直接漫反射光照。
     for (int j = 0; j < num_lights; j++) {
         Vector3D     wi         = sr.w.lights[j]->get_direction(sr);
+        // 判断是否可见。
         float         ndotwi     = sr.normal * wi;
-    
+        // 如果可见，
         if (ndotwi > 0.0) {
             bool in_shadow = false;
-
+            // 判断是否参与阴影计算
             if (sr.w.lights[j]->casts_shadows()) {
+                // 如果参与阴影计算，就构建一条以碰撞点为起点，指向这个光源的光线。
                 Ray shadow_ray(sr.hit_point, wi);
+                // 判断这条光线是否位于阴影中。
                 in_shadow = sr.w.lights[j]->in_shadow(shadow_ray, sr); 
             }
-
-            if (!in_shadow) 
-                L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * sr.w.lights[j]->G(sr) * ndotwi / sr.w.lights[j]->pdf(sr);
+            // 如果光线位于阴影中，就计算这个光源产生的区域光照。
+            // 计算基于式(18.3)。其中V函数在前面使用casts_shadows计算。
+            if (!in_shadow)
+            {
+				// L += diffuse_brdf->f(sr, wo, wi)
+                //          * sr.w.lights[j]->L(sr) 
+                //          * sr.w.lights[j]->G(sr) 
+                //          * ndotwi / sr.w.lights[j]->pdf(sr);
+                // 漫反射计算出来的颜色值。
+				RGBColor diffColor = diffuse_brdf->f(sr, wo, wi);
+                // 材质的发射辐射度
+				RGBColor radianceColor = sr.w.lights[j]->L(sr);
+                // 区域的几何因子
+				float    gFactor = sr.w.lights[j]->G(sr);
+                // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
+				float    pdf = sr.w.lights[j]->pdf(sr);
+                // 计算得到反射辐射度。
+				RGBColor calcResult = diffColor * radianceColor * gFactor * gFactor / pdf;
+				L += calcResult;
+            }
         }
     }
 

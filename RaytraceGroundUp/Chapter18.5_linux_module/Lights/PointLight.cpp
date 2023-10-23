@@ -107,6 +107,5 @@ PointLight::G(const ShadeRec& sr) const{
 
 float
 PointLight::pdf(const ShadeRec& sr) const{
-
     return 5.5;//?
 }

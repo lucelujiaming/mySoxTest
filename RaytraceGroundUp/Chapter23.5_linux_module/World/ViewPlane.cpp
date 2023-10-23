@@ -74,7 +74,7 @@ ViewPlane::~ViewPlane(void) {
 
 
 // -------------------------------------------------------------- set_samples
-
+// 与set_sampler()函数相比，set_samples()函数的使用频率稍高，
 void
 ViewPlane::set_samples(const int n) {
 
@@ -85,8 +85,11 @@ ViewPlane::set_samples(const int n) {
         sampler_ptr = NULL;
     }
 
+    // 该函数在默认情况下使用多重抖动采样。
     if (num_samples > 1)
         sampler_ptr = new MultiJittered(num_samples);
+    // 当采样数量为1时，则转变为均匀采样，并在各像素中心处设置相应的采样点，如程序清单4.1所示，
+    // 从而可避免出现如图5.22(a)所示的失真图像。    
     else
         sampler_ptr = new Regular(1);
 }

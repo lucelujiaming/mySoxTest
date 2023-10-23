@@ -116,6 +116,7 @@ void World::render_scene() const
             pixel_color = background_color;
             
             for(int j=0; j < vp.num_samples; j++) {
+                // 返回存储于采样器对象中的下一个采样点，映射到半球体。
                 sp = vp.sampler_ptr->sample_hemisphere();
                 pp.x = vp.s*(c-0.5*vp.hres + sp.x);
                 pp.y = vp.s*(r-0.5*vp.vres + sp.y);

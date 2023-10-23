@@ -69,6 +69,7 @@ class SphereConcave: public GeometricObject {
 
         float            area;            // for spherical lights
         float            inv_area;        // for spherical lights
+        // 包含了一个采样器对象以使采样点均匀分布于球体表面上。
         Sampler*        sampler_ptr;    // for spherical lights
 
         static const double kEpsilon;   // for shadows and secondary rays

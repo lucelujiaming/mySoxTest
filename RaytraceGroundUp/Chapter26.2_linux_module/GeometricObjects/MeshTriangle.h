@@ -21,9 +21,11 @@
 
 class MeshTriangle: public GeometricObject {    
     public:
-
+        // 通过存储指向网格数据的指针、
         Mesh*         mesh_ptr;                    // stores all the data
+        // 3个顶点索引以及
         int            index0, index1, index2;      // indices into the vertices array in the mesh
+        // 网格中的法线数组，该类拥有访问网格数据结构的权力。
         Normal        normal;                    
         float        area;                        // required for translucency
     

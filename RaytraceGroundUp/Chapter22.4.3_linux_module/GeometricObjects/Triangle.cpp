@@ -76,7 +76,7 @@ Triangle::compute_normal(void) {
     normal.normalize();
 }
 
-
+// 计算各三角形的包围盒
 BBox
 Triangle::get_bounding_box(void) {
     double delta = 0.000001; 
@@ -111,7 +111,7 @@ Triangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
     if (beta < 0.0)
          return (false);
     
-    double r = r = e * l - h * i;
+    double r = e * l - h * i;
     double e2 = a * n + d * q + c * r;
     // 参见公式19.13中求γ的公式。
     double gamma = e2 * inv_denom;
@@ -144,31 +144,38 @@ Triangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 bool
 Triangle::shadow_hit(const Ray& ray, float& tmin) const {
+    // 参见公式19.10
     double a = v0.x - v1.x, b = v0.x - v2.x, c = ray.d.x, d = v0.x - ray.o.x; 
     double e = v0.y - v1.y, f = v0.y - v2.y, g = ray.d.y, h = v0.y - ray.o.y;
     double i = v0.z - v1.z, j = v0.z - v2.z, k = ray.d.z, l = v0.z - ray.o.z;
         
+    // 参见公式19.13
     double m = f * k - g * j, n = h * k - g * l, p = f * l - h * j;
     double q = g * i - e * k, s = e * j - f * i;
     
     double inv_denom  = 1.0 / (a * m + b * q + c * s);
     
     double e1 = d * m - b * n - c * p;
+    // 参见公式19.13中求β的公式。
     double beta = e1 * inv_denom;
     
     if (beta < 0.0)
          return (false);
     
-    double r = r = e * l - h * i;
+    double r = e * l - h * i;
     double e2 = a * n + d * q + c * r;
+    // 参见公式19.13中求γ的公式。
     double gamma = e2 * inv_denom;
     
+    // 参见公式19.6。
     if (gamma < 0.0 )
          return (false);
     
+    // 参见公式19.6。
     if (beta + gamma > 1.0)
         return (false);
             
+    // 参见公式19.13中求t的公式。
     double e3 = a * p - b * r + d * s;
     double t = e3 * inv_denom;
     
@@ -184,17 +191,20 @@ Triangle::shadow_hit(const Ray& ray, float& tmin) const {
 // ------------------------------------------------------------------------------ shadow_hit
 
 bool                                                                                          
-Triangle::shadow_hit(const Ray& ray, double& tmin) const {    
+Triangle::shadow_hit(const Ray& ray, double& tmin) const {
+    // 参见公式19.10
     double a = v0.x - v1.x, b = v0.x - v2.x, c = ray.d.x, d = v0.x - ray.o.x; 
     double e = v0.y - v1.y, f = v0.y - v2.y, g = ray.d.y, h = v0.y - ray.o.y;
     double i = v0.z - v1.z, j = v0.z - v2.z, k = ray.d.z, l = v0.z - ray.o.z;
         
+    // 参见公式19.13
     double m = f * k - g * j, n = h * k - g * l, p = f * l - h * j;
     double q = g * i - e * k, s = e * j - f * i;
     
     double inv_denom  = 1.0 / (a * m + b * q + c * s);
     
     double e1 = d * m - b * n - c * p;
+    // 参见公式19.13中求β的公式。
     double beta = e1 * inv_denom;
     
     if (beta < 0.0)
@@ -202,14 +212,18 @@ Triangle::shadow_hit(const Ray& ray, double& tmin) const {
     
     double r = e * l - h * i;
     double e2 = a * n + d * q + c * r;
+    // 参见公式19.13中求γ的公式。
     double gamma = e2 * inv_denom;
     
+    // 参见公式19.6。
     if (gamma < 0.0)
          return (false);
     
+    // 参见公式19.6。
     if (beta + gamma > 1.0)
         return (false);
             
+    // 参见公式19.13中求t的公式。
     double e3 = a * p - b * r + d * s;
     double t = e3 * inv_denom;
     

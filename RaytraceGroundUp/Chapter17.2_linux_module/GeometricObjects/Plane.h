@@ -26,6 +26,8 @@ class Plane: public GeometricObject {
         virtual bool
         shadow_hit(const Ray& ray, float& tmin) const;
 
+		virtual float
+			pdf(const ShadeRec& sr);
     public:
 
         Vector3D         a;                    // point through which plane passes

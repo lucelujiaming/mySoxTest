@@ -85,6 +85,5 @@ Ambient::G(const ShadeRec& sr) const{
 
 float
 Ambient::pdf(const ShadeRec& sr) const{
-
     return 5.5;//?
 }

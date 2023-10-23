@@ -118,6 +118,9 @@ GlossySpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, f
 	u.normalize();
 	Vector3D v = u ^ w;
 
+    // 返回存储于采样器对象中的下一个采样点，映射到半球体。
+    // 因为，通常情况下，我们需要在局部坐标系中计算光线的方向，
+    // 并在随后计算该光线在世界坐标系中的方向。
 	Point3D sp = sampler_ptr->sample_hemisphere();
 	wi = sp.x * u + sp.y * v + sp.z * w;			// reflected ray direction
 

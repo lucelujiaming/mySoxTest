@@ -3,7 +3,10 @@
 
 #include "GeometricObject.h"
 #include "BBox.h"
-
+// 一个位于YZ平面上的圆绕着Y轴，在水平方向上绕一周。
+// 可以得到关于XYZ的隐式方程。参见公式19.19。
+// 代入光线方程可以得到关于t的一元四次方程。
+// 显然光线和圆环可以有四个交点。
 class Torus: public GeometricObject {
 	public:
 		

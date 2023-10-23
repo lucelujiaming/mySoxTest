@@ -18,6 +18,8 @@
 
 // ------------------------------------------------------------------------------ default constructor
 
+// 圆角盒体是一类较为复杂的对象。包含了26个组件：
+// 8个球体，六个矩形以及12个开放式圆柱体。
 BeveledBox::BeveledBox(void)
 			:	Compound(),
 				p0(-1.0),
@@ -26,50 +28,67 @@ BeveledBox::BeveledBox(void)
 				bbox(p0, p1)
 {	
 	// edges
-	// since the cylinders have to be defined initially in the vertical direction, it's easiest to use -(...)/2, +(...)/2 for 
+	// since the cylinders have to be defined initially in the vertical direction, 
+    // it's easiest to use -(...)/2, +(...)/2 for 
 	// y0 and y1 in the constructors, and then rotate them about their centers.
 	
 	// top edges  (+ve y)
-	
-	Instance* top_front_edge = new Instance (new OpenCylinder(-(p1.x - p0.x - 2 * rb) / 2, (p1.x - p0.x - 2 * rb) / 2, rb));	// top front edge
+	// 创建一个Instance，包含一个绕Y轴的圆柱体OpenCylinder。
+	Instance* top_front_edge = new Instance (
+                    new OpenCylinder(
+                            -(p1.x - p0.x - 2 * rb) / 2, 
+                             (p1.x - p0.x - 2 * rb) / 2, rb));	// top front edge
+    // 旋转90度，指向X方向。
 	top_front_edge->rotate_z(90);
 	top_front_edge->translate((p0.x + p1.x) / 2, p1.y - rb, p1.z - rb);
 	top_front_edge->transform_texture(false);
+    // 作为前面顶部的边。
 	objects.push_back(top_front_edge);
 	
-	
 	// top back (-ve z)
-	
-	Instance* top_back_edge = new Instance (new OpenCylinder(-(p1.x - p0.x - 2 * rb) / 2, (p1.x - p0.x - 2 * rb) / 2, rb));	// top back edge
+	// 创建一个Instance，包含一个绕Y轴的圆柱体OpenCylinder。
+	Instance* top_back_edge = new Instance (
+                    new OpenCylinder(
+                            -(p1.x - p0.x - 2 * rb) / 2, 
+                             (p1.x - p0.x - 2 * rb) / 2, rb));	// top back edge
+    // 旋转90度，指向X方向。
 	top_back_edge->rotate_z(90);
 	top_back_edge->translate((p0.x + p1.x) / 2, p1.y - rb, p0.z + rb);
 	top_back_edge->transform_texture(false);
+    // 作为后面顶部的边。
 	objects.push_back(top_back_edge);
 	
 	
 	// top right (+ve x)
-	
-	Instance* top_right_edge = new Instance (new OpenCylinder(-(p1.z - p0.z - 2 * rb) / 2, (p1.z - p0.z - 2 * rb) / 2, rb)); // top right edge
+	// 创建一个Instance，包含一个绕Y轴的圆柱体OpenCylinder。
+	Instance* top_right_edge = new Instance (
+                    new OpenCylinder(
+                            -(p1.z - p0.z - 2 * rb) / 2, 
+                             (p1.z - p0.z - 2 * rb) / 2, rb)); // top right edge
+    // 旋转90度，指向Z方向。
 	top_right_edge->rotate_x(90);
 	top_right_edge->translate(p1.x - rb, p1.y - rb, (p0.z + p1.z) / 2);
 	top_right_edge->transform_texture(false);
+    // 作为前面右面的边。
 	objects.push_back(top_right_edge);
 	
-	
 	// top left (-ve x)
-	
-	Instance* top_left_edge = new Instance (new OpenCylinder(-(p1.z - p0.z - 2 * rb) / 2, (p1.z - p0.z - 2 * rb) / 2, rb)); // top left edge
+	// 创建一个Instance，包含一个绕Y轴的圆柱体OpenCylinder。
+	Instance* top_left_edge = new Instance (
+                    new OpenCylinder(
+                            -(p1.z - p0.z - 2 * rb) / 2, 
+                             (p1.z - p0.z - 2 * rb) / 2, rb)); // top left edge
+    // 旋转90度，指向Z方向。
 	top_left_edge->rotate_x(90);
 	top_left_edge->translate(p0.x + rb, p1.y - rb, (p0.z + p1.z) / 2);
 	top_left_edge->transform_texture(false);
+    // 作为前面左面的边。
 	objects.push_back(top_left_edge);
 
 
 	
 	// bottom edges  (-ve y)
-	
 	// bottom front  (+ve z)
-	
 	Instance* bottom_front_edge = new Instance (new OpenCylinder(-(p1.x - p0.x - 2 * rb) / 2, (p1.x - p0.x - 2 * rb) / 2, rb));	// bottom fromt edge
 	bottom_front_edge->rotate_z(90);
 	bottom_front_edge->translate((p0.x + p1.x) / 2, p0.y + rb, p1.z - rb);
@@ -78,7 +97,6 @@ BeveledBox::BeveledBox(void)
 	
 	
 	// bottom back  (-ve z)
-	
 	Instance* bottom_back_edge = new Instance (new OpenCylinder(-(p1.x - p0.x - 2 * rb) / 2, (p1.x - p0.x - 2 * rb) / 2, rb));	// bottom back edge
 	bottom_back_edge->rotate_z(90);
 	bottom_back_edge->translate((p0.x + p1.x) / 2, p0.y + rb, p0.z + rb);
@@ -87,7 +105,6 @@ BeveledBox::BeveledBox(void)
 
 	
 	// bottom right (-ve x, -ve y)
-	
 	Instance* bottom_right_edge = new Instance (new OpenCylinder(-(p1.z - p0.z - 2 * rb) / 2, (p1.z - p0.z - 2 * rb) / 2, rb)); // bottom right edge
 	bottom_right_edge->rotate_x(90);
 	bottom_right_edge->translate(p1.x - rb, p0.y + rb, (p0.z + p1.z) / 2);

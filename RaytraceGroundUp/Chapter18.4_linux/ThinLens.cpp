@@ -133,6 +133,7 @@ ThinLens::render_scene(const World& w) {
 
 			L = black;
 			for (int n = 0; n < vp.num_samples; n++) {
+                // 返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
 				sp = vp.sampler_ptr->sample_unit_square();
 				pp.x = vp.s * (c - vp.hres / 2.0 + sp.x);
 				pp.y = vp.s * (r - vp.vres / 2.0 + sp.y);

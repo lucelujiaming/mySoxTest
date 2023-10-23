@@ -218,6 +218,7 @@ MyRectangle::set_sampler(Sampler* sampler) {
 // 通过矩形的角顶点po以及边向量a和b生成其表面上的采样点。
 Point3D                                             
 MyRectangle::sample(void) {
+    // 返回存储于采样器对象中的下一个采样点，映射到单位矩形。
     Point2D sample_point = sampler_ptr->sample_unit_square();
     return (p0 + sample_point.x * a + sample_point.y * b);
 }
@@ -235,6 +236,7 @@ MyRectangle::get_normal(const Point3D& p) {
 
 float
 MyRectangle::pdf(const ShadeRec& sr) {
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
     return (inv_area);
 }
 

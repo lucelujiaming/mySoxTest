@@ -84,13 +84,16 @@ AreaLight::operator= (const AreaLight& rhs) {
 // 因为函数n_shadow()、L()和G()同样需要这些数据。
 Vector3D
 AreaLight::get_direction(ShadeRec& sr) {
-
+    // 1. 存储采样点。
     sample_point = object_ptr->sample();    // used in the G function
-    // 几何对象的get_normal() 函数将被调用。
+    // 2. 存储采样点处的法线。
+    //    几何对象的get_normal()函数将被调用。
     light_normal = object_ptr->get_normal(sample_point); 
+    // 计算着色点与采样点之间的方向向量。
     wi = sample_point - sr.hit_point;        // used in the G function
+    // 单位化方向向量。
     wi.normalize();
-
+    // 3. 返回着色点与采样点之间的单位方向向量ωi。
     return (wi);
 }
 
@@ -99,28 +102,42 @@ AreaLight::get_direction(ShadeRec& sr) {
 // 在返回材质的发射辐射度之前将检测光线是否与位于法线同一侧的表面产生碰撞。
 RGBColor
 AreaLight::L(ShadeRec& sr) {
-
+    // 法线方向
     float ndotd = -light_normal * wi;
-
+    // 同侧
     if (ndotd > 0.0)
+    {
+        // 返回材质的发射辐射度
         return (material_ptr->get_Le(sr));
+    }
+    // 不同侧
     else
+    {
         return (black);
+    }
 }
 
 
 // ---------------------------------------------------------------- in_shadow    
-
+// 检测阴影光线是否与碰撞点和采样点之间的对象产生碰撞。
 bool
 AreaLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
     float t;
     int num_objects = sr.w.objects.size();
+    // 光线上碰撞点对应时间点。
     float ts = (sample_point - ray.o) * ray.d;
 
     for (int j = 0; j < num_objects; j++)
+    {
+        // 如果有一个对象和光线产生碰撞，且碰撞时间点在sample_point对应的时间点之前，
+        // 说明这个对象位于碰撞点和采样点之间。
+        // 也就是说，光线与碰撞点和采样点之间的对象产生碰撞。
         if (sr.w.objects[j]->shadow_hit(ray, t) && t < ts)
+        {
             return (true); 
+        }
+    }
 
     return (false);
 }
@@ -142,8 +159,8 @@ AreaLight::G(const ShadeRec& sr) const {
 
 // ---------------------------------------------------------------- pdf
 // 简单地调用当前对象的pdf()函数。
+// 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
 float
 AreaLight::pdf(const ShadeRec& sr) const {
-
     return (object_ptr->pdf(sr));
 }

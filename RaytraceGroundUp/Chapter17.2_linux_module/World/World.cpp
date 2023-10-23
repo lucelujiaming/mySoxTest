@@ -294,7 +294,6 @@ World::hit_objects(const Ray& ray) {
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-
     int num_samples=256;
     // 设置图像的分辨率和像素尺寸。
     vp.set_hres(400);

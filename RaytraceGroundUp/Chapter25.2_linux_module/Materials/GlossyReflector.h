@@ -9,7 +9,7 @@
 
 #include "Phong.h"
 #include "GlossySpecular.h"
-
+// 光泽反射将统一处理镜面高光和镜面反射计算，进而可以消除二者的不一致性。
 class GlossyReflector: public Phong {
     public:
 
@@ -24,22 +24,22 @@ class GlossyReflector: public Phong {
         clone(void) const;
 
         ~GlossyReflector(void);
-
+        // 设置反射系数
         void
         set_kr(const float k);
-
+        // 设置反射颜色值
         void
         set_cr(const RGBColor& c);
-
+        // 设置反射颜色值
         void
         set_cr(const float r, const float g, const float b);
-
+        // 设置反射颜色值
         void
         set_cr(const float c);
-
+        // 设置Phong指数
         void
         set_exponent(const float e);
-
+        // 设置Phong指数，并且设置采样器。
         void
         set_samples(const int num_samples, const float exp);
 
@@ -50,7 +50,7 @@ class GlossyReflector: public Phong {
         area_light_shade(ShadeRec& sr);
 
     private:
-
+        // 封装了一个光照镜面反射
         GlossySpecular* glossy_specular_brdf;
 };
 

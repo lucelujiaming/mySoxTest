@@ -51,6 +51,8 @@ class Sphere: public GeometricObject {
         double         radius;                // the radius 
 
         static const double kEpsilon;   // for shadows and secondary rays
+        // Lujiaming add it at 10/21/2023
+        float             inv_area;         // 球形映射到平面上形成的圆面积的倒数
 };
 
 

@@ -49,8 +49,9 @@ class PointLight: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-        
+        // 光源缩放系数，也就是亮度值。
         float         ls;        // radiant scale factor
+        // 光源颜色值。
         RGBColor     color;
         Point3D     location;
 };

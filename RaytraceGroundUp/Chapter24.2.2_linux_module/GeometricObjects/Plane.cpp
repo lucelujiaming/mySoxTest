@@ -73,6 +73,9 @@ Plane::~Plane(void)
 // 第3章暂不需要法线数据，相关计算将在第14章讨论着色技术时加以介绍。
 // 另外，在第29章分析纹理数据时，将会实现碰撞点数据local_hit_point。
 // 此处，暂时添加这一类数据以保持碰撞测试函数的原貌。
+// 
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
 bool
 Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
@@ -92,6 +95,8 @@ Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 // ----------------------------------------------------------------- hit
 // explained on page 301
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 只判断是否相交。不计算碰撞点
 bool
 Plane::shadow_hit(const Ray& ray, float& tmin) const {
 
@@ -103,5 +108,13 @@ Plane::shadow_hit(const Ray& ray, float& tmin) const {
     }
     else
         return (false);
+}
+
+// ----------------------------------------------------------------------- pdf
+// returns the probability density function for area light shading
+
+float
+Plane::pdf(const ShadeRec& sr) {
+	return (1.0);
 }
 

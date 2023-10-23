@@ -51,16 +51,21 @@ class Rectangle: public GeometricObject {
 		pdf(ShadeRec& sr);
 		
 	private:
-	
+        // 角顶点
 		Point3D 		p0;   			// corner vertex 
+        // 两条邻接边上的两个顶点
 		Vector3D		a;				// side
 		Vector3D		b;				// side
+        // 邻接边长的平方
 		double			a_len_squared;	// square of the length of side a
 		double			b_len_squared;	// square of the length of side b
+        // 法线方向
 		Normal			normal;	
-		
+		// 面积
 		float			area;			// for rectangular lights
+        // 面积的倒数
 		float			inv_area;		// for rectangular lights
+        // 采样器指针
 		Sampler*		sampler_ptr;	// for rectangular lights 	
 		
 		static const double kEpsilon;   											

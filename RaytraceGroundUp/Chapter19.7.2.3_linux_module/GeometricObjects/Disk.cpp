@@ -185,6 +185,7 @@ Disk::get_normal(const Point3D& p) {
 
 float
 Disk::pdf(ShadeRec& sr) {
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
 	return (inv_area);
 }
 

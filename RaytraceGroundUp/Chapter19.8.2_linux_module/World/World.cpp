@@ -67,7 +67,7 @@ extern ofstream out;
 #include "TorusPartConcave.h"
 #include "TorusPart.h"
 
-#include "SolidCylinder.h"
+#include "Compound.h"
 
 // -------------------------------------------------------------------- default constructor
 
@@ -364,9 +364,16 @@ void World::build()
     matte_ptr2->set_kd(0);
     matte_ptr2->set_cd(0, 1, 0); // Green
     
-	SolidCylinder * solidcylinder_ptr = new SolidCylinder();
-    solidcylinder_ptr->set_material(matte_ptr2);
-    add_object(solidcylinder_ptr);
+	Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
+	OpenCylinder * openCylinder_ptr1 = new OpenCylinder(-1, 2, 1);
+    TorusPart * toruspart_ptr1 = new TorusPart();
+	
+	Compound * compond_ptr = new Compound();
+	compond_ptr->add_object(sphere_ptr1);
+	compond_ptr->add_object(openCylinder_ptr1);
+	compond_ptr->add_object(toruspart_ptr1);
+    compond_ptr->set_material(matte_ptr2);
+    add_object(compond_ptr);
 
 
     Matte* matte_ptr3=new Matte;

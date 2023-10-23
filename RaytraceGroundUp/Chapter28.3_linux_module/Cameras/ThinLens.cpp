@@ -137,6 +137,7 @@ ThinLens::render_scene(const World& w) {
                 pp.x = vp.s * (c - vp.hres / 2.0 + sp.x);
                 pp.y = vp.s * (r - vp.vres / 2.0 + sp.y);
                 
+                // 返回存储于采样器对象中的下一个采样点，映射到单位圆。
                 dp = sampler_ptr->sample_unit_disk();
                 lp = dp * lens_radius;
                 

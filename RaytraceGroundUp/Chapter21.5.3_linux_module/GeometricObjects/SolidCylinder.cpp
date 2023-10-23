@@ -18,15 +18,15 @@ SolidCylinder::SolidCylinder(void)
 		y1(1.0),
 		radius(1.0),
 		inv_radius(1.0) {
-
+    // 底盖
 	objects.push_back(new Disk(	Point3D(0, -1, 0), 			// bottom
 								1,
 								Normal(0, -1, 0)));
-
+    // 顶盖
 	objects.push_back(new Disk(	Point3D(0, 1, 0), 			// top
 								1,
 								Normal(0, 1, 0)));
-
+    // 柱体墙
 	objects.push_back(new OpenCylinder(-1, 1, 1));	// wall
 }
 

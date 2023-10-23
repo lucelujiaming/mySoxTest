@@ -71,21 +71,32 @@ OpenCylinder::~OpenCylinder(void) {}
 // ----------------------------------------------------------------------------- hit
 // The code reverses the normal when the ray hits the inside surface, allows both
 // sides to be shaded, but completely messes up transparency.
-
+// 光线-对象间的碰撞检测函数。
+//   根据19.17有：
+//   x^2 + z^2 -r^2 = 0
+//   带入：
+//   p = o + t * d
+//   有：
+//      (ox + t * dx)^2
+//    + (oz + t * dz)^2 - r^2 = 0
+//   整理后，就可以得到关于t的二元一次方程。
 bool 															 
 OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 															
 	double t;
+    // ox、oy、oz表示光线源点坐标。
 	double ox = ray.o.x;
 	double oy = ray.o.y;
 	double oz = ray.o.z;
+    // (dx, dy, dz)为光线方向。
 	double dx = ray.d.x;
 	double dy = ray.d.y;
 	double dz = ray.d.z;
-	
+	// 参见P302的公式
 	double a = dx * dx + dz * dz;  	
 	double b = 2.0 * (ox * dx + oz * dz);					
 	double c = ox * ox + oz * oz - radius * radius;
+    // 判别式
 	double disc = b * b - 4.0 * a * c ;
 
 			
@@ -152,9 +163,11 @@ OpenCylinder::shadow_hit(const Ray& ray, float& tmin) const {
 	double dy = ray.d.y;
 	double dz = ray.d.z;
 	
+	// 参见P302的公式
 	double a = dx * dx + dz * dz;  	
 	double b = 2.0 * (ox * dx + oz * dz);					
 	double c = ox * ox + oz * oz - radius * radius;
+    // 判别式
 	double disc = b * b - 4.0 * a * c ;
 
 			
@@ -183,7 +196,6 @@ OpenCylinder::shadow_hit(const Ray& ray, float& tmin) const {
 			}
 		} 
 	}
-	
 	return (false);	
 }
 

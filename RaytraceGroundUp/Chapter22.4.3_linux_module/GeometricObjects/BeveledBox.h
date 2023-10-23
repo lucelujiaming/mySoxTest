@@ -16,7 +16,8 @@
 #include "Compound.h"
 #include "Point3D.h"
 #include "BBox.h"
-
+// 圆角盒体是一类较为复杂的对象。包含了26个组件：
+// 8个球体，六个矩形以及12个开放式圆柱体。
 class BeveledBox: public Compound {
 	public:
 		
@@ -47,7 +48,7 @@ class BeveledBox: public Compound {
 		hit(const Ray& ray, double& tmin, ShadeRec& sr) const;
 		
 	private:
-	
+        // 
 		Point3D		p0; 	// minimum coordinate corner
 		Point3D 	p1;		// maximum coordinate corner
 		double		rb;		// bevel radius

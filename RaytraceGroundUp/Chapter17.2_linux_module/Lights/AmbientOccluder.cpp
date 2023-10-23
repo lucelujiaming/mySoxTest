@@ -71,11 +71,18 @@ AmbientOccluder::~AmbientOccluder (void) {}
 
 // ---------------------------------------------------------------------- get_direction
 // 返回各条阴影光线的方向。
+// 这个函数不需要构造(u，v，w)，因为AmbientOccluder::L在调用get_direction之前已经创建好了。
 Vector3D
 AmbientOccluder::get_direction(ShadeRec& sr) {
+    // 返回存储于采样器对象中的下一个采样点，映射到半球体。
+    // 因为，通常情况下，我们需要在局部坐标系中计算光线的方向，
+    // 并在随后计算该光线在世界坐标系中的方向。
     Point3D sp = sampler_ptr->sample_hemisphere();
-    // 该函数只是简单地将局部变量的相关分量投影至(u，v，w)上。
-    // 参见公式17.4
+    // 这个采样点是位于碰撞点基向量u, v, w组成的坐标系中的。
+    // 我们把这个采样点换算到世界坐标系中。
+    // 参见公式2.13。
+    // 也就是局部变量的相关分量投影至(u，v，w)上。
+    // 参见公式17.4。
     return (sp.x * u + sp.y * v + sp.z * w);
 }    
 
@@ -166,6 +173,5 @@ AmbientOccluder::G(const ShadeRec& sr) const{
 
 float
 AmbientOccluder::pdf(const ShadeRec& sr) const{
-
     return 5.5;//?
 }

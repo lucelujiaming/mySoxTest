@@ -8,9 +8,9 @@ const double Rectangle::kEpsilon = 0.001;
 
 Rectangle::Rectangle(void)
 	: 	GeometricObject(),
-		p0(-1, 0, -1), 
-		a(0, 0, 2), b(2, 0, 0), 
-		a_len_squared(4.0), 
+		p0(-1, 0, -1),
+		a(0, 0, 2), b(2, 0, 0),
+		a_len_squared(4.0),
 		b_len_squared(4.0),
 		normal(0, 1, 0),
 		area(4.0),
@@ -27,11 +27,11 @@ Rectangle::Rectangle(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b)
 		p0(_p0),
 		a(_a),
 		b(_b),
-		a_len_squared(a.len_squared()), 
+		a_len_squared(a.len_squared()),
 		b_len_squared(b.len_squared()),
 		area(a.length() * b.length()),
 		inv_area(1.0 / area),
-		sampler_ptr(NULL)		
+		sampler_ptr(NULL)
 {
 	normal = a ^ b;
 	normal.normalize();
@@ -46,9 +46,9 @@ Rectangle::Rectangle(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b,
 		p0(_p0),
 		a(_a),
 		b(_b),
-		a_len_squared(a.len_squared()), 
+		a_len_squared(a.len_squared()),
 		b_len_squared(b.len_squared()),
-		area(a.length() * b.length()),	
+		area(a.length() * b.length()),
 		inv_area(1.0 / area),
 		normal(n),
 		sampler_ptr(NULL)
@@ -60,7 +60,7 @@ Rectangle::Rectangle(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b,
 
 // ---------------------------------------------------------------- clone
 
-Rectangle* 
+Rectangle*
 Rectangle::clone(void) const {
 	return (new Rectangle(*this));
 }
@@ -70,17 +70,17 @@ Rectangle::clone(void) const {
 
 Rectangle::Rectangle (const Rectangle& r)
 	:	GeometricObject(r),
-		p0(r.p0), 
+		p0(r.p0),
 		a(r.a),
 		b(r.b),
-		a_len_squared(r.a_len_squared), 
-		b_len_squared(r.b_len_squared),	
+		a_len_squared(r.a_len_squared),
+		b_len_squared(r.b_len_squared),
 		normal(r.normal),
 		area(r.area),
 		inv_area(r.inv_area)
 {
 	if(r.sampler_ptr)
-		sampler_ptr	= r.sampler_ptr->clone(); 
+		sampler_ptr	= r.sampler_ptr->clone();
 	else  sampler_ptr = NULL;
 }
 
@@ -88,22 +88,22 @@ Rectangle::Rectangle (const Rectangle& r)
 
 // ---------------------------------------------------------------- assignment operator
 
-Rectangle& 
+Rectangle&
 Rectangle::operator= (const Rectangle& rhs) {
 	if (this == &rhs)
 		return (*this);
 
 	GeometricObject::operator=(rhs);
-	
+
 	p0				= rhs.p0;
 	a				= rhs.a;
 	b				= rhs.b;
-	a_len_squared	= rhs.a_len_squared; 
+	a_len_squared	= rhs.a_len_squared;
 	b_len_squared	= rhs.b_len_squared;
-	area			= rhs.area;	
+	area			= rhs.area;
 	inv_area		= rhs.inv_area;
 	normal			= rhs.normal;
-	
+
 	if (sampler_ptr) {
 		delete sampler_ptr;
 		sampler_ptr = NULL;
@@ -126,45 +126,59 @@ Rectangle::~Rectangle (void) {
 	}
 }
 
-//------------------------------------------------------------------ get_bounding_box 
+//------------------------------------------------------------------ get_bounding_box
 
 BBox
 Rectangle::get_bounding_box(void) {
-	double delta = 0.0001; 
+	double delta = 0.0001;
 
 	return(BBox(min(p0.x, p0.x + a.x + b.x) - delta, max(p0.x, p0.x + a.x + b.x) + delta,
-				min(p0.y, p0.y + a.y + b.y) - delta, max(p0.y, p0.y + a.y + b.y) + delta, 
+				min(p0.y, p0.y + a.y + b.y) - delta, max(p0.y, p0.y + a.y + b.y) + delta,
 				min(p0.z, p0.z + a.z + b.z) - delta, max(p0.z, p0.z + a.z + b.z) + delta));
 }
-																			
 
-//------------------------------------------------------------------ hit 
 
-bool 												 
-Rectangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {	
-	
-	double t = (p0 - ray.o) * normal / (ray.d * normal); 
-	
+//------------------------------------------------------------------ hit
+
+bool
+Rectangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
+    // 计算光线和圆形对象所在平面的碰撞点。推导过程如下：
+    //     所谓的平面，定义方式为(a, n)。也就是该平面经过点a，且垂直于法线方向n。
+    //     因此上，平面的任意一点p都满足：
+    //         (p - a) * n = 0
+    //     即，从a到p的向量和法线方向n垂直。
+    //     代入光线方程： p = o + td有：
+    //          (o + td - a) * n = 0
+    //     则：
+    //           t = (a - o) * n / (d * n)
+    //     即为下面的公式。
+    // 也可以参见公式2.6和3.4
+	double t = (p0 - ray.o) * normal / (ray.d * normal);
+
 	if (t <= kEpsilon)
 		return (false);
-			
+
+    // 根据上面计算出来的t算出来碰撞点p。
 	Point3D p = ray.o + t * ray.d;
+    // 计算从碰撞点到角顶点的向量。
 	Vector3D d = p - p0;
-	
+
+    // 将p - p0投影到a和b轴上。
+    // 等同于在以p0为原点，ab为XY轴的坐标系中表示碰撞点p
 	double ddota = d * a;
-	
+    // a方向上，坐标值的平方不能大于a_len_squared。
 	if (ddota < 0.0 || ddota > a_len_squared)
 		return (false);
-		
+
+    // b方向上，坐标值的平方不能大于b_len_squared。
 	double ddotb = d * b;
-	
 	if (ddotb < 0.0 || ddotb > b_len_squared)
 		return (false);
-		
+	// 如果坐标值位于范围内，记录碰撞点，法线方向和碰撞点对应的t值。
 	tmin 				= t;
 	sr.normal 			= normal;
 	sr.local_hit_point 	= p;
-	
+
 	return (true);
 }
 
@@ -172,33 +186,48 @@ Rectangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 bool
 Rectangle::shadow_hit(const Ray& ray, float& tmin) const {
+    // 计算光线和圆形对象所在平面的碰撞点。推导过程如下：
+    //     所谓的平面，定义方式为(a, n)。也就是该平面经过点a，且垂直于法线方向n。
+    //     因此上，平面的任意一点p都满足：
+    //         (p - a) * n = 0
+    //     即，从a到p的向量和法线方向n垂直。
+    //     代入光线方程： p = o + td有：
+    //          (o + td - a) * n = 0
+    //     则：
+    //           t = (a - o) * n / (d * n)
+    //     即为下面的公式。
+    // 也可以参见公式2.6和3.4
+	double t = (p0 - ray.o) * normal / (ray.d * normal);
 
-	double t = (p0 - ray.o) * normal / (ray.d * normal); 
-	
 	if (t <= kEpsilon)
 		return (false);
-			
+
+    // 根据上面计算出来的t算出来碰撞点p。
 	Point3D p = ray.o + t * ray.d;
+    // 计算从碰撞点到角顶点的向量。
 	Vector3D d = p - p0;
-	
+
+    // 将p - p0投影到a和b轴上。
+    // 等同于在以p0为原点，ab为XY轴的坐标系中表示碰撞点p
 	double ddota = d * a;
-	
+    // a方向上，坐标值的平方不能大于a_len_squared。
 	if (ddota < 0.0 || ddota > a_len_squared)
 		return (false);
-		
+
+    // b方向上，坐标值的平方不能大于b_len_squared。
 	double ddotb = d * b;
-	
 	if (ddotb < 0.0 || ddotb > b_len_squared)
 		return (false);
-		
+
+	// 如果坐标值位于范围内，记录碰撞点对应的t值。
 	tmin 				= t;
-	
+
 	return (true);
 }
 
 // ---------------------------------------------------------------- setSampler
 
-void 								
+void
 Rectangle::set_sampler(Sampler* sampler) {
 	sampler_ptr = sampler;
 }
@@ -206,17 +235,20 @@ Rectangle::set_sampler(Sampler* sampler) {
 
 // ---------------------------------------------------------------- sample
 // returns a sample point on the rectangle
-
-Point3D 											
+// 通过矩形的角顶点po以及边向量a和b生成其表面上的采样点。
+Point3D
 Rectangle::sample(void) {
+    //  返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
+    // 其中sp.z不使用。
 	Point2D sample_point = sampler_ptr->sample_unit_square();
+    // 
 	return (p0 + sample_point.x * a + sample_point.y * b);
 }
 
 
-//------------------------------------------------------------------ get_normal 
-					 
-Normal 										
+//------------------------------------------------------------------ get_normal
+
+Normal
 Rectangle::get_normal(const Point3D& p) {
 	return (normal);
 }
@@ -225,9 +257,10 @@ Rectangle::get_normal(const Point3D& p) {
 // ---------------------------------------------------------------- pdf
 
 float
-Rectangle::pdf(ShadeRec& sr) {	
+Rectangle::pdf(ShadeRec& sr) {
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
 	return (inv_area);
-} 
+}
 
 
 

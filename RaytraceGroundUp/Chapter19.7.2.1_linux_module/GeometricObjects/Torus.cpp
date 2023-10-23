@@ -97,12 +97,12 @@ Torus::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	double roots[4];	// solution array for the quartic equation
 	
 	// define the coefficients of the quartic equation
-	
+	// 参见公式19.22。
 	double sum_d_sqrd 	= d1 * d1 + d2 * d2 + d3 * d3;
 	double e			= x1 * x1 + y1 * y1 + z1 * z1 - a * a - b * b;
 	double f			= x1 * d1 + y1 * d2 + z1 * d3;
 	double four_a_sqrd	= 4.0 * a * a;
-	
+	// 计算一元四次方程的5个系数。
 	coeffs[0] = e * e - four_a_sqrd * (b * b - y1 * y1); 	// constant term
 	coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
 	coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
@@ -110,7 +110,7 @@ Torus::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	coeffs[4] = sum_d_sqrd * sum_d_sqrd;  					// coefficient of t^4
 	
 	// find roots of the quartic equation
-	
+	// 调用数学库函数解方程。返回四个根。
 	int num_real_roots = SolveQuartic(coeffs, roots);
 	
 	bool	intersected = false;
@@ -121,17 +121,17 @@ Torus::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	
 	// find the smallest root greater than kEpsilon, if any
 	// the roots array is not sorted
-			
+	// 找到最小的根，也就是第一次和圆环相交的地方，就是碰撞点。
 	for (int j = 0; j < num_real_roots; j++)  
 		if (roots[j] > kEpsilon) {
 			intersected = true;
 			if (roots[j] < t)
 				t = roots[j];
 		}
-		
+	// 如果没有相交，返回false。	
 	if(!intersected)
 		return (false);
-		
+	// 否则记录碰撞点，法线方向和对应的t值。
 	tmin 			 	= t;
 	sr.local_hit_point 	= ray.o + t * ray.d;
 	sr.normal 		 	= compute_normal(sr.local_hit_point);

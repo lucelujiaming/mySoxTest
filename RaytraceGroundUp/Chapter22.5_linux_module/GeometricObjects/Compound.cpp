@@ -116,8 +116,9 @@ Compound::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	bool		hit 		= false;
 				tmin 		= kHugeValue;
 	int 		num_objects	= objects.size();
-
-	for (int j = 0; j < num_objects; j++)
+    // 遍历每一个对象，
+	for (int j = 0; j < num_objects; j++) {
+        // 寻找最近的碰撞点。
 		if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
 			hit				= true;
 			tmin 			= t;
@@ -125,7 +126,8 @@ Compound::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 			normal			= sr.normal;
 			local_hit_point	= sr.local_hit_point;
 		}
-
+    }
+    // 如果找到，就记下来。
 	if (hit) {
 		sr.t				= tmin;
 		sr.normal 			= normal;

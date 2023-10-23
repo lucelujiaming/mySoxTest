@@ -53,39 +53,37 @@ class Instance: public GeometricObject {
         
         
         // affine tranformation functions
-        
+        // 平移变换
         void                                                
         translate(const Vector3D& trans);
-        
+        // 平移变换
         void
         translate(const double dx, const double dy, const double dz);    
-        
+        // 比例变换
         void                                                
         scale(const Vector3D& s);
-        
+        // 比例变换
         void 
         scale(const double a, const double b, const double c);
-        
+        // 绕X轴旋转变换
         virtual void                                        
         rotate_x(const double r);
-        
+        // 绕Y轴旋转变换
         virtual void                                        
         rotate_y(const double r);
-        
+        // 绕Z轴旋转变换矩阵
         virtual void                                        
         rotate_z(const double r);
-        
+        // 错切变换
         void                                                
         shear(const Matrix& m);
         
-        
     private:
-
-        GeometricObject*    object_ptr;                // object to be transformed
-        Matrix                inv_matrix;                // inverse transformation matrix
-        static     Matrix        forward_matrix;         // transformation matrix
-        BBox                bbox;                    // transformed object's bounding box
-        bool                transform_the_texture;    // do we transform the texture?
+        GeometricObject*    object_ptr;               // 对象列表：object to be transformed
+        Matrix              inv_matrix;               // 逆变换矩阵：inverse transformation matrix
+        static   Matrix     forward_matrix;           // 正变换矩阵：transformation matrix
+        BBox                bbox;                     // 包围盒：transformed object's bounding box
+        bool                transform_the_texture;    // 是否转换材质：do we transform the texture?
             
 
 };

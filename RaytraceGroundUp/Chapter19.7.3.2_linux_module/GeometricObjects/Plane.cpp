@@ -78,7 +78,16 @@ Plane::~Plane(void)
 // 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
 bool
 Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
-
+    // 所谓的平面，定义方式为(a, n)。也就是该平面经过点a，且垂直于法线方向n。
+    // 因此上，平面的任意一点p都满足：
+    //     (p - a) * n = 0 
+    // 即，从a到p的向量和法线方向n垂直。
+    // 代入光线方程： p = o + td有：
+    //      (o + td - a) * n = 0
+    // 则：
+    //       t = (a - o) * n / (d * n)
+    // 即为下面的公式。
+    // 也可以参见公式2.6和3.4
     float t = (a - ray.o) * n / (ray.d * n);
 
     if (t > kEpsilon) {
@@ -115,6 +124,8 @@ Plane::shadow_hit(const Ray& ray, float& tmin) const {
 
 float
 Plane::pdf(const ShadeRec& sr) {
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
+    // 我这里写成返回1.0。
 	return (1.0);
 }
 

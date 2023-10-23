@@ -107,10 +107,10 @@ GeometricObject::sample(void) {
 
 // ----------------------------------------------------------------------- pdf
 // returns the probability density function for area light shading
-        
+// As the dividend, It cannot return zero  
 float
 GeometricObject::pdf(const ShadeRec& sr) {
-    return (0.0);
+    return (1.0);
 }      
 
                                     

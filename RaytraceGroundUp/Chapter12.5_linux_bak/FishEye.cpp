@@ -112,6 +112,7 @@ FishEye::render_scene(const World& wr) {
 
             L = black;
             for (int j = 0; j < vp.num_samples; j++) {
+                // 返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
                 sp = vp.sampler_ptr->sample_unit_square();
                 pp.x = s * (c - 0.5 * hres + sp.x);
                 pp.y = s * (r - 0.5 * vres + sp.y);

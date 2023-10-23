@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "BBox.h"
 #include "Constants.h"
 

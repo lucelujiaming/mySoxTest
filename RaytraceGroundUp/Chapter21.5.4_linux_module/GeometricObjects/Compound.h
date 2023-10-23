@@ -48,7 +48,7 @@ class Compound: public GeometricObject {
 		shadow_hit(const Ray& ray, float& tmin) const;
 
 	protected:
-
+        // 存储所有的子对象的列表。
 		vector<GeometricObject*> objects;
 
 	private:

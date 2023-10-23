@@ -84,13 +84,19 @@ StereoCamera::~StereoCamera(void) {
 
 
 // ----------------------------------------------------------------------------- set_up_cameras
-
+// 建立左、右相机
+// 鉴于在调用函数之前，立体相机的基向量(u，v，w)已设定完毕，
+// 该函数只需计算左、右观察点的位置以及视见点的位置即可。
 void
 StereoCamera::setup_cameras(void) {
 
     double r = eye.distance(lookat);
+    // 若x表示相机间距值的一半，则e和l间的距离值r可按如下方式定义：
+	//     r = || e一l ||
+	// 由简单的三角几何计算可得：
+    //     x = r * tan(beta/2)
     double x = r * tan(0.5 * beta * PI_ON_180);  //  half the camera separation distance
-
+    // 根据计算结果设置左右相机。
     left_camera_ptr->set_eye(eye - x * u);
     left_camera_ptr->set_lookat(lookat - x * u);
     left_camera_ptr->compute_uvw();
@@ -109,7 +115,6 @@ StereoCamera::render_stereo(const World& w, float x, int pixel_offset) {}    // 
 
 
 // ----------------------------------------------------------------------------- render scene
-
 void
 StereoCamera::render_scene(const World& w) {
 
@@ -122,11 +127,13 @@ StereoCamera::render_scene(const World& w) {
     double r = eye.distance(lookat);
     double x = r * tan(0.5 * beta * PI_ON_180);
 
+    // 为了生成立体图像对，仅需正确处理其中的一个特例，即沿x，方向移动视平面。
+    // 针对左相机，位移为沿x，方向且距离为相机间距值的一半。
     if (viewing_type == parallel) {
         left_camera_ptr->render_stereo(w, x, 0);                        // left view on left
         right_camera_ptr->render_stereo(w, -x, hres + pixel_gap);        // right view on right
     }
-
+    // 而针对右相机，位移为负x，方向且移动距离值相同。
     if (viewing_type == transverse) {
         right_camera_ptr->render_stereo(w, -x, 0);                    // right view on left
         left_camera_ptr->render_stereo(w, x, hres + pixel_gap);        // left view on right

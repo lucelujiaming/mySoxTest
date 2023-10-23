@@ -51,12 +51,13 @@ class StereoCamera: public Camera {
         render_scene(const World& w);
 
     private:
-
-        ViewingType    viewing_type;        // parallel or transverse viewing
-        int            pixel_gap;            // gap in pixels between the left and right images
-        float        beta;                // stereo separation angle
+		// 另外， 当利用光线跟踪器渲染图像时， 数据成员viewing允许用户指定平行视角或横向视角。
+        ViewingType    viewing_type;       // parallel or transverse viewing
+        int            pixel_gap;          // gap in pixels between the left and right images
+        float          beta;               // stereo separation angle
+		// 添加了左、右相机指针，这使得用户可使用任一类型的相机，并为立体图像对的渲染操作提供了灵活性。
         Camera*        left_camera_ptr;    // left eye camera
-        Camera*        right_camera_ptr;    // right eye camera
+        Camera*        right_camera_ptr;   // right eye camera
 };
 
 

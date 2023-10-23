@@ -117,7 +117,8 @@ GlossySpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, f
     Vector3D u = Vector3D(0.00424, 1, 0.00764) ^ w;
     u.normalize();
     Vector3D v = u ^ w;
-
+            
+    // 返回存储于采样器对象中的下一个采样点，映射到半球体。
     Point3D sp = sampler_ptr->sample_hemisphere();
     wi = sp.x * u + sp.y * v + sp.z * w;            // reflected ray direction
 

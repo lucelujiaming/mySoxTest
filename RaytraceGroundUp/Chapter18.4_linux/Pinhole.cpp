@@ -87,6 +87,7 @@ Pinhole::render_stereo(const World& w, float x, int pixel_offset) {
 
 			L = black;
 			for (int j = 0; j < vp.num_samples; j++) {
+                // 返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
 				sp = vp.sampler_ptr->sample_unit_square();
 				pp.x = vp.s * (c - 0.5 * vp.hres + sp.x) + x;	// asymmetric view frustum
 				pp.y = vp.s * (r - 0.5 * vp.vres + sp.y);
@@ -123,6 +124,7 @@ Pinhole::render_scene(const World& w) {
 
 			L = black;
 			for (int j = 0; j < vp.num_samples; j++) {
+                // 返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
 				sp = vp.sampler_ptr->sample_unit_square();
 				pp.x = vp.s * (c - 0.5 * vp.hres + sp.x);
 				pp.y = vp.s * (r - 0.5 * vp.vres + sp.y);

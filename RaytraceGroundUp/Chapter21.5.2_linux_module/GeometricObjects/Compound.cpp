@@ -3,7 +3,7 @@
 //	This C++ code is licensed under the GNU General Public License Version 2.
 //	See the file COPYING.txt for the full license.
 
-
+#include "stdafx.h"
 #include <vector>
 
 #include "Constants.h"
@@ -116,8 +116,9 @@ Compound::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	bool		hit 		= false;
 				tmin 		= kHugeValue;
 	int 		num_objects	= objects.size();
-
-	for (int j = 0; j < num_objects; j++)
+    // 遍历每一个对象，
+	for (int j = 0; j < num_objects; j++) {
+        // 寻找最近的碰撞点。
 		if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
 			hit				= true;
 			tmin 			= t;
@@ -125,7 +126,8 @@ Compound::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 			normal			= sr.normal;
 			local_hit_point	= sr.local_hit_point;
 		}
-
+    }
+    // 如果找到，就记下来。
 	if (hit) {
 		sr.t				= tmin;
 		sr.normal 			= normal;
@@ -151,6 +153,7 @@ Compound::shadow_hit(const Ray& ray, float& tmin) const {
 		if (objects[j]->shadow_hit(ray, t) && (t < tmin)) {
 			hit				= true;
 			tmin 			= t;
+            material_ptr    = objects[j]->get_material();    // lhs is GeometricObject::material_ptr
 		}
 
 	return (hit);

@@ -53,10 +53,11 @@ class EnvironmentLight: public Light {
         set_shadows(bool _s);
 
     private:
-
         Sampler* sampler_ptr;
         Material* material_ptr;
+        // 碰撞点基向量
         Vector3D u, v, w;
+        // 阴影光线的方向。
         Vector3D            wi;                // unit direction from hit point being shaded to sample point on light surface
 };
 

@@ -92,7 +92,13 @@ EnvironmentLight::get_direction(ShadeRec& sr) {
     v = Vector3D(0.0034, 1, 0.0071) ^ w;
     v.normalize();
     u = v ^ w;
+    // 返回存储于采样器对象中的下一个采样点，映射到半球体。
+    // 因为，通常情况下，我们需要在局部坐标系中计算光线的方向，
+    // 并在随后计算该光线在世界坐标系中的方向。
     Point3D sp = sampler_ptr->sample_hemisphere();
+    // 这个采样点是位于碰撞点基向量u, v, w组成的坐标系中的。
+    // 我们把这个采样点换算到世界坐标系中。
+    // 参见公式2.13。
     wi = sp.x * u + sp.y * v + sp.z * w;
 
     return (wi);

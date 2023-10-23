@@ -13,7 +13,7 @@
 // The classes ConcavePartCylinder and ConvexPartCylinder can in turn inherit from these.
 
 #include "GeometricObject.h"
-
+// OpenCylinder是一个绕Y轴的圆柱体。
 class OpenCylinder: public GeometricObject {
 	
 	public:
@@ -38,12 +38,12 @@ class OpenCylinder: public GeometricObject {
 		
         virtual bool
         shadow_hit(const Ray& ray, float& t) const;
+        
 	protected:
-	
-		double		y0;				// bottom y value
-		double		y1;				// top y value
-		double		radius;			// radius
-		double		inv_radius;  	// one over the radius	
+		double		y0;				// 底面的Y值：bottom y value
+		double		y1;				// 顶面的Y值：top y value
+		double		radius;			// 半径：radius
+		double		inv_radius;  	// 半径的倒数：one over the radius	
 };
 
 #endif

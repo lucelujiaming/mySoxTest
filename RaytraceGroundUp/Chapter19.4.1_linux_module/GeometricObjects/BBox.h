@@ -6,6 +6,7 @@
 
 class BBox {
     public:
+        // 盒体角顶点坐标
         double x0, x1, y0, y1, z0, z1;
         
         BBox(void);                                        
@@ -22,10 +23,10 @@ class BBox {
         operator= (const BBox& rhs);            
 
         ~BBox(void);                                        
-        
+        // 碰撞函数
         bool                                                             
         hit(const Ray& ray) const;
-    
+        // 判断点p是否位于盒子内部。
         bool
         inside(const Point3D& p) const;
 };

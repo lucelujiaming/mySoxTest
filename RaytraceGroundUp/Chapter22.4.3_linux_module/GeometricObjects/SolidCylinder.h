@@ -36,10 +36,10 @@ class SolidCylinder : public Compound
 
 	protected:
 
-		double		y0;				// bottom y value
-		double		y1;				// top y value
-		double		radius;			// radius
-		double		inv_radius;  	// one over the radius
+		double		y0;				// 底面的Y值：bottom y value
+		double		y1;				// 顶面的Y值：top y value
+		double		radius;			// 半径：radius
+		double		inv_radius;  	// 半径的倒数：one over the radius	
 		BBox        bbox;
 };
 

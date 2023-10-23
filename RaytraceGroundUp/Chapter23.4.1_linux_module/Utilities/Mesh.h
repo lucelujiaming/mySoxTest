@@ -27,21 +27,17 @@ using std::vector;
 // 其中，Mesh类存储了顶点数据信息，且全部数据成员均定义为public类型以方便访问。
 class Mesh {                                              
     public:
-
-        vector<Point3D>         vertices;                // mesh vertices 
-        vector<Normal>             normals;                // average normal at each vertex;
-        vector<float>            u;                        // u texture coordinate at each vertex
-        vector<float>            v;                        // v texture coordinate at each vertex
-        vector<vector<int> >     vertex_faces;            // the triangles shared by each vertex
-        int                     num_vertices;             // number of vertices
-        int                     num_triangles;             // number of triangles
+        vector<Point3D>         vertices;                 // 顶点列表：mesh vertices 
+        vector<Normal>          normals;                  // 每一个顶点的法线方向列表：average normal at each vertex;
+        vector<float>           u;                        // 纹理坐标：u texture coordinate at each vertex
+        vector<float>           v;                        // 纹理坐标：v texture coordinate at each vertex
+        vector<vector<int> >    vertex_faces;             // 由三个顶点组成的三角形列表：the triangles shared by each vertex
+        int                     num_vertices;             // 顶点个数：number of vertices
+        int                     num_triangles;            // 三角形个数：number of triangles
         
-        Mesh(void);                                   
-            
-        Mesh(const Mesh& m);                         
-
-        ~Mesh(void);                               
-
+        Mesh(void);   
+        Mesh(const Mesh& m);  
+        ~Mesh(void); 
         Mesh&                                         
         operator= (const Mesh& rhs);
 };

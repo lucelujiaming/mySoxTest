@@ -23,7 +23,6 @@
 
 class World {
 	public:
-
         ViewPlane                   vp;
         Camera*                     camera_ptr;
         Tracer*                     tracer_ptr;

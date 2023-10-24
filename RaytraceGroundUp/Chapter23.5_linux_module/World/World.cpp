@@ -399,14 +399,11 @@ void World::build()
     }    
     add_object(current_grid_ptr);
 
-
-
     Pinhole* camera_ptr=new Pinhole;
-    camera_ptr->set_eye(100, 0, 100);
-    camera_ptr->set_lookat(0, 1, 0);
-    camera_ptr->set_view_distance(80000);
+    camera_ptr->set_eye(0, 0, 50);
+    camera_ptr->set_lookat(0, 0, -1);
+    camera_ptr->set_view_distance(40000);
     camera_ptr->compute_uvw();
     set_camera(camera_ptr);
-
 }
 

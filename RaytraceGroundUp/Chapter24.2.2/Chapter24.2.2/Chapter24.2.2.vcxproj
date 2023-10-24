@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E59AF7A6-D003-4401-BEA1-5D4399AA658E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Chapter2422</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ambient.h" />
+    <ClInclude Include="AmbientOccluder.h" />
+    <ClInclude Include="AreaLight.h" />
+    <ClInclude Include="BBox.h" />
+    <ClInclude Include="BRDF.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Compound.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="Emissive.h" />
+    <ClInclude Include="EnvironmentLight.h" />
+    <ClInclude Include="FishEye.h" />
+    <ClInclude Include="FlatMeshTriangle.h" />
+    <ClInclude Include="GeometricObject.h" />
+    <ClInclude Include="GlossySpecular.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="Jittered.h" />
+    <ClInclude Include="Lambertian.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Maths.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Matte.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshTriangle.h" />
+    <ClInclude Include="MultiJittered.h" />
+    <ClInclude Include="MultipleObjects.h" />
+    <ClInclude Include="MyRectangle.h" />
+    <ClInclude Include="Normal.h" />
+    <ClInclude Include="NRooks.h" />
+    <ClInclude Include="PerfectSpecular.h" />
+    <ClInclude Include="Phong.h" />
+    <ClInclude Include="Pinhole.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="ply.h" />
+    <ClInclude Include="Point2D.h" />
+    <ClInclude Include="Point3D.h" />
+    <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="RayCast.h" />
+    <ClInclude Include="Reflective.h" />
+    <ClInclude Include="Regular.h" />
+    <ClInclude Include="RGBColor.h" />
+    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="ShadeRec.h" />
+    <ClInclude Include="SmoothMeshTriangle.h" />
+    <ClInclude Include="SmoothTriangle.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="SphereConcave.h" />
+    <ClInclude Include="Spherical.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StereoCamera.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThinLens.h" />
+    <ClInclude Include="Tracer.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Vector3D.h" />
+    <ClInclude Include="ViewPlane.h" />
+    <ClInclude Include="Whitted.h" />
+    <ClInclude Include="World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Ambient.cpp" />
+    <ClCompile Include="AmbientOccluder.cpp" />
+    <ClCompile Include="AreaLight.cpp" />
+    <ClCompile Include="BBox.cpp" />
+    <ClCompile Include="BRDF.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Chapter24.2.2.cpp" />
+    <ClCompile Include="Compound.cpp" />
+    <ClCompile Include="Emissive.cpp" />
+    <ClCompile Include="EnvironmentLight.cpp" />
+    <ClCompile Include="FishEye.cpp" />
+    <ClCompile Include="FlatMeshTriangle.cpp" />
+    <ClCompile Include="GeometricObject.cpp" />
+    <ClCompile Include="GlossySpecular.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="Jittered.cpp" />
+    <ClCompile Include="Lambertian.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Maths.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Matte.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshTriangle.cpp" />
+    <ClCompile Include="MultiJittered.cpp" />
+    <ClCompile Include="MultipleObjects.cpp" />
+    <ClCompile Include="MyRectangle.cpp" />
+    <ClCompile Include="Normal.cpp" />
+    <ClCompile Include="NRooks.cpp" />
+    <ClCompile Include="PerfectSpecular.cpp" />
+    <ClCompile Include="Phong.cpp" />
+    <ClCompile Include="Pinhole.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="ply.cpp" />
+    <ClCompile Include="Point2D.cpp" />
+    <ClCompile Include="Point3D.cpp" />
+    <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RayCast.cpp" />
+    <ClCompile Include="Reflective.cpp" />
+    <ClCompile Include="Regular.cpp" />
+    <ClCompile Include="RGBColor.cpp" />
+    <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="ShadeRec.cpp" />
+    <ClCompile Include="SmoothMeshTriangle.cpp" />
+    <ClCompile Include="SmoothTriangle.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="SphereConcave.cpp" />
+    <ClCompile Include="Spherical.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="StereoCamera.cpp" />
+    <ClCompile Include="ThinLens.cpp" />
+    <ClCompile Include="Tracer.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Vector3D.cpp" />
+    <ClCompile Include="ViewPlane.cpp" />
+    <ClCompile Include="Whitted.cpp" />
+    <ClCompile Include="World.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

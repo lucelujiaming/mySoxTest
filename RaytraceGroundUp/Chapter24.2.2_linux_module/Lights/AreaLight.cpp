@@ -80,14 +80,14 @@ AreaLight::operator= (const AreaLight& rhs) {
 
 
 // --------------------------------------------------------------- get_direction
-// º¯Êı²»½ö·µ»Ø×ÅÉ«µãÓë²ÉÑùµãÖ®¼äµÄµ¥Î»·½ÏòÏòÁ¿¦Øi£¬
-// »¹½«´æ´¢²ÉÑùµã¡¢²ÉÑùµã´¦µÄ·¨ÏßÒÔ¼°wiÖÁ³ÉÔ±±äÁ¿ÖĞ£¬
-// ÒòÎªº¯Êın_shadow()¡¢L()ºÍG()Í¬ÑùĞèÒªÕâĞ©Êı¾İ¡£
+// å‡½æ•°ä¸ä»…è¿”å›ç€è‰²ç‚¹ä¸é‡‡æ ·ç‚¹ä¹‹é—´çš„å•ä½æ–¹å‘å‘é‡Ï‰iï¼Œ
+// è¿˜å°†å­˜å‚¨é‡‡æ ·ç‚¹ã€é‡‡æ ·ç‚¹å¤„çš„æ³•çº¿ä»¥åŠwiè‡³æˆå‘˜å˜é‡ä¸­ï¼Œ
+// å› ä¸ºå‡½æ•°n_shadow()ã€L()å’ŒG()åŒæ ·éœ€è¦è¿™äº›æ•°æ®ã€‚
 Vector3D
 AreaLight::get_direction(ShadeRec& sr) {
 
     sample_point = object_ptr->sample();    // used in the G function
-    // ¼¸ºÎ¶ÔÏóµÄget_normal() º¯Êı½«±»µ÷ÓÃ¡£
+    // å‡ ä½•å¯¹è±¡çš„get_normal() å‡½æ•°å°†è¢«è°ƒç”¨ã€‚
     light_normal = object_ptr->get_normal(sample_point); 
     wi = sample_point - sr.hit_point;        // used in the G function
     wi.normalize();
@@ -97,7 +97,7 @@ AreaLight::get_direction(ShadeRec& sr) {
 
 
 // --------------------------------------------------------------- L
-// ÔÚ·µ»Ø²ÄÖÊµÄ·¢Éä·øÉä¶ÈÖ®Ç°½«¼ì²â¹âÏßÊÇ·ñÓëÎ»ÓÚ·¨ÏßÍ¬Ò»²àµÄ±íÃæ²úÉúÅö×²¡£
+// åœ¨è¿”å›æè´¨çš„å‘å°„è¾å°„åº¦ä¹‹å‰å°†æ£€æµ‹å…‰çº¿æ˜¯å¦ä¸ä½äºæ³•çº¿åŒä¸€ä¾§çš„è¡¨é¢äº§ç”Ÿç¢°æ’ã€‚
 RGBColor
 AreaLight::L(ShadeRec& sr) {
 
@@ -130,7 +130,7 @@ AreaLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 // ---------------------------------------------------------------- G
 // G is part of the geometric factor
 // explained on page 337
-// ¼ÆËãÓàÏÒÏîcos¦È²¢³ıÒÔd^2¡£
+// è®¡ç®—ä½™å¼¦é¡¹cosÎ¸å¹¶é™¤ä»¥d^2ã€‚
 float
 AreaLight::G(const ShadeRec& sr) const {
 
@@ -142,7 +142,7 @@ AreaLight::G(const ShadeRec& sr) const {
 
 
 // ---------------------------------------------------------------- pdf
-// ¼òµ¥µØµ÷ÓÃµ±Ç°¶ÔÏóµÄpdf()º¯Êı¡£
+// ç®€å•åœ°è°ƒç”¨å½“å‰å¯¹è±¡çš„pdf()å‡½æ•°ã€‚
 float
 AreaLight::pdf(const ShadeRec& sr) const {
 

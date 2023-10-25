@@ -48,7 +48,7 @@ class Compound: public GeometricObject {
 		shadow_hit(const Ray& ray, float& tmin) const;
 
 	protected:
-        // ´æ´¢ËùÓĞµÄ×Ó¶ÔÏóµÄÁĞ±í¡£
+        // å­˜å‚¨æ‰€æœ‰çš„å­å¯¹è±¡çš„åˆ—è¡¨ã€‚
 		vector<GeometricObject*> objects;
 
 	private:

@@ -30,7 +30,7 @@ BRDF::~BRDF(void) {}
 
 
 // ------------------------------------------------------------------------ f
-// Õë¶ÔÓÚ·´Éä²ÄÖÊÒÔ¼°Âş·´Éä-Âş·´Éä¹âÏßÄ£Äâ¼ÆËã£¬·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
+// é’ˆå¯¹äºåå°„æè´¨ä»¥åŠæ¼«åå°„-æ¼«åå°„å…‰çº¿æ¨¡æ‹Ÿè®¡ç®—ï¼Œè¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
 RGBColor
 BRDF::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
     return (black);
@@ -38,7 +38,7 @@ BRDF::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
 
 
 // ------------------------------------------------------------------------ sample_f
-// ÓÃÓÚ¼ÆËã·´Éä¹âÏßµÄ·½Ïò£¬²¢ÇÒ·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
+// ç”¨äºè®¡ç®—åå°„å…‰çº¿çš„æ–¹å‘ï¼Œå¹¶ä¸”è¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
 RGBColor
 BRDF::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const {
     return (black);
@@ -46,9 +46,9 @@ BRDF::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const {
 
 
 // ------------------------------------------------------------------------ sample_f
-// ¸Ãº¯ÊıÓÃÓÚÄ£Äâ¹âÔó·´Éä¡£²Î¼ûChapter25.1¡£
-// ÓÃÓÚ¼ÆËã·´Éä¹âÏßµÄ·½Ïò£¬²¢ÇÒ·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
-// Ê¹ÓÃMonte Calo»ı·ÖÊµÏÖ¡£
+// è¯¥å‡½æ•°ç”¨äºæ¨¡æ‹Ÿå…‰æ³½åå°„ã€‚å‚è§Chapter25.1ã€‚
+// ç”¨äºè®¡ç®—åå°„å…‰çº¿çš„æ–¹å‘ï¼Œå¹¶ä¸”è¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
+// ä½¿ç”¨Monte Caloç§¯åˆ†å®ç°ã€‚
 RGBColor
 BRDF::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const {
     return (black);
@@ -56,7 +56,7 @@ BRDF::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf)
 
 
 // ------------------------------------------------------------------------ rho    
-// ·µ»ØË«°ëÇò·´ÉäÏµÊı¡£
+// è¿”å›åŒåŠçƒåå°„ç³»æ•°ã€‚
 RGBColor
 BRDF::rho(const ShadeRec& sr, const Vector3D& wo) const {
     return (black);

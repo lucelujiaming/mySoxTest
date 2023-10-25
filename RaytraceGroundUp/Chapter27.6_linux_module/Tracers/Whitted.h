@@ -12,7 +12,7 @@ class Whitted: public Tracer {
         
         virtual                                            
         ~Whitted(void);
-    
+        // 使用depth参数存储ShadeRec对象中各条光线的反射次数。
         virtual RGBColor    
         trace_ray(const Ray ray, const int depth) const;
 };

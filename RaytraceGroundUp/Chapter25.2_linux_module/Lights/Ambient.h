@@ -2,7 +2,7 @@
 #define __AMBIENT__
 
 #include "Light.h"
-// Ambient¿ÉÊÓÎª×î¼òµ¥µÄÒ»Àà¹âÕÕÀà¡£¸ÃÀà²»Éæ¼°·½ÏòÎÊÌâ¡£
+// Ambientå¯è§†ä¸ºæœ€ç®€å•çš„ä¸€ç±»å…‰ç…§ç±»ã€‚è¯¥ç±»ä¸æ¶‰åŠæ–¹å‘é—®é¢˜ã€‚
 class Ambient: public Light {
 
     public:
@@ -54,9 +54,9 @@ class Ambient: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-        // ¹âÔ´Ëõ·ÅÏµÊı£¬Ò²¾ÍÊÇÁÁ¶ÈÖµ¡£
+        // å…‰æºç¼©æ”¾ç³»æ•°ï¼Œä¹Ÿå°±æ˜¯äº®åº¦å€¼ã€‚
         float        ls;
-        // ¹âÔ´ÑÕÉ«Öµ¡£
+        // å…‰æºé¢œè‰²å€¼ã€‚
         RGBColor    color;
 };
 

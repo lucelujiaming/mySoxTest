@@ -51,11 +51,11 @@ class StereoCamera: public Camera {
         render_scene(const World& w);
 
     private:
-		// ÁíÍâ£¬ µ±ÀûÓÃ¹âÏß¸ú×ÙÆ÷äÖÈ¾Í¼ÏñÊ±£¬ Êı¾İ³ÉÔ±viewingÔÊĞíÓÃ»§Ö¸¶¨Æ½ĞĞÊÓ½Ç»òºáÏòÊÓ½Ç¡£
+		// å¦å¤–ï¼Œ å½“åˆ©ç”¨å…‰çº¿è·Ÿè¸ªå™¨æ¸²æŸ“å›¾åƒæ—¶ï¼Œ æ•°æ®æˆå‘˜viewingå…è®¸ç”¨æˆ·æŒ‡å®šå¹³è¡Œè§†è§’æˆ–æ¨ªå‘è§†è§’ã€‚
         ViewingType    viewing_type;       // parallel or transverse viewing
         int            pixel_gap;          // gap in pixels between the left and right images
         float          beta;               // stereo separation angle
-		// Ìí¼ÓÁË×ó¡¢ÓÒÏà»úÖ¸Õë£¬ÕâÊ¹µÃÓÃ»§¿ÉÊ¹ÓÃÈÎÒ»ÀàĞÍµÄÏà»ú£¬²¢ÎªÁ¢ÌåÍ¼Ïñ¶ÔµÄäÖÈ¾²Ù×÷Ìá¹©ÁËÁé»îĞÔ¡£
+		// æ·»åŠ äº†å·¦ã€å³ç›¸æœºæŒ‡é’ˆï¼Œè¿™ä½¿å¾—ç”¨æˆ·å¯ä½¿ç”¨ä»»ä¸€ç±»å‹çš„ç›¸æœºï¼Œå¹¶ä¸ºç«‹ä½“å›¾åƒå¯¹çš„æ¸²æŸ“æ“ä½œæä¾›äº†çµæ´»æ€§ã€‚
         Camera*        left_camera_ptr;    // left eye camera
         Camera*        right_camera_ptr;   // right eye camera
 };

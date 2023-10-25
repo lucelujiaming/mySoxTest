@@ -40,9 +40,9 @@ class Triangle: public GeometricObject {
         shadow_hit(const Ray& ray, double& tmin) const; 
         
     private:
-        // Èı½ÇĞÎµÄÈı¸ö¶¥µã¡£
+        // ä¸‰è§’å½¢çš„ä¸‰ä¸ªé¡¶ç‚¹ã€‚
         Point3D    v0, v1, v2;
-        // ·¨Ïß·½Ïò¡£
+        // æ³•çº¿æ–¹å‘ã€‚
         Normal    normal;
 };
 

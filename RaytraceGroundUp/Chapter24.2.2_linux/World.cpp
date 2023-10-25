@@ -259,7 +259,7 @@ void World::build()
 	vp.set_vres(400) ;
 	vp.set_samples(num_samples) ;
 	vp.set_max_depth(10) ;
-    
+/*    
 	tracer_ptr=new Whitted(this) ;
 	Reflective* reflective_ptr1=new Reflective;
 	reflective_ptr1->set_ka(0.25) ;
@@ -269,6 +269,16 @@ void World::build()
 	reflective_ptr1->set_exp(100) ;
 	reflective_ptr1->set_kr(0.75) ;
 	reflective_ptr1->set_cr(white) ;
+  */  
+	tracer_ptr=new Whitted(this) ;
+	Reflective* reflective_ptr1=new Reflective;
+	reflective_ptr1->set_ka(0.0) ;
+	reflective_ptr1->set_kd(0.0) ;
+	reflective_ptr1->set_cd(0.75, 0.75, 0) ;
+	reflective_ptr1->set_ks(0.0) ;
+	reflective_ptr1->set_exp(100) ;
+	reflective_ptr1->set_kr(0.75) ;
+	reflective_ptr1->set_cr(blue) ;
 
 	Phong * phong_ptr = new Phong;
 	phong_ptr->set_ka(0.25);
@@ -279,6 +289,7 @@ void World::build()
 	sphere_ptr->set_center(-10, -40, 0);
 	sphere_ptr->set_radius(100.0);
 	sphere_ptr->set_color(1.0, 0.0, 0.0);
+	// sphere_ptr->set_material(phong_ptr);
 	sphere_ptr->set_material(reflective_ptr1);
 	add_object(sphere_ptr);
 
@@ -286,8 +297,15 @@ void World::build()
 	sphere_ptr->set_center(0, 60, 0);
 	sphere_ptr->set_radius(80.0);
 	sphere_ptr->set_color(1.0, 1.0, 0.0);
+	// sphere_ptr->set_material(phong_ptr);
 	sphere_ptr->set_material(reflective_ptr1);
 	add_object(sphere_ptr);
+
+	Phong * phong_plane_ptr = new Phong;
+	phong_plane_ptr->set_ka(0.5);
+	phong_plane_ptr->set_kd(0.35);
+	phong_plane_ptr->set_cd(0.5, 0.5, 0);
+
 
 	Plane *plane_ptr = new Plane;
 	plane_ptr->a = Vector3D(0.0);
@@ -295,6 +313,24 @@ void World::build()
 	plane_ptr->set_color(0.0, 1.0, 0.0);
 	plane_ptr->set_material(phong_ptr);
 	add_object(plane_ptr);
+
+    PointLight *light_ptr=new PointLight();
+    light_ptr->set_location(50, 50, 1);
+    light_ptr->scale_radiance(3.0);
+    add_light(light_ptr);
+
+    Emissive*emissive_ptr=new Emissive;
+    emissive_ptr->set_ce(1.0, 1.0, 0.5);
+    // emissive_ptr->set_brightness(1.0) ;
+
+    EnvironmentLight * environment_light_ptr=new EnvironmentLight;
+    environment_light_ptr->set_material(emissive_ptr);
+    environment_light_ptr->set_sampler(new MultiJittered(num_samples) ) ;
+    environment_light_ptr->set_shadows(true);
+    add_light(environment_light_ptr) ;
+
+
+
 
 	// 设定相机
 	Pinhole* pinhole_ptr = new Pinhole;

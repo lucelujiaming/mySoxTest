@@ -13,7 +13,7 @@ main(void)
         << 400 << " " << 400 << "\n255\n";
     World w;
     w.build();
-    // w.render_scene();
+    // 使用相机进行渲染。
     w.camera_ptr->render_scene(w);
 
     out.close();

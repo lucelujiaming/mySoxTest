@@ -69,7 +69,7 @@ class SphereConcave: public GeometricObject {
 
         float            area;            // for spherical lights
         float            inv_area;        // for spherical lights
-        // °üº¬ÁËÒ»¸ö²ÉÑùÆ÷¶ÔÏóÒÔÊ¹²ÉÑùµã¾ùÔÈ·Ö²¼ÓÚÇòÌå±íÃæÉÏ¡£
+        // åŒ…å«äº†ä¸€ä¸ªé‡‡æ ·å™¨å¯¹è±¡ä»¥ä½¿é‡‡æ ·ç‚¹å‡åŒ€åˆ†å¸ƒäºçƒä½“è¡¨é¢ä¸Šã€‚
         Sampler*        sampler_ptr;    // for spherical lights
 
         static const double kEpsilon;   // for shadows and secondary rays

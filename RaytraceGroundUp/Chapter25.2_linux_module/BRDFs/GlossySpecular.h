@@ -3,7 +3,7 @@
 
 #include "BRDF.h"
 #include "Sampler.h"
-// ¹âÕÕ¾µÃæ·´Éä
+// å…‰ç…§é•œé¢åå°„
 class GlossySpecular: public BRDF {
 
     public:
@@ -19,72 +19,72 @@ class GlossySpecular: public BRDF {
 
         GlossySpecular&
         operator= (const GlossySpecular& rhs);
-        // Õë¶ÔÓÚ·´Éä²ÄÖÊÄ£Äâ¼ÆËã£¬·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£ 
+        // é’ˆå¯¹äºåå°„æè´¨æ¨¡æ‹Ÿè®¡ç®—ï¼Œè¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚ 
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
-        // ¸Ãº¯ÊıÓÃÓÚÄ£Äâ¹âÔó·´Éä¡£²Î¼ûChapter25.1¡£
-        // ÓÃÓÚ¼ÆËã·´Éä¹âÏßµÄ·½Ïò£¬²¢ÇÒ·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
-        // Ê¹ÓÃMonte Calo»ı·ÖÊµÏÖ¡£
-        // ²ÎÊıwi£»ÓÃÓÚ·µ»Ø×îÖÕµÄ·½Ïò£¬Òò¶ø²»¿ÉÎª³£Á¿¡£
-        // ¹ËÃûË¼Òå£¬Ïà¹Ø·½Ïò½«Í¨¹ı¶ÔBRDF²ÉÑù¼ÆËãµÃµ½¡£
+        // è¯¥å‡½æ•°ç”¨äºæ¨¡æ‹Ÿå…‰æ³½åå°„ã€‚å‚è§Chapter25.1ã€‚
+        // ç”¨äºè®¡ç®—åå°„å…‰çº¿çš„æ–¹å‘ï¼Œå¹¶ä¸”è¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
+        // ä½¿ç”¨Monte Caloç§¯åˆ†å®ç°ã€‚
+        // å‚æ•°wiï¼›ç”¨äºè¿”å›æœ€ç»ˆçš„æ–¹å‘ï¼Œå› è€Œä¸å¯ä¸ºå¸¸é‡ã€‚
+        // é¡¾åæ€ä¹‰ï¼Œç›¸å…³æ–¹å‘å°†é€šè¿‡å¯¹BRDFé‡‡æ ·è®¡ç®—å¾—åˆ°ã€‚
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
-        // ·µ»ØË«°ëÇò·´ÉäÏµÊı¡£ 
+        // è¿”å›åŒåŠçƒåå°„ç³»æ•°ã€‚ 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
-        // ÉèÖÃ¾µÃæ·´ÉäÏµÊı
+        // è®¾ç½®é•œé¢åå°„ç³»æ•°
         void
         set_ks(const float ks);
-        // ÉèÖÃPhongÖ¸Êı
+        // è®¾ç½®PhongæŒ‡æ•°
         void
         set_exp(const float _e);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
         void
         set_cs(const RGBColor& c);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_cs(const float r, const float g, const float b);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_cs(const float c);
-        // ÉèÖÃ²ÉÑùÆ÷ºÍPhongÖ¸Êı¡£
+        // è®¾ç½®é‡‡æ ·å™¨å’ŒPhongæŒ‡æ•°ã€‚
         void
         set_sampler(Sampler* sp, const float exp);                // any type of sampling
-        // ÉèÖÃPhongÖ¸Êı£¬²¢ÇÒÉèÖÃ²ÉÑùÆ÷Îª¶àÖØ¶¶¶¯²ÉÑù¡£
+        // è®¾ç½®PhongæŒ‡æ•°ï¼Œå¹¶ä¸”è®¾ç½®é‡‡æ ·å™¨ä¸ºå¤šé‡æŠ–åŠ¨é‡‡æ ·ã€‚
         void
         set_samples(const int num_samples, const float exp);    // multi jittered sampling
-        // ÉèÖÃ·¨Ïß·½Ïò¡£Î´ÊµÏÖ¡£
+        // è®¾ç½®æ³•çº¿æ–¹å‘ã€‚æœªå®ç°ã€‚
         void
         set_normal(const Normal& n);
 
     private:
-        // ¾µÃæ·´ÉäÏµÊı
+        // é•œé¢åå°„ç³»æ•°
         float        ks;                // specular reflection coefficient
-        // PhongÖ¸Êı(P102)¡£
-        // ÒòÎª°ëÇòÌå²ÉÑùµãµÄ±íÃæÃÜ¶ÈÖµdÓë¼«½Ç¦ÈÖ®¼äµÄ¹ØÏµÎª£º
-        //     d = cos(¦È)^exp
-        // Õâ¸öexpÓÃÓÚ¿ØÖÆ¼«½Ç¦È±ä´óÊ±£¬dÖµµÄÏÂ½µËÙ¶È¡£
-        // expµÄÖµÔ½´ó£¬ÏÂ½µµÄËÙ¶ÈÒ²Ô½¿ì¡£
-        // ÕâÓĞÖúÓÚÓÃ»§·½±ãµØ¿ØÖÆ¾µÃæ¸ß¹âµÄ³ß´ç¡£
+        // PhongæŒ‡æ•°(P102)ã€‚
+        // å› ä¸ºåŠçƒä½“é‡‡æ ·ç‚¹çš„è¡¨é¢å¯†åº¦å€¼dä¸æè§’Î¸ä¹‹é—´çš„å…³ç³»ä¸ºï¼š
+        //     d = cos(Î¸)^exp
+        // è¿™ä¸ªexpç”¨äºæ§åˆ¶æè§’Î¸å˜å¤§æ—¶ï¼Œdå€¼çš„ä¸‹é™é€Ÿåº¦ã€‚
+        // expçš„å€¼è¶Šå¤§ï¼Œä¸‹é™çš„é€Ÿåº¦ä¹Ÿè¶Šå¿«ã€‚
+        // è¿™æœ‰åŠ©äºç”¨æˆ·æ–¹ä¾¿åœ°æ§åˆ¶é•œé¢é«˜å…‰çš„å°ºå¯¸ã€‚
         float        exp;               // specular exponent
-        // ¾µÃæ¸ß¹âÑÕÉ«Öµ
+        // é•œé¢é«˜å…‰é¢œè‰²å€¼
         RGBColor     cs;                // specular color
-        // ¸ß¹â²ÉÓÃ°ëÇò²ÉÑù¡£ 
-		// ËäÈ»ÔÚ¸¸ÀàBRDFÖĞÒÑ¾­¶¨ÒåÁËÕâ¸ö³ÉÔ±±äÁ¿¡£µ«ÊÇÈç¹ûÔÚ×ÓÀàÖĞ²»¶¨ÒåÕâ¸ö³ÉÔ±±äÁ¿¡£
-		// ¾ÍÎŞ·¨±àÒëÍ¨¹ı¡£ÈÃÈËÊ®·Ö²»½â¡£
+        // é«˜å…‰é‡‡ç”¨åŠçƒé‡‡æ ·ã€‚ 
+		// è™½ç„¶åœ¨çˆ¶ç±»BRDFä¸­å·²ç»å®šä¹‰äº†è¿™ä¸ªæˆå‘˜å˜é‡ã€‚ä½†æ˜¯å¦‚æœåœ¨å­ç±»ä¸­ä¸å®šä¹‰è¿™ä¸ªæˆå‘˜å˜é‡ã€‚
+		// å°±æ— æ³•ç¼–è¯‘é€šè¿‡ã€‚è®©äººååˆ†ä¸è§£ã€‚
         Sampler*    sampler_ptr;    // for use in sample_f
 };
 
 
 // -------------------------------------------------------------- set_ks
-// ÉèÖÃ¾µÃæ·´ÉäÏµÊı
+// è®¾ç½®é•œé¢åå°„ç³»æ•°
 inline void
 GlossySpecular::set_ks(const float k) {
     ks = k;
 }
 
 // -------------------------------------------------------------- set_exp
-// ÉèÖÃPhongÖ¸Êı
+// è®¾ç½®PhongæŒ‡æ•°
 inline void
 GlossySpecular::set_exp(const float e) {
     exp= e;
@@ -92,7 +92,7 @@ GlossySpecular::set_exp(const float e) {
 
 
 // -------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
 inline void
 GlossySpecular::set_cs(const RGBColor& c) {
     cs = c;
@@ -100,7 +100,7 @@ GlossySpecular::set_cs(const RGBColor& c) {
 
 
 // ---------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 GlossySpecular::set_cs(const float r, const float g, const float b) {
     cs.r = r; cs.g = g; cs.b = b;
@@ -108,7 +108,7 @@ GlossySpecular::set_cs(const float r, const float g, const float b) {
 
 
 // ---------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 GlossySpecular::set_cs(const float c) {
     cs.r = c; cs.g = c; cs.b = c;

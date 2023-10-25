@@ -13,7 +13,7 @@ SphereConcave::SphereConcave(void)
         center(0.0),
         radius(1.0),
         area(4*PI),
-        //  pdf¿É±íÊ¾Îªp =1/(4mr^2)£¬ÆäÖĞ£¬r¼ÇÎªÇòÌå°ë¾¶¡£
+        //  pdfå¯è¡¨ç¤ºä¸ºp =1/(4mr^2)ï¼Œå…¶ä¸­ï¼Œrè®°ä¸ºçƒä½“åŠå¾„ã€‚
         inv_area(1.0 / area)
 {}
 
@@ -166,7 +166,7 @@ SphereConcave::shadow_hit(const Ray& ray, float& tmin) const {
 void
 SphereConcave::set_sampler(Sampler* sampler) {
     sampler_ptr = sampler;
-    // Ê¹²ÉÑùµã¾ùÔÈ·Ö²¼ÓÚÇòÌå±íÃæÉÏ¡£
+    // ä½¿é‡‡æ ·ç‚¹å‡åŒ€åˆ†å¸ƒäºçƒä½“è¡¨é¢ä¸Šã€‚
     sampler_ptr->map_samples_to_sphere();
 }
 
@@ -196,7 +196,7 @@ SphereConcave::get_normal(const Point3D& p) {
 
 float
 SphereConcave::pdf(ShadeRec& sr) {
-    // ¶ÔÓÚ¾ùÔÈ¹âÔ´À´Ëµ£¬pdfÎª±íÃæ»ıµÄµ¹Êı¡£ÓÈÆäÊÇÆ½Ãæ¹âÔ´¡£
+    // å¯¹äºå‡åŒ€å…‰æºæ¥è¯´ï¼Œpdfä¸ºè¡¨é¢ç§¯çš„å€’æ•°ã€‚å°¤å…¶æ˜¯å¹³é¢å…‰æºã€‚
     return (inv_area);
 }
 

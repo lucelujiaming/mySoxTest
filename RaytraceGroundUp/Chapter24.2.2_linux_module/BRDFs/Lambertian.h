@@ -2,7 +2,7 @@
 #define __LAMBERTIAN__
 
 #include "BRDF.h"
-// ¹âÕÕÍêÈ«Âş·´Éä
+// å…‰ç…§å®Œå…¨æ¼«åå°„
 class Lambertian: public BRDF {
 
     public:
@@ -18,39 +18,39 @@ class Lambertian: public BRDF {
 
         Lambertian&
         operator= (const Lambertian& rhs);
-        // Õë¶ÔÓÚ·´Éä²ÄÖÊÒÔ¼°Âş·´Éä-Âş·´Éä¹âÏßÄ£Äâ¼ÆËã£¬·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
-        // Èç¹û²»°üº¬delta()º¯Êı£¬½«·µ»ØBRDF×ÔÉí¡£
+        // é’ˆå¯¹äºåå°„æè´¨ä»¥åŠæ¼«åå°„-æ¼«åå°„å…‰çº¿æ¨¡æ‹Ÿè®¡ç®—ï¼Œè¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
+        // å¦‚æœä¸åŒ…å«delta()å‡½æ•°ï¼Œå°†è¿”å›BRDFè‡ªèº«ã€‚
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
 
-        // ·µ»ØË«°ëÇò·´ÉäÏµÊı¡£ 
+        // è¿”å›åŒåŠçƒåå°„ç³»æ•°ã€‚ 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
-        // ÉèÖÃ»·¾³¹â·´ÉäÏµÊı
+        // è®¾ç½®ç¯å¢ƒå…‰åå°„ç³»æ•°
         void
         set_ka(const float ka);
-        // ÉèÖÃÂş·´ÉäÏµÊı
+        // è®¾ç½®æ¼«åå°„ç³»æ•°
         void
         set_kd(const float kd);
-        // ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+        // è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
         void
         set_cd(const RGBColor& c);
-        // ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+        // è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_cd(const float r, const float g, const float b);
-        // ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_cd(const float c);
 
     private:
 
-        float        kd;    // Âş·´ÉäÏµÊı£ºdiffuse reflection coefficient
-        RGBColor     cd;    // Âş·´ÉäÑÕÉ«Öµ£ºdiffuse color
+        float        kd;    // æ¼«åå°„ç³»æ•°ï¼šdiffuse reflection coefficient
+        RGBColor     cd;    // æ¼«åå°„é¢œè‰²å€¼ï¼šdiffuse color
 };
 
 
 // -------------------------------------------------------------- set_ka
-// ÉèÖÃ»·¾³¹â·´ÉäÏµÊı
+// è®¾ç½®ç¯å¢ƒå…‰åå°„ç³»æ•°
 inline void
 Lambertian::set_ka(const float k) {
     kd = k;
@@ -58,7 +58,7 @@ Lambertian::set_ka(const float k) {
 
 
 // -------------------------------------------------------------- set_kd
-// ÉèÖÃÂş·´ÉäÏµÊı
+// è®¾ç½®æ¼«åå°„ç³»æ•°
 inline void
 Lambertian::set_kd(const float k) {
     kd = k;
@@ -66,7 +66,7 @@ Lambertian::set_kd(const float k) {
 
 
 // -------------------------------------------------------------- set_cd
-// ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+// è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
 inline void
 Lambertian::set_cd(const RGBColor& c) {
     cd = c;
@@ -74,7 +74,7 @@ Lambertian::set_cd(const RGBColor& c) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+// è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 Lambertian::set_cd(const float r, const float g, const float b) {
     cd.r = r; cd.g = g; cd.b = b;
@@ -82,7 +82,7 @@ Lambertian::set_cd(const float r, const float g, const float b) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃÂş·´ÉäÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®æ¼«åå°„é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 Lambertian::set_cd(const float c) {
     cd.r = c; cd.g = c; cd.b = c;

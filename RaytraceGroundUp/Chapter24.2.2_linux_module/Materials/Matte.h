@@ -5,7 +5,7 @@
 #include "Lambertian.h"
 
 //----------------------------------------------------------------------------- class Matte
-// Matte²ÄÖÊ¡£¶ÔÓÚ»·¾³¹â·´ÉäºÍÂş·´Éä¶¼²ÉÓÃÍêÈ«Âş·´ÉäLambertian·´Éä
+// Matteæè´¨ã€‚å¯¹äºç¯å¢ƒå…‰åå°„å’Œæ¼«åå°„éƒ½é‡‡ç”¨å®Œå…¨æ¼«åå°„Lambertianåå°„
 class Matte: public Material {
 
     public:
@@ -21,26 +21,26 @@ class Matte: public Material {
         operator= (const Matte& rhs);
 
         ~Matte(void);
-        // ÉèÖÃ»·¾³¹â·´ÉäÏµÊı
+        // è®¾ç½®ç¯å¢ƒå…‰åå°„ç³»æ•°
         void
         set_ka(const float k);
-        // ÉèÖÃÂş·´ÉäÏµÊı
+        // è®¾ç½®æ¼«åå°„ç³»æ•°
         void
         set_kd(const float k);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
         void
         set_cd(const RGBColor c);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_cd(const float r, const float g, const float b);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_cd(const float c);
-        // ¼ÆËã»·¾³¹âÕÕ£¬²¢±éÀúÈ«²¿¹âÔ´ÒÔ¼ÆËãÖ±½ÓÂş·´Éä¹âÕÕ¡£
-        // ´Ó¶ø·µ»Ø²ÄÖÊµÄÑÕÉ«¡£
+        // è®¡ç®—ç¯å¢ƒå…‰ç…§ï¼Œå¹¶éå†å…¨éƒ¨å…‰æºä»¥è®¡ç®—ç›´æ¥æ¼«åå°„å…‰ç…§ã€‚
+        // ä»è€Œè¿”å›æè´¨çš„é¢œè‰²ã€‚
         virtual RGBColor
         shade(ShadeRec& sr);
-        // ¼ÆËãÇøÓò¹âÕÕ
+        // è®¡ç®—åŒºåŸŸå…‰ç…§
         virtual RGBColor
         area_light_shade(ShadeRec& sr);
 
@@ -48,8 +48,8 @@ class Matte: public Material {
         get_Le(ShadeRec& sr) const;
 
     private:
-        Lambertian*        ambient_brdf;    // »·¾³¹â·´Éä
-        Lambertian*        diffuse_brdf;    // Âş·´Éä
+        Lambertian*        ambient_brdf;    // ç¯å¢ƒå…‰åå°„
+        Lambertian*        diffuse_brdf;    // æ¼«åå°„
 };
 
 
@@ -57,7 +57,7 @@ class Matte: public Material {
 // this sets Lambertian::kd
 // there is no Lambertian::ka data member because ambient reflection
 // is diffuse reflection
-// ÉèÖÃ»·¾³¹â·´ÉäÏµÊı
+// è®¾ç½®ç¯å¢ƒå…‰åå°„ç³»æ•°
 inline void
 Matte::set_ka(const float ka) {
     ambient_brdf->set_kd(ka);
@@ -66,7 +66,7 @@ Matte::set_ka(const float ka) {
 
 // ---------------------------------------------------------------- set_kd
 // this also sets Lambertian::kd, but for a different Lambertian object
-// ÉèÖÃÂş·´ÉäÏµÊı
+// è®¾ç½®æ¼«åå°„ç³»æ•°
 inline void
 Matte::set_kd (const float kd) {
     diffuse_brdf->set_kd(kd);
@@ -74,7 +74,7 @@ Matte::set_kd (const float kd) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
 inline void
 Matte::set_cd(const RGBColor c) {
     ambient_brdf->set_cd(c);
@@ -83,7 +83,7 @@ Matte::set_cd(const RGBColor c) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 Matte::set_cd(const float r, const float g, const float b) {
     ambient_brdf->set_cd(r, g, b);
@@ -92,7 +92,7 @@ Matte::set_cd(const float r, const float g, const float b) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 Matte::set_cd(const float c) {
     ambient_brdf->set_cd(c);

@@ -27,17 +27,17 @@ RayCast::~RayCast(void) {}
 
 RGBColor
 RayCast::trace_ray(const Ray& ray) const {
-    // µ÷ÓÃWorld::hit_objects³õÊ¼»¯Ò»¸ö¾Ö²¿ShadeRec¶ÔÏó¡£
+    // è°ƒç”¨World::hit_objectsåˆå§‹åŒ–ä¸€ä¸ªå±€éƒ¨ShadeRecå¯¹è±¡ã€‚
     ShadeRec sr(world_ptr->hit_objects(ray));
-    // Èç¹û»÷ÖÐÎïÌå£¬
+    // å¦‚æžœå‡»ä¸­ç‰©ä½“ï¼Œ
     if (sr.hit_an_object) {
-        // ·µ»Ø²ÄÖÊÉÏÕâ¸ù¹âÏß¶ÔÓ¦µÄÑÕÉ«¡£
+        // è¿”å›žæè´¨ä¸Šè¿™æ ¹å…‰çº¿å¯¹åº”çš„é¢œè‰²ã€‚
         sr.ray = ray;            // used for specular shading
         return (sr.material_ptr->shade(sr));
     }
     else
     {
-        // Èç¹ûÃ»ÓÐÃüÖÐ£¬·µ»Ø±³¾°ÑÕÉ«¡£
+        // å¦‚æžœæ²¡æœ‰å‘½ä¸­ï¼Œè¿”å›žèƒŒæ™¯é¢œè‰²ã€‚
         return (world_ptr->background_color);
     }
 }
@@ -48,17 +48,17 @@ RayCast::trace_ray(const Ray& ray) const {
 
 RGBColor
 RayCast::trace_ray(const Ray ray, const int depth) const {
-    // µ÷ÓÃWorld::hit_objects³õÊ¼»¯Ò»¸ö¾Ö²¿ShadeRec¶ÔÏó¡£
+    // è°ƒç”¨World::hit_objectsåˆå§‹åŒ–ä¸€ä¸ªå±€éƒ¨ShadeRecå¯¹è±¡ã€‚
     ShadeRec sr(world_ptr->hit_objects(ray));
-    // Èç¹û»÷ÖÐÎïÌå£¬
+    // å¦‚æžœå‡»ä¸­ç‰©ä½“ï¼Œ
     if (sr.hit_an_object) {
-        // ·µ»Ø²ÄÖÊÉÏÕâ¸ù¹âÏß¶ÔÓ¦µÄÑÕÉ«¡£
+        // è¿”å›žæè´¨ä¸Šè¿™æ ¹å…‰çº¿å¯¹åº”çš„é¢œè‰²ã€‚
         sr.ray = ray;            // used for specular shading
         return (sr.material_ptr->shade(sr));
     }
     else
     {
-        // Èç¹ûÃ»ÓÐÃüÖÐ£¬·µ»Ø±³¾°ÑÕÉ«¡£
+        // å¦‚æžœæ²¡æœ‰å‘½ä¸­ï¼Œè¿”å›žèƒŒæ™¯é¢œè‰²ã€‚
         return (world_ptr->background_color);
     }
 }

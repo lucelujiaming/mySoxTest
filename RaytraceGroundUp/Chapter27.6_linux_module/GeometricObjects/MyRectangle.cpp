@@ -138,7 +138,13 @@ MyRectangle::~MyRectangle (void) {
                                                                             
 
 //------------------------------------------------------------------ hit 
-
+// 光线-对象间的碰撞检测函数。
+// 对象的碰撞检测函数将以3种方式计算并返回相应的碰撞信息：
+//   当仅返回布尔类型时，函数将判断光线是否与对象发生碰撞；
+//   通过参数tmin返回最近碰撞点(若存在)的光线参数；
+//   返回ShadeRec对象参数所需的相关信息。
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
 bool                                                  
 MyRectangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {    
     
@@ -170,6 +176,8 @@ MyRectangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 // ----------------------------------------------------------------- shadow_hit
 
+// 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+// 只判断是否相交。不计算碰撞点
 bool
 MyRectangle::shadow_hit(const Ray& ray, float& tmin) const {
 
@@ -207,7 +215,7 @@ MyRectangle::set_sampler(Sampler* sampler) {
 
 // ---------------------------------------------------------------- sample
 // returns a sample point on the MyRectangle
-
+// 通过矩形的角顶点po以及边向量a和b生成其表面上的采样点。
 Point3D                                             
 MyRectangle::sample(void) {
     //  返回ViewPlane中存储于采样器对象中的下一个采样点，映射到单位矩形。
@@ -227,10 +235,10 @@ MyRectangle::get_normal(const Point3D& p) {
 // ---------------------------------------------------------------- pdf
 
 float
-MyRectangle::pdf(ShadeRec& sr) { 
-    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。   
+MyRectangle::pdf(const ShadeRec& sr) {
+    // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
     return (inv_area);
-} 
+}
 
 
 

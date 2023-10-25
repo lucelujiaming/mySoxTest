@@ -15,6 +15,7 @@ class ViewPlane {
         float           s;                           // pixel size
         // 视平面将提供执行抗锯齿操作时的采样点数量，因而需要采样数量
         int             num_samples;                 // number of samples per pixel
+        // P400：光线的最大反射次数。
         int             max_depth;                   // max number of reflected bounce rays
         
         float           gamma;                       // gamma correction factor

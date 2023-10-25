@@ -7,7 +7,7 @@
 #include "Phong.h"
 
 //----------------------------------------------------------------------------- class Phong
-// Phong²ÄÖÊÀà
+// Phongæè´¨ç±»
 class Phong: public Material {
 
     public:
@@ -23,38 +23,38 @@ class Phong: public Material {
         operator= (const Phong& rhs);
 
         ~Phong(void);
-        // ÉèÖÃ»·¾³¹â·´ÉäÏµÊý
+        // è®¾ç½®çŽ¯å¢ƒå…‰åå°„ç³»æ•°
         void
         set_ka(const float k);
-        // ÉèÖÃÂþ·´ÉäÏµÊý
+        // è®¾ç½®æ¼«åå°„ç³»æ•°
         void
         set_kd(const float k);
-        // ÉèÖÃ¾µÃæ·´ÉäÏµÊý
+        // è®¾ç½®é•œé¢åå°„ç³»æ•°
         void
         set_ks(const float ks);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGBColorÀàÐÍ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»åž‹ã€‚
         void
         set_cd(const RGBColor c);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGBÈý¸öÖµ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_cd(const float r, const float g, const float b);
-        // ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_cd(const float c);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGBColorÀàÐÍ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»åž‹ã€‚
         void
         set_cs(const RGBColor c);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGBÈý¸öÖµ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_cs(const float r, const float g, const float b);
-        // ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_cs(const float c);
-        // ÉèÖÃPhongÖ¸Êý
+        // è®¾ç½®PhongæŒ‡æ•°
         void
         set_exp(const float _e);
-        // ¼ÆËã»·¾³¹âÕÕ£¬²¢±éÀúÈ«²¿¹âÔ´ÒÔ¼ÆËãÖ±½ÓÂþ·´Éä¹âÕÕºÍ¾µÃæ¸ß¹â·´Éä¹âÕÕ¡£
-        // ´Ó¶ø·µ»Ø²ÄÖÊµÄÑÕÉ«¡£
+        // è®¡ç®—çŽ¯å¢ƒå…‰ç…§ï¼Œå¹¶éåŽ†å…¨éƒ¨å…‰æºä»¥è®¡ç®—ç›´æŽ¥æ¼«åå°„å…‰ç…§å’Œé•œé¢é«˜å…‰åå°„å…‰ç…§ã€‚
+        // ä»Žè€Œè¿”å›žæè´¨çš„é¢œè‰²ã€‚
         virtual RGBColor
         shade(ShadeRec& sr);
 
@@ -62,9 +62,9 @@ class Phong: public Material {
         get_Le(ShadeRec& sr) const;
 
     private:
-        Lambertian*        ambient_brdf;    // »·¾³¹â·´Éä
-        Lambertian*        diffuse_brdf;    // Âþ·´Éä
-        GlossySpecular*    specular_brdf;   // ¾µÃæ¸ß¹â·´Éä
+        Lambertian*        ambient_brdf;    // çŽ¯å¢ƒå…‰åå°„
+        Lambertian*        diffuse_brdf;    // æ¼«åå°„
+        GlossySpecular*    specular_brdf;   // é•œé¢é«˜å…‰åå°„
 };
 
 
@@ -72,7 +72,7 @@ class Phong: public Material {
 // this sets Phong::kd
 // there is no Phong::ka data member because ambient reflection
 // is diffuse reflection
-// ÉèÖÃ»·¾³¹â·´ÉäÏµÊý
+// è®¾ç½®çŽ¯å¢ƒå…‰åå°„ç³»æ•°
 inline void
 Phong::set_ka(const float ka) {
     ambient_brdf->set_kd(ka);
@@ -81,7 +81,7 @@ Phong::set_ka(const float ka) {
 
 // ---------------------------------------------------------------- set_kd
 // this also sets Phong::kd, but for a different Phong object
-// ÉèÖÃÂþ·´ÉäÏµÊý
+// è®¾ç½®æ¼«åå°„ç³»æ•°
 inline void
 Phong::set_kd(const float kd) {
     diffuse_brdf->set_kd(kd);
@@ -89,7 +89,7 @@ Phong::set_kd(const float kd) {
 
 
 // ---------------------------------------------------------------- set_ks
-// ÉèÖÃ¾µÃæ·´ÉäÏµÊý
+// è®¾ç½®é•œé¢åå°„ç³»æ•°
 inline void
 Phong::set_ks(const float ks) {
     specular_brdf->set_ks(ks);
@@ -97,7 +97,7 @@ Phong::set_ks(const float ks) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGBColorÀàÐÍ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»åž‹ã€‚
 inline void
 Phong::set_cd(const RGBColor c) {
     ambient_brdf->set_cd(c);
@@ -107,7 +107,7 @@ Phong::set_cd(const RGBColor c) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGBÈý¸öÖµ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 Phong::set_cd(const float r, const float g, const float b) {
     ambient_brdf->set_cd(r, g, b);
@@ -117,7 +117,7 @@ Phong::set_cd(const float r, const float g, const float b) {
 
 
 // ---------------------------------------------------------------- set_cd
-// ÉèÖÃ²ÄÖÊÑÕÉ«Öµ¡£²ÎÊýÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®æè´¨é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 Phong::set_cd(const float c) {
     ambient_brdf->set_cd(c);
@@ -127,7 +127,7 @@ Phong::set_cd(const float c) {
 
 
 // ---------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGBColorÀàÐÍ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»åž‹ã€‚
 inline void
 Phong::set_cs(const RGBColor c) {
     specular_brdf->set_cs(c);
@@ -135,7 +135,7 @@ Phong::set_cs(const RGBColor c) {
 
 
 // ---------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGBÈý¸öÖµ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 Phong::set_cs(const float r, const float g, const float b) {
     specular_brdf->set_cs(r, g, b);
@@ -143,7 +143,7 @@ Phong::set_cs(const float r, const float g, const float b) {
 
 
 // ---------------------------------------------------------------- set_cs
-// ÉèÖÃ¾µÃæ¸ß¹âÑÕÉ«Öµ¡£²ÎÊýÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®é•œé¢é«˜å…‰é¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 Phong::set_cs(const float c) {
     specular_brdf->set_cs(c);
@@ -151,7 +151,7 @@ Phong::set_cs(const float c) {
 
 
 // ---------------------------------------------------------------- set_exp
-// ÉèÖÃPhongÖ¸Êý
+// è®¾ç½®PhongæŒ‡æ•°
 inline void
 Phong::set_exp(const float _e) {
     specular_brdf->set_exp(_e);

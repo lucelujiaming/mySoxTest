@@ -80,11 +80,14 @@ AreaLight::operator= (const AreaLight& rhs) {
 
 
 // --------------------------------------------------------------- get_direction
-
+// 函数不仅返回着色点与采样点之间的单位方向向量ωi，
+// 还将存储采样点、采样点处的法线以及wi至成员变量中，
+// 因为函数n_shadow()、L()和G()同样需要这些数据。
 Vector3D
 AreaLight::get_direction(ShadeRec& sr) {
 
     sample_point = object_ptr->sample();    // used in the G function
+    // 几何对象的get_normal() 函数将被调用。
     light_normal = object_ptr->get_normal(sample_point); 
     wi = sample_point - sr.hit_point;        // used in the G function
     wi.normalize();
@@ -94,7 +97,7 @@ AreaLight::get_direction(ShadeRec& sr) {
 
 
 // --------------------------------------------------------------- L
-
+// 在返回材质的发射辐射度之前将检测光线是否与位于法线同一侧的表面产生碰撞。
 RGBColor
 AreaLight::L(ShadeRec& sr) {
 
@@ -127,6 +130,7 @@ AreaLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 // ---------------------------------------------------------------- G
 // G is part of the geometric factor
 // explained on page 337
+// 计算余弦项cosθ并除以d^2。
 float
 AreaLight::G(const ShadeRec& sr) const {
 
@@ -138,7 +142,7 @@ AreaLight::G(const ShadeRec& sr) const {
 
 
 // ---------------------------------------------------------------- pdf
-
+// 简单地调用当前对象的pdf()函数。
 float
 AreaLight::pdf(const ShadeRec& sr) const {
 

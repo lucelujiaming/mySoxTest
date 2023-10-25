@@ -55,11 +55,11 @@ Lambertian::operator= (const Lambertian& rhs) {
 
 RGBColor
 Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
-    // pd¿É±íÊ¾ÎªRGBÑÕÉ«Öµ£¬ Òò¶ø¿É°´ÈçÏÂ·½Ê½±íÊ¾£º
-    //   pd = kd * cd / ¦Ğ
-    // ÆäÖĞ£¬kd±íÊ¾Âş·´ÉäÏµÊı£¬ÊÇÒ»¸ö0 ~ 1µÄÊı×Ö¡£caÎªÂş·´ÉäÑÕÉ«Öµ¡£
-    // ÕâÊ¹µÃÓÃ»§¿ÉÒÔ¿ìËÙµØĞŞ¸ÄÎïÌåµÄ·´Éä¹âÊı¾İ£¬²¢ÎªÏà¹ØµÄ±àÂë¹ı³ÌÌá¹©ÁË·½±ãĞÔ¡£
-    // ²Î¼û¹«Ê½13.19
+    // pdå¯è¡¨ç¤ºä¸ºRGBé¢œè‰²å€¼ï¼Œ å› è€Œå¯æŒ‰å¦‚ä¸‹æ–¹å¼è¡¨ç¤ºï¼š
+    //   pd = kd * cd / Ï€
+    // å…¶ä¸­ï¼Œkdè¡¨ç¤ºæ¼«åå°„ç³»æ•°ï¼Œæ˜¯ä¸€ä¸ª0 ~ 1çš„æ•°å­—ã€‚caä¸ºæ¼«åå°„é¢œè‰²å€¼ã€‚
+    // è¿™ä½¿å¾—ç”¨æˆ·å¯ä»¥å¿«é€Ÿåœ°ä¿®æ”¹ç‰©ä½“çš„åå°„å…‰æ•°æ®ï¼Œå¹¶ä¸ºç›¸å…³çš„ç¼–ç è¿‡ç¨‹æä¾›äº†æ–¹ä¾¿æ€§ã€‚
+    // å‚è§å…¬å¼13.19
     return (kd * cd * invPI);
 }
 
@@ -68,6 +68,6 @@ Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const 
 
 RGBColor
 Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const {
-    // ²Î¼û¹«Ê½13.20
+    // å‚è§å…¬å¼13.20
     return (kd * cd);
 }

@@ -11,7 +11,7 @@
 GeometricObject::GeometricObject(void)
     :     color(black),
         material_ptr(NULL),
-        // ³õÊ¼×´Ì¬ÏÂ£¬GeometricObjectÄ¬ÈÏ½«shadowsÉèÖÃÎªtrue¡£
+        // åˆå§‹çŠ¶æ€ä¸‹ï¼ŒGeometricObjecté»˜è®¤å°†shadowsè®¾ç½®ä¸ºtrueã€‚
         shadows(true)
 {}
 

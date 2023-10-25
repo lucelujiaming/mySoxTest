@@ -18,13 +18,13 @@
 #include "BBox.h"
 
 //---------------------------------------------------------------------- class Grid
-// դ��Ҳ��һ��ͨ�ö������������������һ�������ཻ���Լ��㡣
-// ͬʱ��դ�񻹰���һ����Ҫ�Ľ�ģ������ ��դ���ʵ��Ƕ�׹��졣
-// ���⣬դ�����Ҳ�̳���Compound�࣬ ԭ������������㣺
-//     ���ȣ�դ������ɶ��������ɣ����Ҳ��һ����϶���
-//     ��Σ�����դ�������������������ʱ���ڽ���դ��Ԫ֮ǰ��Ҫ��ʱ�洢��Щ����
-//     Compound::objects���ݽṹ�ǳ���������һ���Σ����ʵ��ؼ���դ���ʵ�ֹ��̡�
-//     ���磬Compound��ɽ�դ���еĸ���������ͬһ���ʡ�
+// 栅格也是一类通用对象，因而可像其他对象一样进行相交测试计算。
+// 同时，栅格还包含一项重要的建模特征， 即栅格可实现嵌套构造。
+// 另外，栅格对象也继承于Compound类， 原因包括以下两点：
+//     首先，栅格对象由多个组件构成，因而也是一类组合对象；
+//     其次，当向栅格对象中添加其他对象时，在建立栅格单元之前需要临时存储这些对象，
+//     Compound::objects数据结构非常适用于这一情形，并适当地简化了栅格的实现过程。
+//     例如，Compound类可将栅格中的各个对象赋予同一材质。
 class Grid: public Compound {                                              
     public:
 
@@ -71,11 +71,11 @@ class Grid: public Compound {
         store_material(Material* material, const int index);                             
 
     private: 
-        // ʹ��һά�������ָ������cellsģ��դ��Ԫ��
+        // 使用一维数组对象指针数组cells模拟栅格单元。
         vector<GeometricObject*>    cells;             // grid of cells
-        // xw��yw��zw�����ϵ�դ��Ԫ������
+        // xw、yw、zw方向上的栅格单元数量。
         int                         nx, ny, nz;        // number of cells in the x, y, and z directions
-        // ���ж���İ�Χ�С�
+        // 所有对象的包围盒。
         BBox                        bbox;              // bounding box
         Mesh*                       mesh_ptr;          // holds triangle data
         bool                        reverse_normal;    // some PLY files have normals that point inwards

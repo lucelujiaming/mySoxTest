@@ -54,16 +54,16 @@ PointLight::~PointLight (void) {}
 
 
 // ---------------------------------------------------------------------- get_direction
-// ����һ��������ײ��ĵ�λ������
+// 返回一个背向碰撞点的单位向量。
 Vector3D
 PointLight::get_direction(ShadeRec& sr) {
-    // ����ʹ���˴洢��ShadeRec�����е���ײ�����ꡣ
+    // 该类使用了存储于ShadeRec对象中的碰撞点坐标。
     return ((location - sr.hit_point).hat());
 }
 
 
 // ---------------------------------------------------------------------- L
-// ��Ambient��һ������������Ҳ�ǹ�Դ����ϵ�������Թ�Դ��ɫֵ���μ���ʽ14.1��
+// 和Ambient类一样，入射辐射度也是光源缩放系数，乘以光源颜色值。参见公式14.1。
 RGBColor
 PointLight::L(ShadeRec& sr) {
     return (ls * color);
@@ -71,9 +71,9 @@ PointLight::L(ShadeRec& sr) {
 
 
 // ---------------------------------------------------------------------- in_shadow
-// �ж��Լ������Ĺ��Ƿ��ײ�����塣ֻҪײ��һ�����壬�ͷ����档
-// ��������£�������Գ����е�ȫ������ִ����Ӱ�����ཻ���ԣ�
-// ��ĿǰΪֹ���ú�����Ȼ����ɫ��������Ϊ��ʱ��һ����
+// 判断自己发出的光是否会撞到物体。只要撞到一个物体，就返回真。
+// 多数情况下，无需针对场景中的全部对象执行阴影光线相交测试，
+// 但目前为止，该函数仍然是着色计算中最为耗时的一步。
 bool
 PointLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
@@ -81,13 +81,13 @@ PointLight::in_shadow(const Ray& ray, const ShadeRec& sr) const {
     int num_objects = sr.w.objects.size();
     float d = location.distance(ray.o);
 
-    // ���������е�ȫ�����󲢵��ø������shadow_hit() ������
-    // �Լ����Ӱ�����Ƿ���λ����ɫ��ײ��͹�Դλ��֮��Ķ��������ײ�� 
+    // 遍历场景中的全部对象并调用各对象的shadow_hit() 函数，
+    // 以检测阴影光线是否与位于着色碰撞点和光源位置之间的对象产生碰撞。 
     for(int j = 0; j < num_objects; j++)
     {
         if (sr.w.objects[j]->shadow_hit(ray, t) && t < d)
         {
-            // ��������ײ����ú��������˳���
+            // 若产生碰撞，则该函数即刻退出。
             return true;
         }
     }

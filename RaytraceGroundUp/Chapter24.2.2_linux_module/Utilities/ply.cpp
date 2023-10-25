@@ -810,12 +810,12 @@ Exit:
   version    - version number of PLY file
   returns a file identifier, used to refer to this file, or NULL if error
   
-��PLY�ļ�������һ���ļ����������ĸ�������
-  nelems     - element����
-  elem_names - һ���ַ���ָ�����顣ÿһ��Ԫ�ض���һ���ַ���ָ�롣���������ݵ����֡�
-               ��Ȼ����������У�����ֻ��������������ǣ�"vertex"��"face"��
-  file_type  - �ļ�ͷ�е��ļ�������Ϣ��
-  version    - �ļ�ͷ�еİ汾��Ϣ��
+打开PLY文件。输入一个文件名。返回四个变量。
+  nelems     - element个数
+  elem_names - 一个字符串指针数组。每一个元素都是一个字符串指针。给出了数据的名字。
+               当然在这个函数中，名字只有两种情况。就是："vertex"和"face"。
+  file_type  - 文件头中的文件类型信息。
+  version    - 文件头中的版本信息。
 ******************************************************************************/
 
 PlyFile *ply_open_for_reading(

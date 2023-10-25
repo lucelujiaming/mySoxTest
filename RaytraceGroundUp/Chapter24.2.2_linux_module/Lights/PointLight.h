@@ -49,9 +49,9 @@ class PointLight: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-        // ¹âÔ´Ëõ·ÅÏµÊı£¬Ò²¾ÍÊÇÁÁ¶ÈÖµ¡£
+        // å…‰æºç¼©æ”¾ç³»æ•°ï¼Œä¹Ÿå°±æ˜¯äº®åº¦å€¼ã€‚
         float         ls;        // radiant scale factor
-        // ¹âÔ´ÑÕÉ«Öµ¡£
+        // å…‰æºé¢œè‰²å€¼ã€‚
         RGBColor     color;
         Point3D     location;
 };

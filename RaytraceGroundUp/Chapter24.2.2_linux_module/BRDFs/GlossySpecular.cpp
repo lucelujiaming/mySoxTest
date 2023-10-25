@@ -81,6 +81,7 @@ void
 GlossySpecular::set_samples(const int num_samples, const float exp) {
 
     sampler_ptr = new MultiJittered(num_samples);
+    // 使用余弦指数分布映射到半球模型上。
     sampler_ptr->map_samples_to_hemisphere(exp);
 }
 

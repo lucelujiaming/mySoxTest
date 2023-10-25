@@ -76,7 +76,7 @@ GlossySpecular::set_sampler(Sampler* sp, const float exp) {
 
 // ---------------------------------------------------------------------- set_samples
 // this sets up multi-jittered sampling using the number of samples
-// 设置Phong指数，并且设置采样器为多重抖动采样。
+// 设置Phong指数，并且设置采样器为多重抖动采样并被实现为光泽反射的相关材质加以调用。
 void
 GlossySpecular::set_samples(const int num_samples, const float exp) {
 

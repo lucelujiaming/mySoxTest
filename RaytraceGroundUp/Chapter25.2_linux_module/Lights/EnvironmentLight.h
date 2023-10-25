@@ -4,10 +4,10 @@
 #include "Light.h"
 #include "Sampler.h"
 #include "Material.h"
-// »·¾³¹âÕÕ¿ÉÊÓÎªÒ»¸öÎŞÏŞ´óµÄÇòÌå°üÎ§µ±Ç°³¡¾°²¢ÔÚ¸÷¸ö·½ÏòÉÏÌá¹©¹âÕÕ£¬³£ÓÃÓÚÄ£ÄâÊÒÍâ³¡¾°¡£
-// Í¬Ê±£¬ÇòÌå°üº¬Ä³Ò»¹Ì¶¨ÑÕÉ«Öµ»òËæ¿Õ¼äÎ»ÖÃ±ä»¯µÄ×Ô·¢¹â²ÄÖÊ£¬
-// ¶ÔÓÚºóÕß£¬ÑÕÉ«Öµ»ùÓÚÎïÀíÌì¿ÕºĞÄ£ĞÍ»òÏàÓ¦µÄÌì¿ÕÍ¼Ïñ¡£×îÖÕ½á¹û½«³ÊÏÖÎª°üº¬ÈíÒõÓ°µÄ¾«ÃÀÍ¼Ïñ¡£
-// Environment LightÀàºÍAmbient OccluderÀà¾ßÓĞÄ³Ğ©¹²Í¬ÌØÕ÷¡£
+// ç¯å¢ƒå…‰ç…§å¯è§†ä¸ºä¸€ä¸ªæ— é™å¤§çš„çƒä½“åŒ…å›´å½“å‰åœºæ™¯å¹¶åœ¨å„ä¸ªæ–¹å‘ä¸Šæä¾›å…‰ç…§ï¼Œå¸¸ç”¨äºæ¨¡æ‹Ÿå®¤å¤–åœºæ™¯ã€‚
+// åŒæ—¶ï¼Œçƒä½“åŒ…å«æŸä¸€å›ºå®šé¢œè‰²å€¼æˆ–éšç©ºé—´ä½ç½®å˜åŒ–çš„è‡ªå‘å…‰æè´¨ï¼Œ
+// å¯¹äºåè€…ï¼Œé¢œè‰²å€¼åŸºäºç‰©ç†å¤©ç©ºç›’æ¨¡å‹æˆ–ç›¸åº”çš„å¤©ç©ºå›¾åƒã€‚æœ€ç»ˆç»“æœå°†å‘ˆç°ä¸ºåŒ…å«è½¯é˜´å½±çš„ç²¾ç¾å›¾åƒã€‚
+// Environment Lightç±»å’ŒAmbient Occluderç±»å…·æœ‰æŸäº›å…±åŒç‰¹å¾ã€‚
 class EnvironmentLight: public Light {
 
     public:
@@ -28,18 +28,18 @@ class EnvironmentLight: public Light {
         void
         set_material(Material* material);
 
-        // ·µ»Ø¸÷ÌõÒõÓ°¹âÏßµÄ·½Ïò¡£
+        // è¿”å›å„æ¡é˜´å½±å…‰çº¿çš„æ–¹å‘ã€‚
         virtual Vector3D
         get_direction(ShadeRec& s);
 
-        // ÉèÖÃ²ÉÑùÆ÷¶ÔÏósp
+        // è®¾ç½®é‡‡æ ·å™¨å¯¹è±¡sp
         void
         set_sampler(Sampler* sampler);
 
-        // ·µ»ØÈëÉä·øÉä¶È
+        // è¿”å›å…¥å°„è¾å°„åº¦
         virtual RGBColor
         L(ShadeRec& sr);
-        // ²âÊÔÒõÓ°ÊÇ·ñ±»Ä³Ò»¸ö¶ÔÏóÕÚµ²¡£
+        // æµ‹è¯•é˜´å½±æ˜¯å¦è¢«æŸä¸€ä¸ªå¯¹è±¡é®æŒ¡ã€‚
         virtual bool
         in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
@@ -48,7 +48,7 @@ class EnvironmentLight: public Light {
 
         virtual bool
         casts_shadows(void) const;
-        // ¿ªÆô»ò¹Ø±ÕÒõÓ°¡£
+        // å¼€å¯æˆ–å…³é—­é˜´å½±ã€‚
         virtual void
         set_shadows(bool _s);
 

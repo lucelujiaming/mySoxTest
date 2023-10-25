@@ -84,19 +84,19 @@ StereoCamera::~StereoCamera(void) {
 
 
 // ----------------------------------------------------------------------------- set_up_cameras
-// ½¨Á¢×ó¡¢ÓÒÏà»ú
-// ¼øÓÚÔÚµ÷ÓÃº¯ÊýÖ®Ç°£¬Á¢ÌåÏà»úµÄ»ùÏòÁ¿(u£¬v£¬w)ÒÑÉè¶¨Íê±Ï£¬
-// ¸Ãº¯ÊýÖ»Ðè¼ÆËã×ó¡¢ÓÒ¹Û²ìµãµÄÎ»ÖÃÒÔ¼°ÊÓ¼ûµãµÄÎ»ÖÃ¼´¿É¡£
+// å»ºç«‹å·¦ã€å³ç›¸æœº
+// é‰´äºŽåœ¨è°ƒç”¨å‡½æ•°ä¹‹å‰ï¼Œç«‹ä½“ç›¸æœºçš„åŸºå‘é‡(uï¼Œvï¼Œw)å·²è®¾å®šå®Œæ¯•ï¼Œ
+// è¯¥å‡½æ•°åªéœ€è®¡ç®—å·¦ã€å³è§‚å¯Ÿç‚¹çš„ä½ç½®ä»¥åŠè§†è§ç‚¹çš„ä½ç½®å³å¯ã€‚
 void
 StereoCamera::setup_cameras(void) {
 
     double r = eye.distance(lookat);
-    // Èôx±íÊ¾Ïà»ú¼ä¾àÖµµÄÒ»°ë£¬ÔòeºÍl¼äµÄ¾àÀëÖµr¿É°´ÈçÏÂ·½Ê½¶¨Òå£º
-	//     r = || eÒ»l ||
-	// ÓÉ¼òµ¥µÄÈý½Ç¼¸ºÎ¼ÆËã¿ÉµÃ£º
+    // è‹¥xè¡¨ç¤ºç›¸æœºé—´è·å€¼çš„ä¸€åŠï¼Œåˆ™eå’Œlé—´çš„è·ç¦»å€¼rå¯æŒ‰å¦‚ä¸‹æ–¹å¼å®šä¹‰ï¼š
+	//     r = || eä¸€l ||
+	// ç”±ç®€å•çš„ä¸‰è§’å‡ ä½•è®¡ç®—å¯å¾—ï¼š
     //     x = r * tan(beta/2)
     double x = r * tan(0.5 * beta * PI_ON_180);  //  half the camera separation distance
-    // ¸ù¾Ý¼ÆËã½á¹ûÉèÖÃ×óÓÒÏà»ú¡£
+    // æ ¹æ®è®¡ç®—ç»“æžœè®¾ç½®å·¦å³ç›¸æœºã€‚
     left_camera_ptr->set_eye(eye - x * u);
     left_camera_ptr->set_lookat(lookat - x * u);
     left_camera_ptr->compute_uvw();
@@ -127,13 +127,13 @@ StereoCamera::render_scene(const World& w) {
     double r = eye.distance(lookat);
     double x = r * tan(0.5 * beta * PI_ON_180);
 
-    // ÎªÁËÉú³ÉÁ¢ÌåÍ¼Ïñ¶Ô£¬½öÐèÕýÈ·´¦ÀíÆäÖÐµÄÒ»¸öÌØÀý£¬¼´ÑØx£¬·½ÏòÒÆ¶¯ÊÓÆ½Ãæ¡£
-    // Õë¶Ô×óÏà»ú£¬Î»ÒÆÎªÑØx£¬·½ÏòÇÒ¾àÀëÎªÏà»ú¼ä¾àÖµµÄÒ»°ë¡£
+    // ä¸ºäº†ç”Ÿæˆç«‹ä½“å›¾åƒå¯¹ï¼Œä»…éœ€æ­£ç¡®å¤„ç†å…¶ä¸­çš„ä¸€ä¸ªç‰¹ä¾‹ï¼Œå³æ²¿xï¼Œæ–¹å‘ç§»åŠ¨è§†å¹³é¢ã€‚
+    // é’ˆå¯¹å·¦ç›¸æœºï¼Œä½ç§»ä¸ºæ²¿xï¼Œæ–¹å‘ä¸”è·ç¦»ä¸ºç›¸æœºé—´è·å€¼çš„ä¸€åŠã€‚
     if (viewing_type == parallel) {
         left_camera_ptr->render_stereo(w, x, 0);                        // left view on left
         right_camera_ptr->render_stereo(w, -x, hres + pixel_gap);        // right view on right
     }
-    // ¶øÕë¶ÔÓÒÏà»ú£¬Î»ÒÆÎª¸ºx£¬·½ÏòÇÒÒÆ¶¯¾àÀëÖµÏàÍ¬¡£
+    // è€Œé’ˆå¯¹å³ç›¸æœºï¼Œä½ç§»ä¸ºè´Ÿxï¼Œæ–¹å‘ä¸”ç§»åŠ¨è·ç¦»å€¼ç›¸åŒã€‚
     if (viewing_type == transverse) {
         right_camera_ptr->render_stereo(w, -x, 0);                    // right view on left
         left_camera_ptr->render_stereo(w, x, hres + pixel_gap);        // left view on right

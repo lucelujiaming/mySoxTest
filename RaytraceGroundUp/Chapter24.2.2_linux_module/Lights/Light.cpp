@@ -5,7 +5,7 @@
 // ---------------------------------------------------------------------- default constructor
 
 Light::Light(void)
-        // ³õÊ¼×´Ì¬ÏÂ£¬LightÄ¬ÈÏ½«shadowsÉèÖÃÎªtrue¡£
+        // åˆå§‹çŠ¶æ€ä¸‹ï¼ŒLighté»˜è®¤å°†shadowsè®¾ç½®ä¸ºtrueã€‚
         : shadows(true)
 {}
 

@@ -60,12 +60,12 @@ class Camera {
 
     protected:
 
-        Point3D         eye;                   // 视点：eye point
-        Point3D         lookat;                // 观察点：lookat point
+        Point3D         eye;                   // 瑙嗙偣锛歟ye point
+        Point3D         lookat;                // 瑙傚療鐐癸細lookat point
         float           ra;                    // roll angle
-        Vector3D        u, v, w;               // 正交基向量：orthonormal basis vectors
-        Vector3D        up;                    // up向量：up vector
-        float           exposure_time;         // 曝光时间
+        Vector3D        u, v, w;               // 姝ｄ氦鍩哄悜閲忥細orthonormal basis vectors
+        Vector3D        up;                    // up鍚戦噺锛歶p vector
+        float           exposure_time;         // 鏇濆厜鏃堕棿
 
         Camera&                                // assignment operator
         operator= (const Camera& camera);

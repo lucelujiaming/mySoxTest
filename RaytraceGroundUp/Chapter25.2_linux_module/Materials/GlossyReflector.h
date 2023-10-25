@@ -84,6 +84,7 @@ GlossyReflector::set_cr(const float r, const float g, const float b) {
 
 inline void
 GlossyReflector::set_cr(const float c) {
+    // 直接调用光照镜面反射的set_cs函数。
     glossy_specular_brdf->set_cs(c);
 }
 
@@ -91,6 +92,7 @@ GlossyReflector::set_cr(const float c) {
 
 inline void
 GlossyReflector::set_exponent(const float e) {
+    // 直接调用光照镜面反射的set_exp函数。
     glossy_specular_brdf->set_exp(e);
 }
 
@@ -98,6 +100,7 @@ GlossyReflector::set_exponent(const float e) {
 
 inline void
 GlossyReflector::set_samples(const int num_samples, const float exp) {
+    // 直接调用光照镜面反射的set_samples函数。
     glossy_specular_brdf->set_samples(num_samples, exp);
 }
 

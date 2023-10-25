@@ -13,10 +13,10 @@ class RayCast: public Tracer {
 
         virtual
         ~RayCast(void);
-        // ¼Ì³ĞÓÚTracer»ùÀàµÄÏà¹Ø×ÓÀàÓ¦ÖØĞ´trace_ray() º¯Êı
+        // ç»§æ‰¿äºTraceråŸºç±»çš„ç›¸å…³å­ç±»åº”é‡å†™trace_ray() å‡½æ•°
         virtual RGBColor
         trace_ray(const Ray& ray) const;
-        // ¼ÓÈëdepth£¬ÓÃÓÚÄ£Äâ·´ÉäºÍÍ¸Ã÷¶È¡£
+        // åŠ å…¥depthï¼Œç”¨äºæ¨¡æ‹Ÿåå°„å’Œé€æ˜åº¦ã€‚
         virtual RGBColor
         trace_ray(const Ray ray, const int depth) const;
 };

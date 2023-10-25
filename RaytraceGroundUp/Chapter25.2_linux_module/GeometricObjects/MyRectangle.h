@@ -4,11 +4,11 @@
 #include "Sampler.h"
 #include "GeometricObject.h"
 
-// ¿ÉÊÓÎª¹âÔ´µÄ¼¸ºÎ¶ÔÏóÓ¦Ìá¹©ÏÂÁĞÄÚÈİÖÁArea LightÀà£º
-// Çø±íÃæÉÏµÄ²ÉÑùµã¡£
-// Çø¸÷²ÉÑùµã´¦µÄpdf(ĞèÒªÏà¹Ø¶ÔÏóµÄ±íÃæ»ı)¡£
-// ¸÷²ÉÑùµã´¦µÄ·¨Ïß¡£
-// ¾ØĞÎ¹âÔ´¼¸ºÎ¶ÔÏó¡£
+// å¯è§†ä¸ºå…‰æºçš„å‡ ä½•å¯¹è±¡åº”æä¾›ä¸‹åˆ—å†…å®¹è‡³Area Lightç±»ï¼š
+// åŒºè¡¨é¢ä¸Šçš„é‡‡æ ·ç‚¹ã€‚
+// åŒºå„é‡‡æ ·ç‚¹å¤„çš„pdf(éœ€è¦ç›¸å…³å¯¹è±¡çš„è¡¨é¢ç§¯)ã€‚
+// å„é‡‡æ ·ç‚¹å¤„çš„æ³•çº¿ã€‚
+// çŸ©å½¢å…‰æºå‡ ä½•å¯¹è±¡ã€‚
 class MyRectangle: public GeometricObject {
 
     public:
@@ -32,12 +32,12 @@ class MyRectangle: public GeometricObject {
         
         //BBox
         //get_bounding_box(void);                
-        // ÅĞ¶Ï¹âÏßrayºÍÎïÌåÊÇ·ñÏà½»¡£¹âÏßµÄÊ±¼äÈ¡Öµ·¶Î§Îª[tmin, ¡Ş)
-        // ²¢°Ñ¼ÆËã³öÀ´Åö×²µãºÍÅö×²µã·¨Ïß·½Ïò£¬´æÈëShadeRecÖĞ¡£
+        // åˆ¤æ–­å…‰çº¿rayå’Œç‰©ä½“æ˜¯å¦ç›¸äº¤ã€‚å…‰çº¿çš„æ—¶é—´å–å€¼èŒƒå›´ä¸º[tmin, âˆ)
+        // å¹¶æŠŠè®¡ç®—å‡ºæ¥ç¢°æ’ç‚¹å’Œç¢°æ’ç‚¹æ³•çº¿æ–¹å‘ï¼Œå­˜å…¥ShadeRecä¸­ã€‚
         virtual bool
-        hit(const Ray& ray, double& tmin, ShadeRec& sr) const;        // ¶¨ÒåÁË¹âÏß-¶ÔÏó¼äµÄÅö×²¼ì²âº¯Êı¡£
-        // ÅĞ¶Ï¹âÏßrayºÍÎïÌåÊÇ·ñÏà½»¡£¹âÏßµÄÊ±¼äÈ¡Öµ·¶Î§Îª[tmin, ¡Ş)
-        // Ö»ÅĞ¶ÏÊÇ·ñÏà½»¡£²»¼ÆËãÅö×²µã¡£
+        hit(const Ray& ray, double& tmin, ShadeRec& sr) const;        // å®šä¹‰äº†å…‰çº¿-å¯¹è±¡é—´çš„ç¢°æ’æ£€æµ‹å‡½æ•°ã€‚
+        // åˆ¤æ–­å…‰çº¿rayå’Œç‰©ä½“æ˜¯å¦ç›¸äº¤ã€‚å…‰çº¿çš„æ—¶é—´å–å€¼èŒƒå›´ä¸º[tmin, âˆ)
+        // åªåˆ¤æ–­æ˜¯å¦ç›¸äº¤ã€‚ä¸è®¡ç®—ç¢°æ’ç‚¹ã€‚
         virtual bool
         shadow_hit(const Ray& ray, float& tmin) const;
                 
@@ -58,16 +58,16 @@ class MyRectangle: public GeometricObject {
         
     private:
     
-        Point3D           p0;               // ¾ØĞÎµÄ½Ç¶¥µã£ºcorner vertex 
-        Vector3D          a;                // ±ßÏòÁ¿£ºside
-        Vector3D          b;                // ±ßÏòÁ¿£ºside
-        double            a_len_squared;    // ±ßa³¤¶ÈµÄÆ½·½£ºsquare of the length of side a
-        double            b_len_squared;    // ±ßb³¤¶ÈµÄÆ½·½£ºsquare of the length of side b
-        Normal            normal;           // ·¨Ïß·½Ïò£º
+        Point3D           p0;               // çŸ©å½¢çš„è§’é¡¶ç‚¹ï¼šcorner vertex 
+        Vector3D          a;                // è¾¹å‘é‡ï¼šside
+        Vector3D          b;                // è¾¹å‘é‡ï¼šside
+        double            a_len_squared;    // è¾¹aé•¿åº¦çš„å¹³æ–¹ï¼šsquare of the length of side a
+        double            b_len_squared;    // è¾¹bé•¿åº¦çš„å¹³æ–¹ï¼šsquare of the length of side b
+        Normal            normal;           // æ³•çº¿æ–¹å‘ï¼š
         
-        float             area;             // ¾ØĞÎÃæ»ı£ºfor rectangular lights
-        float             inv_area;         // ¾ØĞÎÃæ»ıµÄµ¹Êı£ºfor rectangular lights
-        Sampler*          sampler_ptr;      // ²ÉÑùÆ÷Ö¸Õë£ºfor rectangular lights     
+        float             area;             // çŸ©å½¢é¢ç§¯ï¼šfor rectangular lights
+        float             inv_area;         // çŸ©å½¢é¢ç§¯çš„å€’æ•°ï¼šfor rectangular lights
+        Sampler*          sampler_ptr;      // é‡‡æ ·å™¨æŒ‡é’ˆï¼šfor rectangular lights     
         
         static const double kEpsilon;                                               
 };

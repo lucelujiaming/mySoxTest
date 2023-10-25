@@ -569,7 +569,7 @@ Grid::read_ply_file(const char* file_name, const int triangle_type) {
                     objects.push_back(triangle_ptr);
                 }
 
-                if (triangle_type == smooth) {
+                if (triangle_type == smooth) {{
                     // 使用mesh_ptr和face_ptr中保存的mesh_ptr索引构建平滑着色三角形。
                     // 就是利用face_ptr中保存的三个mesh_ptr索引，从mesh_ptr取出对应下标的点创建三角形。
                     // 参见MeshTriangle::shadow_hit函数。

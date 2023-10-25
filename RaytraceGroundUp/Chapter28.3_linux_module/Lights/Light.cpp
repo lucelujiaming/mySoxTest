@@ -5,6 +5,7 @@
 // ---------------------------------------------------------------------- default constructor
 
 Light::Light(void)
+        // 初始状态下，Light默认将shadows设置为true。
         : shadows(true)
 {}
 

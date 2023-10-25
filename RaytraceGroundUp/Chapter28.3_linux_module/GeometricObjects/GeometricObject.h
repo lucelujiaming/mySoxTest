@@ -91,10 +91,11 @@ class GeometricObject {
 
         mutable Material*   material_ptr;       // mutable allows the const functions Compound::hit, Instance::hit, and RegularGrid::hit to assign to material_ptr
 
-        RGBColor               color;                // only used for Bare Bones ray tracing
+        RGBColor               color;           // only used for Bare Bones ray tracing
     
         GeometricObject&                        
         operator= (const GeometricObject& rhs);
+        // 对象选项将确定对象自身是否具备投射阴影的能力。这对于环境光照下的遮挡计算将是十分必要的。
         bool shadows;
 };
 

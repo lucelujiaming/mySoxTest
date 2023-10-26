@@ -71,10 +71,51 @@ RGBColor
 Emissive::area_light_shade(ShadeRec& sr) {
     // 另外，仅当入射光线与对象表面法线位于同一侧时，函数均返回Le=ls * ce。
     if (-sr.normal * sr.ray.d > 0.0)
+    {
         return (ls * ce);
+    }
     // 否则， 函数将返回黑色值。
     else
+    {
         return black;
+    }
+}
+
+// ---------------------------------------------------------------- path_shade
+
+RGBColor
+Emissive::path_shade(ShadeRec& sr) {
+    // 另外，仅当入射光线与对象表面法线位于同一侧时，函数均返回Le=ls * ce。
+	if (-sr.normal * sr.ray.d > 0.0)
+    {
+		return (ls * ce);
+    }
+    // 否则， 函数将返回黑色值。
+	else
+    {
+		return (black);
+    }
+}
+
+
+// ---------------------------------------------------------------- global_shade
+
+RGBColor
+Emissive::global_shade(ShadeRec& sr) {
+    if (sr.depth == 1) {
+	    // 当光线的depth值为1时，将返回黑色值。
+        return (black);
+    }
+    // 另外，仅当入射光线与对象表面法线位于同一侧时，函数均返回Le=ls * ce。
+	if (-sr.normal * sr.ray.d > 0.0)
+    {
+		return (ls * ce);
+    }
+    // 否则， 函数将返回黑色值。
+	else
+    {
+		return (black);
+    }
 }
 
 

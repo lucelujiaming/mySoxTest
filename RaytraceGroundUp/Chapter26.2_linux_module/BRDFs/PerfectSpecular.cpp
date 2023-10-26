@@ -39,14 +39,15 @@ PerfectSpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) c
 // explained on page 500
 // 用于计算反射光线的方向，并且返回计算出来的颜色值。
 RGBColor
-PerfectSpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const {
+PerfectSpecular::sample_f(const ShadeRec& sr, 
+                          const Vector3D& wo, 
+                          Vector3D& wi) const {
     // 参见公式24.2
     float ndotwo = sr.normal * wo;
     wi = -wo + 2.0 * sr.normal * ndotwo;
-    // why is this fabs? 
+    return (kr * cr / fabs(sr.normal * wi));
     // kr would be a Fresnel term in a Fresnel reflector、
     // for transparency when ray hits inside surface?, if so it should go in Chapter 24
-    return (kr * cr / fabs(sr.normal * wi)); 
 }                                             
 
 
@@ -55,6 +56,9 @@ PerfectSpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) 
 // it returns ndotwi in the pdf
 // 用于计算反射光线的方向，并且返回计算出来的颜色值。
 // 使用Monte Calo积分实现。
+// 针对返回pdf的完全镜面BRDF，更新sample_f()函数，
+// 以使相关代码与其他新增sample_f()函数保持一致。可以对比程序清单24.2中的Perfect Specula::sample f()函数
+// 该函数采用了Whitted光线跟踪计算方案并返回kr * cr /cosθi。
 RGBColor
 PerfectSpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const {
     // 参见公式24.2

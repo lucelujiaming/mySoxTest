@@ -94,6 +94,14 @@ Matte::~Matte(void) {
 }
 
 
+// ---------------------------------------------------------------------- set_sampler
+
+void
+Matte::set_sampler(Sampler* s_ptr) {
+    diffuse_brdf->set_sampler(s_ptr);
+}
+
+
 // ---------------------------------------------------------------- shade
 // explained on page 271
 // 计算环境光照，并遍历全部光源以计算直接漫反射光照。
@@ -177,6 +185,45 @@ Matte::area_light_shade(ShadeRec& sr) {
     }
 
     return (L);
+}
+
+
+// ---------------------------------------------------------------- path_shade
+
+RGBColor
+Matte::path_shade(ShadeRec& sr) {
+	Vector3D 	wo = -sr.ray.d;
+	Vector3D 	wi;
+	float 		pdf;
+	RGBColor 	f = diffuse_brdf->sample_f(sr, wo, wi, pdf);
+	float 		ndotwi = sr.normal * wi;
+    // 创建折射光线。
+	Ray 		reflected_ray(sr.hit_point, wi);
+    // 使用折射光线递归调用。
+	return (f * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * ndotwi / pdf);
+}
+
+// ---------------------------------------------------------------- global_shade
+
+RGBColor
+Matte::global_shade(ShadeRec& sr) {
+    RGBColor L;
+    // 当depth值为0时，计算直接光照。
+    if (sr.depth == 0) {
+        L = area_light_shade(sr);
+    }
+
+	Vector3D 	wo = -sr.ray.d;
+	Vector3D 	wi;
+	float 		pdf;
+	RGBColor 	f = diffuse_brdf->sample_f(sr, wo, wi, pdf);
+	float 		ndotwi = sr.normal * wi;
+    // 创建折射光线。
+	Ray 		reflected_ray(sr.hit_point, wi);
+    // 使用折射光线递归调用。
+	L += f * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * ndotwi / pdf;
+
+	return (L);
 }
 
 

@@ -31,7 +31,7 @@ class PerfectTransmitter: public BTDF {
         
         void
         set_ior(const float eta);
-
+        // 检测全内反射
         bool                                                    
         tir(const ShadeRec& sr) const;
         
@@ -45,9 +45,9 @@ class PerfectTransmitter: public BTDF {
         rho(const ShadeRec& sr, const Vector3D& wo) const;
                 
     private:
-    
-        float    kt;            // transmission coefficient
-        float    ior;        // index of refraction
+        float    kt;         // 界面间的透射通量面片：transmission coefficient
+        // 简单透明材质使用了单折射率，这对于渲染空气中的透明对象已然足够了。
+        float    ior;        // 折射率：index of refraction
 };
 
 

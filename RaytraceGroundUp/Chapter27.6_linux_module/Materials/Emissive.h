@@ -1,3 +1,4 @@
+
 #ifndef __EMISSIVE__
 #define __EMISSIVE__
 
@@ -25,6 +26,10 @@ class Emissive: public Material {
         virtual RGBColor       shade(ShadeRec& sr);
 
         virtual RGBColor       area_light_shade(ShadeRec& sr);
+
+		virtual RGBColor path_shade(ShadeRec& sr);
+		
+		virtual RGBColor global_shade(ShadeRec& sr);
 
     private:
         // 缩放系数ls

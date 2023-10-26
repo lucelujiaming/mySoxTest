@@ -45,6 +45,7 @@ extern ofstream out;
 #include "MyRectangle.h"
 #include "Emissive.h"
 #include "AreaLight.h"
+#include "AreaLighting.h"
 
 #include "SphereConcave.h"
 #include "EnvironmentLight.h"
@@ -360,7 +361,7 @@ void World::build()
 	vp.set_samples(num_samples) ;
 	vp.set_max_depth(10) ;
 
-    tracer_ptr=new PathTrace(this) ;
+    tracer_ptr=new Whitted(this) ;
     GlossyReflector* reflective_ptr1=new GlossyReflector;
 	reflective_ptr1->set_ka(0.25) ;
 	reflective_ptr1->set_kd(0.5) ;
@@ -369,6 +370,11 @@ void World::build()
 	reflective_ptr1->set_exp(100) ;
 	reflective_ptr1->set_kr(0.75) ;
 	reflective_ptr1->set_cr(white) ;
+
+    PointLight *light_ptr=new PointLight();
+    light_ptr->set_location(50, 50, 1);
+    light_ptr->scale_radiance(3.0);
+    add_light(light_ptr);
 
 	Phong * phong_ptr = new Phong;
 	phong_ptr->set_ka(0.25);
@@ -387,12 +393,26 @@ void World::build()
     Sphere* sphere_ptr1= new Sphere(Point3D(0.0, 4.5, 0.0) , 3.0) ;
     sphere_ptr1->set_material(dielectric_ptr) ;
     add_object(sphere_ptr1) ;
+	
+	Sphere* sphere_ptr = new Sphere;
+	sphere_ptr->set_center(0, 60, 0);
+	sphere_ptr->set_radius(80.0);
+	sphere_ptr->set_color(1.0, 1.0, 0.0);
+	sphere_ptr->set_material(dielectric_ptr);
+	add_object(sphere_ptr);
+
+	Plane *plane_ptr = new Plane;
+	plane_ptr->a = Vector3D(0.0);
+	plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+	plane_ptr->set_color(0.0, 1.0, 0.0);
+	plane_ptr->set_material(phong_ptr);
+	add_object(plane_ptr);
 
 	// 设定相机
 	Pinhole* pinhole_ptr = new Pinhole;
 	pinhole_ptr->set_eye(0, 0, 500);
 	pinhole_ptr->set_lookat(0, 0, -50);
-	pinhole_ptr->set_view_distance(400);
+	pinhole_ptr->set_view_distance(8000);
 	pinhole_ptr->compute_uvw();
 	set_camera(pinhole_ptr);
 

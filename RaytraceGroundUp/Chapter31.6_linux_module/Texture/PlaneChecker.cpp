@@ -75,8 +75,10 @@ PlaneChecker::get_color(const ShadeRec& sr) const {
 
 	float x = sr.local_hit_point.x;
 	float z = sr.local_hit_point.z;
+    // 使用到标准Ｃ语言库中的floor() 函数。
 	int ix = floor(x / size);
 	int iz = floor(z / size);
+    // 提供x、z方向上的线性距离测算。
 	float fx = x / size - ix;
 	float fz = z / size - iz;
 	float width = 0.5 * line_width / size;

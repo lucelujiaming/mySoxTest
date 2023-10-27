@@ -1,5 +1,10 @@
 #include "FBmTextureRamp.h"
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
+
 // ---------------------------------------------------------------- default constructor
 
 FBmTextureRamp::FBmTextureRamp(void)
@@ -68,4 +73,4 @@ FBmTextureRamp::operator= (const FBmTextureRamp& rhs) {
 
 
 // --------------------------------------------------- get_color
-RGBColorFBmTextureRamp::get_color(const ShadeRec& sr) const {	float 	noise 	= noise_ptr->value_fbm(sr.local_hit_point);	float 	y 		= sr.local_hit_point.y + perturbation * noise;	float 	u 		= (1.0 + sin(y)) / 2.0;	int 	row 	= 0;    // use top row of ramp image	int 	column 	= (int) (u * (ramp_ptr->get_hres() - 1));	return (ramp_ptr->get_color(row, column));}
+RGBColorFBmTextureRamp::get_color(const ShadeRec& sr) const {    // 为了生成大理石纹理， 这里在value_fBm() 函数中使用了分形求和参数(gain=0.5，lacuna rity=2.0) 。	float 	noise 	= noise_ptr->value_fbm(sr.local_hit_point);	float 	y 		= sr.local_hit_point.y + perturbation * noise;	float 	u 		= (1.0 + sin(y)) / 2.0;	int 	row 	= 0;    // use top row of ramp image	int 	column 	= (int) (u * (ramp_ptr->get_hres() - 1));	return (ramp_ptr->get_color(row, column));}

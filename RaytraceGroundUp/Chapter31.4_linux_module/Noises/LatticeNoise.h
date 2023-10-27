@@ -8,10 +8,10 @@
 
 
 // This file contains the declaration of the class LatticeNoise.
-// LatticeNoise is an abstract base class that defines scalar and vector 
+// LatticeNoise is an abstract base class that defines scalar and vector
 // turbulence, fractal sum, and fractional Brownian motion noise based functions.
-// The scalar_noise and vector_noise functions are pure virtual.  
-// These are defined in the derived classes LinearNoise and CubicNoise using respectively, 
+// The scalar_noise and vector_noise functions are pure virtual.
+// These are defined in the derived classes LinearNoise and CubicNoise using respectively,
 // tri-linear and tri-cubic interpolation of the lattice noise values.
 
 // The functions
@@ -22,17 +22,17 @@
 //				value_fbm
 //				vector_fbm
 //
-// involve sums of value_noise and vector_noise, but can be defined here in the base class because 
-// they are independent of the interpolation technique. 
+// involve sums of value_noise and vector_noise, but can be defined here in the base class because
+// they are independent of the interpolation technique.
 // I have not implemented a vector turbulence function.
 
 // The three value functions: value_fractal_sum, value_turbulence, and value_fbm return values inside
-// the range [0, 1]. 
+// the range [0, 1].
 // This simplifies the design process for textures based on the noise functions.
 // As the number of octaves increases, the range of the returned values decreases because the different
 // octaves don't line up. Only linear_noise potentially fills the range [0, 1]. See Chapter 31.
 
-// When num_octaves = 1, the value functions all return value_noise, 
+// When num_octaves = 1, the value functions all return value_noise,
 // and the vector functions return vector_noise.
 
 // Some of the ideas for this class came from Wilt N. (1994), Object-Oriented Ray Tracing in C++, Wiley.
@@ -50,105 +50,111 @@ const int kTableSize	= 256;
 const int kTableMask	= kTableSize - 1;
 const int seed_value 	= 253;
 
+// Peachey定义了两个宏PERM() 和INDEX() 以访问value_table数组，
 #define PERM(x)          permutation_table[(x)&kTableMask]
 #define INDEX(ix,iy,iz)  PERM((ix)+PERM((iy)+PERM(iz)))
 #define FLOOR(x) 		 ((int)(x) - ((x) < 0 && (x) != (int) (x)))
- 
+
 
 //------------------------------------------------------------------------- class LatticeNoise
-
+// 栅格噪声函数的构造过程包含下列3个步骤：
+//   (1)将噪声值置于栅格顶点处；
+//   (2)使用哈希(散列)技术计算噪声值栅格单元；
+//   (3)通过插值计算得到栅格单元内部的噪声值。
+//  基类Lattice Noise存储了整数栅格并包含了栅格的构造代码
 class LatticeNoise {
-	
+
 	public:
-	
-		LatticeNoise(void);												
-		
-		LatticeNoise(int octaves);										
-		
-		LatticeNoise(int octaves, float lacunarity, float gain); 		
 
-		LatticeNoise(const LatticeNoise& ns);							
+		LatticeNoise(void);
 
-		LatticeNoise& 													
-		operator= (const LatticeNoise& rhs);	
-		
-		virtual LatticeNoise*											
-		clone(void) const = 0;	
+		LatticeNoise(int octaves);
 
-		virtual															
+		LatticeNoise(int octaves, float lacunarity, float gain);
+
+		LatticeNoise(const LatticeNoise& ns);
+
+		LatticeNoise&
+		operator= (const LatticeNoise& rhs);
+
+		virtual LatticeNoise*
+		clone(void) const = 0;
+
+		virtual
 		~LatticeNoise(void);
-		
-		
-		// noise											
-								
-		virtual float													
+
+
+		// noise
+        // 执行插值计算的相关函数
+		virtual float
 		value_noise(const Point3D& p) const = 0;
-		
-		virtual Vector3D 												
-		vector_noise(const Point3D& p) const = 0;	
-		
-		
+
+		virtual Vector3D
+		vector_noise(const Point3D& p) const = 0;
+
+
 		// fractal sum
-				
-		virtual float 													
+
+		virtual float
 		value_fractal_sum(const Point3D& p) const;
-		
-		virtual Vector3D 						
+
+		virtual Vector3D
 		vector_fractal_sum(const Point3D& p) const;
-		
-		
+
+
 		// turbulence (no vector version)
-				
-		virtual float 													
-		value_turbulence(const Point3D& p) const; 							
-				
-		
+
+		virtual float
+		value_turbulence(const Point3D& p) const;
+
+
 		// fbm
-						
-		virtual float 							
+
+		virtual float
 		value_fbm(const Point3D& p) const;
-		
-		virtual Vector3D 												
+
+		virtual Vector3D
 		vector_fbm(const Point3D& p) const;
-		
-		
+
+
 		// access functions
-		
-		void 														
+
+		void
 		set_num_octaves(int octaves);
-		
-		void 															
+
+		void
 		set_lacunarity(float lacunarity);
-		
-		void 															
+
+		void
 		set_gain(float gain);
-		
-		
+
+
 	protected:
-		
-		int 							num_octaves;						
-		float							lacunarity;				
+
+		int 							num_octaves;
+		float							lacunarity;
 		float							gain;
-		
+        // 为了进一步降低栅格顶点均匀间距所导致的锯齿效应， 
+        // 较好的方法是采用随机索引。Peachey通过使用包含kTable Size个随机整数
+        // 且范围为[0， k Table Size-1] 的辅助数组实现了这一功能。
 		static const	unsigned char 	permutation_table[kTableSize];	// permutation array
 						float 			value_table[kTableSize];		// array of pseudo-random numbers
-						Vector3D		vector_table[kTableSize];		// array of pseudo-random unit vectors	
-	
-		
-	private:	
-		
+						Vector3D		vector_table[kTableSize];		// array of pseudo-random unit vectors
+
+
+	private:
+
 		float							fbm_min;  						// minimum value of fbm
 		float							fbm_max;						// maximum value of fbm
-		
+
 		void															// initialise the integer lattice
 		init_value_table(int seed);
-		
+
 		void															// initialise the integer lattice
 		init_vector_table(int seed);
-		
+
 		void															// compute fbm_min and fbm_max
 		compute_fbm_bounds(void);
 };
 
 #endif
-		

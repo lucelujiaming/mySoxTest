@@ -3,7 +3,8 @@
 
 #include "Texture.h"
 
-
+// 3D棋盘纹理的基本理念是利用两个不同颜色的轴对齐立方体填充某一世界空间，
+// 其中，立方体表面相互衔接且颜色值在表面间相互交替。
 class Checker3D : public Texture
 {
 	public:

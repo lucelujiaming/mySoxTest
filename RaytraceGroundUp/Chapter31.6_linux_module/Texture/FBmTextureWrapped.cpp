@@ -1,5 +1,10 @@
 #include "FBmTextureWrapped.h"
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
+
 // ---------------------------------------------------------------- default constructor
 
 FBmTextureWrapped::FBmTextureWrapped(void)

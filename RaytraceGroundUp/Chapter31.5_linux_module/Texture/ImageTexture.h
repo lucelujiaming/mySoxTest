@@ -10,7 +10,7 @@
 #include "Image.h"
 #include "Mapping.h"
 #include "Texture.h"
-
+// 贴图材质
 class ImageTexture: public Texture {
 	public:
 
@@ -40,10 +40,10 @@ class ImageTexture: public Texture {
 
 	private:
 
-		int 		hres;			// horizontal resolution of the image
-		int			vres;			// vertical resolution of the image
-		Image*		image_ptr;		// the image
-		Mapping*	mapping_ptr;	// mapping technique used, if any
+		int 		hres;			// 贴图分辨率：horizontal resolution of the image
+		int			vres;			// 贴图分辨率：vertical resolution of the image
+		Image*		image_ptr;		// 指向图像的相关指针：the image
+		Mapping*	mapping_ptr;	// 指向贴图的相关指针：mapping technique used, if any
 };
 
 

@@ -6,7 +6,6 @@
 //	This C++ code is licensed under the GNU General Public License Version 2.
 //	See the file COPYING.txt for the full license.
 
-
 // This file contains the definition of the class SphericalMap
 // This class inherits from Mapping, and defines a default spherical mapping
 // Here, an image with an aspect ratio of 2:1 is mapped onto a sphere so
@@ -14,7 +13,7 @@
 
 #include "Constants.h"
 #include "Mapping.h"
-
+// 球体映射
 class SphericalMap: public Mapping {		
 	public:
 	

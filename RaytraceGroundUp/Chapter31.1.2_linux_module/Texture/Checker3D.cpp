@@ -52,10 +52,11 @@ Checker3D::operator= (const Checker3D& rhs) {
 
 
 // ------------------------------------- get_color
-
+// 存在多种方式定义棋盘纹理，一种较为简单的方法将使用到标准Ｃ语言库中的floor() 函数。
+// 由于该函数将返回double值， 因而可将其转换为int值并加以计算。
 RGBColor
 Checker3D::get_color(const ShadeRec& sr) const {
-
+    // 避免将平面棋盘表面置于棋盘边界处。例如，可将棋盘地面平面置于y=±0.001处而非y=0.0处。
 	float eps = -0.000187453738;	// small random number
 	float x = sr.local_hit_point.x + eps;
 	float y = sr.local_hit_point.y + eps;

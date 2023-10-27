@@ -3,7 +3,7 @@
 
 #include "Texture.h"
 #include "LatticeNoise.h"
-
+// 与fBm相对应的纹理类
 class FBmTexture : public Texture
 {
 	public:
@@ -48,7 +48,9 @@ class FBmTexture : public Texture
 
     private:
 
-		LatticeNoise*		noise_ptr;		RGBColor 	  		color;		float		  		min_value, max_value;	// scaling factors};
+		LatticeNoise*		noise_ptr;
+        // 相对于灰度图，向纹理中添加相应的颜色值可进一步丰富图像的内容。		RGBColor 	  		color;
+        // 数据成员min_value和max_value使得纹理对噪声函数value_fBm()返回值的缩放操作成为可能。		float		  		min_value, max_value;	// scaling factors};
 
 
 // ---------------------------------------------------------------- set_color

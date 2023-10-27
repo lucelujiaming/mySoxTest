@@ -3,6 +3,7 @@
 
 #include "Texture.h"
 #include "LatticeNoise.h"
+// 对FBm Texture：：get_color() 函数稍加修改即可生成另一组迥然不同的纹理图像， 包括两方面内容。首先， 可将噪声函数的振幅乘以一个大于1的值以扩大其数值范围； 随后， 可通过floor() 函数将结果值截取至[0，1]范围内，该方法等同于程序清单31.3和程序清单31.6中计算fx、fy、fz时所使用的方法。这使得噪声值多次往复于[0，1]范围内，且当噪声值从1降至0时，纹理中将生成山脊状图案。程序清单31.14显示了纹理类Wrapped FBm Texture中的get_color() 函数的代码， 其中， 若expansion number 值足够大， 则噪声值将位于[0， 1] 范围内且无需使用minvalue和maxvalue继续缩放操作。
 
 class FBmTextureWrapped : public Texture
 {

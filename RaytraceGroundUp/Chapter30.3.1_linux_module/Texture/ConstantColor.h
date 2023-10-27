@@ -3,7 +3,8 @@
 
 #include "Texture.h"
 
-// 纯色纹理：返回的颜色值与碰撞点无关。
+// 纯色纹理：最为简单的纹理操作将返回相应的颜色值且与碰撞点无关。
+// 当需要将纹理材质的分量值与碰撞点的颜色值保持一致时，纹理将是一种十分有效的方案。
 class ConstantColor : public Texture
 {
 	public:

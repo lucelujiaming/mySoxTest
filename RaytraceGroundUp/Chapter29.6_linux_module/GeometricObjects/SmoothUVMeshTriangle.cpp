@@ -69,7 +69,8 @@ SmoothUVMeshTriangle::interpolate_normal(const float beta, const float gamma) co
 }
 
 // ---------------------------------------------------------------- hit
-
+// 在基于(u，v) 映射的三角形网格中，各顶点均存储(u，v) 纹理坐标。
+// 插值计算将在(u，v) 映射三角形中的hit()函数中进行，碰撞点处的相关值则存储于ShadeRec对象中。
 bool
 SmoothUVMeshTriangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	Point3D v0(mesh_ptr->vertices[index0]);

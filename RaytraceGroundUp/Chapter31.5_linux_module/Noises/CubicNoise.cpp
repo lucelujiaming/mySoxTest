@@ -89,6 +89,7 @@ CubicNoise::value_noise(const Point3D& p) const {
 
     for (int k = -1; k <= 2; k++) {
         for (int j = -1; j <= 2; j++) {
+            // 由INDEX() 返回的数组索引执行了3次散列计算， 每次分别计算ix、iy、iz。
             for (int i = -1; i <= 2; i++) {
                 xknots[i+1] = value_table[INDEX(ix + i, iy + j, iz + k)];
             }
@@ -96,7 +97,7 @@ CubicNoise::value_noise(const Point3D& p) const {
         }
         zknots[k+1] = four_knot_spline(fy, yknots);
     }
-
+    // 考虑到过冲现象将导致某些渲染缺陷，因而需要对其进行修正。
     return (clamp(four_knot_spline(fz, zknots), -1.0, 1.0));
 }
 
@@ -122,6 +123,7 @@ CubicNoise::vector_noise(const Point3D& p) const {
 
     for (int k = -1; k <= 2; k++) {
         for (int j = -1; j <= 2; j++) {
+            // 由INDEX() 返回的数组索引执行了3次散列计算， 每次分别计算ix、iy、iz。
             for (int i = -1; i <= 2; i++) {
                 xknots[i+1] = vector_table[INDEX(ix + i, iy + j, iz + k)];
             }

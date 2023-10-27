@@ -14,7 +14,7 @@
 // twice as many horizontal_checkers as vertical_checkers
 
 //-----------------------------------------------------------------------------------class PlaneChecker
-
+// 2D棋盘纹理
 class PlaneChecker: public Texture {
 	public:
 

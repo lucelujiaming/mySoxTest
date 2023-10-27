@@ -113,7 +113,12 @@ LatticeNoise::~LatticeNoise(void) {}
 
 // This initialises the integer lattice of PRN's.
 // It's based on valueTabInit in Peachey (2003).
-
+// 函数in it_value_table() 在1D数组value_table中存储了256个伪随机数， 
+// 其中， 可根据seed_value 值计算随机种子值。
+// 虽然种子值一般为任意值，但当每次运行光线跟踪器且需要构造同一噪声函数时，
+// 种子值的选择还是十分重要的。
+// 这里， 256个PRN将用于模拟PRN无限3D栅格。函数则将PRN均匀分布于[-1， +1] 范围内， 
+// 这类似于Peachey(2003) 中的value Tab In it()函数。
 void
 LatticeNoise::init_value_table(int seed_value) {
     set_rand_seed(seed_value);
@@ -140,7 +145,7 @@ LatticeNoise::init_value_table(int seed_value) {
 
 // The formulae for mapping points from a unit square a unit sphere are in Pharr and Humphreys pp 651-652.
 
-
+// 在各个LatticeNoise类中的构造函数中调用。
 void
 LatticeNoise::init_vector_table(int seed_value) {
 	float r1, r2;
@@ -232,7 +237,7 @@ LatticeNoise::value_fractal_sum(const Point3D& p) const {
 
 
 //---------------------------------------------------------------------------------------- vector_fractal_sum
-
+// 分形求和计算
 Vector3D
 LatticeNoise::vector_fractal_sum(const Point3D& p) const {
 	float 		amplitude 	= 1.0;
@@ -251,7 +256,7 @@ LatticeNoise::vector_fractal_sum(const Point3D& p) const {
 
 //---------------------------------------------------------------------------------------- value_turbulence
 // min turbulence = 0.0, max turbulence = fbm_max
-
+// 扰动函数
 float
 LatticeNoise::value_turbulence(const Point3D& p) const {
 	float 	amplitude 	= 1.0;
@@ -273,7 +278,7 @@ LatticeNoise::value_turbulence(const Point3D& p) const {
 
 //---------------------------------------------------------------------------------------- value_fbm
 // this returns a value in the range [0, 1]
-
+// 分形布朗运动
 float
 LatticeNoise::value_fbm(const Point3D& p) const {
 	float 	amplitude 	= 1.0;

@@ -95,6 +95,19 @@ extern ofstream out;
 #include "GlassOfWater.h"
 #include "FishBowl.h"
 
+#include "Image.h"
+#include "ImageTexture.h"
+#include "SphericalMap.h"
+
+#include "SV_Matte.h"
+
+#include "Checker3D.h"
+#include "InstanceTexture.h"
+
+#include "Box.h"
+
+#include "CubicNoise.h"
+#include "FBmTexture.h"
 // -------------------------------------------------------------------- default constructor
 
 // tracer_ptr is set to NULL because the build functions will always construct the appropriate tracer
@@ -356,54 +369,29 @@ double randf()
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-	//construct view plane， integrator， camera， and lights
-	// int num_spheres=100000;
-	int num_samples = 1;
-	vp.set_hres(600) ;
-	vp.set_vres(400) ;
-	vp.set_samples(num_samples) ;
-	vp.set_max_depth(10) ;
+    //build view plane, etc.
+    //the noise：
+    CubicNoise* noise_ptr = new CubicNoise;
+    noise_ptr->set_num_octaves(6);
+    noise_ptr->set_gain(0.5);
+    noise_ptr->set_lacunarity(8);
 
-    tracer_ptr=new Whitted(this) ;
-    GlossyReflector* reflective_ptr1=new GlossyReflector;
-	reflective_ptr1->set_ka(0.25) ;
-	reflective_ptr1->set_kd(0.5) ;
-	reflective_ptr1->set_cd(0.75, 0.75, 0) ;
-	reflective_ptr1->set_ks(0.15) ;
-	reflective_ptr1->set_exp(100) ;
-	reflective_ptr1->set_kr(0.75) ;
-	reflective_ptr1->set_cr(white) ;
+    //the texture：
+    FBmTexture* fBm_texture_ptr=new FBmTexture(noise_ptr);
+    fBm_texture_ptr->set_color(0.7, 1.0, 0.5);
+    fBm_texture_ptr->set_min_value(-0.1);
+    fBm_texture_ptr->set_max_value(1.1);
+    
+    //the material：
+    SV_Matte* sv_matte_ptr = new SV_Matte;
+    sv_matte_ptr->set_ka(0.25);
+    sv_matte_ptr->set_kd(0.85) ;
+    sv_matte_ptr->set_cd(fBm_texture_ptr) ;
 
-    PointLight *light_ptr=new PointLight();
-    light_ptr->set_location(50, 50, 1);
-    light_ptr->scale_radiance(3.0);
-    add_light(light_ptr);
-
-	Phong * phong_ptr = new Phong;
-	phong_ptr->set_ka(0.25);
-	phong_ptr->set_kd(0.65);
-	phong_ptr->set_cd(1, 1, 0);
-
-    Dielectric*dielectric_ptr=new Dielectric;
-    dielectric_ptr->set_ks(0.2) ;
-
-    dielectric_ptr->set_exp(2000) ;
-    dielectric_ptr->set_eta_in(1.5) ;
-    dielectric_ptr->set_eta_out(1.0) ;
-    dielectric_ptr->set_cf_in(1.0) ;
-    dielectric_ptr->set_cf_out(1.0) ;
-
-    FishBowl* fishbowl_ptr1= new FishBowl() ;
-    fishbowl_ptr1->set_material(dielectric_ptr) ;
-    add_object(fishbowl_ptr1) ;
-
-	// 设定相机
-	Pinhole* pinhole_ptr = new Pinhole;
-	pinhole_ptr->set_eye(0, 0, 500);
-	pinhole_ptr->set_lookat(0, 0, -50);
-	pinhole_ptr->set_view_distance(8000);
-	pinhole_ptr->compute_uvw();
-	set_camera(pinhole_ptr);
+    //the object
+    Sphere* sphere_ptr1=new Sphere(Point3D(0.0), 3) ;
+    sphere_ptr1->set_material(sv_matte_ptr);
+    add_object(sphere_ptr1);
 
 }
 

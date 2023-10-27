@@ -6,6 +6,10 @@
 
 #include "ImageTexture.h"
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
 // ---------------------------------------------------------------- default constructor
 
 ImageTexture::ImageTexture(void)
@@ -115,14 +119,17 @@ RGBColor
 ImageTexture::get_color(const ShadeRec& sr) const {	
 	int row;
 	int column;
-		
+    // 首先检测贴图指针
 	if (mapping_ptr)
+    {
+        // 这是因为包含纹理三角形网格并不需要贴图，其原因将在后续小节中加以解释。
 		mapping_ptr->get_texel_coordinates(sr.local_hit_point, hres, vres, row, column);
+    }
 	else {
 		row 	= (int)(sr.v * (vres - 1));  	
 		column 	= (int)(sr.u * (hres - 1));	
 	}
-	
+	// 获取像素坐标
 	return (image_ptr->get_color(row, column));
 }  
 

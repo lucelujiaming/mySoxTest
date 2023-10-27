@@ -95,6 +95,16 @@ extern ofstream out;
 #include "GlassOfWater.h"
 #include "FishBowl.h"
 
+#include "Image.h"
+#include "ImageTexture.h"
+#include "SphericalMap.h"
+
+#include "SV_Matte.h"
+
+#include "Checker3D.h"
+#include "InstanceTexture.h"
+
+#include "Box.h"
 // -------------------------------------------------------------------- default constructor
 
 // tracer_ptr is set to NULL because the build functions will always construct the appropriate tracer
@@ -356,54 +366,28 @@ double randf()
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-	//construct view plane， integrator， camera， and lights
-	// int num_spheres=100000;
-	int num_samples = 1;
-	vp.set_hres(600) ;
-	vp.set_vres(400) ;
-	vp.set_samples(num_samples) ;
-	vp.set_max_depth(10) ;
+	//construct view plane, etc.
 
-    tracer_ptr=new Whitted(this) ;
-    GlossyReflector* reflective_ptr1=new GlossyReflector;
-	reflective_ptr1->set_ka(0.25) ;
-	reflective_ptr1->set_kd(0.5) ;
-	reflective_ptr1->set_cd(0.75, 0.75, 0) ;
-	reflective_ptr1->set_ks(0.15) ;
-	reflective_ptr1->set_exp(100) ;
-	reflective_ptr1->set_kr(0.75) ;
-	reflective_ptr1->set_cr(white) ;
+	Checker3D *checker_ptr=new Checker3D;
+	checker_ptr->set_size(0.3);
+	checker_ptr->set_color1(white);
+	checker_ptr->set_color2(black);
 
-    PointLight *light_ptr=new PointLight();
-    light_ptr->set_location(50, 50, 1);
-    light_ptr->scale_radiance(3.0);
-    add_light(light_ptr);
+	InstanceTexture *checker_ptr2=new InstanceTexture(checker_ptr);
+	checker_ptr2->scale(2, 1, 1);
 
-	Phong * phong_ptr = new Phong;
-	phong_ptr->set_ka(0.25);
-	phong_ptr->set_kd(0.65);
-	phong_ptr->set_cd(1, 1, 0);
+	SV_Matte* sv_matte_ptr = new SV_Matte;
+	sv_matte_ptr->set_ka(0.8);
+	sv_matte_ptr->set_kd(0.4);
+	sv_matte_ptr->set_cd(checker_ptr2);
 
-    Dielectric*dielectric_ptr=new Dielectric;
-    dielectric_ptr->set_ks(0.2) ;
+	Box* box_ptr1=new Box(Point3D(-1.0), Vector3D(1.0, 0.0, 0.0),  Vector3D(0.0, 1.0, 0.0));
+	box_ptr1->set_material(sv_matte_ptr);
 
-    dielectric_ptr->set_exp(2000) ;
-    dielectric_ptr->set_eta_in(1.5) ;
-    dielectric_ptr->set_eta_out(1.0) ;
-    dielectric_ptr->set_cf_in(1.0) ;
-    dielectric_ptr->set_cf_out(1.0) ;
-
-    FishBowl* fishbowl_ptr1= new FishBowl() ;
-    fishbowl_ptr1->set_material(dielectric_ptr) ;
-    add_object(fishbowl_ptr1) ;
-
-	// 设定相机
-	Pinhole* pinhole_ptr = new Pinhole;
-	pinhole_ptr->set_eye(0, 0, 500);
-	pinhole_ptr->set_lookat(0, 0, -50);
-	pinhole_ptr->set_view_distance(8000);
-	pinhole_ptr->compute_uvw();
-	set_camera(pinhole_ptr);
+	Instance* box_ptr=new Instance(box_ptr1);
+	box_ptr->scale(2, 1, 1);
+	box_ptr->rotate_z(45);
+	add_object(box_ptr);
 
 }
 

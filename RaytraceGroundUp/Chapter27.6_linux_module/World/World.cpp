@@ -360,6 +360,8 @@ void World::build()
 	vp.set_samples(num_samples) ;
 	vp.set_max_depth(10) ;
 
+    // 鉴于材质类Transparent实现了完全镜面反射和透射，
+    // 我们可采用Whitted跟踪器跟踪器。
     tracer_ptr=new Whitted(this) ;
     GlossyReflector* reflective_ptr1=new GlossyReflector;
 	reflective_ptr1->set_ka(0.25) ;
@@ -369,7 +371,9 @@ void World::build()
 	reflective_ptr1->set_exp(100) ;
 	reflective_ptr1->set_kr(0.75) ;
 	reflective_ptr1->set_cr(white) ;
-
+	
+    // 鉴于材质类Transparent实现了完全镜面反射和透射，
+    // 我们将仅使用有向点光源，因而可采用Whitted跟踪器跟踪器。
     PointLight *light_ptr=new PointLight();
     light_ptr->set_location(50, 50, 1);
     light_ptr->scale_radiance(3.0);

@@ -30,6 +30,7 @@ BRDF::~BRDF(void) {}
 
 
 // ------------------------------------------------------------------------ f
+// 返回BRDF比例系数。
 // 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
 RGBColor
 BRDF::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {

@@ -383,17 +383,37 @@ void World::build()
 	phong_ptr->set_kd(0.65);
 	phong_ptr->set_cd(1, 1, 0);
 
-    Dielectric*dielectric_ptr=new Dielectric;
-    dielectric_ptr->set_ks(0.2) ;
+    Dielectric* glass_air_ptr=new Dielectric;
+    glass_air_ptr->set_ks(0.2) ;
 
-    dielectric_ptr->set_exp(2000) ;
-    dielectric_ptr->set_eta_in(1.5) ;
-    dielectric_ptr->set_eta_out(1.0) ;
-    dielectric_ptr->set_cf_in(1.0) ;
-    dielectric_ptr->set_cf_out(1.0) ;
+    glass_air_ptr->set_exp(2000) ;
+    glass_air_ptr->set_eta_in(1.5) ;
+    glass_air_ptr->set_eta_out(1.0) ;
+    glass_air_ptr->set_cf_in(RGBColor(0.65, 1.0, 0.75)) ;
+    glass_air_ptr->set_cf_out(white) ;
 
+    Dielectric* water_air_ptr=new Dielectric;
+    water_air_ptr->set_ks(0.2) ;
+
+    water_air_ptr->set_exp(2000) ;
+    water_air_ptr->set_eta_in(1.33) ;
+    water_air_ptr->set_eta_out(1.0) ;
+    water_air_ptr->set_cf_in(RGBColor(1.0, 0.25, 1.0)) ;
+    water_air_ptr->set_cf_out(white) ;
+    
+    Dielectric* water_glass_ptr=new Dielectric;
+    water_glass_ptr->set_ks(0.2) ;
+
+    water_glass_ptr->set_exp(2000) ;
+    water_glass_ptr->set_eta_in(1.33) ;
+    water_glass_ptr->set_eta_out(1.0) ;
+    water_glass_ptr->set_cf_in(RGBColor(1.0, 0.25, 1.0)) ;
+    water_glass_ptr->set_cf_out(RGBColor(0.65, 1.0, 0.75)) ;
+    
     GlassOfWater* glassofwater_ptr1= new GlassOfWater() ;
-    glassofwater_ptr1->set_material(dielectric_ptr) ;
+    glassofwater_ptr1->set_glass_air_material(glass_air_ptr) ;
+    glassofwater_ptr1->set_water_air_material(water_air_ptr) ;
+    glassofwater_ptr1->set_water_glass_material(water_glass_ptr) ;
     add_object(glassofwater_ptr1) ;
 
 	// 设定相机

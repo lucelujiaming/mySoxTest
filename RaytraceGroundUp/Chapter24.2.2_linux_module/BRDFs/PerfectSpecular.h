@@ -30,6 +30,7 @@ class PerfectSpecular: public BRDF {
         // 设置反射颜色值
         void
         set_cr(const float c);
+        // 返回BRDF比例系数。
         // 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
@@ -42,7 +43,7 @@ class PerfectSpecular: public BRDF {
         // 使用Monte Calo积分实现。
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
-
+        // 返回双半球反射系数。
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
 

@@ -27,6 +27,7 @@ class BRDF {
         clone(void) const = 0;
 
         ~BRDF(void);
+        // 返回BRDF比例系数。
         // 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
         // 如果不包含delta()函数，将返回BRDF自身。
         virtual RGBColor

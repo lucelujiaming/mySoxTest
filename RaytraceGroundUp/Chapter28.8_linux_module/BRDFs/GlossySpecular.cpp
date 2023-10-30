@@ -73,10 +73,9 @@ GlossySpecular::set_sampler(Sampler* sp, const float exp) {
     sampler_ptr->map_samples_to_hemisphere(exp);
 }
 
-
 // ---------------------------------------------------------------------- set_samples
 // this sets up multi-jittered sampling using the number of samples
-// 设置Phong指数，并且设置采样器为多重抖动采样并被实现为光泽反射的相关材质加以调用。
+// 设置Phong指数，设置采样器为多重抖动采样，并且被实现为光泽反射的材质加以调用。
 void
 GlossySpecular::set_samples(const int num_samples, const float exp) {
 
@@ -85,11 +84,11 @@ GlossySpecular::set_samples(const int num_samples, const float exp) {
     sampler_ptr->map_samples_to_hemisphere(exp);
 }
 
-
 // ----------------------------------------------------------------------------------- f
 // no sampling here: just use the Phong formula
 // this is used for direct illumination only
 // explained on page 284
+// 返回BRDF比例系数。
 // 针对于反射材质模拟计算，返回计算出来的颜色值。 
 RGBColor
 GlossySpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
@@ -109,7 +108,6 @@ GlossySpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) co
 
     return (L);
 }
-
 
 // ----------------------------------------------------------------------------------- sample_f
 // 该函数用于模拟光泽反射。参见Chapter25.1。
@@ -132,16 +130,16 @@ GlossySpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, f
     // 因为，通常情况下，我们需要在局部坐标系中计算光线的方向，
     // 并在随后计算该光线在世界坐标系中的方向。
     Point3D sp = sampler_ptr->sample_hemisphere();
-    // 参见公式25.8
+    // 计算反射光线的方向。参见公式25.8
     wi = sp.x * u + sp.y * v + sp.z * w;            // reflected ray direction
     // 如果位于切平面下方。
     if (sr.normal * wi < 0.0)                         // reflected ray is below tangent plane
         wi = -sp.x * u - sp.y * v + sp.z * w;
     // 参见公式25.5。
     float phong_lobe = pow((float)(r * wi), (float)exp);
-    // 添加公式25.3中的cos项。
+    // 计算PDF。参见公式25.6。
     pdf = phong_lobe * (sr.normal * wi);
-    // 返回反射辐射度。参见公式25.3。
+    // 返回BRDF（不包括C）。参见公式25.2。
     return (ks * cs * phong_lobe);
 }
 

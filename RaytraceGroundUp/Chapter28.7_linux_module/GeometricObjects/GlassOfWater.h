@@ -32,16 +32,16 @@ class GlassOfWater: public Compound {
 		
 		virtual 													
 		~GlassOfWater(void);
-		
+		// 创建所有部件。
 		void
 		build_components(void);
-		
+		// 设定玻璃空气界面
 		void
 		set_glass_air_material(Material* m_ptr);
-		
+		// 设定水面空气界面
 		void
 		set_water_air_material(Material* m_ptr); 
-		
+		// 设定水面玻璃界面
 		void
 		set_water_glass_material(Material* m_ptr); 
 		

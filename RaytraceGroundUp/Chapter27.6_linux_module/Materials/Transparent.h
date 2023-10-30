@@ -10,7 +10,7 @@
 // 但该过程仍然会产生反射材质所出现的不一致性。
 
 // 鉴于材质类Transparent实现了完全镜面反射和透射，
-// 且在后续小节中将仅使用有向点光源，因而可采用因而可采用Whitted跟踪器跟踪器。
+// 且在后续小节中将仅使用有向点光源，因而可采用Whitted跟踪器。
 class Transparent : public Phong
 {
     public:

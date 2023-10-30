@@ -73,7 +73,6 @@ GlossySpecular::set_sampler(Sampler* sp, const float exp) {
     sampler_ptr->map_samples_to_hemisphere(exp);
 }
 
-
 // ---------------------------------------------------------------------- set_samples
 // this sets up multi-jittered sampling using the number of samples
 // 设置Phong指数，并且设置采样器为多重抖动采样。
@@ -85,11 +84,11 @@ GlossySpecular::set_samples(const int num_samples, const float exp) {
     sampler_ptr->map_samples_to_hemisphere(exp);
 }
 
-
 // ----------------------------------------------------------------------------------- f
 // no sampling here: just use the Phong formula
 // this is used for direct illumination only
 // explained on page 284
+// 返回BRDF比例系数。
 // 针对于反射材质模拟计算，返回计算出来的颜色值。 
 RGBColor
 GlossySpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
@@ -109,7 +108,6 @@ GlossySpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) co
 
     return (L);
 }
-
 
 // ----------------------------------------------------------------------------------- sample_f
 // 该函数用于模拟光泽反射。参见Chapter25.1。

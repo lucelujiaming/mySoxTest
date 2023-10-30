@@ -109,7 +109,7 @@ FishBowl::build_components(void) {
 
 
 	// outer glass-air boundary
-
+    // 局部圆环体用于玻璃空气建模
 	objects.push_back(new SpherePartConvex(	Point3D(0.0),
 											inner_radius + glass_thickness,
 											0, 360,  				// azimuth angle range - full circle
@@ -120,7 +120,7 @@ FishBowl::build_components(void) {
 
 	// inner glass-air boundary
 	// the inner surface of the glass only goes down to the top of the meniscus
-
+    // 凹局部球体用于水面上方玻璃表面建模
 	objects.push_back(new SpherePartConcave(Point3D(0.0),
 											inner_radius,
 											0, 360, 				// azimuth angle - full circle
@@ -130,10 +130,9 @@ FishBowl::build_components(void) {
 
 
 	// round rim - need an instance for this as it's a half torus
-
 	double theta_min = opening_angle / 2.0;  	// measured counter-clockwise from (x, z) plane
 	double theta_max = theta_min + 180;			// measured counter-clockwise from (x, z) plane
-
+    // 局部圆环体用于圆边建模。
 	Instance* rim_ptr = new Instance (new TorusPartConvex(
 												(inner_radius + glass_thickness / 2.0) * sin(angle_radians), // a
 												glass_thickness / 2.0, 										 // b
@@ -146,7 +145,8 @@ FishBowl::build_components(void) {
 
 
 	// meniscus - if water_depth > 1, we need two part tori
-
+    // 需要两个局部圆环来构建弯月形对象表面。
+    // 一个是270, 360。参见P508。
 	Instance* torus_ptr1 = new Instance (new TorusPartConcave(	xc,
 																meniscus_radius,
 																0, 360,
@@ -154,7 +154,7 @@ FishBowl::build_components(void) {
 	torus_ptr1->translate(0, yc, 0);
 	objects.push_back(torus_ptr1);
 
-
+    // 一个是360到beta。参见P508。
 	Instance* torus_ptr2 = new Instance (new TorusPartConcave(	xc,
 																meniscus_radius,
 																0, 360,
@@ -164,14 +164,14 @@ FishBowl::build_components(void) {
 
 
 	// water-air boundary
-
+    // 圆对象用于水面空气建模
 	objects.push_back(new Disk(	Point3D(0, h, 0),
 								xc,
 								Normal(0, 1, 0)));				// the disk just touches the bottom of the meniscus
 
 
 	// water-glass boundary
-
+    // 凸局部球体用于用于水面玻璃界面建模
 	objects.push_back(new SpherePartConvex(	Point3D(0),
 											inner_radius,
 											0, 360,

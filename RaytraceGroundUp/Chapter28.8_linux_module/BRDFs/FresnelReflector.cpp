@@ -55,11 +55,11 @@ FresnelReflector::fresnel(const ShadeRec& sr) const {
     // 计算cosθt
     float temp                 = 1.0 - (1.0 - cos_theta_i * cos_theta_i) / (eta * eta);
     float cos_theta_t         = sqrt (1.0 - (1.0 - cos_theta_i * cos_theta_i) / (eta * eta));
-    // 参见公式(28.1)
+    // 计算平行于介质表面的偏振光。参见公式(28.1)
     float r_parallel         = (eta * cos_theta_i - cos_theta_t) / (eta * cos_theta_i + cos_theta_t);
-    // 参见公式(28.2)
+    // 计算垂直于介质表面的偏振光。参见公式(28.2)
     float r_perpendicular     = (cos_theta_i - eta * cos_theta_t) / (cos_theta_i + eta * cos_theta_t);
-    // 参见公式(28.3)
+    // 计算Fresnel反射系数，参见公式(28.3)
     float kr                 = 0.5 * (r_parallel * r_parallel + r_perpendicular * r_perpendicular);
 
     return (kr);

@@ -34,13 +34,16 @@ class PerfectTransmitter: public BTDF {
         // 检测全内反射
         bool                                                    
         tir(const ShadeRec& sr) const;
-        
+        // 返回BTDF比例系数。
+        // 针对于折射材质模拟计算，返回计算出来的颜色值。
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
-        
+        // 用于计算折射光线的方向，并且返回计算出来的颜色值。
+        // 参数wt；用于返回折射的方向，因而不可为常量。
+        // 返回黑色。因为不存在BRDF随机采样。
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wt) const;
-        
+        // 返回双半球反射系数。 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
                 

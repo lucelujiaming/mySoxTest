@@ -37,6 +37,7 @@ PerfectSpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) c
 // it's called from from the functions Reflective::shade and Transparent::shade.
 // the fabs in the last statement is for transparency
 // explained on page 500
+// 返回BRDF比例系数。
 // 用于计算反射光线的方向，并且返回计算出来的颜色值。
 RGBColor
 PerfectSpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const {
@@ -66,7 +67,7 @@ PerfectSpecular::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, 
 
 
 // ---------------------------------------------------------- rho
-
+// 返回双半球反射系数。
 RGBColor
 PerfectSpecular::rho(const ShadeRec& sr, const Vector3D& wo) const {
     return (black);

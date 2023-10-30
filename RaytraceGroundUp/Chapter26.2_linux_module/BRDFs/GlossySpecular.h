@@ -19,6 +19,7 @@ class GlossySpecular: public BRDF {
 
         GlossySpecular&
         operator= (const GlossySpecular& rhs);
+        // 返回BRDF比例系数。
         // 针对于反射材质模拟计算，返回计算出来的颜色值。 
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;

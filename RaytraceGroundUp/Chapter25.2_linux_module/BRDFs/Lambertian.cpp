@@ -52,7 +52,7 @@ Lambertian::operator= (const Lambertian& rhs) {
 
 
 // ---------------------------------------------------------------------- f
-
+// 返回BRDF比例系数。
 RGBColor
 Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
     // pd可表示为RGB颜色值， 因而可按如下方式表示：
@@ -65,7 +65,7 @@ Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const 
 
 
 // ---------------------------------------------------------------------- rho
-
+// 返回双半球反射系数。
 RGBColor
 Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const {
     // 参见公式13.20

@@ -189,7 +189,7 @@ Matte::area_light_shade(ShadeRec& sr) {
 
 
 // ---------------------------------------------------------------- path_shade
-
+// 需要注意的是，该函数不显式地计算直接光照。
 RGBColor
 Matte::path_shade(ShadeRec& sr) {
 	Vector3D 	wo = -sr.ray.d;

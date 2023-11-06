@@ -11,52 +11,44 @@
 
 class AreaLight: public Light {
 
-	public:
+    public:
+        AreaLight(void);
+        AreaLight(const AreaLight& al);
 
-		AreaLight(void);
+        virtual Light* clone(void) const;
 
-		AreaLight(const AreaLight& al);
+        virtual  ~AreaLight(void);
 
-		virtual Light*
-		clone(void) const;
+        AreaLight&   operator= (const AreaLight& rhs);
 
-		virtual
-		~AreaLight(void);
+        void  set_object(GeometricObject* obj_ptr);
 
-		AreaLight&
-		operator= (const AreaLight& rhs);
+        virtual Vector3D    get_direction(ShadeRec& s);
 
-		void
-		set_object(GeometricObject* obj_ptr);
+        virtual RGBColor    L(ShadeRec& sr);
 
-		virtual Vector3D
-		get_direction(ShadeRec& s);
+        virtual bool
+        in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
-		virtual RGBColor
-		L(ShadeRec& sr);
+        virtual float
+        G(const ShadeRec& sr) const;
 
-		virtual bool
-		in_shadow(const Ray& ray, const ShadeRec& sr) const;
+        virtual float
+        pdf(const ShadeRec& sr) const;
 
-		virtual float
-		G(const ShadeRec& sr) const;
+        virtual bool
+        casts_shadows(void) const;
 
-		virtual float
-		pdf(const ShadeRec& sr) const;
+        virtual void
+        set_shadows(bool _s);
 
-		virtual bool
-		casts_shadows(void) const;
+    private:
 
-		virtual void
-		set_shadows(bool _s);
-
-	private:
-
-		GeometricObject*	object_ptr;
-		Material*			material_ptr;	// will be an emissive material
-		Point3D				sample_point;
-		Normal				light_normal;	// assigned in get_direction - which therefore can't be const for any light
-		Vector3D			wi;				// unit direction from hit point being shaded to sample point on light surface
+        GeometricObject*    object_ptr;
+        Material*            material_ptr;    // will be an emissive material
+        Point3D                sample_point;
+        Normal                light_normal;    // assigned in get_direction - which therefore can't be const for any light
+        Vector3D            wi;                // unit direction from hit point being shaded to sample point on light surface
 };
 
 
@@ -64,8 +56,8 @@ class AreaLight: public Light {
 
 inline void
 AreaLight::set_object(GeometricObject* obj_ptr) {
-	object_ptr = obj_ptr;
-	material_ptr = object_ptr->get_material();
+    object_ptr = obj_ptr;
+    material_ptr = object_ptr->get_material();
 }
 
 
@@ -74,7 +66,7 @@ AreaLight::set_object(GeometricObject* obj_ptr) {
 inline bool
 AreaLight::casts_shadows() const {
 
-	return Light::casts_shadows();
+    return Light::casts_shadows();
 }
 
 
@@ -83,7 +75,7 @@ AreaLight::casts_shadows() const {
 inline void
 AreaLight::set_shadows(bool _s) {
 
-	return Light::set_shadows(_s);
+    return Light::set_shadows(_s);
 }
 
 #endif

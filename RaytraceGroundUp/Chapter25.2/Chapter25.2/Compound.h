@@ -10,48 +10,48 @@ using std::vector;
 
 //-------------------------------------------------------------------------------- class Compound
 
-class Compound: public GeometricObject {	
-	public:
-		
-		Compound(void);   										
+class Compound: public GeometricObject {    
+    public:
+        
+        Compound(void);                                           
 
-		virtual Compound* 										
-		clone(void) const;
-	
-		Compound(const Compound& c); 							
+        virtual Compound*                                         
+        clone(void) const;
+    
+        Compound(const Compound& c);                             
 
-		~Compound (void);   									
+        ~Compound (void);                                       
 
-		Compound& 												
-		operator= (const Compound& c);	
-		
-		virtual void 
-		set_material(Material* material_ptr);
-		
-		virtual void 											
-		add_object(GeometricObject* object_ptr);  
-		
-		int
-		get_num_objects(void);						
+        Compound&                                                 
+        operator= (const Compound& c);    
+        
+        virtual void 
+        set_material(Material* material_ptr);
+        
+        virtual void                                             
+        add_object(GeometricObject* object_ptr);  
+        
+        int
+        get_num_objects(void);                        
 
-		virtual bool 															 
-		hit(const Ray& ray, double& tmin, ShadeRec& s) const;
+        virtual bool                                                              
+        hit(const Ray& ray, double& tmin, ShadeRec& s) const;
 
-		virtual bool
-		shadow_hit(const Ray& ray, float& tmin) const;
-			
-	protected:		
-		
-		vector<GeometricObject*> objects;
-		
-	private:
-	
-		void 													
-		delete_objects(void);								
+        virtual bool
+        shadow_hit(const Ray& ray, float& tmin) const;
+            
+    protected:        
+        
+        vector<GeometricObject*> objects;
+        
+    private:
+    
+        void                                                     
+        delete_objects(void);                                
 
-		void												
-		copy_objects(const vector<GeometricObject*>& rhs_objects);
-	
+        void                                                
+        copy_objects(const vector<GeometricObject*>& rhs_objects);
+    
 };
 
 
@@ -59,7 +59,7 @@ class Compound: public GeometricObject {
 
 inline int
 Compound::get_num_objects(void) {
-	return (objects.size());
+    return (objects.size());
 }
 
 #endif

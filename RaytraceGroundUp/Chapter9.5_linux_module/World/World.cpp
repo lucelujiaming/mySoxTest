@@ -309,7 +309,7 @@ void World::build()
     add_object(plane_ptr);
     // 设定相机
     Pinhole* pinhole_ptr = new Pinhole;
-    pinhole_ptr->set_eye(300, 400, 500);
+    pinhole_ptr->set_eye(0, 0, 500);
     pinhole_ptr->set_lookat(0, 0, -50);
     pinhole_ptr->set_view_distance(400);
     pinhole_ptr->compute_uvw();

@@ -4,48 +4,48 @@
 #include "Sampler.h"
 #include "GeometricObject.h"
 
-// è½´å¯¹é½ç›’ä½“ä¸è½´å¯¹é½åŒ…å›´ç›’å…·æœ‰ç›¸åŒçš„å½¢çŠ¶ï¼Œä½†éš¶å±äºå‡ ä½•å¯¹è±¡èŒƒç•´å¹¶é€‚ç”¨äºå»ºæ¨¡å›¾å…ƒã€‚
-// å¦å¤–ï¼Œè‹¥å¯¹è±¡è¡¨é¢æœªé‡‡å–éšå¼æ–¹ç¨‹å®šä¹‰ï¼Œè½´å¯¹é½ç›’ä½“åˆ™éå¸¸é€‚ç”¨äºå…‰çº¿è·Ÿè¸ªè®¡ç®—çš„æ•™å­¦æ¼”ç¤ºã€‚
-// åŒæ—¶ï¼Œè½´å¯¹é½ç›’ä½“è¿˜å°†ç”¨äºæ¼”ç¤ºç¬¬28ç« ä¸­çš„å…¨å†…åå°„ã€‚
+// Öá¶ÔÆëºĞÌåÓëÖá¶ÔÆë°üÎ§ºĞ¾ßÓĞÏàÍ¬µÄĞÎ×´£¬µ«Á¥ÊôÓÚ¼¸ºÎ¶ÔÏó·¶³ë²¢ÊÊÓÃÓÚ½¨Ä£Í¼Ôª¡£
+// ÁíÍâ£¬Èô¶ÔÏó±íÃæÎ´²ÉÈ¡ÒşÊ½·½³Ì¶¨Òå£¬Öá¶ÔÆëºĞÌåÔò·Ç³£ÊÊÓÃÓÚ¹âÏß¸ú×Ù¼ÆËãµÄ½ÌÑ§ÑİÊ¾¡£
+// Í¬Ê±£¬Öá¶ÔÆëºĞÌå»¹½«ÓÃÓÚÑİÊ¾µÚ28ÕÂÖĞµÄÈ«ÄÚ·´Éä¡£
 class Box: public GeometricObject {
 
-	public:
-		
-		Box(void);   									
-				
-		Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b);
-		
-		Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b, const Normal& n);
-		
-		virtual Box* 										
-		clone(void) const;
-	
-		Box(const Box& r); 						
+    public:
+        
+        Box(void);                                       
+                
+        Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b);
+        
+        Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b, const Normal& n);
+        
+        virtual Box*                                         
+        clone(void) const;
+    
+        Box(const Box& r);                         
 
-		virtual													
-		~Box(void);   									
+        virtual                                                    
+        ~Box(void);                                       
 
-		Box& 												
-		operator= (const Box& rhs);
-		
-		//Box
-		//get_bounding_box(void);				
-	
-		virtual bool 												 
-		hit(const Ray& ray, double& t, ShadeRec& s) const;
+        Box&                                                 
+        operator= (const Box& rhs);
+        
+        //Box
+        //get_bounding_box(void);                
+    
+        virtual bool                                                  
+        hit(const Ray& ray, double& t, ShadeRec& s) const;
 
-		virtual bool
-		shadow_hit(const Ray& ray, float& tmin) const;
-        // å•ç‹¬å¯¹æ³•çº¿åŠ ä»¥è®¡ç®—ã€‚
-		Normal
-		get_normal(const int face_hit) const;
-				
-		
-	private:
-        // å°†å¯¹è§’é¡¶ç‚¹å­˜å‚¨äº6ä¸ªç§æœ‰ç±»å‹çš„æµ®ç‚¹æ•°ä¸­ã€‚
-		float x0, y0, z0, x1, y1, z1;
-		
-		static const double kEpsilon;   											
+        virtual bool
+        shadow_hit(const Ray& ray, float& tmin) const;
+        // µ¥¶À¶Ô·¨Ïß¼ÓÒÔ¼ÆËã¡£
+        Normal
+        get_normal(const int face_hit) const;
+                
+        
+    private:
+        // ½«¶Ô½Ç¶¥µã´æ´¢ÓÚ6¸öË½ÓĞÀàĞÍµÄ¸¡µãÊıÖĞ¡£
+        float x0, y0, z0, x1, y1, z1;
+        
+        static const double kEpsilon;                                               
 };
 
 #endif

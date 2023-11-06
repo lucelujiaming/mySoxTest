@@ -25,9 +25,9 @@ class Lambertian: public BRDF {
 
         // 返回双半球反射系数。 
         virtual RGBColor
-		sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
+        sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
 
-		virtual RGBColor
+        virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
         // 设置环境光反射系数
         void
@@ -45,14 +45,14 @@ class Lambertian: public BRDF {
         void
         set_cd(const float c);
 
-		void
-		set_sampler(Sampler* sp);   			// any type of sampling
+        void
+        set_sampler(Sampler* sp);               // any type of sampling
 
     private:
 
         float        kd;    // 漫反射系数：diffuse reflection coefficient
         RGBColor     cd;    // 漫反射颜色值：diffuse color
-		Sampler*	sampler_ptr;    // for use in sample_f
+        Sampler*    sampler_ptr;    // for use in sample_f
 };
 
 

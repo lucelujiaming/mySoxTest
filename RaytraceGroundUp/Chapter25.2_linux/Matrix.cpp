@@ -7,22 +7,22 @@
 // a default matrix is an identity matrix
 
 Matrix::Matrix(void) {
-	for (int x = 0; x < 4; x++)
-		for (int y = 0; y < 4; y++) {
-			if (x == y)
-				m[x][y] = 1.0;
-			else
-				m[x][y] = 0.0;
-		}
+    for (int x = 0; x < 4; x++)
+        for (int y = 0; y < 4; y++) {
+            if (x == y)
+                m[x][y] = 1.0;
+            else
+                m[x][y] = 0.0;
+        }
 }
 
 
 // ----------------------------------------------------------------------- copy constructor
 
 Matrix::Matrix (const Matrix& mat) {
-	for (int x = 0; x < 4; x++)
-		for (int y = 0; y < 4; y++)
-			m[x][y] = mat.m[x][y];
+    for (int x = 0; x < 4; x++)
+        for (int y = 0; y < 4; y++)
+            m[x][y] = mat.m[x][y];
 }
 
 
@@ -36,14 +36,14 @@ Matrix::~Matrix (void) {}
 
 Matrix&
 Matrix::operator= (const Matrix& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	for (int x = 0; x < 4; x++)
-		for (int y = 0; y < 4; y++)
-			m[x][y] = rhs.m[x][y];
+    for (int x = 0; x < 4; x++)
+        for (int y = 0; y < 4; y++)
+            m[x][y] = rhs.m[x][y];
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -52,19 +52,19 @@ Matrix::operator= (const Matrix& rhs) {
 
 Matrix
 Matrix::operator* (const Matrix& mat) const {
-	Matrix 	product;
+    Matrix     product;
 
-	for (int y = 0; y < 4; y++)
-		for (int x = 0; x < 4; x++) {
-			double sum = 0.0;
+    for (int y = 0; y < 4; y++)
+        for (int x = 0; x < 4; x++) {
+            double sum = 0.0;
 
-			for (int j = 0; j < 4; j++)
-				sum += m[x][j] * mat.m[j][y];
+            for (int j = 0; j < 4; j++)
+                sum += m[x][j] * mat.m[j][y];
  
-			product.m[x][y] = sum;
-		}
+            product.m[x][y] = sum;
+        }
 
-	return (product);
+    return (product);
 }
 
 
@@ -73,11 +73,11 @@ Matrix::operator* (const Matrix& mat) const {
 
 Matrix
 Matrix::operator/ (const double d) {
-	for (int x = 0; x < 4; x++)
-		for (int y = 0; y < 4; y++)
-			m[x][y] = m[x][y] / d;
+    for (int x = 0; x < 4; x++)
+        for (int y = 0; y < 4; y++)
+            m[x][y] = m[x][y] / d;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -88,10 +88,10 @@ Matrix::operator/ (const double d) {
 void
 Matrix::set_identity(void) {
     for (int x = 0; x < 4; x++)
-		for (int y = 0; y < 4; y++) {
-			if (x == y)
-				m[x][y] = 1.0;
-			else
-				m[x][y] = 0.0;
-		}
+        for (int y = 0; y < 4; y++) {
+            if (x == y)
+                m[x][y] = 1.0;
+            else
+                m[x][y] = 0.0;
+        }
 }

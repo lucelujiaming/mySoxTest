@@ -1,10 +1,10 @@
 #ifndef __CUBIC_NOISE__
 #define __CUBIC_NOISE__
 
-// 	Copyright (C) Kevin Suffern 2000-2008.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2008.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // This file contains the declaration of the class CubicNoise.
@@ -21,30 +21,30 @@
 //   (3)通过插值计算得到栅格单元内部的噪声值。
 //  Cubic Noise类则实现了3次插值计算。
 class CubicNoise: public LatticeNoise {
-	public:
+    public:
 
-		CubicNoise(void);
+        CubicNoise(void);
 
-		CubicNoise(int octaves);
+        CubicNoise(int octaves);
 
-		CubicNoise(int octaves, float lacunarity, float gain);
+        CubicNoise(int octaves, float lacunarity, float gain);
 
-		CubicNoise(const CubicNoise& cns);
+        CubicNoise(const CubicNoise& cns);
 
-		CubicNoise&
-		operator= (const CubicNoise& rhs);
+        CubicNoise&
+        operator= (const CubicNoise& rhs);
 
-		virtual CubicNoise*
-		clone(void) const;
+        virtual CubicNoise*
+        clone(void) const;
 
-		virtual
-		~CubicNoise(void);
+        virtual
+        ~CubicNoise(void);
         // 执行插值计算的相关函数
-		virtual float
-		value_noise(const Point3D& p) const;
+        virtual float
+        value_noise(const Point3D& p) const;
 
-		virtual Vector3D
-		vector_noise(const Point3D& p) const;
+        virtual Vector3D
+        vector_noise(const Point3D& p) const;
 };
 
 
@@ -56,10 +56,10 @@ class CubicNoise: public LatticeNoise {
 // 样条插值技术
 template<class T> T
 four_knot_spline(const float x, const T knots[]) {
-	T c3 = -0.5 * knots[0] + 1.5 * knots[1] - 1.5 * knots[2] + 0.5 * knots[3];
-  	T c2 = knots[0] - 2.5 * knots[1] + 2.0 * knots[2] - 0.5 * knots[3];
-  	T c1 = 0.5 * (-knots[0] + knots [2]);
-  	T c0 = knots[1];
+    T c3 = -0.5 * knots[0] + 1.5 * knots[1] - 1.5 * knots[2] + 0.5 * knots[3];
+      T c2 = knots[0] - 2.5 * knots[1] + 2.0 * knots[2] - 0.5 * knots[3];
+      T c1 = 0.5 * (-knots[0] + knots [2]);
+      T c0 = knots[1];
 
     return (T((c3*x + c2)*x + c1)*x + c0);
 }

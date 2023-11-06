@@ -6,56 +6,56 @@
 
 class FBmTexture : public Texture
 {
-	public:
+    public:
 
-		FBmTexture(void);
+        FBmTexture(void);
 
-		FBmTexture(LatticeNoise* ln_ptr);
+        FBmTexture(LatticeNoise* ln_ptr);
 
-		FBmTexture(const FBmTexture& ft);
+        FBmTexture(const FBmTexture& ft);
 
-		virtual FBmTexture*
-		clone(void) const;
+        virtual FBmTexture*
+        clone(void) const;
 
-		virtual
-		~FBmTexture(void);
+        virtual
+        ~FBmTexture(void);
 
-		void
-		set_noise(LatticeNoise* ln_ptr);
+        void
+        set_noise(LatticeNoise* ln_ptr);
 
-		void
-		set_color(const RGBColor& c);
+        void
+        set_color(const RGBColor& c);
 
-		void
-		set_color(const float r, const float g, const float b);
+        void
+        set_color(const float r, const float g, const float b);
 
-		void
-		set_color(const float c);
+        void
+        set_color(const float c);
 
-		void
-		set_min_value(const float mi);
+        void
+        set_min_value(const float mi);
 
-		void
-		set_max_value(const float ma);
+        void
+        set_max_value(const float ma);
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-	protected:
+    protected:
 
-		FBmTexture&
-		operator= (const FBmTexture& rhs);
+        FBmTexture&
+        operator= (const FBmTexture& rhs);
 
     private:
 
-		LatticeNoise*		noise_ptr;		RGBColor 	  		color;		float		  		min_value, max_value;	// scaling factors};
+        LatticeNoise*        noise_ptr;        RGBColor               color;        float                  min_value, max_value;    // scaling factors};
 
 
 // ---------------------------------------------------------------- set_color
 
 inline void
 FBmTexture::set_noise(LatticeNoise* ln_ptr) {
-	noise_ptr = ln_ptr;
+    noise_ptr = ln_ptr;
 }
 
 
@@ -63,7 +63,7 @@ FBmTexture::set_noise(LatticeNoise* ln_ptr) {
 
 inline void
 FBmTexture::set_color(const RGBColor& c) {
-	color = c;
+    color = c;
 }
 
 
@@ -71,7 +71,7 @@ FBmTexture::set_color(const RGBColor& c) {
 
 inline void
 FBmTexture::set_color(const float r, const float g, const float b) {
-	color.r = r; color.g = g; color.b = b;
+    color.r = r; color.g = g; color.b = b;
 }
 
 
@@ -79,7 +79,7 @@ FBmTexture::set_color(const float r, const float g, const float b) {
 
 inline void
 FBmTexture::set_color(const float c) {
-	color.r = c; color.g = c; color.b = c;
+    color.r = c; color.g = c; color.b = c;
 }
 
 
@@ -87,7 +87,7 @@ FBmTexture::set_color(const float c) {
 
 inline void
 FBmTexture::set_min_value(const float mi) {
-	min_value = mi;
+    min_value = mi;
 }
 
 
@@ -95,7 +95,7 @@ FBmTexture::set_min_value(const float mi) {
 
 inline void
 FBmTexture::set_max_value(const float ma) {
-	max_value = ma;
+    max_value = ma;
 }
 
 #endif // FBMTEXTURE_H

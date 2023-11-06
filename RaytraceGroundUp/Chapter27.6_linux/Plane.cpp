@@ -115,6 +115,6 @@ Plane::shadow_hit(const Ray& ray, float& tmin) const {
 
 float
 Plane::pdf(const ShadeRec& sr) {
-	return (1.0);
+    return (1.0);
 }
 

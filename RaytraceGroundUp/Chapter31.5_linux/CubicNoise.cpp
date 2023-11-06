@@ -1,7 +1,7 @@
-// 	Copyright (C) Kevin Suffern 2000-2008.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2008.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // This file contains the definition of the class CubicNoise
@@ -14,28 +14,28 @@
 //------------------------------------------------------------------------- default constructor
 
 CubicNoise::CubicNoise(void)
-	: LatticeNoise()
+    : LatticeNoise()
 {}
 
 
 //------------------------------------------------------------------------- constructor
 
 CubicNoise::CubicNoise(int octaves)
-	: LatticeNoise(octaves)
+    : LatticeNoise(octaves)
 {}
 
 
 //------------------------------------------------------------------------- constructor
 
 CubicNoise::CubicNoise(int octaves, float lacunarity, float gain)
-	: LatticeNoise(octaves, lacunarity, gain)
+    : LatticeNoise(octaves, lacunarity, gain)
 {}
 
 
 //------------------------------------------------------------------------- copy constructor
 
 CubicNoise::CubicNoise(const CubicNoise& cns)
-	: LatticeNoise(cns)
+    : LatticeNoise(cns)
 {}
 
 
@@ -44,12 +44,12 @@ CubicNoise::CubicNoise(const CubicNoise& cns)
 CubicNoise&
 CubicNoise::operator= (const CubicNoise& rhs) {
 
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	LatticeNoise::operator= (rhs);
+    LatticeNoise::operator= (rhs);
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -57,7 +57,7 @@ CubicNoise::operator= (const CubicNoise& rhs) {
 
 CubicNoise*
 CubicNoise::clone(void) const {
-	return (new CubicNoise);
+    return (new CubicNoise);
 }
 
 
@@ -74,9 +74,9 @@ CubicNoise::~CubicNoise(void) {}
 
 float
 CubicNoise::value_noise(const Point3D& p) const {
-	int 	ix, iy, iz;
-    float 	fx, fy, fz;
-    float 	xknots[4], yknots[4], zknots[4];
+    int     ix, iy, iz;
+    float     fx, fy, fz;
+    float     xknots[4], yknots[4], zknots[4];
 
     ix = floor(p.x);
     fx = p.x - ix;
@@ -84,7 +84,7 @@ CubicNoise::value_noise(const Point3D& p) const {
     iy = floor(p.y);
     fy = p.y - iy;
 
-	iz = floor(p.z);
+    iz = floor(p.z);
     fz = p.z - iz;
 
     for (int k = -1; k <= 2; k++) {
@@ -107,9 +107,9 @@ CubicNoise::value_noise(const Point3D& p) const {
 
 Vector3D
 CubicNoise::vector_noise(const Point3D& p) const {
-	int 		ix, iy, iz;
-    float 		fx, fy, fz;
-    Vector3D 	xknots[4], yknots[4], zknots[4];
+    int         ix, iy, iz;
+    float         fx, fy, fz;
+    Vector3D     xknots[4], yknots[4], zknots[4];
 
     ix = floor(p.x);
     fx = p.x - ix;
@@ -117,7 +117,7 @@ CubicNoise::vector_noise(const Point3D& p) const {
     iy = floor(p.y);
     fy = p.y - iy;
 
-	iz = floor(p.z);
+    iz = floor(p.z);
     fz = p.z - iz;
 
     for (int k = -1; k <= 2; k++) {
@@ -127,10 +127,10 @@ CubicNoise::vector_noise(const Point3D& p) const {
             }
              yknots[j+1] = four_knot_spline(fx, xknots);
         }
-     	zknots[k+1] = four_knot_spline(fy, yknots);
+         zknots[k+1] = four_knot_spline(fy, yknots);
     }
 
-	return (four_knot_spline(fz, zknots));
+    return (four_knot_spline(fz, zknots));
 }
 
 

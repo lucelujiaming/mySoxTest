@@ -9,48 +9,48 @@
 
 class Matte: public Material {
 
-	public:
+    public:
 
-		Matte(void);
+        Matte(void);
 
-		Matte(const Matte& m);
+        Matte(const Matte& m);
 
-		virtual Material*
-		clone(void) const;
+        virtual Material*
+        clone(void) const;
 
-		Matte& 
-		operator= (const Matte& rhs);
+        Matte& 
+        operator= (const Matte& rhs);
 
-		~Matte(void);
+        ~Matte(void);
 
-		void
-		set_ka(const float k);
+        void
+        set_ka(const float k);
 
-		void
-		set_kd(const float k);
+        void
+        set_kd(const float k);
 
-		void
-		set_cd(const RGBColor c);
+        void
+        set_cd(const RGBColor c);
 
-		void
-		set_cd(const float r, const float g, const float b);
+        void
+        set_cd(const float r, const float g, const float b);
 
-		void
-		set_cd(const float c);
+        void
+        set_cd(const float c);
 
-		virtual RGBColor
-		shade(ShadeRec& sr);
+        virtual RGBColor
+        shade(ShadeRec& sr);
 
-		virtual RGBColor
-		area_light_shade(ShadeRec& sr);
+        virtual RGBColor
+        area_light_shade(ShadeRec& sr);
 
-		virtual RGBColor
-		get_Le(ShadeRec& sr) const;
+        virtual RGBColor
+        get_Le(ShadeRec& sr) const;
 
-	private:
+    private:
 
-		Lambertian*		ambient_brdf;
-		Lambertian*		diffuse_brdf;
+        Lambertian*        ambient_brdf;
+        Lambertian*        diffuse_brdf;
 };
 
 
@@ -61,7 +61,7 @@ class Matte: public Material {
 
 inline void
 Matte::set_ka(const float ka) {
-	ambient_brdf->set_kd(ka);
+    ambient_brdf->set_kd(ka);
 }
 
 
@@ -70,7 +70,7 @@ Matte::set_ka(const float ka) {
 
 inline void
 Matte::set_kd (const float kd) {
-	diffuse_brdf->set_kd(kd);
+    diffuse_brdf->set_kd(kd);
 }
 
 
@@ -78,8 +78,8 @@ Matte::set_kd (const float kd) {
 
 inline void
 Matte::set_cd(const RGBColor c) {
-	ambient_brdf->set_cd(c);
-	diffuse_brdf->set_cd(c);
+    ambient_brdf->set_cd(c);
+    diffuse_brdf->set_cd(c);
 }
 
 
@@ -87,8 +87,8 @@ Matte::set_cd(const RGBColor c) {
 
 inline void
 Matte::set_cd(const float r, const float g, const float b) {
-	ambient_brdf->set_cd(r, g, b);
-	diffuse_brdf->set_cd(r, g, b);
+    ambient_brdf->set_cd(r, g, b);
+    diffuse_brdf->set_cd(r, g, b);
 }
 
 
@@ -96,8 +96,8 @@ Matte::set_cd(const float r, const float g, const float b) {
 
 inline void
 Matte::set_cd(const float c) {
-	ambient_brdf->set_cd(c);
-	diffuse_brdf->set_cd(c);
+    ambient_brdf->set_cd(c);
+    diffuse_brdf->set_cd(c);
 }
 
 #endif

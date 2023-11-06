@@ -8,37 +8,37 @@
 // ---------------------------------------------------------------- default constructor
 
 FBmTextureRamp::FBmTextureRamp(void)
-	:	Texture(),
+    :    Texture(),
         noise_ptr(NULL),
         ramp_ptr(NULL),
-	    perturbation(1.0)
+        perturbation(1.0)
 {}
 
 // ----------------------------------------------------------------constructor
 
 FBmTextureRamp::FBmTextureRamp(LatticeNoise* ln_ptr)
-	:	Texture(),
+    :    Texture(),
         noise_ptr(ln_ptr),
         ramp_ptr(NULL),
-	    perturbation(1.0)
+        perturbation(1.0)
 {}
 
 // ----------------------------------------------------------------constructor
 
 FBmTextureRamp::FBmTextureRamp(Image* im_ptr)
-	:	Texture(),
+    :    Texture(),
         noise_ptr(NULL),
         ramp_ptr(im_ptr),
-	    perturbation(1.0)
+        perturbation(1.0)
 {}
 
 // ---------------------------------------------------------------- copy constructor
 
 FBmTextureRamp::FBmTextureRamp(const FBmTextureRamp& ft)
-	:   Texture(ft),
+    :   Texture(ft),
         noise_ptr(ft.noise_ptr),
         ramp_ptr(ft.ramp_ptr),
-	    perturbation(ft.perturbation)
+        perturbation(ft.perturbation)
 {}
 
 
@@ -46,7 +46,7 @@ FBmTextureRamp::FBmTextureRamp(const FBmTextureRamp& ft)
 
 FBmTextureRamp*
 FBmTextureRamp::clone(void) const {
-	return (new FBmTextureRamp(*this));
+    return (new FBmTextureRamp(*this));
 }
 
 
@@ -59,18 +59,18 @@ FBmTextureRamp::~FBmTextureRamp(void) {}
 
 FBmTextureRamp&
 FBmTextureRamp::operator= (const FBmTextureRamp& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	Texture::operator= (rhs);
+    Texture::operator= (rhs);
 
-	noise_ptr        = rhs.noise_ptr;
-	ramp_ptr         = rhs.ramp_ptr;
-	perturbation     = rhs.perturbation;
+    noise_ptr        = rhs.noise_ptr;
+    ramp_ptr         = rhs.ramp_ptr;
+    perturbation     = rhs.perturbation;
 
-	return (*this);
+    return (*this);
 }
 
 
 // --------------------------------------------------- get_color
-RGBColorFBmTextureRamp::get_color(const ShadeRec& sr) const {    // 为了生成大理石纹理， 这里在value_fBm() 函数中使用了分形求和参数(gain=0.5，lacuna rity=2.0) 。	float 	noise 	= noise_ptr->value_fbm(sr.local_hit_point);	float 	y 		= sr.local_hit_point.y + perturbation * noise;	float 	u 		= (1.0 + sin(y)) / 2.0;	int 	row 	= 0;    // use top row of ramp image	int 	column 	= (int) (u * (ramp_ptr->get_hres() - 1));	return (ramp_ptr->get_color(row, column));}
+RGBColorFBmTextureRamp::get_color(const ShadeRec& sr) const {    // 为了生成大理石纹理， 这里在value_fBm() 函数中使用了分形求和参数(gain=0.5，lacuna rity=2.0) 。    float     noise     = noise_ptr->value_fbm(sr.local_hit_point);    float     y         = sr.local_hit_point.y + perturbation * noise;    float     u         = (1.0 + sin(y)) / 2.0;    int     row     = 0;    // use top row of ramp image    int     column     = (int) (u * (ramp_ptr->get_hres() - 1));    return (ramp_ptr->get_color(row, column));}

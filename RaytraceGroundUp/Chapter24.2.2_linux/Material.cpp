@@ -15,10 +15,10 @@ Material::Material(const Material& m) {}
 
 Material&
 Material::operator= (const Material& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -32,7 +32,7 @@ Material::~Material(void)
 
 RGBColor
 Material::shade(ShadeRec& sr) {
-	return (black);
+    return (black);
 }
 
 
@@ -40,7 +40,7 @@ Material::shade(ShadeRec& sr) {
 
 RGBColor
 Material::area_light_shade(ShadeRec& sr) {
-	return (black);
+    return (black);
 }
 
 
@@ -48,7 +48,7 @@ Material::area_light_shade(ShadeRec& sr) {
 
 RGBColor
 Material::path_shade(ShadeRec& sr) {
-	return (black);
+    return (black);
 }
 
 
@@ -56,5 +56,5 @@ Material::path_shade(ShadeRec& sr) {
 
 RGBColor
 Material::get_Le(ShadeRec& sr) const{
-	return (black);
+    return (black);
 }

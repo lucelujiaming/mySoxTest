@@ -100,6 +100,7 @@ extern ofstream out;
 #include "SphericalMap.h"
 
 #include "SV_Matte.h"
+#include "Checker3D.h"
 // -------------------------------------------------------------------- default constructor
 
 // tracer_ptr is set to NULL because the build functions will always construct the appropriate tracer
@@ -277,10 +278,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -361,32 +362,32 @@ double randf()
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-    //construct view plane， tracer， camera， light
-    //image：
-    Image* image_ptr=new Image;
-    image_ptr->read_ppm_file("EarthLowRes.ppm");
-    
-    //mapping：
-    SphericalMap* spherical_map_ptr = new SphericalMap;
-    //image based texture：
-    ImageTexture* image_texture_ptr=new ImageTexture;
-    image_texture_ptr->set_image(image_ptr);
-    image_texture_ptr->set_mapping(spherical_map_ptr);
-    
-    //textured material：
-    SV_Matte* sv_matte_ptr = new SV_Matte;
-    sv_matte_ptr->set_ka(0.45);
-    sv_matte_ptr->set_kd(0.65);
-    sv_matte_ptr->set_cd(image_texture_ptr);
-    //generic sphere：
-    Sphere*sphere_ptr=new Sphere;
-    sphere_ptr->set_material(sv_matte_ptr);
+    Checker3D *checker_ptr1 = new Checker3D;
+    checker_ptr1->set_size(1.0) ;
+    checker_ptr1->set_color1(black) ;
+    checker_ptr1->set_color2(white) ;
+
+    SV_Matte* sv_matte_ptr1 = new SV_Matte;
+    sv_matte_ptr1->set_ka(0.75) ;
+    sv_matte_ptr1->set_kd(0.75) ;
+    sv_matte_ptr1->set_cd(checker_ptr1) ;
+
+    Sphere* sphere_ptr=new Sphere(Point3D(-9.5, -1, 0) , 2.5) ;
+    sphere_ptr->set_material(sv_matte_ptr1) ;
+    add_object(sphere_ptr) ;
     
     //transformed sphere:
     Instance *earth_ptr=new Instance(sphere_ptr);
-    earth_ptr->set_material(sv_matte_ptr);
+    earth_ptr->set_material(sv_matte_ptr1);
     earth_ptr->rotate_y(60);
     add_object(earth_ptr);
 
+    // 设定相机
+    Pinhole* pinhole_ptr = new Pinhole;
+    pinhole_ptr->set_eye(0, 0, 500);
+    pinhole_ptr->set_lookat(0, 0, -50);
+    pinhole_ptr->set_view_distance(8000);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
 }
 

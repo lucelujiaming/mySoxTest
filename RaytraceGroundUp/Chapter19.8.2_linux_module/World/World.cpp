@@ -246,10 +246,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -364,14 +364,14 @@ void World::build()
     matte_ptr2->set_kd(0);
     matte_ptr2->set_cd(0, 1, 0); // Green
     
-	Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
-	OpenCylinder * openCylinder_ptr1 = new OpenCylinder(-1, 2, 1);
+    Sphere* sphere_ptr1=new Sphere(Point3D(0, 1, 0) , 1);
+    OpenCylinder * openCylinder_ptr1 = new OpenCylinder(-1, 2, 1);
     TorusPart * toruspart_ptr1 = new TorusPart();
-	
-	Compound * compond_ptr = new Compound();
-	compond_ptr->add_object(sphere_ptr1);
-	compond_ptr->add_object(openCylinder_ptr1);
-	compond_ptr->add_object(toruspart_ptr1);
+    
+    Compound * compond_ptr = new Compound();
+    compond_ptr->add_object(sphere_ptr1);
+    compond_ptr->add_object(openCylinder_ptr1);
+    compond_ptr->add_object(toruspart_ptr1);
     compond_ptr->set_material(matte_ptr2);
     add_object(compond_ptr);
 

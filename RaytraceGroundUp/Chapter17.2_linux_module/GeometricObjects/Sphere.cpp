@@ -151,6 +151,6 @@ float
 Sphere::pdf(const ShadeRec& sr) {
     // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
     // 我这里写成返回圆面积的倒数。
-	// return (1.0);
+    // return (1.0);
     return inv_area;
 }

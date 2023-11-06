@@ -9,27 +9,27 @@
 
 class Matrix {
 
-	public:
+    public:
 
-		double	m[4][4];								// elements
+        double    m[4][4];                                // elements
 
-		Matrix(void);									// default constructor
+        Matrix(void);                                    // default constructor
 
-		Matrix(const Matrix& mat);						// copy constructor
+        Matrix(const Matrix& mat);                        // copy constructor
 
-		~Matrix (void);									// destructor
+        ~Matrix (void);                                    // destructor
 
-		Matrix& 										// assignment operator
-		operator= (const Matrix& rhs); 	
+        Matrix&                                         // assignment operator
+        operator= (const Matrix& rhs);     
 
-		Matrix 											// multiplication of two matrices
-		operator* (const Matrix& mat) const;
+        Matrix                                             // multiplication of two matrices
+        operator* (const Matrix& mat) const;
 
-		Matrix 											// divsion by a double
-		operator/ (const double d);
+        Matrix                                             // divsion by a double
+        operator/ (const double d);
 
-		void											// set to the identity matrix
-		set_identity(void);	
+        void                                            // set to the identity matrix
+        set_identity(void);    
 };
 
 #endif

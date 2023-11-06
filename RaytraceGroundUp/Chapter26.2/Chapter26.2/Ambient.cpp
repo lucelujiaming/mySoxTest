@@ -4,18 +4,18 @@
 // ---------------------------------------------------------------------- default constructor
 
 Ambient::Ambient (void)
-	: 	Light(),
-		ls(1.0),
-		color(1.0)
+    :     Light(),
+        ls(1.0),
+        color(1.0)
 {}
 
 
 // ---------------------------------------------------------------------- copy constructor
 
 Ambient::Ambient (const Ambient& a)
-	: 	Light(a),
-		ls(a.ls),
-		color(a.color)
+    :     Light(a),
+        ls(a.ls),
+        color(a.color)
 {}
 
 
@@ -23,7 +23,7 @@ Ambient::Ambient (const Ambient& a)
 
 Light*
 Ambient::clone(void) const {
-	return (new Ambient(*this));
+    return (new Ambient(*this));
 }
 
 
@@ -31,15 +31,15 @@ Ambient::clone(void) const {
 
 Ambient&
 Ambient::operator= (const Ambient& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	Light::operator= (rhs);
+    Light::operator= (rhs);
 
-	ls 		= rhs.ls;
-	color 	= rhs.color;
+    ls         = rhs.ls;
+    color     = rhs.color;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -52,7 +52,7 @@ Ambient::~Ambient (void) {}
 
 Vector3D
 Ambient::get_direction(ShadeRec& sr) {
-	return (Vector3D(0.0));
+    return (Vector3D(0.0));
 }
 
 
@@ -60,7 +60,7 @@ Ambient::get_direction(ShadeRec& sr) {
 
 RGBColor
 Ambient::L(ShadeRec& sr) {
-	return (ls * color);
+    return (ls * color);
 }
 
 
@@ -69,7 +69,7 @@ Ambient::L(ShadeRec& sr) {
 bool
 Ambient::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
-	return true; // not implented yet
+    return true; // not implented yet
 
 }
 
@@ -78,7 +78,7 @@ Ambient::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
 float
 Ambient::G(const ShadeRec& sr) const{
-	return 5.5; //?
+    return 5.5; //?
 }
 
 
@@ -87,5 +87,5 @@ Ambient::G(const ShadeRec& sr) const{
 float
 Ambient::pdf(const ShadeRec& sr) const{
 
-	return 5.5;//?
+    return 5.5;//?
 }

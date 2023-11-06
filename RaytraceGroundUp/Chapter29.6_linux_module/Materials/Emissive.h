@@ -27,9 +27,9 @@ class Emissive: public Material {
 
         virtual RGBColor       area_light_shade(ShadeRec& sr);
 
-		virtual RGBColor path_shade(ShadeRec& sr);
-		
-		virtual RGBColor global_shade(ShadeRec& sr);
+        virtual RGBColor path_shade(ShadeRec& sr);
+        
+        virtual RGBColor global_shade(ShadeRec& sr);
 
     private:
         // 缩放系数ls

@@ -7,34 +7,34 @@
 //----------------------------------------------------------------------------- class SV_Matte
 
 class SV_Matte: public Material {
-	public:
+    public:
 
-		SV_Matte(void);
+        SV_Matte(void);
 
-		SV_Matte(const SV_Matte& m);
+        SV_Matte(const SV_Matte& m);
 
-		virtual Material*
-		clone(void) const;
+        virtual Material*
+        clone(void) const;
 
-		SV_Matte&
-		operator= (const SV_Matte& rhs);
+        SV_Matte&
+        operator= (const SV_Matte& rhs);
 
-		~SV_Matte(void);
+        ~SV_Matte(void);
 
-		void
-		set_ka(const float k);
+        void
+        set_ka(const float k);
 
-		void
-		set_kd(const float k);
+        void
+        set_kd(const float k);
 
-		void
-		set_cd(Texture* t_ptr);
+        void
+        set_cd(Texture* t_ptr);
 
-		void
-		set_sampler(Sampler* sp);   			// any type of sampling
+        void
+        set_sampler(Sampler* sp);               // any type of sampling
 
-		virtual RGBColor
-		shade(ShadeRec& sr);
+        virtual RGBColor
+        shade(ShadeRec& sr);
 
         virtual RGBColor
         area_light_shade(ShadeRec& sr);
@@ -44,10 +44,10 @@ class SV_Matte: public Material {
 
         virtual RGBColor
         global_shade(ShadeRec& sr);
-	private:
+    private:
 
-		SV_Lambertian*		ambient_brdf;
-		SV_Lambertian*		diffuse_brdf;
+        SV_Lambertian*        ambient_brdf;
+        SV_Lambertian*        diffuse_brdf;
 };
 
 
@@ -58,7 +58,7 @@ class SV_Matte: public Material {
 
 inline void
 SV_Matte::set_ka(const float ka) {
-	ambient_brdf->set_kd(ka);
+    ambient_brdf->set_kd(ka);
 }
 
 
@@ -67,7 +67,7 @@ SV_Matte::set_ka(const float ka) {
 
 inline void
 SV_Matte::set_kd (const float kd) {
-	diffuse_brdf->set_kd(kd);
+    diffuse_brdf->set_kd(kd);
 }
 
 
@@ -75,8 +75,8 @@ SV_Matte::set_kd (const float kd) {
 
 inline void
 SV_Matte::set_cd(Texture* t_ptr) {
-	ambient_brdf->set_cd(t_ptr);
-	diffuse_brdf->set_cd(t_ptr);
+    ambient_brdf->set_cd(t_ptr);
+    diffuse_brdf->set_cd(t_ptr);
 }
 
 #endif // SV_MATTE_H

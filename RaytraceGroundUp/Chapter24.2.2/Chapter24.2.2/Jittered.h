@@ -5,29 +5,29 @@
 
 class Jittered: public Sampler {
 
-	public:
+    public:
 
-		Jittered(void);
+        Jittered(void);
 
-		Jittered(const int num_samples);
+        Jittered(const int num_samples);
 
-		Jittered(const int num_samples, const int m);
+        Jittered(const int num_samples, const int m);
 
-		Jittered(const Jittered& u);
+        Jittered(const Jittered& u);
 
-		Jittered& 
-		operator= (const Jittered& rhs);
+        Jittered& 
+        operator= (const Jittered& rhs);
 
-		virtual Jittered*
-		clone(void) const;
+        virtual Jittered*
+        clone(void) const;
 
-		virtual
-		~Jittered(void);
+        virtual
+        ~Jittered(void);
 
-	private:
+    private:
 
-		virtual void
-		generate_samples(void);
+        virtual void
+        generate_samples(void);
 };
 
 #endif

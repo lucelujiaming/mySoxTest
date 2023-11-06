@@ -7,39 +7,39 @@
 
 class Emissive: public Material {
 
-	public:
+    public:
 
-		Emissive(void);
+        Emissive(void);
 
-		Emissive(const Emissive& m);
+        Emissive(const Emissive& m);
 
-		virtual Material*
-		clone(void) const;
+        virtual Material*
+        clone(void) const;
 
-		Emissive& 
-		operator= (const Emissive& rhs);
+        Emissive& 
+        operator= (const Emissive& rhs);
 
-		~Emissive(void);
+        ~Emissive(void);
 
-		void
-		scale_radiance(const float _ls);
+        void
+        scale_radiance(const float _ls);
 
-		void
-		set_ce(const float r, const float g, const float b);
+        void
+        set_ce(const float r, const float g, const float b);
 
-		virtual RGBColor
-		get_Le(ShadeRec& sr) const;
+        virtual RGBColor
+        get_Le(ShadeRec& sr) const;
 
-		virtual RGBColor
-		shade(ShadeRec& sr);
+        virtual RGBColor
+        shade(ShadeRec& sr);
 
-		virtual RGBColor
-		area_light_shade(ShadeRec& sr);
+        virtual RGBColor
+        area_light_shade(ShadeRec& sr);
 
-	private:
+    private:
 
-		float ls;		// radiance scaling facor
-		RGBColor ce;	// color
+        float ls;        // radiance scaling facor
+        RGBColor ce;    // color
 };
 
 
@@ -47,7 +47,7 @@ class Emissive: public Material {
 
 inline void
 Emissive::scale_radiance(const float _ls){
-	ls = _ls;
+    ls = _ls;
 }
 
 
@@ -55,7 +55,7 @@ Emissive::scale_radiance(const float _ls){
 
 inline void
 Emissive::set_ce(const float r, const float g, const float b){
-	ce.r = r; ce.g = g; ce.b = b;
+    ce.r = r; ce.g = g; ce.b = b;
 }
 
 #endif

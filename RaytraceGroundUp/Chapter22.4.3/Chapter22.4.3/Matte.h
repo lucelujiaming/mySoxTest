@@ -1,56 +1,54 @@
-#ifndef __MATTE__
+﻿#ifndef __MATTE__
 #define __MATTE__
 
 #include "Material.h"
 #include "Lambertian.h"
 
 //----------------------------------------------------------------------------- class Matte
-
-
+// Matte材质。对于环境光反射和漫反射都采用完全漫反射Lambertian反射
 class Matte: public Material {
 
-	public:
+    public:
 
-		Matte(void);
+        Matte(void);
 
-		Matte(const Matte& m);
+        Matte(const Matte& m);
 
-		virtual Material*
-		clone(void) const;
+        virtual Material*
+        clone(void) const;
 
-		Matte& 
-		operator= (const Matte& rhs);
+        Matte& 
+        operator= (const Matte& rhs);
 
-		~Matte(void);
+        ~Matte(void);
+        // 设置环境光反射系数
+        void
+        set_ka(const float k);
+        // 设置漫反射系数
+        void
+        set_kd(const float k);
+        // 设置材质颜色值。参数为RGBColor类型。
+        void
+        set_cd(const RGBColor c);
+        // 设置材质颜色值。参数为RGB三个值。
+        void
+        set_cd(const float r, const float g, const float b);
+        // 设置材质颜色值。参数为RGB灰度值。
+        void
+        set_cd(const float c);
 
-		void
-		set_ka(const float k);
+        virtual RGBColor
+        shade(ShadeRec& sr);
+        // 计算区域光照
+        virtual RGBColor
+        area_light_shade(ShadeRec& sr);
 
-		void
-		set_kd(const float k);
+        virtual RGBColor
+        get_Le(ShadeRec& sr) const;
 
-		void
-		set_cd(const RGBColor c);
-
-		void
-		set_cd(const float r, const float g, const float b);
-
-		void
-		set_cd(const float c);
-
-		virtual RGBColor
-		shade(ShadeRec& sr);
-
-		virtual RGBColor
-		area_light_shade(ShadeRec& sr);
-
-		virtual RGBColor
-		get_Le(ShadeRec& sr) const;
-
-	private:
-
-		Lambertian*		ambient_brdf;
-		Lambertian*		diffuse_brdf;
+    private:
+        Lambertian*        ambient_brdf;    // 环境光反射
+        Lambertian*        diffuse_brdf;    // 漫反射
 };
 
 
@@ -61,7 +59,7 @@ class Matte: public Material {
 
 inline void
 Matte::set_ka(const float ka) {
-	ambient_brdf->set_kd(ka);
+    ambient_brdf->set_kd(ka);
 }
 
 
@@ -70,7 +68,7 @@ Matte::set_ka(const float ka) {
 
 inline void
 Matte::set_kd (const float kd) {
-	diffuse_brdf->set_kd(kd);
+    diffuse_brdf->set_kd(kd);
 }
 
 
@@ -78,8 +76,8 @@ Matte::set_kd (const float kd) {
 
 inline void
 Matte::set_cd(const RGBColor c) {
-	ambient_brdf->set_cd(c);
-	diffuse_brdf->set_cd(c);
+    ambient_brdf->set_cd(c);
+    diffuse_brdf->set_cd(c);
 }
 
 
@@ -87,8 +85,8 @@ Matte::set_cd(const RGBColor c) {
 
 inline void
 Matte::set_cd(const float r, const float g, const float b) {
-	ambient_brdf->set_cd(r, g, b);
-	diffuse_brdf->set_cd(r, g, b);
+    ambient_brdf->set_cd(r, g, b);
+    diffuse_brdf->set_cd(r, g, b);
 }
 
 
@@ -96,8 +94,8 @@ Matte::set_cd(const float r, const float g, const float b) {
 
 inline void
 Matte::set_cd(const float c) {
-	ambient_brdf->set_cd(c);
-	diffuse_brdf->set_cd(c);
+    ambient_brdf->set_cd(c);
+    diffuse_brdf->set_cd(c);
 }
 
 #endif

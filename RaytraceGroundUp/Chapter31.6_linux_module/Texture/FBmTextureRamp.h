@@ -7,49 +7,49 @@
 
 class FBmTextureRamp : public Texture
 {
-	public:
+    public:
 
-		FBmTextureRamp(void);
+        FBmTextureRamp(void);
 
-		FBmTextureRamp(LatticeNoise* ln_ptr);
+        FBmTextureRamp(LatticeNoise* ln_ptr);
 
-		FBmTextureRamp(Image* im_ptr);
+        FBmTextureRamp(Image* im_ptr);
 
-		FBmTextureRamp(const FBmTextureRamp& ft);
+        FBmTextureRamp(const FBmTextureRamp& ft);
 
-		virtual FBmTextureRamp*
-		clone(void) const;
+        virtual FBmTextureRamp*
+        clone(void) const;
 
-		virtual
-		~FBmTextureRamp(void);
+        virtual
+        ~FBmTextureRamp(void);
 
-		void
-		set_noise(LatticeNoise* ln_ptr);
+        void
+        set_noise(LatticeNoise* ln_ptr);
 
-		void
-		set_image(Image* im_ptr);
+        void
+        set_image(Image* im_ptr);
 
-		void
-		set_perturbation(const float p);
+        void
+        set_perturbation(const float p);
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-	protected:
+    protected:
 
-		FBmTextureRamp&
-		operator= (const FBmTextureRamp& rhs);
+        FBmTextureRamp&
+        operator= (const FBmTextureRamp& rhs);
 
     private:
 
-		LatticeNoise*		noise_ptr;		Image* 	  		    ramp_ptr;		float               perturbation;                      // the amount of fbm};
+        LatticeNoise*        noise_ptr;        Image*                   ramp_ptr;        float               perturbation;                      // the amount of fbm};
 
 
 // ---------------------------------------------------------------- set_noise
 
 inline void
 FBmTextureRamp::set_noise(LatticeNoise* ln_ptr) {
-	noise_ptr = ln_ptr;
+    noise_ptr = ln_ptr;
 }
 
 
@@ -57,14 +57,14 @@ FBmTextureRamp::set_noise(LatticeNoise* ln_ptr) {
 
 inline void
 FBmTextureRamp::set_image(Image* im_ptr) {
-	ramp_ptr = im_ptr;
+    ramp_ptr = im_ptr;
 }
 
 // ---------------------------------------------------------------- set_expansion_number
 
 inline void
 FBmTextureRamp::set_perturbation(const float p) {
-	perturbation = p;
+    perturbation = p;
 }
 
 #endif // FBMTEXTURERAMP_H

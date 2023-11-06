@@ -84,16 +84,16 @@ Reflective::shade(ShadeRec& sr) {
 // 另外，两个函数均不包含cosθi项。
 RGBColor
 Reflective::path_shade(ShadeRec& sr) {
-	Vector3D 	wo = -sr.ray.d;
-	Vector3D 	wi;
-	float 		pdf;
-	RGBColor 	fr = reflective_brdf->sample_f(sr, wo, wi, pdf);
+    Vector3D     wo = -sr.ray.d;
+    Vector3D     wi;
+    float         pdf;
+    RGBColor     fr = reflective_brdf->sample_f(sr, wo, wi, pdf);
     // 反射光线的起点为碰撞点，方向为反射方向。
-	Ray 		reflected_ray(sr.hit_point, wi);
+    Ray         reflected_ray(sr.hit_point, wi);
 
     // 累加反射次数。
     // 调用sr.w.tracer_ptr->trace_ray完成递归。
-	return (fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi) / pdf);
+    return (fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi) / pdf);
 }
 
 
@@ -101,21 +101,21 @@ Reflective::path_shade(ShadeRec& sr) {
 
 RGBColor
 Reflective::global_shade(ShadeRec& sr) {
-	Vector3D 	wo = -sr.ray.d;
-	Vector3D 	wi;
-	float 		pdf;
-	RGBColor 	fr = reflective_brdf->sample_f(sr, wo, wi, pdf);
-	Ray 		reflected_ray(sr.hit_point, wi);
+    Vector3D     wo = -sr.ray.d;
+    Vector3D     wi;
+    float         pdf;
+    RGBColor     fr = reflective_brdf->sample_f(sr, wo, wi, pdf);
+    Ray         reflected_ray(sr.hit_point, wi);
     // 各条光线均有depth>1。但该方案并未对(相机)直接可见对象上的光源反射进行渲染，
     // 其原因在于与光源碰撞的反射光线的depth值为1。
     // 该问题可通过进行简单地处理得以解决，例如下面的代码将光线的depth值赋值为2。
     // 同时， 这也反映出当前着色架构无法提供一种较为简单的方法以告知Emissive材质某些包含depth=1的光线将返回Le。
     // 然而，这并不是什么重要问题，读者不必纠结于此类问题。
-	if (sr.depth == 0) {
+    if (sr.depth == 0) {
         return (fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 2) * (sr.normal * wi) / pdf);
-	}
-	else {
+    }
+    else {
         return (fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi) / pdf);
-	}
+    }
 }
 

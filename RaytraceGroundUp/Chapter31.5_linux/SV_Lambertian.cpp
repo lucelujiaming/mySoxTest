@@ -4,18 +4,18 @@
 // ---------------------------------------------------------------------- default constructor
 
 SV_Lambertian::SV_Lambertian(void)
-	:   BRDF(),
-		kd(0.0),
-		cd(new ConstantColor)
+    :   BRDF(),
+        kd(0.0),
+        cd(new ConstantColor)
 {}
 
 
 // ---------------------------------------------------------------------- copy constructor
 
 SV_Lambertian::SV_Lambertian(const SV_Lambertian& lamb)
-	:   BRDF(lamb),
-		kd(lamb.kd),
-		cd(lamb.cd)
+    :   BRDF(lamb),
+        kd(lamb.kd),
+        cd(lamb.cd)
 {}
 
 
@@ -23,7 +23,7 @@ SV_Lambertian::SV_Lambertian(const SV_Lambertian& lamb)
 
 SV_Lambertian*
 SV_Lambertian::clone(void) const {
-	return (new SV_Lambertian(*this));
+    return (new SV_Lambertian(*this));
 }
 
 
@@ -36,15 +36,15 @@ SV_Lambertian::~SV_Lambertian(void) {}
 
 SV_Lambertian&
 SV_Lambertian::operator= (const SV_Lambertian& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	BRDF::operator= (rhs);
+    BRDF::operator= (rhs);
 
-	kd = rhs.kd;
-	cd = rhs.cd;
+    kd = rhs.kd;
+    cd = rhs.cd;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -52,15 +52,15 @@ SV_Lambertian::operator= (const SV_Lambertian& rhs) {
 
 void
 SV_Lambertian::set_sampler(Sampler* s_ptr) {
-	sampler_ptr = s_ptr;
-	sampler_ptr->map_samples_to_hemisphere(1);
+    sampler_ptr = s_ptr;
+    sampler_ptr->map_samples_to_hemisphere(1);
 }
 
 // ---------------------------------------------------------------------- f
 
 RGBColor
 SV_Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
-	return (kd * (cd->get_color(sr)) * invPI);
+    return (kd * (cd->get_color(sr)) * invPI);
 }
 
 
@@ -74,18 +74,18 @@ SV_Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) con
 RGBColor
 SV_Lambertian::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const {
 
-	Vector3D w = sr.normal;
-	Vector3D v = Vector3D(0.0034, 1, 0.0071) ^ w;
-	v.normalize();
-	Vector3D u = v ^ w;
+    Vector3D w = sr.normal;
+    Vector3D v = Vector3D(0.0034, 1, 0.0071) ^ w;
+    v.normalize();
+    Vector3D u = v ^ w;
 
-	Point3D sp = sampler_ptr->sample_hemisphere();
-	wi = sp.x * u + sp.y * v + sp.z * w;
-	wi.normalize();
+    Point3D sp = sampler_ptr->sample_hemisphere();
+    wi = sp.x * u + sp.y * v + sp.z * w;
+    wi.normalize();
 
-	pdf = sr.normal * wi * invPI;
+    pdf = sr.normal * wi * invPI;
 
-	return (kd * (cd->get_color(sr)) * invPI);
+    return (kd * (cd->get_color(sr)) * invPI);
 }
 
 
@@ -93,6 +93,6 @@ SV_Lambertian::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, fl
 
 RGBColor
 SV_Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const {
-	return (kd * (cd->get_color(sr)));
+    return (kd * (cd->get_color(sr)));
 }
 

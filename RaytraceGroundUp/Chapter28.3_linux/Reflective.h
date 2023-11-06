@@ -34,6 +34,11 @@ class Reflective: public Phong {
         virtual RGBColor                                        
         shade(ShadeRec& s);
         
+        virtual RGBColor
+        path_shade(ShadeRec& sr);
+
+        virtual RGBColor
+        global_shade(ShadeRec& sr);
     private:
         // 包括了一个完全镜面BRDF。
         PerfectSpecular* reflective_brdf;        

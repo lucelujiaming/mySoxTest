@@ -54,7 +54,10 @@ PerfectTransmitter::operator= (const PerfectTransmitter& rhs) {
 
 // ------------------------------------------------------------------- tir
 // tests for total internal reflection
-
+// 检测全内反射。
+// P455：根据第15章所讨论的反射定律以及Snell定律，
+//       可以进一步推导出折射光线t的计算公式，
+//       但这里将直接引用其计算结果。
 bool                                                    
 PerfectTransmitter::tir(const ShadeRec& sr) const {
     Vector3D wo(-sr.ray.d); 
@@ -63,13 +66,14 @@ PerfectTransmitter::tir(const ShadeRec& sr) const {
     
     if (cos_thetai < 0.0) 
         eta = 1.0 / eta; 
-        
+    // 参见公式27.4和公式27.5
     return (1.0 - (1.0 - cos_thetai * cos_thetai) / (eta * eta) < 0.0);
 }    
 
 
 // ------------------------------------------------------------------- f
-
+// 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
+// 返回黑色。因为反射光线位于镜面反射方向上，不存在BRDF随机采样。
 RGBColor
 PerfectTransmitter::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
     return (black);
@@ -80,27 +84,32 @@ PerfectTransmitter::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi
 // this computes the direction wt for perfect transmission
 // and returns the transmission coefficient
 // this is only called when there is no total internal reflection
-
+// 该函数计算透视光线的方向并将其返回至参数wt中且仅适用于非全内反射条件下。
 RGBColor
 PerfectTransmitter::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wt) const {
     
     Normal n(sr.normal);
+    // P455：cosθi=n * ω0
     float cos_thetai = n * wo;
     float eta = ior;    
-        
-    if (cos_thetai < 0.0) {            // transmitted ray is outside     
+    // 如果cos_thetai小于零，说明是法线和入射方向位于介质的同一侧。
+    // 例如从水面下方向上观察。
+    // 执行倒置操作。
+    if (cos_thetai < 0.0) {          // transmitted ray is outside     
         cos_thetai = -cos_thetai;
         n = -n;                      // reverse direction of normal
         eta = 1.0 / eta;             // invert ior 
     }
 
+    // 计算cosθt。参见公式27.4
     float temp = 1.0 - (1.0 - cos_thetai * cos_thetai) / (eta * eta);
     float cos_theta2 = sqrt(temp);
+    // 参见公式27.3
     wt = -wo / eta - (cos_theta2 - cos_thetai / eta) * n;   
-    
+    // 参见公式27.10
+    // 由于本章所讨论的透射方案不涉及颜色计算，因此返回值将乘以白色值以显示为RGB颜色。
     return (kt / (eta * eta) * white / fabs(sr.normal * wt));
 }
-
 
 // ------------------------------------------------------------------- rho
 

@@ -1,21 +1,21 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Ambient.h"
 
 // ---------------------------------------------------------------------- default constructor
 
 Ambient::Ambient (void)
-	: 	Light(),
-		ls(1.0),
-		color(1.0)
+    :     Light(),
+        ls(1.0),
+        color(1.0)
 {}
 
 
 // ---------------------------------------------------------------------- copy constructor
 
 Ambient::Ambient (const Ambient& a)
-	: 	Light(a),
-		ls(a.ls),
-		color(a.color)
+    :     Light(a),
+        ls(a.ls),
+        color(a.color)
 {}
 
 
@@ -23,7 +23,7 @@ Ambient::Ambient (const Ambient& a)
 
 Light*
 Ambient::clone(void) const {
-	return (new Ambient(*this));
+    return (new Ambient(*this));
 }
 
 
@@ -31,15 +31,15 @@ Ambient::clone(void) const {
 
 Ambient&
 Ambient::operator= (const Ambient& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	Light::operator= (rhs);
+    Light::operator= (rhs);
 
-	ls 		= rhs.ls;
-	color 	= rhs.color;
+    ls         = rhs.ls;
+    color     = rhs.color;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -49,36 +49,35 @@ Ambient::~Ambient (void) {}
 
 
 // ---------------------------------------------------------------------- get_direction
-
+// Ambient类不涉及方向问题。直接返回0向量。
 Vector3D
 Ambient::get_direction(ShadeRec& sr) {
-	return (Vector3D(0.0));
+    return (Vector3D(0.0));
 }
 
 
 // ---------------------------------------------------------------------- L
-
+// 入射辐射度就是光源缩放系数，乘以光源颜色值。参见公式14.1。
 RGBColor
 Ambient::L(ShadeRec& sr) {
-	return (ls * color);
+    return (ls * color);
 }
 
 
 // ---------------------------------------------------------------------- in_shadow
-
+// 环境光会撞到所有物体。因此上永远返回真。
 bool
 Ambient::in_shadow(const Ray& ray, const ShadeRec& sr) const {
 
-	return true; // not implented yet
+    return true; // not implented yet
 
 }
-
 
 // ---------------------------------------------------------------------- G
 
 float
 Ambient::G(const ShadeRec& sr) const{
-	return 5.5; //?
+    return 5.5; //?
 }
 
 
@@ -87,5 +86,5 @@ Ambient::G(const ShadeRec& sr) const{
 float
 Ambient::pdf(const ShadeRec& sr) const{
 
-	return 5.5;//?
+    return 5.5;//?
 }

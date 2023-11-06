@@ -9,43 +9,43 @@
 // 同时，轴对齐盒体还将用于演示第28章中的全内反射。
 class Box: public GeometricObject {
 
-	public:
-		
-		Box(void);   									
-				
-		Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b);
-		
-		Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b, const Normal& n);
-		
-		virtual Box* 										
-		clone(void) const;
-	
-		Box(const Box& r); 						
+    public:
+        
+        Box(void);                                       
+                
+        Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b);
+        
+        Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b, const Normal& n);
+        
+        virtual Box*                                         
+        clone(void) const;
+    
+        Box(const Box& r);                         
 
-		virtual													
-		~Box(void);   									
+        virtual                                                    
+        ~Box(void);                                       
 
-		Box& 												
-		operator= (const Box& rhs);
-		
-		//Box
-		//get_bounding_box(void);				
-	
-		virtual bool 												 
-		hit(const Ray& ray, double& t, ShadeRec& s) const;
+        Box&                                                 
+        operator= (const Box& rhs);
+        
+        //Box
+        //get_bounding_box(void);                
+    
+        virtual bool                                                  
+        hit(const Ray& ray, double& t, ShadeRec& s) const;
 
-		virtual bool
-		shadow_hit(const Ray& ray, float& tmin) const;
+        virtual bool
+        shadow_hit(const Ray& ray, float& tmin) const;
         // 单独对法线加以计算。
-		Normal
-		get_normal(const int face_hit) const;
-				
-		
-	private:
+        Normal
+        get_normal(const int face_hit) const;
+                
+        
+    private:
         // 将对角顶点存储于6个私有类型的浮点数中。
-		float x0, y0, z0, x1, y1, z1;
-		
-		static const double kEpsilon;   											
+        float x0, y0, z0, x1, y1, z1;
+        
+        static const double kEpsilon;                                               
 };
 
 #endif

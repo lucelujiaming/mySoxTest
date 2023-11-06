@@ -2,10 +2,10 @@
 #define OPENCYLINDERCONVEX_H
 
 
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // An open cylinder is defined by its extent in the y direction and its radius.
@@ -17,38 +17,38 @@
 
 class OpenCylinderConvex: public GeometricObject {
 
-	public:
+    public:
 
-		OpenCylinderConvex(void);
+        OpenCylinderConvex(void);
 
-		OpenCylinderConvex(const double bottom, const double top, const double radius);
+        OpenCylinderConvex(const double bottom, const double top, const double radius);
 
-		OpenCylinderConvex(const OpenCylinderConvex& c);
+        OpenCylinderConvex(const OpenCylinderConvex& c);
 
-		virtual OpenCylinderConvex*
-		clone (void) const;
+        virtual OpenCylinderConvex*
+        clone (void) const;
 
-		OpenCylinderConvex&
-		operator= (const OpenCylinderConvex& rhs);
+        OpenCylinderConvex&
+        operator= (const OpenCylinderConvex& rhs);
 
-		virtual
-		~OpenCylinderConvex(void);
+        virtual
+        ~OpenCylinderConvex(void);
 
-		virtual bool
-		hit(const Ray& ray, double& t, ShadeRec& sr) const;
+        virtual bool
+        hit(const Ray& ray, double& t, ShadeRec& sr) const;
 
-		virtual bool
-		shadow_hit(const Ray& ray, float& t) const;
+        virtual bool
+        shadow_hit(const Ray& ray, float& t) const;
 
-		virtual BBox
-		get_bounding_box(void);
+        virtual BBox
+        get_bounding_box(void);
 
-	protected:
+    protected:
 
-		double		y0;				// bottom y value
-		double		y1;				// top y value
-		double		radius;			// radius
-		double		inv_radius;  	// one over the radius
+        double        y0;                // bottom y value
+        double        y1;                // top y value
+        double        radius;            // radius
+        double        inv_radius;      // one over the radius
 };
 
 #endif // OPENCYLINDERCONVEX_H

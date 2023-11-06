@@ -1,58 +1,58 @@
 #ifndef __GLASS_OF_WATER__
 #define __GLASS_OF_WATER__
 
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include "Compound.h"
 
 
 class GlassOfWater: public Compound {
-	public:
-		
-		GlassOfWater(void);   									
-		
-		GlassOfWater( 	const double _height, 
-						const double _inner_radius,
-						const double _wall_thickness,
-						const double _base_thickness,
-						const double _water_height,
-						const double _meniscus_radius);
-						
-		GlassOfWater(const GlassOfWater& gw); 				
-		
-		virtual GlassOfWater* 									
-		clone(void) const;
+    public:
+        
+        GlassOfWater(void);                                       
+        
+        GlassOfWater(     const double _height, 
+                        const double _inner_radius,
+                        const double _wall_thickness,
+                        const double _base_thickness,
+                        const double _water_height,
+                        const double _meniscus_radius);
+                        
+        GlassOfWater(const GlassOfWater& gw);                 
+        
+        virtual GlassOfWater*                                     
+        clone(void) const;
 
-		virtual GlassOfWater& 									
-		operator= (const GlassOfWater& rhs);		
-		
-		virtual 													
-		~GlassOfWater(void);
-		// ´´½¨ËùÓĞ²¿¼ş¡£
-		void
-		build_components(void);
-		// Éè¶¨²£Á§¿ÕÆø½çÃæ
-		void
-		set_glass_air_material(Material* m_ptr);
-		// Éè¶¨Ë®Ãæ¿ÕÆø½çÃæ
-		void
-		set_water_air_material(Material* m_ptr); 
-		// Éè¶¨Ë®Ãæ²£Á§½çÃæ
-		void
-		set_water_glass_material(Material* m_ptr); 
-		
-	protected:
-	
-		double		height;  			// total height
-		double 		inner_radius;		// inner radius of glass, outer radius of water
-		double 		wall_thickness;		// thickness of the glass wall
-		double		base_thickness;		// thickness of the glass base
-		double 		water_height;		// height of water from bottom of glass base on (x, z) plane
-		double 		meniscus_radius;	
+        virtual GlassOfWater&                                     
+        operator= (const GlassOfWater& rhs);        
+        
+        virtual                                                     
+        ~GlassOfWater(void);
+        // åˆ›å»ºæ‰€æœ‰éƒ¨ä»¶ã€‚
+        void
+        build_components(void);
+        // è®¾å®šç»ç’ƒç©ºæ°”ç•Œé¢
+        void
+        set_glass_air_material(Material* m_ptr);
+        // è®¾å®šæ°´é¢ç©ºæ°”ç•Œé¢
+        void
+        set_water_air_material(Material* m_ptr); 
+        // è®¾å®šæ°´é¢ç»ç’ƒç•Œé¢
+        void
+        set_water_glass_material(Material* m_ptr); 
+        
+    protected:
+    
+        double        height;              // total height
+        double         inner_radius;        // inner radius of glass, outer radius of water
+        double         wall_thickness;        // thickness of the glass wall
+        double        base_thickness;        // thickness of the glass base
+        double         water_height;        // height of water from bottom of glass base on (x, z) plane
+        double         meniscus_radius;    
 };
 
 #endif

@@ -5,17 +5,17 @@
 
 class MultipleObjects: public Tracer {
 
-	public:
+    public:
 
-		MultipleObjects(void);
+        MultipleObjects(void);
 
-		MultipleObjects(World* _world_ptr);
+        MultipleObjects(World* _world_ptr);
 
-		virtual
-		~MultipleObjects(void);
+        virtual
+        ~MultipleObjects(void);
 
-		virtual RGBColor
-		trace_ray(const Ray& ray) const;
+        virtual RGBColor
+        trace_ray(const Ray& ray) const;
 };
 
 #endif

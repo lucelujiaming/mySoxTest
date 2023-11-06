@@ -1,10 +1,10 @@
 #ifndef __LATTICE_NOISE__
 #define __LATTICE_NOISE__
 
-// 	Copyright (C) Kevin Suffern 2000-2008.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2008.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // This file contains the declaration of the class LatticeNoise.
@@ -16,11 +16,11 @@
 
 // The functions
 //
-//				value_fractal_sum
-//				vector_fractal_sum
-//				value_turbulence
-//				value_fbm
-//				vector_fbm
+//                value_fractal_sum
+//                vector_fractal_sum
+//                value_turbulence
+//                value_fbm
+//                vector_fbm
 //
 // involve sums of value_noise and vector_noise, but can be defined here in the base class because
 // they are independent of the interpolation technique.
@@ -46,14 +46,14 @@
 #include "Vector3D.h"
 #include "Point3D.h"
 
-const int kTableSize	= 256;
-const int kTableMask	= kTableSize - 1;
-const int seed_value 	= 253;
+const int kTableSize    = 256;
+const int kTableMask    = kTableSize - 1;
+const int seed_value     = 253;
 
 // Peachey定义了两个宏PERM() 和INDEX() 以访问value_table数组，
 #define PERM(x)          permutation_table[(x)&kTableMask]
 #define INDEX(ix,iy,iz)  PERM((ix)+PERM((iy)+PERM(iz)))
-#define FLOOR(x) 		 ((int)(x) - ((x) < 0 && (x) != (int) (x)))
+#define FLOOR(x)          ((int)(x) - ((x) < 0 && (x) != (int) (x)))
 
 
 //------------------------------------------------------------------------- class LatticeNoise
@@ -64,97 +64,97 @@ const int seed_value 	= 253;
 //  基类Lattice Noise存储了整数栅格并包含了栅格的构造代码
 class LatticeNoise {
 
-	public:
+    public:
 
-		LatticeNoise(void);
+        LatticeNoise(void);
 
-		LatticeNoise(int octaves);
+        LatticeNoise(int octaves);
 
-		LatticeNoise(int octaves, float lacunarity, float gain);
+        LatticeNoise(int octaves, float lacunarity, float gain);
 
-		LatticeNoise(const LatticeNoise& ns);
+        LatticeNoise(const LatticeNoise& ns);
 
-		LatticeNoise&
-		operator= (const LatticeNoise& rhs);
+        LatticeNoise&
+        operator= (const LatticeNoise& rhs);
 
-		virtual LatticeNoise*
-		clone(void) const = 0;
+        virtual LatticeNoise*
+        clone(void) const = 0;
 
-		virtual
-		~LatticeNoise(void);
+        virtual
+        ~LatticeNoise(void);
 
 
-		// noise
+        // noise
         // 执行插值计算的相关函数
-		virtual float
-		value_noise(const Point3D& p) const = 0;
+        virtual float
+        value_noise(const Point3D& p) const = 0;
 
-		virtual Vector3D
-		vector_noise(const Point3D& p) const = 0;
-
-
-		// fractal sum
-
-		virtual float
-		value_fractal_sum(const Point3D& p) const;
-
-		virtual Vector3D
-		vector_fractal_sum(const Point3D& p) const;
+        virtual Vector3D
+        vector_noise(const Point3D& p) const = 0;
 
 
-		// turbulence (no vector version)
+        // fractal sum
 
-		virtual float
-		value_turbulence(const Point3D& p) const;
+        virtual float
+        value_fractal_sum(const Point3D& p) const;
 
-
-		// fbm
-
-		virtual float
-		value_fbm(const Point3D& p) const;
-
-		virtual Vector3D
-		vector_fbm(const Point3D& p) const;
+        virtual Vector3D
+        vector_fractal_sum(const Point3D& p) const;
 
 
-		// access functions
+        // turbulence (no vector version)
 
-		void
-		set_num_octaves(int octaves);
-
-		void
-		set_lacunarity(float lacunarity);
-
-		void
-		set_gain(float gain);
+        virtual float
+        value_turbulence(const Point3D& p) const;
 
 
-	protected:
+        // fbm
 
-		int 							num_octaves;
-		float							lacunarity;
-		float							gain;
+        virtual float
+        value_fbm(const Point3D& p) const;
+
+        virtual Vector3D
+        vector_fbm(const Point3D& p) const;
+
+
+        // access functions
+
+        void
+        set_num_octaves(int octaves);
+
+        void
+        set_lacunarity(float lacunarity);
+
+        void
+        set_gain(float gain);
+
+
+    protected:
+
+        int                             num_octaves;
+        float                            lacunarity;
+        float                            gain;
         // 为了进一步降低栅格顶点均匀间距所导致的锯齿效应， 
         // 较好的方法是采用随机索引。Peachey通过使用包含kTable Size个随机整数
         // 且范围为[0， k Table Size-1] 的辅助数组实现了这一功能。
-		static const	unsigned char 	permutation_table[kTableSize];	// permutation array
-						float 			value_table[kTableSize];		// array of pseudo-random numbers
-						Vector3D		vector_table[kTableSize];		// array of pseudo-random unit vectors
+        static const    unsigned char     permutation_table[kTableSize];    // permutation array
+                        float             value_table[kTableSize];        // array of pseudo-random numbers
+                        Vector3D        vector_table[kTableSize];        // array of pseudo-random unit vectors
 
 
-	private:
+    private:
 
-		float							fbm_min;  						// minimum value of fbm
-		float							fbm_max;						// maximum value of fbm
+        float                            fbm_min;                          // minimum value of fbm
+        float                            fbm_max;                        // maximum value of fbm
 
-		void															// initialise the integer lattice
-		init_value_table(int seed);
+        void                                                            // initialise the integer lattice
+        init_value_table(int seed);
 
-		void															// initialise the integer lattice
-		init_vector_table(int seed);
+        void                                                            // initialise the integer lattice
+        init_vector_table(int seed);
 
-		void															// compute fbm_min and fbm_max
-		compute_fbm_bounds(void);
+        void                                                            // compute fbm_min and fbm_max
+        compute_fbm_bounds(void);
 };
 
 #endif

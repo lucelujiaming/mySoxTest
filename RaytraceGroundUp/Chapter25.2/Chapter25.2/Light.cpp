@@ -5,14 +5,14 @@
 // ---------------------------------------------------------------------- default constructor
 
 Light::Light(void)
-		: shadows(true)
+        : shadows(true)
 {}
 
 
 // ---------------------------------------------------------------------- copy constructor
 
 Light::Light(const Light& ls)
-	:	shadows(ls.shadows)
+    :    shadows(ls.shadows)
 {}
 
 
@@ -21,12 +21,12 @@ Light::Light(const Light& ls)
 Light&
 Light::operator= (const Light& rhs) {
 
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	shadows = rhs.shadows;
+    shadows = rhs.shadows;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -40,6 +40,6 @@ Light::~Light(void) {}
 
 RGBColor
 Light::L(ShadeRec& s) {
-	return (black);
+    return (black);
 }
 

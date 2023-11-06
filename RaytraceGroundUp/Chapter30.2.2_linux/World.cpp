@@ -272,10 +272,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -356,54 +356,58 @@ double randf()
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-	//construct view plane， integrator， camera， and lights
-	// int num_spheres=100000;
-	int num_samples = 1;
-	vp.set_hres(600) ;
-	vp.set_vres(400) ;
-	vp.set_samples(num_samples) ;
-	vp.set_max_depth(10) ;
+    //construct view plane， integrator， camera， and lights
+    // int num_spheres=100000;
+    int num_samples = 1;
+    vp.set_hres(600) ;
+    vp.set_vres(400) ;
+    vp.set_samples(num_samples) ;
+    vp.set_max_depth(10) ;
 
     tracer_ptr=new Whitted(this) ;
-    GlossyReflector* reflective_ptr1=new GlossyReflector;
-	reflective_ptr1->set_ka(0.25) ;
-	reflective_ptr1->set_kd(0.5) ;
-	reflective_ptr1->set_cd(0.75, 0.75, 0) ;
-	reflective_ptr1->set_ks(0.15) ;
-	reflective_ptr1->set_exp(100) ;
-	reflective_ptr1->set_kr(0.75) ;
-	reflective_ptr1->set_cr(white) ;
+    
+    PlaneChecker *plane_checker_ptrl = new PlaneChecker;
+    plane_checker_ptrl->set_size(1.0) ;
+    plane_checker_ptrl->set_colorl(black) ;
+    plane_checker_ptrl->set_color2(white) ;
+
+    SV_Matte* sv_matte_ptrl = new SV_Matte;
+    sv_matte_ptrl->set_ka(0.75) ;
+    sv_matte_ptrl->set_kd(0.75) ;
+    sv_matte_ptrl->set_cd(plane_checker_ptrl) ;
+
+    Phong * phong_ptr = new Phong;
+    phong_ptr->set_ka(0.25);
+    phong_ptr->set_kd(0.65);
+    phong_ptr->set_cd(1, 1, 0);
+
+    Sphere *sphere_ptr = new Sphere;
+    sphere_ptr->set_center(-50, -120, 50);
+    sphere_ptr->set_radius(80.0);
+    sphere_ptr->set_color(0.5, 0.0, 0.0);
+    sphere_ptr->set_material(sv_matte_ptrl);
+    add_object(sphere_ptr);
+
+    sphere_ptr = new Sphere;
+    sphere_ptr->set_center(10, 120, 50);
+    sphere_ptr->set_radius(100.0);
+    sphere_ptr->set_color(0.5, 1.0, 0.0);
+    sphere_ptr->set_material(sv_matte_ptrl);
+    add_object(sphere_ptr);
+
 
     PointLight *light_ptr=new PointLight();
     light_ptr->set_location(50, 50, 1);
     light_ptr->scale_radiance(3.0);
     add_light(light_ptr);
 
-	Phong * phong_ptr = new Phong;
-	phong_ptr->set_ka(0.25);
-	phong_ptr->set_kd(0.65);
-	phong_ptr->set_cd(1, 1, 0);
-
-    Dielectric*dielectric_ptr=new Dielectric;
-    dielectric_ptr->set_ks(0.2) ;
-
-    dielectric_ptr->set_exp(2000) ;
-    dielectric_ptr->set_eta_in(1.5) ;
-    dielectric_ptr->set_eta_out(1.0) ;
-    dielectric_ptr->set_cf_in(1.0) ;
-    dielectric_ptr->set_cf_out(1.0) ;
-
-    FishBowl* fishbowl_ptr1= new FishBowl() ;
-    fishbowl_ptr1->set_material(dielectric_ptr) ;
-    add_object(fishbowl_ptr1) ;
-
-	// 设定相机
-	Pinhole* pinhole_ptr = new Pinhole;
-	pinhole_ptr->set_eye(0, 0, 500);
-	pinhole_ptr->set_lookat(0, 0, -50);
-	pinhole_ptr->set_view_distance(8000);
-	pinhole_ptr->compute_uvw();
-	set_camera(pinhole_ptr);
+    // 设定相机
+    Pinhole* pinhole_ptr = new Pinhole;
+    pinhole_ptr->set_eye(0, 0, 500);
+    pinhole_ptr->set_lookat(0, 0, -50);
+    pinhole_ptr->set_view_distance(8000);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
 
 }
 

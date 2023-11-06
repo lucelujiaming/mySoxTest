@@ -5,31 +5,31 @@
 
 class MultiJittered: public Sampler {
 
-	public:
+    public:
 
-		MultiJittered(void);
+        MultiJittered(void);
 
-		MultiJittered(const int num_samples);
+        MultiJittered(const int num_samples);
 
-		MultiJittered(const int num_samples, const int m);
+        MultiJittered(const int num_samples, const int m);
 
-		MultiJittered(const MultiJittered& mjs);
+        MultiJittered(const MultiJittered& mjs);
 
-		MultiJittered&
-		operator= (const MultiJittered& rhs);
+        MultiJittered&
+        operator= (const MultiJittered& rhs);
 
-		virtual MultiJittered*
-		clone(void) const;
+        virtual MultiJittered*
+        clone(void) const;
 
-		int rand_int(int min, int max);
+        int rand_int(int min, int max);
 
-		virtual
-		~MultiJittered(void);
+        virtual
+        ~MultiJittered(void);
 
-	private:
+    private:
 
-		virtual void
-		generate_samples(void);
+        virtual void
+        generate_samples(void);
 };
 
 #endif

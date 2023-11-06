@@ -41,11 +41,11 @@ class Light {
         virtual void
         set_shadows(bool val);
 
-		virtual void
-		set_cast_shadow(bool cs);
+        virtual void
+        set_cast_shadow(bool cs);
 
-		virtual bool
-		get_cast_shadow(void);
+        virtual bool
+        get_cast_shadow(void);
 
         virtual float
         G(const ShadeRec& sr) const;

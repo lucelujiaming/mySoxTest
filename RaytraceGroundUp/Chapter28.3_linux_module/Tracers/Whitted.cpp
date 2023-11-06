@@ -21,6 +21,26 @@ Whitted::Whitted(World* _worldPtr)
 
 Whitted::~Whitted(void) {}
 
+// -------------------------------------------------------------------- trace_ray
+
+RGBColor
+Whitted::trace_ray(const Ray& ray) const {
+    // 使用一个临时变量保存碰撞结果。
+    ShadeRec sr(world_ptr->hit_objects(ray));    
+    // 如果发生碰撞，
+    if (sr.hit_an_object) {
+        // 保存碰撞深度。
+        sr.depth = depth;
+        // 保存碰撞的光线。
+        sr.ray = ray;
+        // 调用反射材质的Shade方法。
+        // 也就是Reflective::shade函数。
+        // 这个函数内部会调用sr.w.tracer_ptr->trace_ray完成递归。
+        return (sr.material_ptr->shade(sr));   
+    }
+    else
+        return (world_ptr->background_color);
+}
 
 // -------------------------------------------------------------------- trace_ray
 // explained on page 499
@@ -52,7 +72,7 @@ Whitted::trace_ray(const Ray ray, const int depth) const {
 }
 
 RGBColor    
-Whitted::trace_ray(const Ray ray, double& tmin, const int depth) const {
+Whitted::trace_ray(const Ray ray, float& tmin, const int depth) const {
     // 大于最大反射次数，返回黑色。
     if (depth > world_ptr->vp.max_depth)
     {

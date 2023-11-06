@@ -18,8 +18,8 @@ class Material {
 
         virtual
         ~Material(void);
-		void
-		set_sampler(Sampler* s_ptr);
+        void
+        set_sampler(Sampler* s_ptr);
 
         // 计算环境光照，并遍历全部光源以计算直接漫反射光照。
         // 从而返回材质的颜色

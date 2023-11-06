@@ -28,6 +28,11 @@ Material::~Material(void)
 {}
 
 
+// ---------------------------------------------------------------------- set_sampler
+
+void
+Material::set_sampler(Sampler* s_ptr) {}
+
 // ---------------------------------------------------------------- shade
 
 RGBColor
@@ -51,6 +56,11 @@ Material::path_shade(ShadeRec& sr) {
     return (black);
 }
 
+// ---------------------------------------------------------------- global_shade
+RGBColor
+Material::global_shade(ShadeRec& sr) {
+    return (black);
+}
 
 // ---------------------------------------------------------------- get_Le
 

@@ -52,7 +52,7 @@ Whitted::trace_ray(const Ray ray, const int depth) const {
 }
 
 RGBColor    
-Whitted::trace_ray(const Ray ray, double& tmin, const int depth) const {
+Whitted::trace_ray(const Ray ray, float& tmin, const int depth) const {
     // 大于最大反射次数，返回黑色。
     if (depth > world_ptr->vp.max_depth)
     {

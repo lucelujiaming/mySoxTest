@@ -4,29 +4,29 @@
 // ---------------------------------------------------------------- default constructor
 
 Phong::Phong (void)
-	:	Material(),
-		ambient_brdf(new Lambertian),
-		diffuse_brdf(new Lambertian),
-		specular_brdf(new GlossySpecular)
+    :    Material(),
+        ambient_brdf(new Lambertian),
+        diffuse_brdf(new Lambertian),
+        specular_brdf(new GlossySpecular)
 {}
 
 
 // ---------------------------------------------------------------- copy constructor
 
 Phong::Phong(const Phong& m)
-	: 	Material(m)
+    :     Material(m)
 {
-	if(m.ambient_brdf)
-		ambient_brdf = m.ambient_brdf->clone();
-	else  ambient_brdf = NULL;
+    if(m.ambient_brdf)
+        ambient_brdf = m.ambient_brdf->clone();
+    else  ambient_brdf = NULL;
 
-	if(m.diffuse_brdf)
-		diffuse_brdf = m.diffuse_brdf->clone();
-	else  diffuse_brdf = NULL;
+    if(m.diffuse_brdf)
+        diffuse_brdf = m.diffuse_brdf->clone();
+    else  diffuse_brdf = NULL;
 
-	if(m.specular_brdf)
-		specular_brdf = m.specular_brdf->clone();
-	else  specular_brdf = NULL;
+    if(m.specular_brdf)
+        specular_brdf = m.specular_brdf->clone();
+    else  specular_brdf = NULL;
 }
 
 
@@ -34,7 +34,7 @@ Phong::Phong(const Phong& m)
 
 Material*
 Phong::clone(void) const {
-	return (new Phong(*this));
+    return (new Phong(*this));
 }
 
 
@@ -43,36 +43,36 @@ Phong::clone(void) const {
 Phong&
 Phong::operator= (const Phong& rhs) {
 
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	Material::operator=(rhs);
+    Material::operator=(rhs);
 
-	if (ambient_brdf) {
-		delete ambient_brdf;
-		ambient_brdf = NULL;
-	}
+    if (ambient_brdf) {
+        delete ambient_brdf;
+        ambient_brdf = NULL;
+    }
 
-	if (rhs.ambient_brdf)
-		ambient_brdf = rhs.ambient_brdf->clone();
-		
-	if (diffuse_brdf) {
-		delete diffuse_brdf;
-		diffuse_brdf = NULL;
-	}
+    if (rhs.ambient_brdf)
+        ambient_brdf = rhs.ambient_brdf->clone();
+        
+    if (diffuse_brdf) {
+        delete diffuse_brdf;
+        diffuse_brdf = NULL;
+    }
 
-	if (rhs.diffuse_brdf)
-		diffuse_brdf = rhs.diffuse_brdf->clone();
+    if (rhs.diffuse_brdf)
+        diffuse_brdf = rhs.diffuse_brdf->clone();
 
-	if (specular_brdf) {
-		delete specular_brdf;
-		specular_brdf = NULL;
-	}
+    if (specular_brdf) {
+        delete specular_brdf;
+        specular_brdf = NULL;
+    }
 
-	if (rhs.specular_brdf)
-		specular_brdf = rhs.specular_brdf->clone();
+    if (rhs.specular_brdf)
+        specular_brdf = rhs.specular_brdf->clone();
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -80,20 +80,20 @@ Phong::operator= (const Phong& rhs) {
 
 Phong::~Phong(void) {
 
-	if (ambient_brdf) {
-		delete ambient_brdf;
-		ambient_brdf = NULL;
-	}
+    if (ambient_brdf) {
+        delete ambient_brdf;
+        ambient_brdf = NULL;
+    }
 
-	if (diffuse_brdf) {
-		delete diffuse_brdf;
-		diffuse_brdf = NULL;
-	}
+    if (diffuse_brdf) {
+        delete diffuse_brdf;
+        diffuse_brdf = NULL;
+    }
 
-	if (specular_brdf) {
-		delete specular_brdf;
-		specular_brdf = NULL;
-	}
+    if (specular_brdf) {
+        delete specular_brdf;
+        specular_brdf = NULL;
+    }
 }
 
 
@@ -102,29 +102,29 @@ Phong::~Phong(void) {
 RGBColor
 Phong::shade(ShadeRec& sr) {
 
-	Vector3D 	wo 			= -sr.ray.d;
-	RGBColor 	L 			= ambient_brdf->rho(sr, wo) * sr.w.ambient_ptr->L(sr);
-	int 		num_lights	= sr.w.lights.size();
+    Vector3D     wo             = -sr.ray.d;
+    RGBColor     L             = ambient_brdf->rho(sr, wo) * sr.w.ambient_ptr->L(sr);
+    int         num_lights    = sr.w.lights.size();
 
-	for (int j = 0; j < num_lights; j++) {
-		Vector3D 	wi 		= sr.w.lights[j]->get_direction(sr);
-		float 		ndotwi 	= sr.normal * wi;
+    for (int j = 0; j < num_lights; j++) {
+        Vector3D     wi         = sr.w.lights[j]->get_direction(sr);
+        float         ndotwi     = sr.normal * wi;
 
-		if (ndotwi > 0.0) {
+        if (ndotwi > 0.0) {
 
-			bool in_shadow = false;
-			if (sr.w.lights[j]->casts_shadows()) {
-				Ray shadowRay(sr.hit_point, wi);
-				in_shadow = sr.w.lights[j]->in_shadow(shadowRay, sr);
-			}
+            bool in_shadow = false;
+            if (sr.w.lights[j]->casts_shadows()) {
+                Ray shadowRay(sr.hit_point, wi);
+                in_shadow = sr.w.lights[j]->in_shadow(shadowRay, sr);
+            }
 
-			if (!in_shadow)
-				L += (	diffuse_brdf->f(sr, wo, wi)
-						+ specular_brdf->f(sr, wo, wi)) * sr.w.lights[j]->L(sr) * ndotwi;
-		}
-	}
+            if (!in_shadow)
+                L += (    diffuse_brdf->f(sr, wo, wi)
+                        + specular_brdf->f(sr, wo, wi)) * sr.w.lights[j]->L(sr) * ndotwi;
+        }
+    }
 
-	return (L);
+    return (L);
 }
 
 
@@ -132,5 +132,5 @@ Phong::shade(ShadeRec& sr) {
 
 RGBColor
 Phong::get_Le(ShadeRec& sr) const{
-	return (black);
+    return (black);
 }

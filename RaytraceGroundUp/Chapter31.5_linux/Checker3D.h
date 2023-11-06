@@ -6,50 +6,50 @@
 
 class Checker3D : public Texture
 {
-	public:
+    public:
 
-		Checker3D(void);
+        Checker3D(void);
 
-		Checker3D(const Checker3D& cc);
+        Checker3D(const Checker3D& cc);
 
-		virtual Checker3D*
-		clone(void) const;
+        virtual Checker3D*
+        clone(void) const;
 
-		virtual
-		~Checker3D(void);
+        virtual
+        ~Checker3D(void);
 
         void
         set_size(const float s);
 
-		void
-		set_color1(const RGBColor& c);
+        void
+        set_color1(const RGBColor& c);
 
-		void
-		set_color1(const float r, const float g, const float b);
+        void
+        set_color1(const float r, const float g, const float b);
 
-		void
-		set_color1(const float c);
+        void
+        set_color1(const float c);
 
-		void
-		set_color2(const RGBColor& c);
+        void
+        set_color2(const RGBColor& c);
 
-		void
-		set_color2(const float r, const float g, const float b);
+        void
+        set_color2(const float r, const float g, const float b);
 
-		void
-		set_color2(const float c);
+        void
+        set_color2(const float c);
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-	protected:
+    protected:
 
-		Checker3D&
-		operator= (const Checker3D& rhs);
+        Checker3D&
+        operator= (const Checker3D& rhs);
 
     private:
 
-		float	   size;		        // width of a single checker
+        float       size;                // width of a single checker
         RGBColor color1;                // the color1
         RGBColor color2;                // the color2
 };
@@ -58,7 +58,7 @@ class Checker3D : public Texture
 // ---------------------------------------------------------------- set_size
 inline void
 Checker3D::set_size(const float s) {
-	size = s;
+    size = s;
 }
 
 
@@ -66,7 +66,7 @@ Checker3D::set_size(const float s) {
 
 inline void
 Checker3D::set_color1(const RGBColor& c) {
-	color1 = c;
+    color1 = c;
 }
 
 
@@ -74,7 +74,7 @@ Checker3D::set_color1(const RGBColor& c) {
 
 inline void
 Checker3D::set_color1(const float r, const float g, const float b) {
-	color1.r = r; color1.g = g; color1.b = b;
+    color1.r = r; color1.g = g; color1.b = b;
 }
 
 
@@ -82,7 +82,7 @@ Checker3D::set_color1(const float r, const float g, const float b) {
 
 inline void
 Checker3D::set_color1(const float c) {
-	color1.r = c; color1.g = c; color1.b = c;
+    color1.r = c; color1.g = c; color1.b = c;
 }
 
 
@@ -90,7 +90,7 @@ Checker3D::set_color1(const float c) {
 
 inline void
 Checker3D::set_color2(const RGBColor& c) {
-	color2 = c;
+    color2 = c;
 }
 
 
@@ -98,7 +98,7 @@ Checker3D::set_color2(const RGBColor& c) {
 
 inline void
 Checker3D::set_color2(const float r, const float g, const float b) {
-	color2.r = r; color2.g = g; color2.b = b;
+    color2.r = r; color2.g = g; color2.b = b;
 }
 
 
@@ -106,7 +106,7 @@ Checker3D::set_color2(const float r, const float g, const float b) {
 
 inline void
 Checker3D::set_color2(const float c) {
-	color2.r = c; color2.g = c; color2.b = c;
+    color2.r = c; color2.g = c; color2.b = c;
 }
 
 #endif // CHECKER3D_H

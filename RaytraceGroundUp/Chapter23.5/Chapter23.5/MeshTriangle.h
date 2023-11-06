@@ -1,4 +1,4 @@
-#ifndef __MESH_TRIANGLE__
+﻿#ifndef __MESH_TRIANGLE__
 #define __MESH_TRIANGLE__
 
 
@@ -19,53 +19,55 @@
 #include "Mesh.h"
 #include "BBox.h"
 
-class MeshTriangle: public GeometricObject {	
-	public:
+class MeshTriangle: public GeometricObject {    
+    public:
+        // 通过存储指向网格数据的指针、
+        Mesh*         mesh_ptr;                    // stores all the data
+        // 3个顶点索引以及
+        int            index0, index1, index2;      // indices into the vertices array in the mesh
+        // 网格中的法线数组，该类拥有访问网格数据结构的权力。
+        Normal        normal;                    
+        float        area;                        // required for translucency
+    
+    public:
+        
+        MeshTriangle(void);                                             
+        
+        MeshTriangle(Mesh* _mesh_ptr, const int i1, const int i2, const int i3);        
 
-		Mesh* 		mesh_ptr;					// stores all the data
-		int			index0, index1, index2;  	// indices into the vertices array in the mesh
-		Normal		normal;					
-		float		area;						// required for translucency
-	
-	public:
-		
-		MeshTriangle(void);   	  									
-		
-		MeshTriangle(Mesh* _mesh_ptr, const int i1, const int i2, const int i3);		
+        virtual MeshTriangle*                                         
+        clone(void) const = 0;
+    
+        MeshTriangle(const MeshTriangle& mt);                     
 
-		virtual MeshTriangle* 										
-		clone(void) const = 0;
-	
-		MeshTriangle(const MeshTriangle& mt); 					
+        virtual
+        ~MeshTriangle(void);                                       
 
-		virtual
-		~MeshTriangle(void);   									
+        MeshTriangle&                                                 
+        operator= (const MeshTriangle& rhs);
+        
+        virtual bool                                                  
+        hit(const Ray& ray, double& tmin, ShadeRec& sr) const = 0;
+        
+        virtual    bool                                                                     
+        shadow_hit(const Ray& ray, double& tmin) const;
+        
+        void 
+        compute_normal(const bool reverse_normal);
+                
+        virtual Normal
+        get_normal(void) const;                
 
-		MeshTriangle& 												
-		operator= (const MeshTriangle& rhs);
-		
-		virtual bool 												 
-		hit(const Ray& ray, double& tmin, ShadeRec& sr) const = 0;
-		
-		virtual	bool 																	
-		shadow_hit(const Ray& ray, double& tmin) const;
-		
-		void 
-		compute_normal(const bool reverse_normal);
-				
-		virtual Normal
-		get_normal(void) const;				
-
-		virtual BBox
-		get_bounding_box(void);
-		
-	protected:
-	
-		float  
-		interpolate_u(const float beta, const float gamma) const;
-		
-		float  
-		interpolate_v(const float beta, const float gamma) const;			
+        virtual BBox
+        get_bounding_box(void);
+        
+    protected:
+    
+        float  
+        interpolate_u(const float beta, const float gamma) const;
+        
+        float  
+        interpolate_v(const float beta, const float gamma) const;            
 };
 
 #endif

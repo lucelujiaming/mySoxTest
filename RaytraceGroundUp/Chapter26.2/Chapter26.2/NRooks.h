@@ -5,29 +5,29 @@
 
 class NRooks: public Sampler {
 
-	public:
+    public:
 
-		NRooks(void);
+        NRooks(void);
 
-		NRooks(const int num_samples);
+        NRooks(const int num_samples);
 
-		NRooks(const int num_samples, const int m);
+        NRooks(const int num_samples, const int m);
 
-		NRooks(const NRooks& nr);
+        NRooks(const NRooks& nr);
 
-		NRooks& 
-		operator= (const NRooks& rhs);
+        NRooks& 
+        operator= (const NRooks& rhs);
 
-		virtual NRooks*
-		clone(void) const;
+        virtual NRooks*
+        clone(void) const;
 
-		virtual
-		~NRooks(void);
+        virtual
+        ~NRooks(void);
 
-	private:
+    private:
 
-		virtual void
-		generate_samples(void);
+        virtual void
+        generate_samples(void);
 };
 
 #endif

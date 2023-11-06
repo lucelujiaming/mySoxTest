@@ -9,68 +9,68 @@
 // ---------------------------------------------------------------------- default constructor
 
 GeometricObject::GeometricObject(void)
-	: 	color(black),
-		material_ptr(NULL),
-		shadows(true)
+    :     color(black),
+        material_ptr(NULL),
+        shadows(true)
 {}
 
 
 // ---------------------------------------------------------------------- copy constructor
 
 GeometricObject::GeometricObject (const GeometricObject& object)
-	: 	color(object.color),
-		shadows(object.shadows) {
-	if(object.material_ptr)
-		material_ptr = object.material_ptr->clone(); 
-	else  
-		material_ptr = NULL;
-}	
+    :     color(object.color),
+        shadows(object.shadows) {
+    if(object.material_ptr)
+        material_ptr = object.material_ptr->clone(); 
+    else  
+        material_ptr = NULL;
+}    
 
 
 // ---------------------------------------------------------------------- assignment operator
 
-GeometricObject&														
+GeometricObject&                                                        
 GeometricObject::operator= (const GeometricObject& rhs) {
-	if (this == &rhs)
-		return (*this);
-		
-	color = rhs.color;
-	
-	if (material_ptr) {
-		delete material_ptr;
-		material_ptr = NULL;
-	}
+    if (this == &rhs)
+        return (*this);
+        
+    color = rhs.color;
+    
+    if (material_ptr) {
+        delete material_ptr;
+        material_ptr = NULL;
+    }
 
-	if (rhs.material_ptr)
-		material_ptr = rhs.material_ptr->clone();
+    if (rhs.material_ptr)
+        material_ptr = rhs.material_ptr->clone();
 
-	shadows = rhs.shadows;
+    shadows = rhs.shadows;
 
-	return (*this);
+    return (*this);
 }
 
 
 // ---------------------------------------------------------------------- destructor
 
-GeometricObject::~GeometricObject (void) {	
-	if (material_ptr) {
-		delete material_ptr;
-		material_ptr = NULL;
-	}
+GeometricObject::~GeometricObject (void) {    
+    if (material_ptr) {
+        delete material_ptr;
+        material_ptr = NULL;
+    }
 }
 
 
 // ---------------------------------------------------------------------- add_object
 // required for Compound objects 
 
-void 												
+void                                                 
 GeometricObject::add_object(GeometricObject* object_ptr) {}
 
 // ----------------------------------------------------------------------- set_material
 
 void
 GeometricObject::set_material(Material* mPtr) {
-	material_ptr = mPtr;
+    material_ptr = mPtr;
 }
 
 
@@ -78,21 +78,21 @@ GeometricObject::set_material(Material* mPtr) {
 
 Material*
 GeometricObject::get_material(void) const {
-	return (material_ptr);
+    return (material_ptr);
 }
 
 // ----------------------------------------------------------------------- get_normal
 
 Normal
 GeometricObject::get_normal(void) const{
-	return (Normal());
+    return (Normal());
 } 
 
 // ----------------------------------------------------------------------- compute_normal
 
 Normal
 GeometricObject::get_normal(const Point3D& p) {
-	return (Normal());
+    return (Normal());
 }  
 
 // ----------------------------------------------------------------------- sample
@@ -100,17 +100,17 @@ GeometricObject::get_normal(const Point3D& p) {
 
 Point3D 
 GeometricObject::sample(void) {
-	return (Point3D(0.0));
+    return (Point3D(0.0));
 }
 
 
 // ----------------------------------------------------------------------- pdf
 // returns the probability density function for area light shading
-		
+        
 float
 GeometricObject::pdf(const ShadeRec& sr) {
-	return (0.0);
-}  	
+    return (0.0);
+}      
 
-									
+                                    
 

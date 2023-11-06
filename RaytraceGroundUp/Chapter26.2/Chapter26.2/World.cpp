@@ -69,9 +69,9 @@ extern ofstream out;
 // and set its parameters
 
 World::World(void)
-	:  	background_color(black),
-		tracer_ptr(NULL),
-		ambient_ptr(new Ambient),
+    :      background_color(black),
+        tracer_ptr(NULL),
+        ambient_ptr(new Ambient),
         camera_ptr(NULL)
 {}
 
@@ -95,7 +95,7 @@ World::~World(void) {
 void World::render_scene() const
 {
     RGBColor pixel_color;
-	Ray ray;
+    Ray ray;
 
     double zw = 200.0;
     // double x, y;
@@ -190,24 +190,28 @@ World::clamp_to_color(const RGBColor& raw_color) const {
 void
 World::display_pixel(const int row, const int column, const RGBColor& raw_color) const {
 
-	RGBColor mapped_color;
+    RGBColor mapped_color;
 
-	if (vp.show_out_of_gamut)
-		mapped_color = clamp_to_color(raw_color);
-	else
-		mapped_color = max_to_one(raw_color);
-	if (vp.gamma != 1.0)
-		mapped_color = mapped_color.powc(vp.inv_gamma);
+    if (vp.show_out_of_gamut)
+    {
+        mapped_color = clamp_to_color(raw_color);
+    }
+    else
+    {
+        mapped_color = max_to_one(raw_color);
+    }
+    if (vp.gamma != 1.0)
+        mapped_color = mapped_color.powc(vp.inv_gamma);
 
-	//have to start from max y coordinate to convert to screen coordinates
-	int x = column;
-	int y = vp.vres - row - 1;
+    //have to start from max y coordinate to convert to screen coordinates
+    int x = column;
+    int y = vp.vres - row - 1;
 
-	// paintArea->setPixel(x, y, (int)(mapped_color.r * 255),  // 
+    // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),  // 
     //                          (int)(mapped_color.g * 255),   // 
     //                          (int)(mapped_color.b * 255));  // 
     // cout << (int)(mapped_color.r * 255) << " " 
-	//      << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl; // 
+    //      << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl; // 
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -223,20 +227,20 @@ World::hit_objects(const Ray& ray) {
     double      tmin            = kHugeValue;
     int         num_objects     = objects.size();
 
-	for (int j = 0; j < num_objects; j++)
-	{
-		if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
-			sr.hit_an_object = true;
-			tmin = t;
-			//  We can use material now
-			// Lujiaming uncomment at 230913
-			sr.material_ptr = objects[j]->get_material();
-			sr.hit_point = ray.o + t * ray.d;
-			normal = sr.normal;
-			local_hit_point = sr.local_hit_point;
-			sr.color = objects[j]->get_color();
-		}
-	}
+    for (int j = 0; j < num_objects; j++)
+    {
+        if (objects[j]->hit(ray, t, sr) && (t < tmin)) {
+            sr.hit_an_object = true;
+            tmin = t;
+            //  We can use material now
+            // Lujiaming uncomment at 230913
+            sr.material_ptr = objects[j]->get_material();
+            sr.hit_point = ray.o + t * ray.d;
+            normal = sr.normal;
+            local_hit_point = sr.local_hit_point;
+            sr.color = objects[j]->get_color();
+        }
+    }
 
     if(sr.hit_an_object) {
         sr.t = tmin;
@@ -252,62 +256,113 @@ double randf()
     return (double)(rand()/(double)RAND_MAX);
 }
 
+#define SCALE_FACTOR   5.0
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-	//construct view plane， integrator， camera， and lights
-	// int num_spheres=100000;
-	int num_samples = 8;
-	vp.set_hres(600) ;
-	vp.set_vres(400) ;
-	vp.set_samples(num_samples) ;
-	vp.set_max_depth(10) ;
+    //construct view plane， integrator， camera， and lights
+    // int num_spheres=100000;
+    int num_spheres=1000;
+    float volume=0.1/num_spheres;
+    float radius=pow(0.75*volume/3.14159, 0.333333) * SCALE_FACTOR;
     
-    tracer_ptr=new PathTrace(this) ;
-    GlossyReflector* reflective_ptr1=new GlossyReflector;
-	reflective_ptr1->set_ka(0.25) ;
-	reflective_ptr1->set_kd(0.5) ;
-	reflective_ptr1->set_cd(0.75, 0.75, 0) ;
-	reflective_ptr1->set_ks(0.15) ;
-	reflective_ptr1->set_exp(100) ;
-	reflective_ptr1->set_kr(0.75) ;
-	reflective_ptr1->set_cr(white) ;
+    int num_samples = 1;
+    // vp.set_hres(800) ;
+    // vp.set_vres(800) ;
+    vp.set_samples(num_samples) ;
+    vp.set_max_depth(5) ;
+    
+    tracer_ptr = new PathTrace(this);
+    // Only Matte supports path_shade 
+    Matte * matte_plane_ptr = new Matte;
+    matte_plane_ptr->set_cd(0.5, 0.0, 0.5);
+    matte_plane_ptr->set_ka(0.25);
+    matte_plane_ptr->set_kd(0.8);
+    MultiJittered * multi_jitter_ptr = new MultiJittered(num_samples);
+    multi_jitter_ptr->map_samples_to_hemisphere(1);
+    matte_plane_ptr->set_sampler(multi_jitter_ptr);
 
-	reflective_ptr1->set_samples(num_samples, 0.5);
+    Matte * matte_sphere1_ptr = new Matte;
+    matte_sphere1_ptr->set_cd(0.75, 1.0, 0.0);
+    matte_sphere1_ptr->set_ka(0.25);
+    matte_sphere1_ptr->set_kd(0.8);
+    matte_sphere1_ptr->set_sampler(multi_jitter_ptr);
 
-	Phong * phong_ptr = new Phong;
-	phong_ptr->set_ka(0.25);
-	phong_ptr->set_kd(0.65);
-	phong_ptr->set_cd(1, 1, 0);
+    //Matte * matte_sphere2_ptr = new Matte;
+    //matte_sphere2_ptr->set_cd(0.0, 0.5, 1.0);
+    //matte_sphere2_ptr->set_ka(0.25);
+    //matte_sphere2_ptr->set_kd(0.8);
+    //matte_sphere2_ptr->set_sampler(multi_jitter_ptr);
 
-	Sphere *sphere_ptr = new Sphere;
-	sphere_ptr->set_center(-10, -40, 0);
-	sphere_ptr->set_radius(100.0);
-	sphere_ptr->set_color(1.0, 0.0, 0.0);
-	sphere_ptr->set_material(reflective_ptr1);
-	add_object(sphere_ptr);
+    //Sphere *sphere_ptr = new Sphere;
+    //sphere_ptr->set_center(-10, -30, 50);
+    //sphere_ptr->set_radius(240.0);
+    //sphere_ptr->set_color(0.5, 0.0, 0.0);
+    //sphere_ptr->set_material(matte_sphere1_ptr);
+    //add_object(sphere_ptr);
 
-	sphere_ptr = new Sphere;
-	sphere_ptr->set_center(0, 60, 0);
-	sphere_ptr->set_radius(80.0);
-	sphere_ptr->set_color(1.0, 1.0, 0.0);
-	sphere_ptr->set_material(reflective_ptr1);
-	add_object(sphere_ptr);
+    //sphere_ptr = new Sphere;
+    //sphere_ptr->set_center(0, 110, 50);
+    //sphere_ptr->set_radius(50.0);
+    //sphere_ptr->set_color(0.5, 1.0, 0.0);
+    //sphere_ptr->set_material(matte_sphere2_ptr);
+    //add_object(sphere_ptr);
+    
+    Grid* grid_ptr=new Grid;
+    set_rand_seed(15);
+    
+    for(int j = 0; j < num_spheres; j++) {
+        Matte*matte_ptr=new Matte;
+        matte_ptr->set_ka(0.25);
+        matte_ptr->set_kd(0.75);
+        matte_ptr->set_cd(randf(), randf(), randf());
+        
+        Sphere*sphere_ptr=new Sphere;
+        sphere_ptr->set_radius(radius);
+        sphere_ptr->set_center(
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()),
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()),
+            SCALE_FACTOR * (1.0 - 2.0 *rand_float()));
+        sphere_ptr->set_material(matte_sphere1_ptr);
+        grid_ptr->add_object(sphere_ptr);
+    }
+    grid_ptr->setup_cells(); 
+    
+    Phong* phong_ptr=new Phong;
+    phong_ptr->set_cd(0.75);
+    phong_ptr->set_ka(0.25);
+    phong_ptr->set_kd(0.8);
+    phong_ptr->set_ks(0.15);
+    phong_ptr->set_exp(50);
+    
+    Instance* instance_ptr=new Instance(grid_ptr);
+    instance_ptr->set_material(phong_ptr);
+    instance_ptr->scale(10, 10, 1);
+    add_object(instance_ptr);
 
-	Plane *plane_ptr = new Plane;
-	plane_ptr->a = Vector3D(0.0);
-	plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
-	plane_ptr->set_color(0.0, 1.0, 0.0);
-	plane_ptr->set_material(phong_ptr);
-	add_object(plane_ptr);
+    Plane *plane_ptr = new Plane;
+    plane_ptr->a = Vector3D(0.0);
+    plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+    plane_ptr->set_color(0.0, 0.0, 0.5);
+    plane_ptr->set_material(matte_plane_ptr);
+    add_object(plane_ptr);
 
-	// 设定相机
-	Pinhole* pinhole_ptr = new Pinhole;
-	pinhole_ptr->set_eye(300, 400, 500);
-	pinhole_ptr->set_lookat(0, 0, -50);
-	pinhole_ptr->set_view_distance(400);
-	pinhole_ptr->compute_uvw();
-	set_camera(pinhole_ptr);
+    Emissive*emissive_ptr = new Emissive;
+    emissive_ptr->set_ce(1.0, 1.0, 0.5);
+
+    EnvironmentLight* light_ptr = new EnvironmentLight;
+    light_ptr->set_material(emissive_ptr);
+    light_ptr->set_sampler(new MultiJittered(num_samples));
+    light_ptr->set_shadows(true);
+    add_light(light_ptr);
+
+    // 设定相机
+    Pinhole* pinhole_ptr = new Pinhole;
+    pinhole_ptr->set_eye(0, 0, 500);
+    pinhole_ptr->set_lookat(0, 0, -50);
+    pinhole_ptr->set_view_distance(400);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
 
 }
 

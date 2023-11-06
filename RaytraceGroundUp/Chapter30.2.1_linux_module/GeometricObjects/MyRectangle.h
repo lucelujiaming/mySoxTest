@@ -54,7 +54,7 @@ class MyRectangle: public GeometricObject {
         get_normal(const Point3D& p);        
         
         virtual float                                                
-			pdf(const ShadeRec& sr);
+            pdf(const ShadeRec& sr);
         
     private:
     

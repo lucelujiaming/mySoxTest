@@ -1,7 +1,7 @@
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include "ImageTexture.h"
@@ -13,41 +13,41 @@
 // ---------------------------------------------------------------- default constructor
 
 ImageTexture::ImageTexture(void)
-	:	Texture(),
-		hres(100),
-		vres(100),
-		image_ptr(NULL),
-		mapping_ptr(NULL)
+    :    Texture(),
+        hres(100),
+        vres(100),
+        image_ptr(NULL),
+        mapping_ptr(NULL)
 {}
 
 
 // ---------------------------------------------------------------- constructor
 
 ImageTexture::ImageTexture(Image* _image_ptr)
-	:	Texture(),
-		hres(_image_ptr->get_hres()),
-		vres(_image_ptr->get_vres()),
-		image_ptr(_image_ptr),
-		mapping_ptr(NULL)
+    :    Texture(),
+        hres(_image_ptr->get_hres()),
+        vres(_image_ptr->get_vres()),
+        image_ptr(_image_ptr),
+        mapping_ptr(NULL)
 {}
 
 
 // ---------------------------------------------------------------- copy constructor
 
 ImageTexture::ImageTexture(const ImageTexture& it)
-	: 	Texture(it),
-		hres(it.hres),
-		vres(it.vres)
+    :     Texture(it),
+        hres(it.hres),
+        vres(it.vres)
 {
-	if (it.image_ptr)
-		*image_ptr = *it.image_ptr;
-	else
-		image_ptr = NULL;
-		
-	if (it.mapping_ptr)
-		mapping_ptr = it.mapping_ptr->clone();
-	else
-		mapping_ptr = NULL;
+    if (it.image_ptr)
+        *image_ptr = *it.image_ptr;
+    else
+        image_ptr = NULL;
+        
+    if (it.mapping_ptr)
+        mapping_ptr = it.mapping_ptr->clone();
+    else
+        mapping_ptr = NULL;
 }
 
 
@@ -55,55 +55,55 @@ ImageTexture::ImageTexture(const ImageTexture& it)
 
 ImageTexture& 
 ImageTexture::operator= (const ImageTexture& rhs) {
-	if (this == &rhs)
-		return (*this);
-	
-	Texture::operator= (rhs);
-	
-	hres = rhs.hres;
-	vres = rhs.vres;
-	
-	if (image_ptr) {
-		delete image_ptr;
-		image_ptr = NULL;
-	}
-	
-	if (rhs.image_ptr)
-		*image_ptr = *rhs.image_ptr;
-	
-	if (mapping_ptr) {
-		delete mapping_ptr;
-		mapping_ptr = NULL;
-	}
-	
-	if (rhs.mapping_ptr)
-		mapping_ptr = rhs.mapping_ptr->clone();
+    if (this == &rhs)
+        return (*this);
+    
+    Texture::operator= (rhs);
+    
+    hres = rhs.hres;
+    vres = rhs.vres;
+    
+    if (image_ptr) {
+        delete image_ptr;
+        image_ptr = NULL;
+    }
+    
+    if (rhs.image_ptr)
+        *image_ptr = *rhs.image_ptr;
+    
+    if (mapping_ptr) {
+        delete mapping_ptr;
+        mapping_ptr = NULL;
+    }
+    
+    if (rhs.mapping_ptr)
+        mapping_ptr = rhs.mapping_ptr->clone();
 
-	return (*this);
+    return (*this);
 }
 
 
 // ---------------------------------------------------------------- clone
 
-ImageTexture*										
+ImageTexture*                                        
 ImageTexture::clone(void) const {
-	return (new ImageTexture (*this));
-}	
+    return (new ImageTexture (*this));
+}    
 
 
 // ---------------------------------------------------------------- destructor
 
 ImageTexture::~ImageTexture (void) {
 
-	if (image_ptr) {
-		delete image_ptr;
-		image_ptr = NULL;
-	}
-	
-	if (mapping_ptr) {
-		delete mapping_ptr;
-		mapping_ptr = NULL;
-	}
+    if (image_ptr) {
+        delete image_ptr;
+        image_ptr = NULL;
+    }
+    
+    if (mapping_ptr) {
+        delete mapping_ptr;
+        mapping_ptr = NULL;
+    }
 }
 
 
@@ -115,22 +115,24 @@ ImageTexture::~ImageTexture (void) {
 // from the uv coordinates stored in the ShadeRec object in the uv triangles' hit functions
 // See, for example, Listing 29.12.
 
-RGBColor														
-ImageTexture::get_color(const ShadeRec& sr) const {	
-	int row;
-	int column;
+RGBColor                                                        
+ImageTexture::get_color(const ShadeRec& sr) const {    
+    int row;
+    int column;
     // 首先检测贴图指针
-	if (mapping_ptr)
+    if (mapping_ptr)
     {
-        // 这是因为包含纹理三角形网格并不需要贴图，其原因将在后续小节中加以解释。
-		mapping_ptr->get_texel_coordinates(sr.local_hit_point, hres, vres, row, column);
+        // 贴图类不包含数据成员且只需定义get_texel_coordinates() 函数。
+        mapping_ptr->get_texel_coordinates(sr.local_hit_point, hres, vres, row, column);
     }
-	else {
-		row 	= (int)(sr.v * (vres - 1));  	
-		column 	= (int)(sr.u * (hres - 1));	
-	}
-	// 获取像素坐标
-	return (image_ptr->get_color(row, column));
+    // 因为包含纹理三角形网格并不需要贴图，其原因将在后续小节中加以解释。
+    // 此时，贴图指针将为null。
+    else {
+        row     = (int)(sr.v * (vres - 1));      
+        column     = (int)(sr.u * (hres - 1));    
+    }
+    // 获取像素坐标
+    return (image_ptr->get_color(row, column));
 }  
 
 

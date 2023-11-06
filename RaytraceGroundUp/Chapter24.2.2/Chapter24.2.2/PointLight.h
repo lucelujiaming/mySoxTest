@@ -6,53 +6,53 @@
 
 class PointLight: public Light {
 
-	public:
+    public:
 
-		PointLight(void);
+        PointLight(void);
 
-		PointLight(const PointLight& a);
+        PointLight(const PointLight& a);
 
-		virtual Light*
-		clone(void) const;
+        virtual Light*
+        clone(void) const;
 
-		PointLight&
-		operator= (const PointLight& rhs);
+        PointLight&
+        operator= (const PointLight& rhs);
 
-		virtual
-		~PointLight(void);
+        virtual
+        ~PointLight(void);
 
-		virtual Vector3D
-		get_direction(ShadeRec& sr);
+        virtual Vector3D
+        get_direction(ShadeRec& sr);
 
-		virtual RGBColor
-		L(ShadeRec& sr);
+        virtual RGBColor
+        L(ShadeRec& sr);
 
-		virtual bool
-		casts_shadows(void) const;
+        virtual bool
+        casts_shadows(void) const;
 
-		virtual void
-		set_shadows(bool _s);
+        virtual void
+        set_shadows(bool _s);
 
-		void
-		set_location(float x, float y, float z);
+        void
+        set_location(float x, float y, float z);
 
-		void
-		scale_radiance(float _r);
+        void
+        scale_radiance(float _r);
 
-		bool
-		in_shadow(const Ray& ray, const ShadeRec& sr) const;
+        bool
+        in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
-		virtual float
-		G(const ShadeRec& sr) const;
+        virtual float
+        G(const ShadeRec& sr) const;
 
-		virtual float
-		pdf(const ShadeRec& sr) const;
+        virtual float
+        pdf(const ShadeRec& sr) const;
 
-	private:
-		
-		float 		ls;		// radiant scale factor
-		RGBColor 	color;
-		Point3D 	location;
+    private:
+        
+        float         ls;        // radiant scale factor
+        RGBColor     color;
+        Point3D     location;
 };
 
 
@@ -61,7 +61,7 @@ class PointLight: public Light {
 inline bool
 PointLight::casts_shadows() const {
 
-	return Light::casts_shadows();
+    return Light::casts_shadows();
 }
 
 
@@ -70,7 +70,7 @@ PointLight::casts_shadows() const {
 inline void
 PointLight::set_shadows(bool _s) {
 
-	return Light::set_shadows(_s);
+    return Light::set_shadows(_s);
 }
 
 
@@ -78,7 +78,7 @@ PointLight::set_shadows(bool _s) {
 
 inline void
 PointLight::set_location(float _x, float _y, float _z) {
-	location.x = _x; location.y = _y; location.z = _z;
+    location.x = _x; location.y = _y; location.z = _z;
 }
 
 
@@ -86,7 +86,7 @@ PointLight::set_location(float _x, float _y, float _z) {
 
 inline void
 PointLight::scale_radiance(float _r) {
-	ls *= _r;
+    ls *= _r;
 }
 
 #endif

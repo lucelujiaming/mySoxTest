@@ -52,7 +52,7 @@ PathTrace::trace_ray(const Ray ray, const int depth) const {
 // for color filtering
 
 RGBColor    
-PathTrace::trace_ray(const Ray ray, double& tmin, const int depth) const {
+PathTrace::trace_ray(const Ray ray, float& tmin, const int depth) const {
     if (depth > world_ptr->vp.max_depth)
         return (black);
     else {

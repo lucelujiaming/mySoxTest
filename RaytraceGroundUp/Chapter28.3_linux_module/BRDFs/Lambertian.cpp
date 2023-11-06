@@ -54,8 +54,8 @@ Lambertian::operator= (const Lambertian& rhs) {
 
 void
 Lambertian::set_sampler(Sampler* s_ptr) {
-	sampler_ptr = s_ptr;
-	sampler_ptr->map_samples_to_hemisphere(1);
+    sampler_ptr = s_ptr;
+    sampler_ptr->map_samples_to_hemisphere(1);
 }
 
 // ---------------------------------------------------------------------- f
@@ -81,21 +81,21 @@ RGBColor
 Lambertian::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const {
 
     // 构造正交基向量且w=n，
-	Vector3D w = sr.normal;
-	Vector3D v = Vector3D(0.0034, 1, 0.0071) ^ w;
-	v.normalize();
-	Vector3D u = v ^ w;
+    Vector3D w = sr.normal;
+    Vector3D v = Vector3D(0.0034, 1, 0.0071) ^ w;
+    v.normalize();
+    Vector3D u = v ^ w;
 
     // 并于随后对呈余弦分布且法线居中的半球模型进行采样。
     // 这里，需要在Lambertian类型BRDF Matte::diffuse_brdf中定义一个(继承)采样器对象，
     // 且采样点呈余弦分布。
-	Point3D sp = sampler_ptr->sample_hemisphere();
-	wi = sp.x * u + sp.y * v + sp.z * w;
-	wi.normalize();
+    Point3D sp = sampler_ptr->sample_hemisphere();
+    wi = sp.x * u + sp.y * v + sp.z * w;
+    wi.normalize();
     // 根据式(18.6)计算pdf=cosθi/π
-	pdf = sr.normal * wi * invPI;
+    pdf = sr.normal * wi * invPI;
     // 返回kd * cd/π。
-	return (kd * cd * invPI);
+    return (kd * cd * invPI);
 }
 
 

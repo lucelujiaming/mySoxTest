@@ -7,60 +7,60 @@
 
 class FBmTextureWrapped : public Texture
 {
-	public:
+    public:
 
-		FBmTextureWrapped(void);
+        FBmTextureWrapped(void);
 
-		FBmTextureWrapped(LatticeNoise* ln_ptr);
+        FBmTextureWrapped(LatticeNoise* ln_ptr);
 
-		FBmTextureWrapped(const FBmTextureWrapped& ft);
+        FBmTextureWrapped(const FBmTextureWrapped& ft);
 
-		virtual FBmTextureWrapped*
-		clone(void) const;
+        virtual FBmTextureWrapped*
+        clone(void) const;
 
-		virtual
-		~FBmTextureWrapped(void);
+        virtual
+        ~FBmTextureWrapped(void);
 
-		void
-		set_noise(LatticeNoise* ln_ptr);
+        void
+        set_noise(LatticeNoise* ln_ptr);
 
-		void
-		set_color(const RGBColor& c);
+        void
+        set_color(const RGBColor& c);
 
-		void
-		set_color(const float r, const float g, const float b);
+        void
+        set_color(const float r, const float g, const float b);
 
-		void
-		set_color(const float c);
+        void
+        set_color(const float c);
 
-		void
-		set_min_value(const float mi);
+        void
+        set_min_value(const float mi);
 
-		void
-		set_max_value(const float ma);
+        void
+        set_max_value(const float ma);
 
-		void
-		set_expansion_number(const float en);
+        void
+        set_expansion_number(const float en);
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-	protected:
+    protected:
 
-		FBmTextureWrapped&
-		operator= (const FBmTextureWrapped& rhs);
+        FBmTextureWrapped&
+        operator= (const FBmTextureWrapped& rhs);
 
     private:
 
-		LatticeNoise*		noise_ptr;		RGBColor 	  		color;		float		  		min_value, max_value;	// scaling factors
-		float               expansion_number;       // expand the amplitude of the noise function};
+        LatticeNoise*        noise_ptr;        RGBColor               color;        float                  min_value, max_value;    // scaling factors
+        float               expansion_number;       // expand the amplitude of the noise function};
 
 
 // ---------------------------------------------------------------- set_color
 
 inline void
 FBmTextureWrapped::set_noise(LatticeNoise* ln_ptr) {
-	noise_ptr = ln_ptr;
+    noise_ptr = ln_ptr;
 }
 
 
@@ -68,7 +68,7 @@ FBmTextureWrapped::set_noise(LatticeNoise* ln_ptr) {
 
 inline void
 FBmTextureWrapped::set_color(const RGBColor& c) {
-	color = c;
+    color = c;
 }
 
 
@@ -76,7 +76,7 @@ FBmTextureWrapped::set_color(const RGBColor& c) {
 
 inline void
 FBmTextureWrapped::set_color(const float r, const float g, const float b) {
-	color.r = r; color.g = g; color.b = b;
+    color.r = r; color.g = g; color.b = b;
 }
 
 
@@ -84,7 +84,7 @@ FBmTextureWrapped::set_color(const float r, const float g, const float b) {
 
 inline void
 FBmTextureWrapped::set_color(const float c) {
-	color.r = c; color.g = c; color.b = c;
+    color.r = c; color.g = c; color.b = c;
 }
 
 
@@ -92,7 +92,7 @@ FBmTextureWrapped::set_color(const float c) {
 
 inline void
 FBmTextureWrapped::set_min_value(const float mi) {
-	min_value = mi;
+    min_value = mi;
 }
 
 
@@ -100,7 +100,7 @@ FBmTextureWrapped::set_min_value(const float mi) {
 
 inline void
 FBmTextureWrapped::set_max_value(const float ma) {
-	max_value = ma;
+    max_value = ma;
 }
 
 
@@ -108,6 +108,6 @@ FBmTextureWrapped::set_max_value(const float ma) {
 
 inline void
 FBmTextureWrapped::set_expansion_number(const float en) {
-	expansion_number = en;
+    expansion_number = en;
 }
 #endif // FBMTEXTUREWRAPPED_H

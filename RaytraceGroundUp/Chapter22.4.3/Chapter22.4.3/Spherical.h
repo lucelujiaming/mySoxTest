@@ -6,47 +6,47 @@
 
 class Spherical: public Camera {
 
-	public:
+    public:
 
-		Spherical();
+        Spherical();
 
-		Spherical(const Spherical& ph);
+        Spherical(const Spherical& ph);
 
-		virtual Camera*
-		clone(void) const;
+        virtual Camera*
+        clone(void) const;
 
-		Spherical&
-		operator= (const Spherical& rhs);
+        Spherical&
+        operator= (const Spherical& rhs);
 
-		virtual
-		~Spherical();
+        virtual
+        ~Spherical();
 
-		void
-		set_psi_max(const float max);
+        void
+        set_psi_max(const float max);
 
-		void
-		set_lambda_max(const float max);
+        void
+        set_lambda_max(const float max);
 
-		void
-		set_horizontal_fov(const float fov);
+        void
+        set_horizontal_fov(const float fov);
 
-		void
-		set_vertical_fov(const float fov);
+        void
+        set_vertical_fov(const float fov);
 
-		Vector3D
-		ray_direction(const Point2D& pixel_point, const int hres,
-						const int vres, const float s) const;
+        Vector3D
+        ray_direction(const Point2D& pixel_point, const int hres,
+                        const int vres, const float s) const;
 
-		void
-		render_stereo(const World& w, float x, int pixel_offset);
+        void
+        render_stereo(const World& w, float x, int pixel_offset);
 
-		virtual void
-		render_scene(const World& w);
+        virtual void
+        render_scene(const World& w);
 
-	private:
+    private:
 
-		float	psi_max;		// in degrees
-		float	lambda_max;		// in degrees
+        float    psi_max;        // in degrees
+        float    lambda_max;        // in degrees
 };
 
 
@@ -54,7 +54,7 @@ class Spherical: public Camera {
 
 inline void
 Spherical::set_psi_max(float _m) {
-	psi_max = _m;
+    psi_max = _m;
 }
 
 
@@ -62,7 +62,7 @@ Spherical::set_psi_max(float _m) {
 
 inline void
 Spherical::set_lambda_max(float _l) {
-	lambda_max = _l;
+    lambda_max = _l;
 }
 
 
@@ -70,7 +70,7 @@ Spherical::set_lambda_max(float _l) {
 
 inline void
 Spherical::set_horizontal_fov(float _v) {
-	psi_max = 2 * _v; // this right? check page 191 later
+    psi_max = 2 * _v; // this right? check page 191 later
 }
 
 
@@ -78,7 +78,7 @@ Spherical::set_horizontal_fov(float _v) {
 
 inline void
 Spherical::set_vertical_fov(float _v) {
-	lambda_max = 2 * _v;  // this right? check page 191 later
+    lambda_max = 2 * _v;  // this right? check page 191 later
 }
 
 #endif

@@ -1,39 +1,61 @@
-#ifndef __VIEW_PLANE__
+﻿#ifndef __VIEW_PLANE__
 #define __VIEW_PLANE__
 
 #include "Sampler.h"
 
 //-------------------------------------------------------------------------------------- class ViewPlane
+// View Plane类存储了水平、垂直方向上的全部像素以及像素尺寸。
+// 视平面中包含了构成场景渲染窗口的全部像素。
+// 在本章中，视平面将垂直于Zw轴，其中的像素将以水平多行方式排列。另外，zw轴将穿越窗口中心位置。
 class ViewPlane {
 
-	public:
-		int 			hres;						// horizontal image resolution
-		int 			vres;						// vertical image resolution
-		float			s;							// pixel size
-		int				num_samples;				// number of samples per pixel
-		int				max_depth;					// max number of reflected bounce rays
-		
-		float			gamma;						// gamma correction factor
-		float			inv_gamma;					// the inverse of the gamma correction factor
-		bool			show_out_of_gamut;			// display red if RGBColor out of gamut
-		Sampler*		sampler_ptr;
+    public:
+        int             hres;                        // horizontal image resolution
+        int             vres;                        // vertical image resolution
+        float           s;                           // pixel size
+        // 视平面将提供执行抗锯齿操作时的采样点数量，因而需要采样数量
+        int             num_samples;                 // number of samples per pixel
+        // P400：光线的最大反射次数。
+        int             max_depth;                   // max number of reflected bounce rays
+        
+        float           gamma;                       // gamma correction factor
+        float           inv_gamma;                   // the inverse of the gamma correction factor
+        bool            show_out_of_gamut;           // display red if RGBColor out of gamut
+        // 视平面将提供执行抗锯齿操作时的采样点数量，因而需要存储指向采样器对象的指针
+        Sampler*        sampler_ptr;
 
-	public:
-		ViewPlane();								// default Constructor
-		ViewPlane(const ViewPlane& vp);				// copy constructor
-		ViewPlane& operator= (const ViewPlane& rhs);		// assignment operator
-		~ViewPlane();							// destructor
+    public:
+        ViewPlane();                                 // default Constructor
 
-		void set_hres(const int h_res);
-		void set_vres(const int v_res);
-		void set_pixel_size(const float size);
-		void set_gamma(const float g);
-		void set_gamut_display(const bool show);
-		void set_samples(const int n);
+        ViewPlane(const ViewPlane& vp);              // copy constructor
 
-		void set_sampler(Sampler* sp);
+        ViewPlane& operator= (const ViewPlane& rhs); // assignment operator
 
-		void set_max_depth(int depth);
+        ~ViewPlane();                                // destructor
+
+        void
+        set_hres(const int h_res);
+
+        void
+        set_vres(const int v_res);
+
+        void
+        set_pixel_size(const float size);
+
+        void
+        set_gamma(const float g);
+
+        void
+        set_gamut_display(const bool show);
+
+        void
+        set_samples(const int n);
+
+        // 视平面将提供执行抗锯齿操作时的采样点数量，因而需要相应的设置函数
+        void set_sampler(Sampler* sp);
+
+        void
+        set_max_depth(int depth);
 };
 
 
@@ -41,7 +63,7 @@ class ViewPlane {
 
 inline void
 ViewPlane::set_hres(const int h_res) {
-	hres = h_res;
+    hres = h_res;
 }
 
 
@@ -49,7 +71,7 @@ ViewPlane::set_hres(const int h_res) {
 
 inline void
 ViewPlane::set_vres(const int v_res) {
-	vres = v_res;
+    vres = v_res;
 }
 
 
@@ -57,7 +79,7 @@ ViewPlane::set_vres(const int v_res) {
 
 inline void
 ViewPlane::set_pixel_size(const float size) {
-	s = size;
+    s = size;
 }
 
 
@@ -65,8 +87,8 @@ ViewPlane::set_pixel_size(const float size) {
 
 inline void
 ViewPlane::set_gamma(const float g) {
-	gamma = g;
-	inv_gamma = 1.0 / gamma;
+    gamma = g;
+    inv_gamma = 1.0 / gamma;
 }
 
 
@@ -74,7 +96,7 @@ ViewPlane::set_gamma(const float g) {
 
 inline void
 ViewPlane::set_gamut_display(const bool show) {
-	show_out_of_gamut = show;
+    show_out_of_gamut = show;
 }
 
 
@@ -82,9 +104,10 @@ ViewPlane::set_gamut_display(const bool show) {
 
 inline void
 ViewPlane::set_max_depth(int depth) {
-	max_depth = depth;
+    max_depth = depth;
 }
 
+// 函数将使用一个采样器对象指针作为参数，该函数对于采样器的类型并没有任何要求。
 inline void ViewPlane::set_sampler(Sampler* sp) {
     if(sampler_ptr) {
         delete sampler_ptr;
@@ -92,6 +115,7 @@ inline void ViewPlane::set_sampler(Sampler* sp) {
     }
     num_samples = sp->get_num_samples();
     sampler_ptr = sp;
+    // 密度公式: 将位于正方形内的采样点映射至对应的半球体上。
     sampler_ptr->map_samples_to_hemisphere(50);
 }
 

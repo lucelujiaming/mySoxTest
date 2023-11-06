@@ -1,57 +1,57 @@
 #ifndef GLOSSYREFLECTOR_H
 #define GLOSSYREFLECTOR_H
 
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include "Phong.h"
 #include "GlossySpecular.h"
 
 class GlossyReflector: public Phong {
-	public:
+    public:
 
-		GlossyReflector(void);
+        GlossyReflector(void);
 
-		GlossyReflector(const GlossyReflector& gr);
+        GlossyReflector(const GlossyReflector& gr);
 
-		GlossyReflector&
-		operator= (const GlossyReflector& rhs);
+        GlossyReflector&
+        operator= (const GlossyReflector& rhs);
 
-		virtual GlossyReflector*
-		clone(void) const;
+        virtual GlossyReflector*
+        clone(void) const;
 
-		~GlossyReflector(void);
+        ~GlossyReflector(void);
 
-		void
-		set_kr(const float k);
+        void
+        set_kr(const float k);
 
-		void
-		set_cr(const RGBColor& c);
+        void
+        set_cr(const RGBColor& c);
 
-		void
-		set_cr(const float r, const float g, const float b);
+        void
+        set_cr(const float r, const float g, const float b);
 
-		void
-		set_cr(const float c);
+        void
+        set_cr(const float c);
 
-		void
-		set_exponent(const float e);
+        void
+        set_exponent(const float e);
 
-		void
-		set_samples(const int num_samples, const float exp);
+        void
+        set_samples(const int num_samples, const float exp);
 
-		virtual RGBColor
-		shade(ShadeRec& s);
+        virtual RGBColor
+        shade(ShadeRec& s);
 
         virtual RGBColor
         area_light_shade(ShadeRec& sr);
 
-	private:
+    private:
 
-		GlossySpecular* glossy_specular_brdf;
+        GlossySpecular* glossy_specular_brdf;
 };
 
 
@@ -59,7 +59,7 @@ class GlossyReflector: public Phong {
 
 inline void
 GlossyReflector::set_kr(const float k) {
-	glossy_specular_brdf->set_ks(k);
+    glossy_specular_brdf->set_ks(k);
 }
 
 
@@ -67,7 +67,7 @@ GlossyReflector::set_kr(const float k) {
 
 inline void
 GlossyReflector::set_cr(const RGBColor& c) {
-	glossy_specular_brdf->set_cs(c);
+    glossy_specular_brdf->set_cs(c);
 
 }
 
@@ -76,7 +76,7 @@ GlossyReflector::set_cr(const RGBColor& c) {
 
 inline void
 GlossyReflector::set_cr(const float r, const float g, const float b) {
-	glossy_specular_brdf->set_cs(r, g, b);
+    glossy_specular_brdf->set_cs(r, g, b);
 }
 
 
@@ -84,21 +84,21 @@ GlossyReflector::set_cr(const float r, const float g, const float b) {
 
 inline void
 GlossyReflector::set_cr(const float c) {
-	glossy_specular_brdf->set_cs(c);
+    glossy_specular_brdf->set_cs(c);
 }
 
 // -------------------------------------------------------------- set_exp
 
 inline void
 GlossyReflector::set_exponent(const float e) {
-	glossy_specular_brdf->set_exp(e);
+    glossy_specular_brdf->set_exp(e);
 }
 
 // -------------------------------------------------------------- set_samples
 
 inline void
 GlossyReflector::set_samples(const int num_samples, const float exp) {
-	glossy_specular_brdf->set_samples(num_samples, exp);
+    glossy_specular_brdf->set_samples(num_samples, exp);
 }
 
 #endif // GLOSSYREFLECTOR_H

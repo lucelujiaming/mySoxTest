@@ -17,22 +17,22 @@ class World;
 // 跟踪器按照一定的继承结构方式加以组织。
 class Tracer {
 
-	public:
-		Tracer(void);
-		Tracer(World* _world_ptr);
-		virtual
-		~Tracer(void);
-		// 继承于Tracer基类的相关子类应重写trace_ray() 函数
-		virtual RGBColor
-		trace_ray(const Ray& ray) const;
-		virtual RGBColor
-		trace_ray(const Ray ray, const int depth) const;
-		virtual RGBColor
-		trace_ray(const Ray ray, float& tmin, const int depth) const;
+    public:
+        Tracer(void);
+        Tracer(World* _world_ptr);
+        virtual
+        ~Tracer(void);
+        // 继承于Tracer基类的相关子类应重写trace_ray() 函数
+        virtual RGBColor
+        trace_ray(const Ray& ray) const;
+        virtual RGBColor
+        trace_ray(const Ray ray, const int depth) const;
+        virtual RGBColor
+        trace_ray(const Ray ray, float& tmin, const int depth) const;
 
-	protected:
-		// 指向World类的指针，旨在访问场景中的几何对象以及背景颜色。
-		World* world_ptr;
+    protected:
+        // 指向World类的指针，旨在访问场景中的几何对象以及背景颜色。
+        World* world_ptr;
 };
 
 #endif

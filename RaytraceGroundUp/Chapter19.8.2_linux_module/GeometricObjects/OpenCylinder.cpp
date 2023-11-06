@@ -7,59 +7,59 @@
 // ---------------------------------------------------------------- default constructor
 
 OpenCylinder::OpenCylinder(void)
-	: 	GeometricObject(),
-		y0(-1.0),
-		y1(1.0),
-		radius(1.0),
-		inv_radius(1.0)			
+    :     GeometricObject(),
+        y0(-1.0),
+        y1(1.0),
+        radius(1.0),
+        inv_radius(1.0)            
 {}
 
 // ---------------------------------------------------------------- constructor
 
 OpenCylinder::OpenCylinder(const double bottom, const double top, const double r)
-	:  	GeometricObject(),
-		y0(bottom),
-		y1(top),	
-		radius(r),
-		inv_radius(1.0 / radius)
+    :      GeometricObject(),
+        y0(bottom),
+        y1(top),    
+        radius(r),
+        inv_radius(1.0 / radius)
 {}
 
 
 // ---------------------------------------------------------------- copy constructor
 
 OpenCylinder::OpenCylinder(const OpenCylinder& c)
-	: 	GeometricObject(c),
-		y0(c.y0),
-		y1(c.y1),
-		radius(c.radius), 
-		inv_radius(c.inv_radius) 			
+    :     GeometricObject(c),
+        y0(c.y0),
+        y1(c.y1),
+        radius(c.radius), 
+        inv_radius(c.inv_radius)             
 {}
-																				
-																				
+                                                                                
+                                                                                
 // ---------------------------------------------------------------- clone
 
 OpenCylinder* 
 OpenCylinder::clone(void) const {
-	return (new OpenCylinder (*this));
-}																				
-																																											
+    return (new OpenCylinder (*this));
+}                                                                                
+                                                                                                                                                                            
 
 // ---------------------------------------------------------------- assignment operator
 
 OpenCylinder& 
-OpenCylinder::operator= (const OpenCylinder& rhs) 		
+OpenCylinder::operator= (const OpenCylinder& rhs)         
 {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	GeometricObject::operator= (rhs);
-	
-	y0 			= rhs.y0;
-	y1 			= rhs.y1;
-	radius 		= rhs.radius;
-	inv_radius 	= rhs.inv_radius;
+    GeometricObject::operator= (rhs);
+    
+    y0             = rhs.y0;
+    y1             = rhs.y1;
+    radius         = rhs.radius;
+    inv_radius     = rhs.inv_radius;
 
-	return (*this) ;
+    return (*this) ;
 }
 
 
@@ -80,73 +80,73 @@ OpenCylinder::~OpenCylinder(void) {}
 //      (ox + t * dx)^2
 //    + (oz + t * dz)^2 - r^2 = 0
 //   整理后，就可以得到关于t的二元一次方程。
-bool 															 
+bool                                                              
 OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
-															
-	double t;
+                                                            
+    double t;
     // ox、oy、oz表示光线源点坐标。
-	double ox = ray.o.x;
-	double oy = ray.o.y;
-	double oz = ray.o.z;
+    double ox = ray.o.x;
+    double oy = ray.o.y;
+    double oz = ray.o.z;
     // (dx, dy, dz)为光线方向。
-	double dx = ray.d.x;
-	double dy = ray.d.y;
-	double dz = ray.d.z;
-	// 参见P302的公式
-	double a = dx * dx + dz * dz;  	
-	double b = 2.0 * (ox * dx + oz * dz);					
-	double c = ox * ox + oz * oz - radius * radius;
+    double dx = ray.d.x;
+    double dy = ray.d.y;
+    double dz = ray.d.z;
+    // 参见P302的公式
+    double a = dx * dx + dz * dz;      
+    double b = 2.0 * (ox * dx + oz * dz);                    
+    double c = ox * ox + oz * oz - radius * radius;
     // 判别式
-	double disc = b * b - 4.0 * a * c ;
+    double disc = b * b - 4.0 * a * c ;
 
-			
-	if (disc < 0.0)
-		return(false);
-	else {	
-		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
-		
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
-			
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
-				sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
-				
-				// test for hitting from inside
-			
-				if (-ray.d * sr.normal < 0.0)
-					sr.normal = -sr.normal;
-					
-				sr.local_hit_point = ray.o + tmin * ray.d;
-				
-				return (true);
-			}
-		} 
-		
-		t = (-b + e) / denom;    // larger root
-		
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
-			
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
-				sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
-				
-				// test for hitting inside surface
-			
-				if (-ray.d * sr.normal < 0.0)
-					sr.normal = -sr.normal;
-					
-				sr.local_hit_point = ray.o + tmin * ray.d;
-	
-				return (true);
-			}
-		} 
-	}
-	
-	return (false);			
+            
+    if (disc < 0.0)
+        return(false);
+    else {    
+        double e = sqrt(disc);
+        double denom = 2.0 * a;
+        t = (-b - e) / denom;    // smaller root
+        
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
+            
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
+                sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
+                
+                // test for hitting from inside
+            
+                if (-ray.d * sr.normal < 0.0)
+                    sr.normal = -sr.normal;
+                    
+                sr.local_hit_point = ray.o + tmin * ray.d;
+                
+                return (true);
+            }
+        } 
+        
+        t = (-b + e) / denom;    // larger root
+        
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
+            
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
+                sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
+                
+                // test for hitting inside surface
+            
+                if (-ray.d * sr.normal < 0.0)
+                    sr.normal = -sr.normal;
+                    
+                sr.local_hit_point = ray.o + tmin * ray.d;
+    
+                return (true);
+            }
+        } 
+    }
+    
+    return (false);            
 }
 
 
@@ -154,49 +154,49 @@ OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 bool
 OpenCylinder::shadow_hit(const Ray& ray, float& tmin) const {
-														
-	double t;
-	double ox = ray.o.x;
-	double oy = ray.o.y;
-	double oz = ray.o.z;
-	double dx = ray.d.x;
-	double dy = ray.d.y;
-	double dz = ray.d.z;
-	
-	// 参见P302的公式
-	double a = dx * dx + dz * dz;  	
-	double b = 2.0 * (ox * dx + oz * dz);					
-	double c = ox * ox + oz * oz - radius * radius;
+                                                        
+    double t;
+    double ox = ray.o.x;
+    double oy = ray.o.y;
+    double oz = ray.o.z;
+    double dx = ray.d.x;
+    double dy = ray.d.y;
+    double dz = ray.d.z;
+    
+    // 参见P302的公式
+    double a = dx * dx + dz * dz;      
+    double b = 2.0 * (ox * dx + oz * dz);                    
+    double c = ox * ox + oz * oz - radius * radius;
     // 判别式
-	double disc = b * b - 4.0 * a * c ;
+    double disc = b * b - 4.0 * a * c ;
 
-			
-	if (disc < 0.0)
-		return(false);
-	else {	
-		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
-		
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
-			
-			if (yhit > y0 && yhit < y1) {
-				return (true);
-			}
-		} 
-		
-		t = (-b + e) / denom;    // larger root
-		
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
-			
-			if (yhit > y0 && yhit < y1) {
-				return (true);
-			}
-		} 
-	}
-	return (false);	
+            
+    if (disc < 0.0)
+        return(false);
+    else {    
+        double e = sqrt(disc);
+        double denom = 2.0 * a;
+        t = (-b - e) / denom;    // smaller root
+        
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
+            
+            if (yhit > y0 && yhit < y1) {
+                return (true);
+            }
+        } 
+        
+        t = (-b + e) / denom;    // larger root
+        
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
+            
+            if (yhit > y0 && yhit < y1) {
+                return (true);
+            }
+        } 
+    }
+    return (false);    
 }
 
 

@@ -8,39 +8,39 @@
 
 class Point3D {
 
-	public:
+    public:
 
-		double x, y, z;
+        double x, y, z;
 
-		Point3D();													// default constructor
-		Point3D(const double a);									// constructor
-		Point3D(const double a, const double b, const double c);	// constructor
-		Point3D(const Point3D& p);									// copy constructor
-		~Point3D();													// destructor
+        Point3D();                                                    // default constructor
+        Point3D(const double a);                                    // constructor
+        Point3D(const double a, const double b, const double c);    // constructor
+        Point3D(const Point3D& p);                                    // copy constructor
+        ~Point3D();                                                    // destructor
 
-		Point3D& 													// assignment operator
-		operator= (const Point3D& p);
+        Point3D&                                                     // assignment operator
+        operator= (const Point3D& p);
 
-		Point3D 													// unary minus
-		operator- (void) const;
+        Point3D                                                     // unary minus
+        operator- (void) const;
 
-		Vector3D 													// vector joining two points
-		operator- (const Point3D& p) const;
+        Vector3D                                                     // vector joining two points
+        operator- (const Point3D& p) const;
 
-		Point3D 													// addition of a vector
-		operator+ (const Vector3D& v) const;
+        Point3D                                                     // addition of a vector
+        operator+ (const Vector3D& v) const;
 
-		Point3D 													// subtraction of a vector
-		operator- (const Vector3D& v) const;
+        Point3D                                                     // subtraction of a vector
+        operator- (const Vector3D& v) const;
 
-		Point3D 													// multiplication by a double on the right
-		operator* (const double a) const;
+        Point3D                                                     // multiplication by a double on the right
+        operator* (const double a) const;
 
-		double														// square of distance bertween two points
-		d_squared(const Point3D& p) const;
+        double                                                        // square of distance bertween two points
+        d_squared(const Point3D& p) const;
 
-		double														// distance bewteen two points
-		distance(const Point3D& p) const;
+        double                                                        // distance bewteen two points
+        distance(const Point3D& p) const;
 };
 
 
@@ -51,7 +51,7 @@ class Point3D {
 
 inline Point3D 
 Point3D::operator- (void) const {
-	return (Point3D(-x, -y, -z));
+    return (Point3D(-x, -y, -z));
 }
 
 
@@ -60,7 +60,7 @@ Point3D::operator- (void) const {
 
 inline Vector3D 
 Point3D::operator- (const Point3D& p) const {
-	return (Vector3D(x - p.x,y - p.y,z - p.z));
+    return (Vector3D(x - p.x,y - p.y,z - p.z));
 }
 
 
@@ -69,7 +69,7 @@ Point3D::operator- (const Point3D& p) const {
 
 inline Point3D 
 Point3D::operator+ (const Vector3D& v) const {
-	return (Point3D(x + v.x, y + v.y, z + v.z));
+    return (Point3D(x + v.x, y + v.y, z + v.z));
 }
 
 
@@ -78,7 +78,7 @@ Point3D::operator+ (const Vector3D& v) const {
 
 inline Point3D 
 Point3D::operator- (const Vector3D& v) const {
-	return (Point3D(x - v.x, y - v.y, z - v.z));
+    return (Point3D(x - v.x, y - v.y, z - v.z));
 }
 
 
@@ -87,7 +87,7 @@ Point3D::operator- (const Vector3D& v) const {
 
 inline Point3D 
 Point3D::operator* (const double a) const {
-	return (Point3D(x * a,y * a,z * a));
+    return (Point3D(x * a,y * a,z * a));
 }
 
 
@@ -96,9 +96,9 @@ Point3D::operator* (const double a) const {
 
 inline double
 Point3D::d_squared(const Point3D& p) const {
-	return (	(x - p.x) * (x - p.x)
-			+ 	(y - p.y) * (y - p.y)
-			+	(z - p.z) * (z - p.z) );
+    return (    (x - p.x) * (x - p.x)
+            +     (y - p.y) * (y - p.y)
+            +    (z - p.z) * (z - p.z) );
 }
 
 
@@ -112,7 +112,7 @@ operator* (double a, const Point3D& p);
 
 inline Point3D
 operator* (double a, const Point3D& p) {
-	return (Point3D(a * p.x, a * p.y, a * p.z));
+    return (Point3D(a * p.x, a * p.y, a * p.z));
 }
 
 

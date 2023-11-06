@@ -145,5 +145,5 @@ Sphere::shadow_hit(const Ray& ray, float& tmin) const {
 
 float
 Sphere::pdf(const ShadeRec& sr) {
-	return (1.0);
+    return (1.0);
 }

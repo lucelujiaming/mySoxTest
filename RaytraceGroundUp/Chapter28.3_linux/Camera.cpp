@@ -60,25 +60,25 @@ Camera::~Camera(void) {}
 //-------------------------------------------------------------- compute_uvw
 
 // This computes an orthornormal basis given the view point, lookat point, and up vector
-// å› ä¸ºï¼Œæˆ‘ä»¬ä½¿ç”¨æ­£äº¤åŸºå‘é‡(uï¼Œyï¼Œw)å®šä¹‰è§†è§åæ ‡ç³»ç»Ÿï¼Œå› æ­¤ä¸Šå…¬å¼9.1è®¡ç®—å‡ºæ¥çš„wå°±æ˜¯zè½´ã€‚
-// ä¹‹åæˆ‘ä»¬ä½¿ç”¨9.2å’Œ9.3è®¡ç®—å¦å¤–ä¸¤ä¸ªè½´ã€‚è¿™å°±æ˜¯è¿™ä¸ªå‡½æ•°çš„æ„æ€ã€‚
+// ÒòÎª£¬ÎÒÃÇÊ¹ÓÃÕı½»»ùÏòÁ¿(u£¬y£¬w)¶¨ÒåÊÓ¼û×ø±êÏµÍ³£¬Òò´ËÉÏ¹«Ê½9.1¼ÆËã³öÀ´µÄw¾ÍÊÇzÖá¡£
+// Ö®ºóÎÒÃÇÊ¹ÓÃ9.2ºÍ9.3¼ÆËãÁíÍâÁ½¸öÖá¡£Õâ¾ÍÊÇÕâ¸öº¯ÊıµÄÒâË¼¡£
 void
 Camera::compute_uvw(void) {
-    w = eye - lookat;   // å…¬å¼9.1
+    w = eye - lookat;   // ¹«Ê½9.1
     w.normalize();
-    u = up ^ w;         // å…¬å¼9.2
+    u = up ^ w;         // ¹«Ê½9.2
     u.normalize();
-    v = w ^ u;          // å…¬å¼9.3
+    v = w ^ u;          // ¹«Ê½9.3
 
-    // å½“ç›¸æœºå‚ç›´å‘ä¸Šæˆ–å‘ä¸‹è§‚å¯Ÿåœºæ™¯æ—¶ï¼Œå°†ä¼šå‡ºç°å¼‚å¸¸æƒ…å†µã€‚
+    // µ±Ïà»ú´¹Ö±ÏòÉÏ»òÏòÏÂ¹Û²ì³¡¾°Ê±£¬½«»á³öÏÖÒì³£Çé¿ö¡£
     // take care of the singularity by hardwiring in specific camera orientations
-    // å½“ç›¸æœºå‚ç›´å‘ä¸‹æ—¶ï¼Œåˆ™æŒ‰ç…§ä¸‹åˆ—æ–¹å¼å®šä¹‰å‘é‡uã€vå’Œw
+    // µ±Ïà»ú´¹Ö±ÏòÏÂÊ±£¬Ôò°´ÕÕÏÂÁĞ·½Ê½¶¨ÒåÏòÁ¿u¡¢vºÍw
     if (eye.x == lookat.x && eye.z == lookat.z && eye.y > lookat.y) { // camera looking vertically down
         u = Vector3D(0, 0, 1);
         v = Vector3D(1, 0, 0);
         w = Vector3D(0, 1, 0);
     }
-    // å½“ç›¸æœºå‚ç›´å‘ä¸Šæ—¶ï¼Œåˆ™æŒ‰ç…§ä¸‹åˆ—æ–¹å¼å®šä¹‰å‘é‡uã€vå’Œw
+    // µ±Ïà»ú´¹Ö±ÏòÉÏÊ±£¬Ôò°´ÕÕÏÂÁĞ·½Ê½¶¨ÒåÏòÁ¿u¡¢vºÍw
     if (eye.x == lookat.x && eye.z == lookat.z && eye.y < lookat.y) { // camera looking vertically up
         u = Vector3D(1, 0, 0);
         v = Vector3D(0, 0, 1);

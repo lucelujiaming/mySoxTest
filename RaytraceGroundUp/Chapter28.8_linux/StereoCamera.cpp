@@ -92,8 +92,8 @@ StereoCamera::setup_cameras(void) {
 
     double r = eye.distance(lookat);
     // 若x表示相机间距值的一半，则e和l间的距离值r可按如下方式定义：
-	//     r = || e一l ||
-	// 由简单的三角几何计算可得：
+    //     r = || e一l ||
+    // 由简单的三角几何计算可得：
     //     x = r * tan(beta/2)
     double x = r * tan(0.5 * beta * PI_ON_180);  //  half the camera separation distance
     // 根据计算结果设置左右相机。

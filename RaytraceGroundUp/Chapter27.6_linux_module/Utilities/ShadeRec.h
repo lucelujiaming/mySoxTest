@@ -36,7 +36,7 @@ class ShadeRec {
         // Shade Rec对象存储了一个引用值以简化着色代码的语法。
         const World&        w;                  // World reference
         RGBColor            color;              // Only used in Chapter3
-		double              u, v;               // texture parameters
+        double              u, v;               // texture parameters
 
         ShadeRec(const World& wr);              // constructor
         ShadeRec(const ShadeRec& sr);           // copy constructor

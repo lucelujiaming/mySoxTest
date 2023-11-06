@@ -166,7 +166,7 @@ PlyFile *ply_write(
   for (i = 0; i < nelems; i++) {
     elem = (PlyElement *) myalloc (sizeof (PlyElement));
     plyfile->elems[i] = elem;
-   	elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
+       elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
     elem->num = 0;
     elem->nprops = 0;
   }
@@ -711,10 +711,10 @@ PlyFile *ply_read(FILE *fp, int *nelems, char ***elem_names)
   /* check for NULL file pointer */
   if (fp == NULL)
   {
-//  	cout << "File is null" << endl;
-//  	while(!Button());
-//	ExitToShell();
-	
+//      cout << "File is null" << endl;
+//      while(!Button());
+//    ExitToShell();
+    
     return (NULL);
   }
 
@@ -809,6 +809,13 @@ Exit:
   file_type  - file type, either ascii or binary
   version    - version number of PLY file
   returns a file identifier, used to refer to this file, or NULL if error
+  
+打开PLY文件。输入一个文件名。返回四个变量。
+  nelems     - element个数
+  elem_names - 一个字符串指针数组。每一个元素都是一个字符串指针。给出了数据的名字。
+               当然在这个函数中，名字只有两种情况。就是："vertex"和"face"。
+  file_type  - 文件头中的文件类型信息。
+  version    - 文件头中的版本信息。
 ******************************************************************************/
 
 PlyFile *ply_open_for_reading(
@@ -1674,7 +1681,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
        * properties.
        */ 
       if (store_it) {
-	item_size = ply_type_size[prop->internal_type];
+    item_size = ply_type_size[prop->internal_type];
       }
       store_array = (char **) (elem_data + prop->offset);
       if (list_count == 0) {
@@ -2558,8 +2565,8 @@ static char *my_alloc(int size, int lnum, char *fname)
 /*
 char* 
 strdup(const char* s) {
-   int   	len = strlen(s);
-   char*	r;
+   int       len = strlen(s);
+   char*    r;
 
    r = (char* )malloc(len + 1);  // KS: explicit cast to char* added 4/2/2005
    strcpy(r, s);

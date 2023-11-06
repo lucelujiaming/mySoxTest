@@ -4,46 +4,46 @@
 // This file contains the declaration of the class Pinhole
 
 #include "Point2D.h"
-#include "World.h"		// we can #include "World.h" here
+#include "World.h"        // we can #include "World.h" here
 
 //--------------------------------------------------------------------- class Pinhole
 
 class Pinhole: public Camera {
 
-	public:
+    public:
 
-		Pinhole();
+        Pinhole();
 
-		Pinhole(const Pinhole& ph);
+        Pinhole(const Pinhole& ph);
 
-		virtual Camera*
-		clone(void) const;
+        virtual Camera*
+        clone(void) const;
 
-		Pinhole&
-		operator= (const Pinhole& rhs);
+        Pinhole&
+        operator= (const Pinhole& rhs);
 
-		virtual
-		~Pinhole();
+        virtual
+        ~Pinhole();
 
-		void
-		set_view_distance(const float vpd);
+        void
+        set_view_distance(const float vpd);
 
-		void
-		set_zoom(const float zoom_factor);
+        void
+        set_zoom(const float zoom_factor);
 
-		Vector3D
-		get_direction(const Point2D& p) const;
+        Vector3D
+        get_direction(const Point2D& p) const;
 
-		void
-		render_stereo(const World& w, float x, int pixel_offset);
+        void
+        render_stereo(const World& w, float x, int pixel_offset);
 
-		virtual void
-		render_scene(const World& w);
+        virtual void
+        render_scene(const World& w);
 
-	private:
+    private:
 
-		float	d;		// view plane distance
-		float	zoom;	// zoom factor
+        float    d;        // view plane distance
+        float    zoom;    // zoom factor
 
 };
 
@@ -52,7 +52,7 @@ class Pinhole: public Camera {
 
 inline void
 Pinhole::set_view_distance(float _d) {
-	d = _d;
+    d = _d;
 }
 
 
@@ -60,7 +60,7 @@ Pinhole::set_view_distance(float _d) {
 
 inline void
 Pinhole::set_zoom(float zoom_factor) {
-	zoom = zoom_factor;
+    zoom = zoom_factor;
 }
 
 #endif

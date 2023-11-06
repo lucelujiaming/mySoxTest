@@ -97,6 +97,7 @@ FlatMeshTriangle::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
         return (false);
 
     tmin                 = t;
+    // 设置法线方向
     sr.normal             = normal;                  // for flat shading
     // 根据求出来的t计算碰撞点。
     sr.local_hit_point     = ray.o + t * ray.d;

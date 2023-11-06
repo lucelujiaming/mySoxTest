@@ -1,4 +1,4 @@
-#ifndef __CAMERA__
+﻿#ifndef __CAMERA__
 #define __CAMERA__
 
 // This file contains the declaration of the base class Camera

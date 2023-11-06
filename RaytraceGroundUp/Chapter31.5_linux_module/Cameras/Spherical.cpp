@@ -73,7 +73,7 @@ Spherical::ray_direction(    const Point2D&    pp,
 
     // compute the regular azimuth and polar angles
     // 像素点的标准设备坐标定义方位分离角lambda以及极角psi
-	// 与球体坐标角度phi和theta之间存在下列简单的计算关系。
+    // 与球体坐标角度phi和theta之间存在下列简单的计算关系。
     //    参见公式11.5
     float phi         = PI - lambda;
     float theta     = 0.5 * PI - psi;
@@ -84,8 +84,8 @@ Spherical::ray_direction(    const Point2D&    pp,
     float cos_theta = cos(theta);
 
     // equation 11.6
-	// 通过将lambda和psi与式(11.5)中的标准球体坐标角度相关联，
-	// 并利用r=1)，可计算光线方向为：
+    // 通过将lambda和psi与式(11.5)中的标准球体坐标角度相关联，
+    // 并利用r=1)，可计算光线方向为：
     //    参见公式11.6
     Vector3D dir     = sin_theta * sin_phi * u + cos_theta * v + sin_theta * cos_phi * w;
     return (dir);

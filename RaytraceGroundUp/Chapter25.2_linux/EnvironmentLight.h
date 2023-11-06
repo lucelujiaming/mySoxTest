@@ -7,51 +7,51 @@
 
 class EnvironmentLight: public Light {
 
-	public:
+    public:
 
-		EnvironmentLight(void);
+        EnvironmentLight(void);
 
-		EnvironmentLight(const EnvironmentLight& al);
+        EnvironmentLight(const EnvironmentLight& al);
 
-		virtual Light*
-		clone(void) const;
+        virtual Light*
+        clone(void) const;
 
-		virtual
-		~EnvironmentLight(void);
+        virtual
+        ~EnvironmentLight(void);
 
-		EnvironmentLight&
-		operator= (const EnvironmentLight& rhs);
+        EnvironmentLight&
+        operator= (const EnvironmentLight& rhs);
 
-		void
-		set_sampler(Sampler* sampler);
+        void
+        set_sampler(Sampler* sampler);
 
-		void
-		set_material(Material* material);
+        void
+        set_material(Material* material);
 
-		virtual Vector3D
-		get_direction(ShadeRec& s);
+        virtual Vector3D
+        get_direction(ShadeRec& s);
 
-		virtual RGBColor
-		L(ShadeRec& sr);
+        virtual RGBColor
+        L(ShadeRec& sr);
 
-		virtual bool
-		in_shadow(const Ray& ray, const ShadeRec& sr) const;
+        virtual bool
+        in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
-		virtual float
-		pdf(const ShadeRec& sr) const;
+        virtual float
+        pdf(const ShadeRec& sr) const;
 
-		virtual bool
-		casts_shadows(void) const;
+        virtual bool
+        casts_shadows(void) const;
 
-		virtual void
-		set_shadows(bool _s);
+        virtual void
+        set_shadows(bool _s);
 
-	private:
+    private:
 
-		Sampler* sampler_ptr;
-		Material* material_ptr;
-		Vector3D u, v, w;
-		Vector3D			wi;				// unit direction from hit point being shaded to sample point on light surface
+        Sampler* sampler_ptr;
+        Material* material_ptr;
+        Vector3D u, v, w;
+        Vector3D            wi;                // unit direction from hit point being shaded to sample point on light surface
 };
 
 
@@ -60,7 +60,7 @@ class EnvironmentLight: public Light {
 inline bool
 EnvironmentLight::casts_shadows() const {
 
-	return Light::casts_shadows();
+    return Light::casts_shadows();
 }
 
 
@@ -69,7 +69,7 @@ EnvironmentLight::casts_shadows() const {
 inline void
 EnvironmentLight::set_shadows(bool _s) {
 
-	return Light::set_shadows(_s);
+    return Light::set_shadows(_s);
 }
 
 
@@ -77,7 +77,7 @@ EnvironmentLight::set_shadows(bool _s) {
 
 inline void
 EnvironmentLight::set_material(Material* mat_ptr) {
-	material_ptr = mat_ptr;
+    material_ptr = mat_ptr;
 }
 
 #endif

@@ -166,7 +166,7 @@ PlyFile *ply_write(
   for (i = 0; i < nelems; i++) {
     elem = (PlyElement *) myalloc (sizeof (PlyElement));
     plyfile->elems[i] = elem;
-   	elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
+       elem->name = (char* )strdup (elem_names[i]);         /* added (char* ) cast 3/2/2005 */  
     elem->num = 0;
     elem->nprops = 0;
   }
@@ -711,10 +711,10 @@ PlyFile *ply_read(FILE *fp, int *nelems, char ***elem_names)
   /* check for NULL file pointer */
   if (fp == NULL)
   {
-//  	cout << "File is null" << endl;
-//  	while(!Button());
-//	ExitToShell();
-	
+//      cout << "File is null" << endl;
+//      while(!Button());
+//    ExitToShell();
+    
     return (NULL);
   }
 
@@ -1674,7 +1674,7 @@ void binary_get_element(PlyFile *plyfile, char *elem_ptr)
        * properties.
        */ 
       if (store_it) {
-	item_size = ply_type_size[prop->internal_type];
+    item_size = ply_type_size[prop->internal_type];
       }
       store_array = (char **) (elem_data + prop->offset);
       if (list_count == 0) {
@@ -2558,8 +2558,8 @@ static char *my_alloc(int size, int lnum, char *fname)
 /*
 char* 
 strdup(const char* s) {
-   int   	len = strlen(s);
-   char*	r;
+   int       len = strlen(s);
+   char*    r;
 
    r = (char* )malloc(len + 1);  // KS: explicit cast to char* added 4/2/2005
    strcpy(r, s);

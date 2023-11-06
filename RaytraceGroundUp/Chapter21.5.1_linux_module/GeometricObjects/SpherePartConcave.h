@@ -2,10 +2,10 @@
 #define SPHEREPARTCONCAVE_H
 
 
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // This file contains the declaration of the class SpherePartConcave
@@ -17,50 +17,50 @@
 #include "BBox.h"
 
 class SpherePartConcave: public GeometricObject {
-	public:
+    public:
 
-		Point3D 	center;   			// center coordinates
-		double 		radius;				// sphere radius
-		double 		phi_min;			// minimum azimiuth angle in degrees measured counter clockwise from the +ve z axis
-		double 		phi_max;			// maximum azimiuth angle in degrees measured counter clockwise from the +ve z axis
-		double 		theta_min;			// minimum polar angle in degrees measured down from the +ve y axis
-		double 		theta_max;			// maximum polar angle in degrees measured down from the +ve y axis
+        Point3D     center;               // center coordinates
+        double         radius;                // sphere radius
+        double         phi_min;            // minimum azimiuth angle in degrees measured counter clockwise from the +ve z axis
+        double         phi_max;            // maximum azimiuth angle in degrees measured counter clockwise from the +ve z axis
+        double         theta_min;            // minimum polar angle in degrees measured down from the +ve y axis
+        double         theta_max;            // maximum polar angle in degrees measured down from the +ve y axis
 
-		double		phi_interval;		// stored to avoid repeated calculations
-		double		theta_interval;		// stored to avoid repeated calculations
+        double        phi_interval;        // stored to avoid repeated calculations
+        double        theta_interval;        // stored to avoid repeated calculations
 
-		double		cos_theta_min;		// stored to avoid repeated calculations
-		double		cos_theta_max;		// stored to avoid repeated calculations
+        double        cos_theta_min;        // stored to avoid repeated calculations
+        double        cos_theta_max;        // stored to avoid repeated calculations
 
-	public:
+    public:
 
-		SpherePartConcave(void);
+        SpherePartConcave(void);
 
-		SpherePartConcave(	const Point3D 	c,
-							const double 	r,
-							const double 	azimuth_min,	// in degrees
-							const double 	azimuth_max,	// in degrees
-							const double 	polar_min,		// in degrees measured from top
-							const double 	polar_max);		// in degrees measured from top
+        SpherePartConcave(    const Point3D     c,
+                            const double     r,
+                            const double     azimuth_min,    // in degrees
+                            const double     azimuth_max,    // in degrees
+                            const double     polar_min,        // in degrees measured from top
+                            const double     polar_max);        // in degrees measured from top
 
-		SpherePartConcave(const Point3D c, const double radius);
+        SpherePartConcave(const Point3D c, const double radius);
 
-		virtual SpherePartConcave*
-		clone(void) const;
+        virtual SpherePartConcave*
+        clone(void) const;
 
-		SpherePartConcave(const SpherePartConcave& cp);
+        SpherePartConcave(const SpherePartConcave& cp);
 
-		virtual
-		~SpherePartConcave(void);
+        virtual
+        ~SpherePartConcave(void);
 
-		SpherePartConcave&
-		operator= (const SpherePartConcave& rhs);
+        SpherePartConcave&
+        operator= (const SpherePartConcave& rhs);
 
-		virtual bool
-		hit(const Ray& ray, double& tmin, ShadeRec& sr) const;
+        virtual bool
+        hit(const Ray& ray, double& tmin, ShadeRec& sr) const;
 
-		virtual bool
-		shadow_hit(const Ray& ray, float& tmin) const;
+        virtual bool
+        shadow_hit(const Ray& ray, float& tmin) const;
 };
 
 #endif // SPHEREPARTCONCAVE_H

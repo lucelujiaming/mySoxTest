@@ -59,7 +59,7 @@ Material::path_shade(ShadeRec& sr) {
 // ---------------------------------------------------------------- global_shade
 RGBColor
 Material::global_shade(ShadeRec& sr) {
-	return (black);
+    return (black);
 }
 
 // ---------------------------------------------------------------- get_Le

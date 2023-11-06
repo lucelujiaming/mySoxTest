@@ -6,7 +6,7 @@
 #include "FresnelReflector.h"
 #include "FresnelTransmitter.h"
 
-
+// 透明材质。实现镜面高光的渲染操作。
 class Dielectric : public Phong
 {
     public:

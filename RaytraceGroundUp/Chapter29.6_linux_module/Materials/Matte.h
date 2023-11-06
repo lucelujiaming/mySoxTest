@@ -38,8 +38,8 @@ class Matte: public Material {
         set_cd(const float c);
         // 计算环境光照，并遍历全部光源以计算直接漫反射光照。
         // 从而返回材质的颜色。
-		void
-		set_sampler(Sampler* sp);   			// any type of sampling
+        void
+        set_sampler(Sampler* sp);               // any type of sampling
         virtual RGBColor
         shade(ShadeRec& sr);
         // 计算区域光照

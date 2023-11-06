@@ -7,39 +7,40 @@
 // 当需要将纹理材质的分量值与碰撞点的颜色值保持一致时，纹理将是一种十分有效的方案。
 class ConstantColor : public Texture
 {
-	public:
+    public:
 
-		ConstantColor(void);
+        ConstantColor(void);
 
-		ConstantColor(const RGBColor& c);
+        ConstantColor(const RGBColor& c);
 
-		ConstantColor(const ConstantColor& cc);
+        ConstantColor(const ConstantColor& cc);
 
-		virtual ConstantColor*
-		clone(void) const;
+        virtual ConstantColor*
+        clone(void) const;
 
-		virtual
-		~ConstantColor(void);
+        virtual
+        ~ConstantColor(void);
 
-		void
-		set_color(const RGBColor& c);
+        void
+        // 设置颜色值。参数为RGBColor类型。
+        set_color(const RGBColor& c);
+        // 设置颜色值。参数为RGB三个值。
+        void
+        set_color(const float r, const float g, const float b);
+        // 设置颜色值。参数为RGB灰度值。
+        void
+        set_color(const float c);
 
-		void
-		set_color(const float r, const float g, const float b);
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-		void
-		set_color(const float c);
+    protected:
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
-
-	protected:
-
-		ConstantColor&
-		operator= (const ConstantColor& rhs);
+        ConstantColor&
+        operator= (const ConstantColor& rhs);
 
     private:
-
+        // 颜色值
         RGBColor color; // the color
 };
 
@@ -48,7 +49,7 @@ class ConstantColor : public Texture
 
 inline void
 ConstantColor::set_color(const RGBColor& c) {
-	color = c;
+    color = c;
 }
 
 
@@ -56,7 +57,7 @@ ConstantColor::set_color(const RGBColor& c) {
 
 inline void
 ConstantColor::set_color(const float r, const float g, const float b) {
-	color.r = r; color.g = g; color.b = b;
+    color.r = r; color.g = g; color.b = b;
 }
 
 
@@ -64,7 +65,7 @@ ConstantColor::set_color(const float r, const float g, const float b) {
 
 inline void
 ConstantColor::set_color(const float c) {
-	color.r = c; color.g = c; color.b = c;
+    color.r = c; color.g = c; color.b = c;
 }
 
 #endif // CONSTANTCOLOR_H

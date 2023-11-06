@@ -1,7 +1,7 @@
-// 	Copyright (C) Kevin Suffern 2000-2008.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2008.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 // This file contains the definition of the class LinearNoise
@@ -14,58 +14,58 @@
 //------------------------------------------------------------------------- default constructor
 
 LinearNoise::LinearNoise(void)
-	: LatticeNoise() 
+    : LatticeNoise() 
 {}
 
 
 LinearNoise::LinearNoise(int octaves, float lacunarity, float gain)
-	: LatticeNoise(octaves, lacunarity, gain)  
+    : LatticeNoise(octaves, lacunarity, gain)  
 {}
 
 
-//------------------------------------------------------------------------- copy constructor										
+//------------------------------------------------------------------------- copy constructor                                        
 
 LinearNoise::LinearNoise(const LinearNoise& lns)
-	: LatticeNoise(lns)
+    : LatticeNoise(lns)
 {}
 
 
 //------------------------------------------------------------------------- clone
 
-LinearNoise*											
+LinearNoise*                                            
 LinearNoise::clone(void) const {
-	return (new LinearNoise);
+    return (new LinearNoise);
 }
 
 
-//------------------------------------------------------------------------- assignment operator	
+//------------------------------------------------------------------------- assignment operator    
 
-LinearNoise& 											
+LinearNoise&                                             
 LinearNoise::operator= (const LinearNoise& rhs) {
 
-	if (this == &rhs)
-		return (*this);
-		
-	LatticeNoise::operator= (rhs);
-		
-	return (*this);
+    if (this == &rhs)
+        return (*this);
+        
+    LatticeNoise::operator= (rhs);
+        
+    return (*this);
 }
 
 
-//------------------------------------------------------------------------- destructor										
+//------------------------------------------------------------------------- destructor                                        
 
 LinearNoise::~LinearNoise(void) {}
 
 
 //------------------------------------------------------------------------- value_noise
-// This function is based on C code from Hill and Kelley (2006).	
+// This function is based on C code from Hill and Kelley (2006).    
 
-float											
-LinearNoise::value_noise(const Point3D& p) const {	
-	int 	ix, iy, iz;
-    float 	fx, fy, fz;
-    float 	d[2][2][2];
-    float 	x0, x1, x2, x3, y0, y1, z0;
+float                                            
+LinearNoise::value_noise(const Point3D& p) const {    
+    int     ix, iy, iz;
+    float     fx, fy, fz;
+    float     d[2][2][2];
+    float     x0, x1, x2, x3, y0, y1, z0;
     
     ix = floor(p.x);
     fx = p.x - ix;
@@ -73,13 +73,13 @@ LinearNoise::value_noise(const Point3D& p) const {
     iy = floor(p.y);
     fy = p.y - iy;
 
-	iz = floor(p.z);
+    iz = floor(p.z);
     fz = p.z - iz;
     
     for (int k = 0; k <= 1; k++) 
         for (int j = 0; j <= 1; j++) 
             for (int i = 0; i <= 1; i++)
-                d[k][j][i] = value_table[INDEX(ix + i, iy + j, iz + k)];		
+                d[k][j][i] = value_table[INDEX(ix + i, iy + j, iz + k)];        
                                 
     x0 = lerp(fx, d[0][0][0], d[0][0][1]);  
     x1 = lerp(fx, d[0][1][0], d[0][1][1]); 
@@ -96,12 +96,12 @@ LinearNoise::value_noise(const Point3D& p) const {
 //------------------------------------------------------------------------- vector_noise
 // This is based on C code from Hill and Kelley (2006).
 
-Vector3D 											
+Vector3D                                             
 LinearNoise::vector_noise(const Point3D& p) const {
-	int 		ix, iy, iz;
-    float 		fx, fy, fz;
-    Vector3D	d[2][2][2];
-    Vector3D 	x0, x1, x2, x3, y0, y1, z0;
+    int         ix, iy, iz;
+    float         fx, fy, fz;
+    Vector3D    d[2][2][2];
+    Vector3D     x0, x1, x2, x3, y0, y1, z0;
 
     ix = floor(p.x);
     fx = p.x - ix;
@@ -109,7 +109,7 @@ LinearNoise::vector_noise(const Point3D& p) const {
     iy = floor(p.y);
     fy = p.y - iy;
 
-	iz = floor(p.z);
+    iz = floor(p.z);
     fz = p.z - iz;
     
     for (int k = 0; k <= 1; k++) 
@@ -131,4 +131,4 @@ LinearNoise::vector_noise(const Point3D& p) const {
 
 
 
-	
+    

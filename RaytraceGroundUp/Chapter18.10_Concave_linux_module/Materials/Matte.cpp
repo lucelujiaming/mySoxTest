@@ -167,21 +167,21 @@ Matte::area_light_shade(ShadeRec& sr) {
             // 计算基于式(18.3)。其中V函数在前面使用casts_shadows计算。
             if (!in_shadow)
             {
-				// L += diffuse_brdf->f(sr, wo, wi)
+                // L += diffuse_brdf->f(sr, wo, wi)
                 //          * sr.w.lights[j]->L(sr) 
                 //          * sr.w.lights[j]->G(sr) 
                 //          * ndotwi / sr.w.lights[j]->pdf(sr);
                 // 漫反射计算出来的颜色值。
-				RGBColor diffColor = diffuse_brdf->f(sr, wo, wi);
+                RGBColor diffColor = diffuse_brdf->f(sr, wo, wi);
                 // 材质的发射辐射度
-				RGBColor radianceColor = sr.w.lights[j]->L(sr);
+                RGBColor radianceColor = sr.w.lights[j]->L(sr);
                 // 区域的几何因子
-				float    gFactor = sr.w.lights[j]->G(sr);
+                float    gFactor = sr.w.lights[j]->G(sr);
                 // 对于均匀光源来说，pdf为表面积的倒数。尤其是平面光源。
-				float    pdf = sr.w.lights[j]->pdf(sr);
+                float    pdf = sr.w.lights[j]->pdf(sr);
                 // 计算得到反射辐射度。
-				RGBColor calcResult = diffColor * radianceColor * gFactor * gFactor / pdf;
-				L += calcResult;
+                RGBColor calcResult = diffColor * radianceColor * gFactor * gFactor / pdf;
+                L += calcResult;
             }
         }
     }

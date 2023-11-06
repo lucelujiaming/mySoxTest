@@ -251,10 +251,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -338,24 +338,17 @@ void World::build()
 
     tracer_ptr=new RayCast(this);
 
-    Pinhole* camera_ptr=new Pinhole;
-    camera_ptr->set_eye(100, 0, 100);
-    camera_ptr->set_lookat(0, 1, 0);
-    camera_ptr->set_view_distance(8000);
-    camera_ptr->compute_uvw();
-    set_camera(camera_ptr);
-
-    PointLight *light_ptr=new PointLight();
-    light_ptr->set_location(50, 50, 1);
-    light_ptr->scale_radiance(3.0);
-    add_light(light_ptr);
-
     Phong* phong_ptr=new Phong;
     phong_ptr->set_cd(0.75);
     phong_ptr->set_ka(0.25);
     phong_ptr->set_kd(0.8);
     phong_ptr->set_ks(0.15);
     phong_ptr->set_exp(50);
+
+    PointLight *light_ptr=new PointLight();
+    light_ptr->set_location(50, 50, 1);
+    light_ptr->scale_radiance(3.0);
+    add_light(light_ptr);
 
     float y0 = -1.0;        // minimum y value
     float y1 = 2;           // maximum y value
@@ -373,7 +366,12 @@ void World::build()
     ellipsoid_ptr->translate(0, 1, 0);
     add_object(ellipsoid_ptr);
 
-
+    Pinhole* pinhole_ptr=new Pinhole;
+    pinhole_ptr->set_eye(100, 0, 100);
+    pinhole_ptr->set_lookat(0, 1, 0);
+    pinhole_ptr->set_view_distance(8000);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
 
 }
 

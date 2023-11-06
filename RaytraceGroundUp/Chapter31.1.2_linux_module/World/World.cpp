@@ -282,10 +282,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }
@@ -366,28 +366,28 @@ double randf()
 // #include "BuildRedSphere.cpp"
 void World::build()
 {
-	//construct view plane, etc.
+    //construct view plane, etc.
 
-	Checker3D *checker_ptr=new Checker3D;
-	checker_ptr->set_size(0.3);
-	checker_ptr->set_color1(white);
-	checker_ptr->set_color2(black);
+    Checker3D *checker_ptr=new Checker3D;
+    checker_ptr->set_size(0.3);
+    checker_ptr->set_color1(white);
+    checker_ptr->set_color2(black);
 
-	InstanceTexture *checker_ptr2=new InstanceTexture(checker_ptr);
-	checker_ptr2->scale(2, 1, 1);
+    InstanceTexture *checker_ptr2=new InstanceTexture(checker_ptr);
+    checker_ptr2->scale(2, 1, 1);
 
-	SV_Matte* sv_matte_ptr = new SV_Matte;
-	sv_matte_ptr->set_ka(0.8);
-	sv_matte_ptr->set_kd(0.4);
-	sv_matte_ptr->set_cd(checker_ptr2);
+    SV_Matte* sv_matte_ptr = new SV_Matte;
+    sv_matte_ptr->set_ka(0.8);
+    sv_matte_ptr->set_kd(0.4);
+    sv_matte_ptr->set_cd(checker_ptr2);
 
-	Box* box_ptr1=new Box(Point3D(-1.0), Vector3D(1.0, 0.0, 0.0),  Vector3D(0.0, 1.0, 0.0));
-	box_ptr1->set_material(sv_matte_ptr);
+    Box* box_ptr1=new Box(Point3D(-1.0), Vector3D(1.0, 0.0, 0.0),  Vector3D(0.0, 1.0, 0.0));
+    box_ptr1->set_material(sv_matte_ptr);
 
-	Instance* box_ptr=new Instance(box_ptr1);
-	box_ptr->scale(2, 1, 1);
-	box_ptr->rotate_z(45);
-	add_object(box_ptr);
+    Instance* box_ptr=new Instance(box_ptr1);
+    box_ptr->scale(2, 1, 1);
+    box_ptr->rotate_z(45);
+    add_object(box_ptr);
 
 }
 

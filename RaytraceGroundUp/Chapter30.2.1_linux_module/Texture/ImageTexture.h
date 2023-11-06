@@ -1,10 +1,10 @@
 #ifndef __IMAGE_TEXTURE__
 #define __IMAGE_TEXTURE__
 
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include "Image.h"
@@ -12,38 +12,38 @@
 #include "Texture.h"
 // 贴图材质
 class ImageTexture: public Texture {
-	public:
+    public:
 
-		ImageTexture(void);
+        ImageTexture(void);
 
-		ImageTexture(Image* _image_ptr);
+        ImageTexture(Image* _image_ptr);
 
-		ImageTexture(const ImageTexture& it);
+        ImageTexture(const ImageTexture& it);
 
-		ImageTexture&
-		operator= (const ImageTexture& rhs);
+        ImageTexture&
+        operator= (const ImageTexture& rhs);
 
-		virtual ImageTexture*
-		clone(void) const;
+        virtual ImageTexture*
+        clone(void) const;
 
-		virtual
-		~ImageTexture(void) ;
+        virtual
+        ~ImageTexture(void) ;
 
-		virtual RGBColor
-		get_color(const ShadeRec& sr) const;
+        virtual RGBColor
+        get_color(const ShadeRec& sr) const;
 
-		void
-		set_image(Image* _image_ptr);
+        void
+        set_image(Image* _image_ptr);
 
-		void
-		set_mapping(Mapping* map_ptr);
+        void
+        set_mapping(Mapping* map_ptr);
 
-	private:
+    private:
 
-		int 		hres;			// 贴图分辨率：horizontal resolution of the image
-		int			vres;			// 贴图分辨率：vertical resolution of the image
-		Image*		image_ptr;		// 指向图像的相关指针：the image
-		Mapping*	mapping_ptr;	// 指向贴图的相关指针：mapping technique used, if any
+        int         hres;            // 贴图分辨率：horizontal resolution of the image
+        int            vres;            // 贴图分辨率：vertical resolution of the image
+        Image*        image_ptr;        // 指向图像的相关指针：the image
+        Mapping*    mapping_ptr;    // 指向贴图的相关指针：mapping technique used, if any
 };
 
 
@@ -51,9 +51,9 @@ class ImageTexture: public Texture {
 
 inline void
 ImageTexture::set_image(Image* _image_ptr) {
-	image_ptr = _image_ptr;
-	hres = image_ptr->get_hres();
-	vres = image_ptr->get_vres();
+    image_ptr = _image_ptr;
+    hres = image_ptr->get_hres();
+    vres = image_ptr->get_vres();
 }
 
 
@@ -61,7 +61,7 @@ ImageTexture::set_image(Image* _image_ptr) {
 
 inline void
 ImageTexture::set_mapping(Mapping* map_ptr) {
-	mapping_ptr = map_ptr;
+    mapping_ptr = map_ptr;
 }
 
 #endif

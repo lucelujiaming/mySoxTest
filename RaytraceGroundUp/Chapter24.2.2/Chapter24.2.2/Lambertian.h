@@ -5,45 +5,45 @@
 
 class Lambertian: public BRDF {
 
-	public:
+    public:
 
-		Lambertian(void);
+        Lambertian(void);
 
-		Lambertian(const Lambertian& lamb);
+        Lambertian(const Lambertian& lamb);
 
-		virtual Lambertian*
-		clone(void) const;
+        virtual Lambertian*
+        clone(void) const;
 
-		~Lambertian(void);
+        ~Lambertian(void);
 
-		Lambertian&
-		operator= (const Lambertian& rhs);
+        Lambertian&
+        operator= (const Lambertian& rhs);
 
-		virtual RGBColor
-		f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
+        virtual RGBColor
+        f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
 
-		virtual RGBColor
-		rho(const ShadeRec& sr, const Vector3D& wo) const;
+        virtual RGBColor
+        rho(const ShadeRec& sr, const Vector3D& wo) const;
 
-		void
-		set_ka(const float ka);
+        void
+        set_ka(const float ka);
 
-		void
-		set_kd(const float kd);
+        void
+        set_kd(const float kd);
 
-		void
-		set_cd(const RGBColor& c);
+        void
+        set_cd(const RGBColor& c);
 
-		void
-		set_cd(const float r, const float g, const float b);
+        void
+        set_cd(const float r, const float g, const float b);
 
-		void
-		set_cd(const float c);
+        void
+        set_cd(const float c);
 
-	private:
+    private:
 
-		float		kd;	// diffuse reflection coefficient
-		RGBColor 	cd;	// diffuse color
+        float        kd;    // diffuse reflection coefficient
+        RGBColor     cd;    // diffuse color
 };
 
 
@@ -51,7 +51,7 @@ class Lambertian: public BRDF {
 
 inline void
 Lambertian::set_ka(const float k) {
-	kd = k;
+    kd = k;
 }
 
 
@@ -59,7 +59,7 @@ Lambertian::set_ka(const float k) {
 
 inline void
 Lambertian::set_kd(const float k) {
-	kd = k;
+    kd = k;
 }
 
 
@@ -67,7 +67,7 @@ Lambertian::set_kd(const float k) {
 
 inline void
 Lambertian::set_cd(const RGBColor& c) {
-	cd = c;
+    cd = c;
 }
 
 
@@ -75,7 +75,7 @@ Lambertian::set_cd(const RGBColor& c) {
 
 inline void
 Lambertian::set_cd(const float r, const float g, const float b) {
-	cd.r = r; cd.g = g; cd.b = b;
+    cd.r = r; cd.g = g; cd.b = b;
 }
 
 
@@ -83,7 +83,7 @@ Lambertian::set_cd(const float r, const float g, const float b) {
 
 inline void
 Lambertian::set_cd(const float c) {
-	cd.r = c; cd.g = c; cd.b = c;
+    cd.r = c; cd.g = c; cd.b = c;
 }
 
 #endif

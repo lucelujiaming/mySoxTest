@@ -11,45 +11,45 @@ class ShadeRec;
 
 class Light {
 
-	public:
+    public:
 
-		Light(void);
+        Light(void);
 
-		Light(const Light& ls);
+        Light(const Light& ls);
 
-		Light&
-		operator= (const Light& rhs);
+        Light&
+        operator= (const Light& rhs);
 
-		virtual Light*
-		clone(void) const = 0;
+        virtual Light*
+        clone(void) const = 0;
 
-		virtual
-		~Light(void);
+        virtual
+        ~Light(void);
 
-		virtual Vector3D
-		get_direction(ShadeRec& sr) = 0;
+        virtual Vector3D
+        get_direction(ShadeRec& sr) = 0;
 
-		virtual RGBColor
-		L(ShadeRec& sr);
+        virtual RGBColor
+        L(ShadeRec& sr);
 
-		virtual bool
-		casts_shadows(void) const;
+        virtual bool
+        casts_shadows(void) const;
 
-		virtual void
-		set_shadows(bool val);
+        virtual void
+        set_shadows(bool val);
 
-		virtual bool
-		in_shadow(const Ray& ray, const ShadeRec& sr) const = 0;
+        virtual bool
+        in_shadow(const Ray& ray, const ShadeRec& sr) const = 0;
 
-		virtual float
-		G(const ShadeRec& sr) const;
+        virtual float
+        G(const ShadeRec& sr) const;
 
-		virtual float
-		pdf(const ShadeRec& sr) const;
+        virtual float
+        pdf(const ShadeRec& sr) const;
 
-	private:
+    private:
 
-		bool	shadows;	// does the light cast shadows or not
+        bool    shadows;    // does the light cast shadows or not
 
 };
 
@@ -58,7 +58,7 @@ class Light {
 
 inline bool
 Light::casts_shadows() const {
-	return shadows;
+    return shadows;
 }
 
 
@@ -66,7 +66,7 @@ Light::casts_shadows() const {
 
 inline void
 Light::set_shadows(bool _s) {
-	shadows = _s;
+    shadows = _s;
 }
 
 
@@ -74,7 +74,7 @@ Light::set_shadows(bool _s) {
 // explained on page 333
 inline float
 Light::G(const ShadeRec& sr) const {
-	return 1.0;
+    return 1.0;
 }
 
 
@@ -82,7 +82,7 @@ Light::G(const ShadeRec& sr) const {
 
 inline float
 Light::pdf(const ShadeRec& sr) const {
-	return 1.0;
+    return 1.0;
 }
 
 #endif

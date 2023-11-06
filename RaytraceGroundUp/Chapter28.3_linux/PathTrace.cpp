@@ -24,7 +24,8 @@ PathTrace::PathTrace(World* _worldPtr)
 
 
 // -------------------------------------------------------------------- trace_ray
-
+// 另外，这里所讨论的路径跟踪计算仅限于Lambertian材质以及完全镜面材质，
+// 至于光泽反射材质将作为练习留予读者。
 RGBColor    
 PathTrace::trace_ray(const Ray ray, const int depth) const {
     if (depth > world_ptr->vp.max_depth)
@@ -36,6 +37,8 @@ PathTrace::trace_ray(const Ray ray, const int depth) const {
             sr.depth = depth;
             sr.ray = ray;
             
+            // 该函数与Whitted::trace_ray() 函数的唯一差别在于：
+            // 该函数调用了material_ptr->path_shade()函数而非material_ptr->shade()函数。
             return (sr.material_ptr->path_shade(sr));   
         }
         else
@@ -49,7 +52,7 @@ PathTrace::trace_ray(const Ray ray, const int depth) const {
 // for color filtering
 
 RGBColor    
-PathTrace::trace_ray(const Ray ray, double& tmin, const int depth) const {
+PathTrace::trace_ray(const Ray ray, float& tmin, const int depth) const {
     if (depth > world_ptr->vp.max_depth)
         return (black);
     else {

@@ -165,13 +165,13 @@ Matte::area_light_shade(ShadeRec& sr) {
             // 计算基于式(18.3)
             if (!in_shadow)
             {
-				// L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * sr.w.lights[j]->G(sr) * ndotwi / sr.w.lights[j]->pdf(sr);
-				RGBColor diffColor = diffuse_brdf->f(sr, wo, wi);
-				RGBColor radianceColor = sr.w.lights[j]->L(sr);
-				float    gFactor = sr.w.lights[j]->G(sr);
-				float    pdf = sr.w.lights[j]->pdf(sr);
-				RGBColor calcResult = diffColor * radianceColor * gFactor * gFactor / pdf;
-				L += calcResult;
+                // L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * sr.w.lights[j]->G(sr) * ndotwi / sr.w.lights[j]->pdf(sr);
+                RGBColor diffColor = diffuse_brdf->f(sr, wo, wi);
+                RGBColor radianceColor = sr.w.lights[j]->L(sr);
+                float    gFactor = sr.w.lights[j]->G(sr);
+                float    pdf = sr.w.lights[j]->pdf(sr);
+                RGBColor calcResult = diffColor * radianceColor * gFactor * gFactor / pdf;
+                L += calcResult;
             }
         }
     }

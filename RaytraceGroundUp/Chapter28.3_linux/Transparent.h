@@ -5,7 +5,12 @@
 #include "PerfectSpecular.h"
 #include "PerfectTransmitter.h"
 
+// 材质类Transparent继承于Phong类， 因而可采用镜面高光渲染透明对象。
+// 当使用有向点光源时，将有助于提高透明对象的视觉效果，
+// 但该过程仍然会产生反射材质所出现的不一致性。
 
+// 鉴于材质类Transparent实现了完全镜面反射和透射，
+// 且在后续小节中将仅使用有向点光源，因而可采用Whitted跟踪器。
 class Transparent : public Phong
 {
     public:
@@ -44,9 +49,11 @@ class Transparent : public Phong
         shade(ShadeRec& s);
 
     private:
-
+        // 包含了一个BRDF用于处理反射计算，
         PerfectSpecular* reflective_brdf;
+        // 包含了一个BTDF用于处理透明度计算
         PerfectTransmitter* specular_btdf;
+        // 以及3个继承于Phong材质类的BRDF。
 };
 
 // ---------------------------------------------------------------- set_kr

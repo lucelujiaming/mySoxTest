@@ -12,65 +12,65 @@ class Point3D;
 
 class Vector3D {
 
-	public:
+    public:
 
-		double	x, y, z;
+        double    x, y, z;
 
-	public:
+    public:
 
-		Vector3D(void);											// default constructor
-		Vector3D(double a);										// constructor
-		Vector3D(double _x, double _y, double _z);				// constructor
-		Vector3D(const Vector3D& v);							// copy constructor
-		Vector3D(const Normal& n);								// constructs a vector from a Normal
-		Vector3D(const Point3D& p);								// constructs a vector from a point
+        Vector3D(void);                                            // default constructor
+        Vector3D(double a);                                        // constructor
+        Vector3D(double _x, double _y, double _z);                // constructor
+        Vector3D(const Vector3D& v);                            // copy constructor
+        Vector3D(const Normal& n);                                // constructs a vector from a Normal
+        Vector3D(const Point3D& p);                                // constructs a vector from a point
 
-		~Vector3D (void);										// destructor
+        ~Vector3D (void);                                        // destructor
 
-		Vector3D& 												// assignment operator
-		operator= (const Vector3D& rhs);
+        Vector3D&                                                 // assignment operator
+        operator= (const Vector3D& rhs);
 
-		Vector3D& 												// assign a Normal to a vector
-		operator= (const Normal& rhs);
+        Vector3D&                                                 // assign a Normal to a vector
+        operator= (const Normal& rhs);
 
-		Vector3D& 												// assign a Point3D to a vector
-		operator= (const Point3D& rhs);
+        Vector3D&                                                 // assign a Point3D to a vector
+        operator= (const Point3D& rhs);
 
-		Vector3D												// unary minus
-		operator- (void) const;
+        Vector3D                                                // unary minus
+        operator- (void) const;
 
-		double													// length
-		length(void);
+        double                                                    // length
+        length(void);
 
-		double													// square of the length
-		len_squared(void);
+        double                                                    // square of the length
+        len_squared(void);
 
-		Vector3D												// multiplication by a double on the right
-		operator* (const double a) const;
+        Vector3D                                                // multiplication by a double on the right
+        operator* (const double a) const;
 
-		Vector3D												// division by a double
-		operator/ (const double a) const;
+        Vector3D                                                // division by a double
+        operator/ (const double a) const;
 
-		Vector3D												// addition
-		operator+ (const Vector3D& v) const;
+        Vector3D                                                // addition
+        operator+ (const Vector3D& v) const;
 
-		Vector3D& 												// compound addition
-		operator+= (const Vector3D& v);
+        Vector3D&                                                 // compound addition
+        operator+= (const Vector3D& v);
 
-		Vector3D												// subtraction
-		operator- (const Vector3D& v) const;
+        Vector3D                                                // subtraction
+        operator- (const Vector3D& v) const;
 
-		double 													// dot product
-		operator* (const Vector3D& b) const;
+        double                                                     // dot product
+        operator* (const Vector3D& b) const;
 
-		Vector3D 												// cross product
-		operator^ (const Vector3D& v) const;
+        Vector3D                                                 // cross product
+        operator^ (const Vector3D& v) const;
 
-		void 													// convert vector to a unit vector
-		normalize(void);
+        void                                                     // convert vector to a unit vector
+        normalize(void);
 
-		Vector3D& 												// return a unit vector, and normalize the vector
-		hat(void);
+        Vector3D&                                                 // return a unit vector, and normalize the vector
+        hat(void);
 };
 
 
@@ -83,7 +83,7 @@ class Vector3D {
 
 inline Vector3D
 Vector3D::operator- (void) const {
-	return (Vector3D(-x, -y, -z));
+    return (Vector3D(-x, -y, -z));
 }
 
 
@@ -92,7 +92,7 @@ Vector3D::operator- (void) const {
 
 inline double
 Vector3D::len_squared(void) {
-	return (x * x + y * y + z * z);
+    return (x * x + y * y + z * z);
 }
 
 
@@ -101,7 +101,7 @@ Vector3D::len_squared(void) {
 
 inline Vector3D
 Vector3D::operator* (const double a) const {
-	return (Vector3D(x * a, y * a, z * a));
+    return (Vector3D(x * a, y * a, z * a));
 }
 
 
@@ -110,7 +110,7 @@ Vector3D::operator* (const double a) const {
 
 inline Vector3D
 Vector3D::operator/ (const double a) const {
-	return (Vector3D(x / a, y / a, z / a));
+    return (Vector3D(x / a, y / a, z / a));
 }
 
 
@@ -119,7 +119,7 @@ Vector3D::operator/ (const double a) const {
 
 inline Vector3D
 Vector3D::operator+ (const Vector3D& v) const {
-	return (Vector3D(x + v.x, y + v.y, z + v.z));
+    return (Vector3D(x + v.x, y + v.y, z + v.z));
 }
 
 
@@ -128,7 +128,7 @@ Vector3D::operator+ (const Vector3D& v) const {
 
 inline Vector3D
 Vector3D::operator- (const Vector3D& v) const {
-	return (Vector3D(x - v.x, y - v.y, z - v.z));
+    return (Vector3D(x - v.x, y - v.y, z - v.z));
 }
 
 
@@ -137,7 +137,7 @@ Vector3D::operator- (const Vector3D& v) const {
 
 inline double
 Vector3D::operator* (const Vector3D& v) const {
-	return (x * v.x + y * v.y + z * v.z);
+    return (x * v.x + y * v.y + z * v.z);
 }
 
 
@@ -146,7 +146,7 @@ Vector3D::operator* (const Vector3D& v) const {
 
 inline Vector3D
 Vector3D::operator^ (const Vector3D& v) const {
-	return (Vector3D(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x));
+    return (Vector3D(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x));
 }
 
 
@@ -155,8 +155,8 @@ Vector3D::operator^ (const Vector3D& v) const {
 
 inline Vector3D&
 Vector3D::operator+= (const Vector3D& v) {
-	x += v.x; y += v.y; z += v.z;
-	return (*this);
+    x += v.x; y += v.y; z += v.z;
+    return (*this);
 }
 
 
@@ -170,7 +170,7 @@ operator* (const double a, const Vector3D& v);
 
 inline Vector3D
 operator* (const double a, const Vector3D& v) {
-	return (Vector3D(a * v.x, a * v.y, a * v.z));
+    return (Vector3D(a * v.x, a * v.y, a * v.z));
 }
 
 

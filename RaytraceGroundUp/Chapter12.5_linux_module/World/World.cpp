@@ -306,7 +306,7 @@ void World::build()
     stereo_ptr->compute_uvw();
     // stereo_ptr->set_stereo_angle(0.75);
     stereo_ptr->set_beta(0.75);
-	// 调用setup_cameras() 函数并建立左、右相机
+    // 调用setup_cameras() 函数并建立左、右相机
     stereo_ptr->setup_cameras();
     set_camera(stereo_ptr);
     //in pixels //in degrees
@@ -320,7 +320,7 @@ void World::build()
 
     sphere_ptr = new Sphere;
     sphere_ptr->set_center(0, 60, 0);
-	// sphere_ptr->set_radius(80.0);
+    // sphere_ptr->set_radius(80.0);
     sphere_ptr->set_radius(20.0);
     sphere_ptr->set_color(1.0, 1.0, 0.0);
     add_object(sphere_ptr);

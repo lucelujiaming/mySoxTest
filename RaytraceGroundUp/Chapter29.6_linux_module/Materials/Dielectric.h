@@ -57,8 +57,8 @@ class Dielectric : public Phong
         RGBColor             cf_in;            // interior filter color
         RGBColor             cf_out;            // exterior filter color
 
-        FresnelReflector* fresnel_brdf;
-        FresnelTransmitter* fresnel_btdf;
+        FresnelReflector* fresnel_brdf;        // 一个BRDF用于处理反射计算
+        FresnelTransmitter* fresnel_btdf;      // 一个BRDF用于处理透射计算
 };
 
 

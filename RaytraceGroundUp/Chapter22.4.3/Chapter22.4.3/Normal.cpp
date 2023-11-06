@@ -8,28 +8,28 @@
 // ---------------------------------------------------------- default constructor
 
 Normal::Normal(void)
-	 : x(0.0), y(0.0), z(0.0)
+     : x(0.0), y(0.0), z(0.0)
 {}
 
 
 // ---------------------------------------------------------- constructor
 
 Normal::Normal(double a)
-	 : x(a), y(a), z(a)
+     : x(a), y(a), z(a)
 {}
 
 
 // ---------------------------------------------------------- constructor
 
 Normal::Normal(double _x, double _y, double _z)
-	: x(_x), y(_y), z(_z)
+    : x(_x), y(_y), z(_z)
 {}
 
 
 // ---------------------------------------------------------- copy constructor
 
 Normal::Normal(const Normal& n)
-	: x(n.x), y(n.y), z(n.z)
+    : x(n.x), y(n.y), z(n.z)
 {}
 
 
@@ -37,7 +37,7 @@ Normal::Normal(const Normal& n)
 // construct a normal from a vector
 
 Normal::Normal(const Vector3D& v)
-	: x(v.x), y(v.y), z(v.z)  
+    : x(v.x), y(v.y), z(v.z)  
 {}
 
 
@@ -52,12 +52,12 @@ Normal::~Normal (void)
 
 Normal&
 Normal::operator= (const Normal& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	x = rhs.x; y = rhs.y; z = rhs.z;
+    x = rhs.x; y = rhs.y; z = rhs.z;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -66,8 +66,8 @@ Normal::operator= (const Normal& rhs) {
 
 Normal&
 Normal::operator= (const Vector3D& rhs) {
-	x = rhs.x; y = rhs.y; z = rhs.z;
-	return (*this);
+    x = rhs.x; y = rhs.y; z = rhs.z;
+    return (*this);
 }
 
 
@@ -76,17 +76,17 @@ Normal::operator= (const Vector3D& rhs) {
 
 Normal&
 Normal::operator= (const Point3D& rhs) {
-	x = rhs.x; y = rhs.y; z = rhs.z;
-	return (*this);
+    x = rhs.x; y = rhs.y; z = rhs.z;
+    return (*this);
 }
 
 
 // ------------------------------------------------------------ normalize
 
 void
-Normal::normalize(void) {	
-	double length = sqrt(x * x + y * y + z * z);
-	x /= length; y /= length; z /= length;
+Normal::normalize(void) {    
+    double length = sqrt(x * x + y * y + z * z);
+    x /= length; y /= length; z /= length;
 }
 
 
@@ -100,7 +100,7 @@ Normal::normalize(void) {
 
 Normal
 operator* (const Matrix& mat, const Normal& n) {
-	return (Normal(	mat.m[0][0] * n.x + mat.m[1][0] * n.y + mat.m[2][0] * n.z,
-					mat.m[0][1] * n.x + mat.m[1][1] * n.y + mat.m[2][1] * n.z,
-					mat.m[0][2] * n.x + mat.m[1][2] * n.y + mat.m[2][2] * n.z));
+    return (Normal(    mat.m[0][0] * n.x + mat.m[1][0] * n.y + mat.m[2][0] * n.z,
+                    mat.m[0][1] * n.x + mat.m[1][1] * n.y + mat.m[2][1] * n.z,
+                    mat.m[0][2] * n.x + mat.m[1][2] * n.y + mat.m[2][2] * n.z));
 }

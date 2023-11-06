@@ -277,10 +277,10 @@ World::display_pixel(const int row, const int column, const RGBColor& raw_color)
     // paintArea->setPixel(x, y, (int)(mapped_color.r * 255),
     //                          (int)(mapped_color.g * 255),
     //                          (int)(mapped_color.b * 255));
-	// cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
-	// cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
-	// cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
-	
+    // cout << "raw_color : " << (raw_color.r) << " " << (raw_color.g) << " " << (raw_color.b) << endl;
+    // cout << "mapped_color : " << (mapped_color.r) << " " << (mapped_color.g) << " " << (mapped_color.b) << endl;
+    // cout << "mapped_color.r * 255 : " << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
+    
     out << (int)(mapped_color.r * 255) << " " << (int)(mapped_color.g * 255) << " " << (int)(mapped_color.b * 255) << endl;
 
 }

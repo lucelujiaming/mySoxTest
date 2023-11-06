@@ -1,7 +1,7 @@
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include "OpenCylinderConvex.h"
@@ -11,32 +11,32 @@
 // ---------------------------------------------------------------- default constructor
 
 OpenCylinderConvex::OpenCylinderConvex(void)
-	: 	GeometricObject(),
-		y0(-1.0),
-		y1(1.0),
-		radius(1.0),
-		inv_radius(1.0)
+    :     GeometricObject(),
+        y0(-1.0),
+        y1(1.0),
+        radius(1.0),
+        inv_radius(1.0)
 {}
 
 // ---------------------------------------------------------------- constructor
 
 OpenCylinderConvex::OpenCylinderConvex(const double bottom, const double top, const double r)
-	:  	GeometricObject(),
-		y0(bottom),
-		y1(top),
-		radius(r),
-		inv_radius(1.0 / radius)
+    :      GeometricObject(),
+        y0(bottom),
+        y1(top),
+        radius(r),
+        inv_radius(1.0 / radius)
 {}
 
 
 // ---------------------------------------------------------------- copy constructor
 
 OpenCylinderConvex::OpenCylinderConvex(const OpenCylinderConvex& c)
-	: 	GeometricObject(c),
-		y0(c.y0),
-		y1(c.y1),
-		radius(c.radius),
-		inv_radius(c.inv_radius)
+    :     GeometricObject(c),
+        y0(c.y0),
+        y1(c.y1),
+        radius(c.radius),
+        inv_radius(c.inv_radius)
 {}
 
 
@@ -44,7 +44,7 @@ OpenCylinderConvex::OpenCylinderConvex(const OpenCylinderConvex& c)
 
 OpenCylinderConvex*
 OpenCylinderConvex::clone(void) const {
-	return (new OpenCylinderConvex (*this));
+    return (new OpenCylinderConvex (*this));
 }
 
 
@@ -53,17 +53,17 @@ OpenCylinderConvex::clone(void) const {
 OpenCylinderConvex&
 OpenCylinderConvex::operator= (const OpenCylinderConvex& rhs)
 {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	GeometricObject::operator= (rhs);
+    GeometricObject::operator= (rhs);
 
-	y0 			= rhs.y0;
-	y1 			= rhs.y1;
-	radius 		= rhs.radius;
-	inv_radius 	= rhs.inv_radius;
+    y0             = rhs.y0;
+    y1             = rhs.y1;
+    radius         = rhs.radius;
+    inv_radius     = rhs.inv_radius;
 
-	return (*this) ;
+    return (*this) ;
 }
 
 
@@ -76,11 +76,11 @@ OpenCylinderConvex::~OpenCylinderConvex(void) {}
 
 BBox
 OpenCylinderConvex::get_bounding_box(void) {
-	double delta = 0.000001;
+    double delta = 0.000001;
 
-	return (BBox(0 - radius - delta, 0 + radius + delta,
+    return (BBox(0 - radius - delta, 0 + radius + delta,
                          y0 - delta,         y1 + delta,
-				 0 - radius - delta, 0 + radius + delta));
+                 0 - radius - delta, 0 + radius + delta));
 }
 
 
@@ -91,76 +91,76 @@ OpenCylinderConvex::get_bounding_box(void) {
 bool
 OpenCylinderConvex::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
-	double t;
-	double ox = ray.o.x;
-	double oy = ray.o.y;
-	double oz = ray.o.z;
-	double dx = ray.d.x;
-	double dy = ray.d.y;
-	double dz = ray.d.z;
+    double t;
+    double ox = ray.o.x;
+    double oy = ray.o.y;
+    double oz = ray.o.z;
+    double dx = ray.d.x;
+    double dy = ray.d.y;
+    double dz = ray.d.z;
 
-	double a = dx * dx + dz * dz;
-	double b = 2.0 * (ox * dx + oz * dz);
-	double c = ox * ox + oz * oz - radius * radius;
-	double disc = b * b - 4.0 * a * c ;
+    double a = dx * dx + dz * dz;
+    double b = 2.0 * (ox * dx + oz * dz);
+    double c = ox * ox + oz * oz - radius * radius;
+    double disc = b * b - 4.0 * a * c ;
 
 
-	if (disc < 0.0)
-		return(false);
-	else {
-		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
+    if (disc < 0.0)
+        return(false);
+    else {
+        double e = sqrt(disc);
+        double denom = 2.0 * a;
+        t = (-b - e) / denom;    // smaller root
 
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
 
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
-				sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
-
-# if 0 // Convex doesn't need this
-
-				// test for hitting from inside
-
-				if (-ray.d * sr.normal < 0.0) {
-					sr.normal = -sr.normal;
-				}
-
-# endif // 0
-				sr.local_hit_point = ray.o + tmin * ray.d;
-
-				return (true);
-			}
-		}
-
-		t = (-b + e) / denom;    // larger root
-
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
-
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
-				sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
+                sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
 
 # if 0 // Convex doesn't need this
 
-				// test for hitting from inside
+                // test for hitting from inside
 
-				if (-ray.d * sr.normal < 0.0) {
-					sr.normal = -sr.normal;
-				}
+                if (-ray.d * sr.normal < 0.0) {
+                    sr.normal = -sr.normal;
+                }
+
+# endif // 0
+                sr.local_hit_point = ray.o + tmin * ray.d;
+
+                return (true);
+            }
+        }
+
+        t = (-b + e) / denom;    // larger root
+
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
+
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
+                sr.normal = Normal((ox + t * dx) * inv_radius, 0.0, (oz + t * dz) * inv_radius);
+
+# if 0 // Convex doesn't need this
+
+                // test for hitting from inside
+
+                if (-ray.d * sr.normal < 0.0) {
+                    sr.normal = -sr.normal;
+                }
 
 # endif // 0
 
-				sr.local_hit_point = ray.o + tmin * ray.d;
+                sr.local_hit_point = ray.o + tmin * ray.d;
 
-				return (true);
-			}
-		}
-	}
+                return (true);
+            }
+        }
+    }
 
-	return (false);
+    return (false);
 }
 
 
@@ -171,49 +171,49 @@ OpenCylinderConvex::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 bool
 OpenCylinderConvex::shadow_hit(const Ray& ray, float& tmin) const {
 
-	double t;
-	double ox = ray.o.x;
-	double oy = ray.o.y;
-	double oz = ray.o.z;
-	double dx = ray.d.x;
-	double dy = ray.d.y;
-	double dz = ray.d.z;
+    double t;
+    double ox = ray.o.x;
+    double oy = ray.o.y;
+    double oz = ray.o.z;
+    double dx = ray.d.x;
+    double dy = ray.d.y;
+    double dz = ray.d.z;
 
-	double a = dx * dx + dz * dz;
-	double b = 2.0 * (ox * dx + oz * dz);
-	double c = ox * ox + oz * oz - radius * radius;
-	double disc = b * b - 4.0 * a * c ;
+    double a = dx * dx + dz * dz;
+    double b = 2.0 * (ox * dx + oz * dz);
+    double c = ox * ox + oz * oz - radius * radius;
+    double disc = b * b - 4.0 * a * c ;
 
 
-	if (disc < 0.0)
-		return(false);
-	else {
-		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
+    if (disc < 0.0)
+        return(false);
+    else {
+        double e = sqrt(disc);
+        double denom = 2.0 * a;
+        t = (-b - e) / denom;    // smaller root
 
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
 
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
 
-				return (true);
-			}
-		}
+                return (true);
+            }
+        }
 
-		t = (-b + e) / denom;    // larger root
+        t = (-b + e) / denom;    // larger root
 
-		if (t > kEpsilon) {
-			double yhit = oy + t * dy;
+        if (t > kEpsilon) {
+            double yhit = oy + t * dy;
 
-			if (yhit > y0 && yhit < y1) {
-				tmin = t;
+            if (yhit > y0 && yhit < y1) {
+                tmin = t;
 
-				return (true);
-			}
-		}
-	}
+                return (true);
+            }
+        }
+    }
 
-	return (false);
+    return (false);
 }

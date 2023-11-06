@@ -6,19 +6,19 @@
 
 class Ray {
 
-	public:
+    public:
 
-		Point3D			o;  			// origin						
-		Vector3D		d; 				// direction					
-		int				depth;			// ray depth, for reflections	
-		Ray(void);						//default constructor			
-		Ray(const Point3D& origin,		
-			const Vector3D& dir);		//constructor
-		Ray(const Ray& ray);			//copy constructor
-		Ray&
-		operator= (const Ray& rhs);		//assignment operator
+        Point3D            o;              // origin                        
+        Vector3D        d;                 // direction                    
+        int                depth;            // ray depth, for reflections    
+        Ray(void);                        //default constructor            
+        Ray(const Point3D& origin,        
+            const Vector3D& dir);        //constructor
+        Ray(const Ray& ray);            //copy constructor
+        Ray&
+        operator= (const Ray& rhs);        //assignment operator
 
-		~Ray(void);						//destructor
+        ~Ray(void);                        //destructor
 };
 
 #endif

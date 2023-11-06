@@ -5,20 +5,20 @@
 
 class AreaLighting: public Tracer {
 
-	public:
+    public:
 
-		AreaLighting(void);
+        AreaLighting(void);
 
-		AreaLighting(World* _worldPtr);
+        AreaLighting(World* _worldPtr);
 
-		virtual
-		~AreaLighting(void);
+        virtual
+        ~AreaLighting(void);
 
-		virtual RGBColor
-		trace_ray(const Ray& ray) const;
+        virtual RGBColor
+        trace_ray(const Ray& ray) const;
 
-		virtual RGBColor
-		trace_ray(const Ray ray, const int depth) const;
+        virtual RGBColor
+        trace_ray(const Ray ray, const int depth) const;
 };
 
 #endif

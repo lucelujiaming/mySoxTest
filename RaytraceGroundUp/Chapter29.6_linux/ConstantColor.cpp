@@ -3,23 +3,23 @@
 // ---------------------------------------------------------------- default constructor
 
 ConstantColor::ConstantColor(void)
-	:	Texture(),
-	    color(0.0)
+    :    Texture(),
+        color(0.0)
 {}
 
 // ---------------------------------------------------------------- default constructor
 
 ConstantColor::ConstantColor(const RGBColor& c)
-	:	Texture(),
-	    color(c)
+    :    Texture(),
+        color(c)
 {}
 
 
 // ---------------------------------------------------------------- copy constructor
 
 ConstantColor::ConstantColor(const ConstantColor& cc)
-	:   Texture(cc),
-		color(cc.color)
+    :   Texture(cc),
+        color(cc.color)
 {}
 
 
@@ -27,7 +27,7 @@ ConstantColor::ConstantColor(const ConstantColor& cc)
 
 ConstantColor*
 ConstantColor::clone(void) const {
-	return (new ConstantColor(*this));
+    return (new ConstantColor(*this));
 }
 
 
@@ -40,14 +40,14 @@ ConstantColor::~ConstantColor(void) {}
 
 ConstantColor&
 ConstantColor::operator= (const ConstantColor& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	Texture::operator= (rhs);
+    Texture::operator= (rhs);
 
-	color = rhs.color;
+    color = rhs.color;
 
-	return (*this);
+    return (*this);
 }
 
 

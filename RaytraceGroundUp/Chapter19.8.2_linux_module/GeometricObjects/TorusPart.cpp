@@ -1,24 +1,24 @@
-// 	Copyright (C) Kevin Suffern 2000-2007.
-//	This C++ code is for non-commercial purposes only.
-//	This C++ code is licensed under the GNU General Public License Version 2.
-//	See the file COPYING.txt for the full license.
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
-#include "Maths.h"	// for SolveQuartic
+#include "Maths.h"    // for SolveQuartic
 #include "TorusPart.h"
 
 
 // ---------------------------------------------------------------- default constructor
 
 TorusPart::TorusPart (void)
-	: 	GeometricObject(),
-		a(2.0),
-		b(0.5),
-		phi1(90.0 * PI / 180.0),
-		phi2(270.0 * PI / 180.0),
-		theta1(90.0 * PI / 180.0),
-		theta2(270.0 * PI / 180.0),
-		bbox(-a - b, a + b, -b, b, -a - b, a + b)
+    :     GeometricObject(),
+        a(2.0),
+        b(0.5),
+        phi1(90.0 * PI / 180.0),
+        phi2(270.0 * PI / 180.0),
+        theta1(90.0 * PI / 180.0),
+        theta2(270.0 * PI / 180.0),
+        bbox(-a - b, a + b, -b, b, -a - b, a + b)
 {}
 
 // ---------------------------------------------------------------- constructor
@@ -26,35 +26,35 @@ TorusPart::TorusPart (void)
 TorusPart::TorusPart (const double _a,      const double _b,
                       const double _phi1,   const double _phi2,
                       const double _theta1, const double _theta2)
-	: 	GeometricObject(),
-		a(_a),
-		b(_b),
-		phi1(_phi1 * PI / 180.0),
-		phi2(_phi2 * PI / 180.0),
-		theta1(_theta1 * PI / 180.0),
-		theta2(_theta2 * PI / 180.0),
-		bbox(-a - b, a + b, -b, b, -a - b, a + b)
+    :     GeometricObject(),
+        a(_a),
+        b(_b),
+        phi1(_phi1 * PI / 180.0),
+        phi2(_phi2 * PI / 180.0),
+        theta1(_theta1 * PI / 180.0),
+        theta2(_theta2 * PI / 180.0),
+        bbox(-a - b, a + b, -b, b, -a - b, a + b)
 {}
 
 // ---------------------------------------------------------------- clone
 
 TorusPart*
 TorusPart::clone(void) const {
-	return (new TorusPart(*this));
+    return (new TorusPart(*this));
 }
 
 
 // ---------------------------------------------------------------- copy constructor
 
 TorusPart::TorusPart (const TorusPart& torus)
-	: 	GeometricObject(torus),
-		a(torus.a),
-		b(torus.b),
-		phi1(torus.phi1),
-		phi2(torus.phi2),
-		theta1(torus.theta1),
-		theta2(torus.theta2),
-		bbox(torus.bbox)
+    :     GeometricObject(torus),
+        a(torus.a),
+        b(torus.b),
+        phi1(torus.phi1),
+        phi2(torus.phi2),
+        theta1(torus.theta1),
+        theta2(torus.theta2),
+        bbox(torus.bbox)
 {}
 
 
@@ -62,20 +62,20 @@ TorusPart::TorusPart (const TorusPart& torus)
 
 TorusPart&
 TorusPart::operator = (TorusPart& rhs) {
-	if (this == &rhs)
-		return (*this);
+    if (this == &rhs)
+        return (*this);
 
-	GeometricObject::operator=(rhs);
+    GeometricObject::operator=(rhs);
 
-	a		= rhs.a;
-	b 		= rhs.b;
-	phi1	= rhs.phi1;
-	phi2	= rhs.phi2;
-	theta1	= rhs.theta1;
-	theta2 	= rhs.theta2;
-	bbox	= rhs.bbox;
+    a        = rhs.a;
+    b         = rhs.b;
+    phi1    = rhs.phi1;
+    phi2    = rhs.phi2;
+    theta1    = rhs.theta1;
+    theta2     = rhs.theta2;
+    bbox    = rhs.bbox;
 
-	return (*this);
+    return (*this);
 }
 
 
@@ -90,20 +90,20 @@ TorusPart::~TorusPart(void) {}
 
 Normal
 TorusPart::compute_normal(const Point3D& p) const {
-	Normal normal;
-	double param_squared = a * a + b * b;
+    Normal normal;
+    double param_squared = a * a + b * b;
 
-	double x = p.x;
-	double y = p.y;
-	double z = p.z;
-	double sum_squared = x * x + y * y + z * z;
+    double x = p.x;
+    double y = p.y;
+    double z = p.z;
+    double sum_squared = x * x + y * y + z * z;
 
-	normal.x = 4.0 * x * (sum_squared - param_squared);
-	normal.y = 4.0 * y * (sum_squared - param_squared + 2.0 * a * a);
-	normal.z = 4.0 * z * (sum_squared - param_squared);
-	normal.normalize();
+    normal.x = 4.0 * x * (sum_squared - param_squared);
+    normal.y = 4.0 * y * (sum_squared - param_squared + 2.0 * a * a);
+    normal.z = 4.0 * z * (sum_squared - param_squared);
+    normal.normalize();
 
-	return (normal);
+    return (normal);
 }
 
 
@@ -111,48 +111,48 @@ TorusPart::compute_normal(const Point3D& p) const {
 
 bool
 TorusPart::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
-	if (!bbox.hit(ray))
-		return (false);
+    if (!bbox.hit(ray))
+        return (false);
 
-	double x1 = ray.o.x; double y1 = ray.o.y; double z1 = ray.o.z;
-	double d1 = ray.d.x; double d2 = ray.d.y; double d3 = ray.d.z;
+    double x1 = ray.o.x; double y1 = ray.o.y; double z1 = ray.o.z;
+    double d1 = ray.d.x; double d2 = ray.d.y; double d3 = ray.d.z;
 
-	double coeffs[5];	// coefficient array for the quartic equation
-	double roots[4];	// solution array for the quartic equation
+    double coeffs[5];    // coefficient array for the quartic equation
+    double roots[4];    // solution array for the quartic equation
 
-	// define the coefficients of the quartic equation
+    // define the coefficients of the quartic equation
 
-	double sum_d_sqrd 	= d1 * d1 + d2 * d2 + d3 * d3;
-	double e			= x1 * x1 + y1 * y1 + z1 * z1 - a * a - b * b;
-	double f			= x1 * d1 + y1 * d2 + z1 * d3;
-	double four_a_sqrd	= 4.0 * a * a;
+    double sum_d_sqrd     = d1 * d1 + d2 * d2 + d3 * d3;
+    double e            = x1 * x1 + y1 * y1 + z1 * z1 - a * a - b * b;
+    double f            = x1 * d1 + y1 * d2 + z1 * d3;
+    double four_a_sqrd    = 4.0 * a * a;
 
-	coeffs[0] = e * e - four_a_sqrd * (b * b - y1 * y1); 	// constant term
-	coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
-	coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
-	coeffs[3] = 4.0 * sum_d_sqrd * f;
-	coeffs[4] = sum_d_sqrd * sum_d_sqrd;  					// coefficient of t^4
+    coeffs[0] = e * e - four_a_sqrd * (b * b - y1 * y1);     // constant term
+    coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
+    coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
+    coeffs[3] = 4.0 * sum_d_sqrd * f;
+    coeffs[4] = sum_d_sqrd * sum_d_sqrd;                      // coefficient of t^4
 
-	// find roots of the quartic equation
+    // find roots of the quartic equation
 
-	int num_real_roots = SolveQuartic(coeffs, roots);
+    int num_real_roots = SolveQuartic(coeffs, roots);
 
-	bool	intersected = false;
-	double 	t 		 	= kHugeValue;
-	double   t_t;
+    bool    intersected = false;
+    double     t              = kHugeValue;
+    double   t_t;
     Point3D  p_t;
     Vector3D v_t;
     Vector3D v_t_xz;
     double   phi;
     double   theta;
 
-	if (num_real_roots == 0)  // ray misses the torus
-		return(false);
+    if (num_real_roots == 0)  // ray misses the torus
+        return(false);
 
-	// find the smallest root greater than kEpsilon, if any
-	// the roots array is not sorted
-	for (int j = 0; j < num_real_roots; j++)
-		if (roots[j] > kEpsilon) {
+    // find the smallest root greater than kEpsilon, if any
+    // the roots array is not sorted
+    for (int j = 0; j < num_real_roots; j++)
+        if (roots[j] > kEpsilon) {
             t_t = roots[j];
             p_t = ray.o + ray.d * t_t;
             v_t = Vector3D(p_t.x, p_t.y, p_t.z);
@@ -169,26 +169,26 @@ TorusPart::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
                 theta = TWO_PI - theta;
             }
 
-			if ((roots[j] < t) &&
+            if ((roots[j] < t) &&
                 ((theta > theta1) && (theta < theta2)) &&
                 ((phi > phi1) && (phi < phi2))) {
-				t = roots[j];
+                t = roots[j];
                 intersected = true;
             }
-		}
+        }
 
-	if(!intersected)
-		return (false);
+    if(!intersected)
+        return (false);
 
-	tmin 			 	= t;
-	sr.local_hit_point 	= ray.o + t * ray.d;
-	sr.normal 		 	= compute_normal(sr.local_hit_point);
+    tmin                  = t;
+    sr.local_hit_point     = ray.o + t * ray.d;
+    sr.normal              = compute_normal(sr.local_hit_point);
 
     if (-ray.d * sr.normal < 0.0) {
         sr.normal = -sr.normal;
     }
 
-	return (true);
+    return (true);
 }
 
 
@@ -196,48 +196,48 @@ TorusPart::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 bool
 TorusPart::shadow_hit(const Ray& ray, float& tmin) const {
-	if (!bbox.hit(ray))
-		return (false);
+    if (!bbox.hit(ray))
+        return (false);
 
-	double x1 = ray.o.x; double y1 = ray.o.y; double z1 = ray.o.z;
-	double d1 = ray.d.x; double d2 = ray.d.y; double d3 = ray.d.z;
+    double x1 = ray.o.x; double y1 = ray.o.y; double z1 = ray.o.z;
+    double d1 = ray.d.x; double d2 = ray.d.y; double d3 = ray.d.z;
 
-	double coeffs[5];	// coefficient array for the quartic equation
-	double roots[4];	// solution array for the quartic equation
+    double coeffs[5];    // coefficient array for the quartic equation
+    double roots[4];    // solution array for the quartic equation
 
-	// define the coefficients of the quartic equation
+    // define the coefficients of the quartic equation
 
-	double sum_d_sqrd 	= d1 * d1 + d2 * d2 + d3 * d3;
-	double e			= x1 * x1 + y1 * y1 + z1 * z1 - a * a - b * b;
-	double f			= x1 * d1 + y1 * d2 + z1 * d3;
-	double four_a_sqrd	= 4.0 * a * a;
+    double sum_d_sqrd     = d1 * d1 + d2 * d2 + d3 * d3;
+    double e            = x1 * x1 + y1 * y1 + z1 * z1 - a * a - b * b;
+    double f            = x1 * d1 + y1 * d2 + z1 * d3;
+    double four_a_sqrd    = 4.0 * a * a;
 
-	coeffs[0] = e * e - four_a_sqrd * (b * b - y1 * y1); 	// constant term
-	coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
-	coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
-	coeffs[3] = 4.0 * sum_d_sqrd * f;
-	coeffs[4] = sum_d_sqrd * sum_d_sqrd;  					// coefficient of t^4
+    coeffs[0] = e * e - four_a_sqrd * (b * b - y1 * y1);     // constant term
+    coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
+    coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
+    coeffs[3] = 4.0 * sum_d_sqrd * f;
+    coeffs[4] = sum_d_sqrd * sum_d_sqrd;                      // coefficient of t^4
 
-	// find roots of the quartic equation
+    // find roots of the quartic equation
 
-	int num_real_roots = SolveQuartic(coeffs, roots);
+    int num_real_roots = SolveQuartic(coeffs, roots);
 
-	bool	intersected = false;
-	double 	t 		 	= kHugeValue;
-	double   t_t;
+    bool    intersected = false;
+    double     t              = kHugeValue;
+    double   t_t;
     Point3D  p_t;
     Vector3D v_t;
     Vector3D v_t_xz;
     double   phi;
     double   theta;
 
-	if (num_real_roots == 0)  // ray misses the torus
-		return(false);
+    if (num_real_roots == 0)  // ray misses the torus
+        return(false);
 
-	// find the smallest root greater than kEpsilon, if any
-	// the roots array is not sorted
-	for (int j = 0; j < num_real_roots; j++)
-		if (roots[j] > kEpsilon) {
+    // find the smallest root greater than kEpsilon, if any
+    // the roots array is not sorted
+    for (int j = 0; j < num_real_roots; j++)
+        if (roots[j] > kEpsilon) {
             t_t = roots[j];
             p_t = ray.o + ray.d * t_t;
             v_t = Vector3D(p_t.x, p_t.y, p_t.z);
@@ -254,20 +254,20 @@ TorusPart::shadow_hit(const Ray& ray, float& tmin) const {
                 theta = TWO_PI - theta;
             }
 
-			if ((roots[j] < t) &&
+            if ((roots[j] < t) &&
                 ((theta > theta1) && (theta < theta2)) &&
                 ((phi > phi1) && (phi < phi2))) {
-				t = roots[j];
+                t = roots[j];
                 intersected = true;
             }
-		}
+        }
 
-	if(!intersected)
-		return (false);
+    if(!intersected)
+        return (false);
 
-	tmin 			 	= t;
+    tmin                  = t;
 
-	return (true);
+    return (true);
 }
 
 

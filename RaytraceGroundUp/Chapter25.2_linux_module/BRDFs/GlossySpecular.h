@@ -71,8 +71,8 @@ class GlossySpecular: public BRDF {
         // 镜面高光颜色值
         RGBColor     cs;                // specular color
         // 高光采用半球采样。 
-		// 虽然在父类BRDF中已经定义了这个成员变量。但是如果在子类中不定义这个成员变量。
-		// 就无法编译通过。让人十分不解。
+        // 虽然在父类BRDF中已经定义了这个成员变量。但是如果在子类中不定义这个成员变量。
+        // 就无法编译通过。让人十分不解。
         Sampler*    sampler_ptr;    // for use in sample_f
 };
 

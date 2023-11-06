@@ -11,10 +11,10 @@
 
 #include "Sampler.h"
 
-// å¾…BRDFå¯¹è±¡å®žçŽ°äº†åŸºæœ¬çš„æè´¨åå°„æœºåˆ¶åŽï¼Œ å„æè´¨å¯¹è±¡å‡åŒ…å«è‡³å°‘ä¸€ä¸ªBRDFã€‚
-// å„ç±»å‡å…·æœ‰ç©ºé—´ä¸å˜æ€§ç‰¹å¾ã€‚
-// å„ä¸ªBRDFç±»å‡å®šä¹‰äº†3ä¸ªæˆå‘˜å‡½æ•°ï¼šf()å‡½æ•°ï¼Œsample_f()å‡½æ•°ä»¥åŠrho()å‡½æ•°ï¼Œ
-// æ¯ä¸ªå‡½æ•°å°†è¿”å›žä¸€ä¸ªRGBé¢œè‰²å€¼ã€‚
+// ´ýBRDF¶ÔÏóÊµÏÖÁË»ù±¾µÄ²ÄÖÊ·´Éä»úÖÆºó£¬ ¸÷²ÄÖÊ¶ÔÏó¾ù°üº¬ÖÁÉÙÒ»¸öBRDF¡£
+// ¸÷Àà¾ù¾ßÓÐ¿Õ¼ä²»±äÐÔÌØÕ÷¡£
+// ¸÷¸öBRDFÀà¾ù¶¨ÒåÁË3¸ö³ÉÔ±º¯Êý£ºf()º¯Êý£¬sample_f()º¯ÊýÒÔ¼°rho()º¯Êý£¬
+// Ã¿¸öº¯Êý½«·µ»ØÒ»¸öRGBÑÕÉ«Öµ¡£
 class BRDF {
 
     public:
@@ -27,20 +27,20 @@ class BRDF {
         clone(void) const = 0;
 
         ~BRDF(void);
-        // é’ˆå¯¹äºŽåå°„æè´¨ä»¥åŠæ¼«åå°„-æ¼«åå°„å…‰çº¿æ¨¡æ‹Ÿè®¡ç®—ï¼Œè¿”å›žè®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
-        // å¦‚æžœä¸åŒ…å«delta()å‡½æ•°ï¼Œå°†è¿”å›žBRDFè‡ªèº«ã€‚
+        // Õë¶ÔÓÚ·´Éä²ÄÖÊÒÔ¼°Âþ·´Éä-Âþ·´Éä¹âÏßÄ£Äâ¼ÆËã£¬·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
+        // Èç¹û²»°üº¬delta()º¯Êý£¬½«·µ»ØBRDF×ÔÉí¡£
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
-        // ç”¨äºŽè®¡ç®—åå°„å…‰çº¿çš„æ–¹å‘ï¼Œå¹¶ä¸”è¿”å›žè®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
-        // å‚æ•°wiï¼›ç”¨äºŽè¿”å›žæœ€ç»ˆçš„æ–¹å‘ï¼Œå› è€Œä¸å¯ä¸ºå¸¸é‡ã€‚
-        // é¡¾åæ€ä¹‰ï¼Œç›¸å…³æ–¹å‘å°†é€šè¿‡å¯¹BRDFé‡‡æ ·è®¡ç®—å¾—åˆ°ã€‚
+        // ÓÃÓÚ¼ÆËã·´Éä¹âÏßµÄ·½Ïò£¬²¢ÇÒ·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
+        // ²ÎÊýwi£»ÓÃÓÚ·µ»Ø×îÖÕµÄ·½Ïò£¬Òò¶ø²»¿ÉÎª³£Á¿¡£
+        // ¹ËÃûË¼Òå£¬Ïà¹Ø·½Ïò½«Í¨¹ý¶ÔBRDF²ÉÑù¼ÆËãµÃµ½¡£
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi) const;
-        // ç”¨äºŽè®¡ç®—åå°„å…‰çº¿çš„æ–¹å‘ï¼Œå¹¶ä¸”è¿”å›žè®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
-        // ä½¿ç”¨Monte Caloç§¯åˆ†å®žçŽ°ã€‚
+        // ÓÃÓÚ¼ÆËã·´Éä¹âÏßµÄ·½Ïò£¬²¢ÇÒ·µ»Ø¼ÆËã³öÀ´µÄÑÕÉ«Öµ¡£
+        // Ê¹ÓÃMonte Calo»ý·ÖÊµÏÖ¡£
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
-        // è¿”å›žåŒåŠçƒåå°„ç³»æ•°ã€‚ 
+        // ·µ»ØË«°ëÇò·´ÉäÏµÊý¡£ 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
 
@@ -48,9 +48,9 @@ class BRDF {
 
         BRDF&
         operator= (const BRDF& rhs);
-        // å› ä¸ºåå°„å…‰çº¿æ–¹å‘å°†è¿‡å¯¹BRDFé‡‡æ ·è®¡ç®—å¾—åˆ°ï¼Œ
-        // è¿™å°±æ˜¯BRDFåŸºç±»åŒ…å«ä¸€ä¸ªé‡‡æ ·å™¨å¯¹è±¡æŒ‡é’ˆçš„åŽŸå› ã€‚
-        // ä½†æ˜¯BRDFè‡ªå·±æ²¡æœ‰ä½¿ç”¨è¿™ä¸ªæˆå‘˜å˜é‡ã€‚è€Œæ˜¯æŠŠå®ƒç•™ç»™å­ç±»ä½¿ç”¨ã€‚
+        // ÒòÎª·´Éä¹âÏß·½Ïò½«¹ý¶ÔBRDF²ÉÑù¼ÆËãµÃµ½£¬
+        // Õâ¾ÍÊÇBRDF»ùÀà°üº¬Ò»¸ö²ÉÑùÆ÷¶ÔÏóÖ¸ÕëµÄÔ­Òò¡£
+        // µ«ÊÇBRDF×Ô¼ºÃ»ÓÐÊ¹ÓÃÕâ¸ö³ÉÔ±±äÁ¿¡£¶øÊÇ°ÑËüÁô¸ø×ÓÀàÊ¹ÓÃ¡£
         Sampler* sampler_ptr;    // for use in sample_f
 };
 

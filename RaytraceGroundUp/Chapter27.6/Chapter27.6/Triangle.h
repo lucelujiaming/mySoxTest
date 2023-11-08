@@ -1,4 +1,4 @@
-#ifndef __TRIANGLE__
+﻿#ifndef __TRIANGLE__
 #define __TRIANGLE__
 
 
@@ -40,7 +40,9 @@ class Triangle: public GeometricObject {
         shadow_hit(const Ray& ray, double& tmin) const; 
         
     private:
+        // 三角形的三个顶点。
         Point3D    v0, v1, v2;
+        // 法线方向。
         Normal    normal;
 };
 

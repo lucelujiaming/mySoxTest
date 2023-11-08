@@ -1,4 +1,4 @@
-#ifndef __SMOOTH_MESH_TRIANGLE__
+﻿#ifndef __SMOOTH_MESH_TRIANGLE__
 #define __SMOOTH_MESH_TRIANGLE__
 
 // SmoothMeshTriangle is a MeshTriangle that uses smooth shading with an interpolated normal at each hit point
@@ -7,7 +7,6 @@
 
 class SmoothMeshTriangle: public MeshTriangle {        
     public:
-        
         SmoothMeshTriangle(void);                                       
         
         SmoothMeshTriangle(Mesh* _meshPtr, const int i0, const int i1, const int i2);        
@@ -30,7 +29,6 @@ class SmoothMeshTriangle: public MeshTriangle {
         shadow_hit(const Ray& ray, float& tmin) const;
 
     protected:
-    
         Normal 
         interpolate_normal(const float beta, const float gamma) const;
 };

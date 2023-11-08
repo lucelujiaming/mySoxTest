@@ -3,8 +3,8 @@
 //    This C++ code is licensed under the GNU General Public License Version 2.
 //    See the file COPYING.txt for the full license.
 
-
 #include "stdafx.h"
+
 #include "PathTrace.h"
 #include "World.h"
 #include "ShadeRec.h"
@@ -25,8 +25,9 @@ PathTrace::PathTrace(World* _worldPtr)
 
 
 // -------------------------------------------------------------------- trace_ray
-
-RGBColor
+// 另外，这里所讨论的路径跟踪计算仅限于Lambertian材质以及完全镜面材质，
+// 至于光泽反射材质将作为练习留予读者。
+RGBColor    
 PathTrace::trace_ray(const Ray ray, const int depth) const {
     if (depth > world_ptr->vp.max_depth)
         return (black);
@@ -36,6 +37,9 @@ PathTrace::trace_ray(const Ray ray, const int depth) const {
         if (sr.hit_an_object) {
             sr.depth = depth;
             sr.ray = ray;
+            
+            // 该函数与Whitted::trace_ray() 函数的唯一差别在于：
+            // 该函数调用了material_ptr->path_shade()函数而非material_ptr->shade()函数。
             RGBColor rgbRet = sr.material_ptr->path_shade(sr);
             return rgbRet;
         }

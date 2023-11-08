@@ -5,12 +5,12 @@
 #include "PerfectSpecular.h"
 #include "PerfectTransmitter.h"
 
-// ²ÄÖÊÀàTransparent¼Ì³ÐÓÚPhongÀà£¬ Òò¶ø¿É²ÉÓÃ¾µÃæ¸ß¹âäÖÈ¾Í¸Ã÷¶ÔÏó¡£
-// µ±Ê¹ÓÃÓÐÏòµã¹âÔ´Ê±£¬½«ÓÐÖúÓÚÌá¸ßÍ¸Ã÷¶ÔÏóµÄÊÓ¾õÐ§¹û£¬
-// µ«¸Ã¹ý³ÌÈÔÈ»»á²úÉú·´Éä²ÄÖÊËù³öÏÖµÄ²»Ò»ÖÂÐÔ¡£
+// æè´¨ç±»Transparentç»§æ‰¿äºŽPhongç±»ï¼Œ å› è€Œå¯é‡‡ç”¨é•œé¢é«˜å…‰æ¸²æŸ“é€æ˜Žå¯¹è±¡ã€‚
+// å½“ä½¿ç”¨æœ‰å‘ç‚¹å…‰æºæ—¶ï¼Œå°†æœ‰åŠ©äºŽæé«˜é€æ˜Žå¯¹è±¡çš„è§†è§‰æ•ˆæžœï¼Œ
+// ä½†è¯¥è¿‡ç¨‹ä»ç„¶ä¼šäº§ç”Ÿåå°„æè´¨æ‰€å‡ºçŽ°çš„ä¸ä¸€è‡´æ€§ã€‚
 
-// ¼øÓÚ²ÄÖÊÀàTransparentÊµÏÖÁËÍêÈ«¾µÃæ·´ÉäºÍÍ¸Éä£¬
-// ÇÒÔÚºóÐøÐ¡½ÚÖÐ½«½öÊ¹ÓÃÓÐÏòµã¹âÔ´£¬Òò¶ø¿É²ÉÓÃÒò¶ø¿É²ÉÓÃWhitted¸ú×ÙÆ÷¸ú×ÙÆ÷¡£
+// é‰´äºŽæè´¨ç±»Transparentå®žçŽ°äº†å®Œå…¨é•œé¢åå°„å’Œé€å°„ï¼Œ
+// ä¸”åœ¨åŽç»­å°èŠ‚ä¸­å°†ä»…ä½¿ç”¨æœ‰å‘ç‚¹å…‰æºï¼Œå› è€Œå¯é‡‡ç”¨Whittedè·Ÿè¸ªå™¨ã€‚
 class Transparent : public Phong
 {
     public:
@@ -49,11 +49,11 @@ class Transparent : public Phong
         shade(ShadeRec& s);
 
     private:
-        // °üº¬ÁËÒ»¸öBRDFÓÃÓÚ´¦Àí·´Éä¼ÆËã£¬
+        // åŒ…å«äº†ä¸€ä¸ªBRDFç”¨äºŽå¤„ç†åå°„è®¡ç®—ï¼Œ
         PerfectSpecular* reflective_brdf;
-        // °üº¬ÁËÒ»¸öBTDFÓÃÓÚ´¦ÀíÍ¸Ã÷¶È¼ÆËã
+        // åŒ…å«äº†ä¸€ä¸ªBTDFç”¨äºŽå¤„ç†é€æ˜Žåº¦è®¡ç®—
         PerfectTransmitter* specular_btdf;
-        // ÒÔ¼°3¸ö¼Ì³ÐÓÚPhong²ÄÖÊÀàµÄBRDF¡£
+        // ä»¥åŠ3ä¸ªç»§æ‰¿äºŽPhongæè´¨ç±»çš„BRDFã€‚
 };
 
 // ---------------------------------------------------------------- set_kr

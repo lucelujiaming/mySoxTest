@@ -1,4 +1,4 @@
-#ifndef __SAMPLER__
+﻿#ifndef __SAMPLER__
 #define __SAMPLER__
 
 #include <vector>
@@ -40,8 +40,8 @@ class Sampler {
         void shuffle_x_coordinates(void);
         void shuffle_y_coordinates(void);
         void setup_shuffled_indices(void);                // setup the randomly shuffled indices 
-        void map_samples_to_unit_disk(void);  
-        void map_samples_to_hemisphere(const float p);
+        void map_samples_to_unit_disk(void);              // 将位于正方形内的采样点映射至对应的同心圆上。
+        void map_samples_to_hemisphere(const float p);    // 将位于正方形内的采样点映射至对应的半球体上。
         void map_samples_to_sphere(void);
 
         // the following functions are not const because they change count and jump
@@ -58,11 +58,16 @@ class Sampler {
                                                            // file LatticeNoise.cpp in Chapter 31
 
     protected:
+        // Sampler的继承类包含下列特征：相关类将在场景构造时计算并存储全部采样点。
+        // 与在光线跟踪计算中获取采样点相比，该方式将更加高效。
+        // 同时，这也将是某些特定采样算法所必须的操作方式。
         int                     num_samples;            // the number of sample points in a set
         int                     num_sets;               // the number of sample sets
         vector<Point2D>         samples;                // sample points on a unit square
         vector<int>             shuffled_indices;       // shuffled samples array indices
+        // 存储映射到单位圆的采样点。
         vector<Point2D>         disk_samples;           // sample points on a unit disk
+        // 存储映射到半球体的采样点。
         vector<Point3D>         hemisphere_samples;     // sample points on a unit hemisphere
         vector<Point3D>         sphere_samples;         // sample points on a unit sphere
         unsigned long           count;                  // the current number of sample points used

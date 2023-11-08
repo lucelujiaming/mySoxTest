@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "MultipleObjects.h"
 #include "World.h"
 
@@ -22,6 +22,7 @@ MultipleObjects::~MultipleObjects(void) {}
 
 
 // -------------------------------------------------------------------- trace_ray
+// 显示了在光线与对象发生碰撞时最近对象间颜色值的返回结果。
 RGBColor
 MultipleObjects::trace_ray(const Ray& ray) const {
     ShadeRec sr(world_ptr->hit_objects(ray)); // sr is copy constructed

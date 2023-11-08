@@ -3,8 +3,8 @@
 //    This C++ code is licensed under the GNU General Public License Version 2.
 //    See the file COPYING.txt for the full license.
 
-
 #include "stdafx.h"
+
 #include "PerfectTransmitter.h"
 
 // ------------------------------------------------------------------- default constructor
@@ -55,10 +55,10 @@ PerfectTransmitter::operator= (const PerfectTransmitter& rhs) {
 
 // ------------------------------------------------------------------- tir
 // tests for total internal reflection
-// ¼ì²âÈ«ÄÚ·´Éä¡£
-// P455£º¸ù¾İµÚ15ÕÂËùÌÖÂÛµÄ·´Éä¶¨ÂÉÒÔ¼°Snell¶¨ÂÉ£¬
-//       ¿ÉÒÔ½øÒ»²½ÍÆµ¼³öÕÛÉä¹âÏßtµÄ¼ÆËã¹«Ê½£¬
-//       µ«ÕâÀï½«Ö±½ÓÒıÓÃÆä¼ÆËã½á¹û¡£
+// æ£€æµ‹å…¨å†…åå°„ã€‚
+// P455ï¼šæ ¹æ®ç¬¬15ç« æ‰€è®¨è®ºçš„åå°„å®šå¾‹ä»¥åŠSnellå®šå¾‹ï¼Œ
+//       å¯ä»¥è¿›ä¸€æ­¥æ¨å¯¼å‡ºæŠ˜å°„å…‰çº¿tçš„è®¡ç®—å…¬å¼ï¼Œ
+//       ä½†è¿™é‡Œå°†ç›´æ¥å¼•ç”¨å…¶è®¡ç®—ç»“æœã€‚
 bool                                                    
 PerfectTransmitter::tir(const ShadeRec& sr) const {
     Vector3D wo(-sr.ray.d); 
@@ -67,13 +67,14 @@ PerfectTransmitter::tir(const ShadeRec& sr) const {
     
     if (cos_thetai < 0.0) 
         eta = 1.0 / eta; 
-    // ²Î¼û¹«Ê½27.4ºÍ¹«Ê½27.5
+    // å‚è§å…¬å¼27.4å’Œå…¬å¼27.5
     return (1.0 - (1.0 - cos_thetai * cos_thetai) / (eta * eta) < 0.0);
 }    
 
 
 // ------------------------------------------------------------------- f
-
+// é’ˆå¯¹äºåå°„æè´¨ä»¥åŠæ¼«åå°„-æ¼«åå°„å…‰çº¿æ¨¡æ‹Ÿè®¡ç®—ï¼Œè¿”å›è®¡ç®—å‡ºæ¥çš„é¢œè‰²å€¼ã€‚
+// è¿”å›é»‘è‰²ã€‚å› ä¸ºåå°„å…‰çº¿ä½äºé•œé¢åå°„æ–¹å‘ä¸Šï¼Œä¸å­˜åœ¨BRDFéšæœºé‡‡æ ·ã€‚
 RGBColor
 PerfectTransmitter::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
     return (black);
@@ -84,30 +85,30 @@ PerfectTransmitter::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi
 // this computes the direction wt for perfect transmission
 // and returns the transmission coefficient
 // this is only called when there is no total internal reflection
-// ¸Ãº¯Êı¼ÆËãÍ¸ÊÓ¹âÏßµÄ·½Ïò²¢½«Æä·µ»ØÖÁ²ÎÊıwtÖĞÇÒ½öÊÊÓÃÓÚ·ÇÈ«ÄÚ·´ÉäÌõ¼şÏÂ¡£
+// è¯¥å‡½æ•°è®¡ç®—é€è§†å…‰çº¿çš„æ–¹å‘å¹¶å°†å…¶è¿”å›è‡³å‚æ•°wtä¸­ä¸”ä»…é€‚ç”¨äºéå…¨å†…åå°„æ¡ä»¶ä¸‹ã€‚
 RGBColor
 PerfectTransmitter::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wt) const {
     
     Normal n(sr.normal);
-    // P455£ºcos¦Èi=n * ¦Ø0
+    // P455ï¼šcosÎ¸i=n * Ï‰0
     float cos_thetai = n * wo;
     float eta = ior;    
-    // Èç¹ûcos_thetaiĞ¡ÓÚÁã£¬ËµÃ÷ÊÇ·¨ÏßºÍÈëÉä·½ÏòÎ»ÓÚ½éÖÊµÄÍ¬Ò»²à¡£
-    // ÀıÈç´ÓË®ÃæÏÂ·½ÏòÉÏ¹Û²ì¡£
-    // Ö´ĞĞµ¹ÖÃ²Ù×÷¡£
+    // å¦‚æœcos_thetaiå°äºé›¶ï¼Œè¯´æ˜æ˜¯æ³•çº¿å’Œå…¥å°„æ–¹å‘ä½äºä»‹è´¨çš„åŒä¸€ä¾§ã€‚
+    // ä¾‹å¦‚ä»æ°´é¢ä¸‹æ–¹å‘ä¸Šè§‚å¯Ÿã€‚
+    // æ‰§è¡Œå€’ç½®æ“ä½œã€‚
     if (cos_thetai < 0.0) {          // transmitted ray is outside     
         cos_thetai = -cos_thetai;
         n = -n;                      // reverse direction of normal
         eta = 1.0 / eta;             // invert ior 
     }
 
-    // ¼ÆËãcos¦Èt¡£²Î¼û¹«Ê½27.4
+    // è®¡ç®—cosÎ¸tã€‚å‚è§å…¬å¼27.4
     float temp = 1.0 - (1.0 - cos_thetai * cos_thetai) / (eta * eta);
     float cos_theta2 = sqrt(temp);
-    // ²Î¼û¹«Ê½27.3
+    // å‚è§å…¬å¼27.3
     wt = -wo / eta - (cos_theta2 - cos_thetai / eta) * n;   
-    // ²Î¼û¹«Ê½27.10
-    // ÓÉÓÚ±¾ÕÂËùÌÖÂÛµÄÍ¸Éä·½°¸²»Éæ¼°ÑÕÉ«¼ÆËã£¬Òò´Ë·µ»ØÖµ½«³ËÒÔ°×É«ÖµÒÔÏÔÊ¾ÎªRGBÑÕÉ«¡£
+    // å‚è§å…¬å¼27.10
+    // ç”±äºæœ¬ç« æ‰€è®¨è®ºçš„é€å°„æ–¹æ¡ˆä¸æ¶‰åŠé¢œè‰²è®¡ç®—ï¼Œå› æ­¤è¿”å›å€¼å°†ä¹˜ä»¥ç™½è‰²å€¼ä»¥æ˜¾ç¤ºä¸ºRGBé¢œè‰²ã€‚
     return (kt / (eta * eta) * white / fabs(sr.normal * wt));
 }
 

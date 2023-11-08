@@ -3,8 +3,8 @@
 //    This C++ code is licensed under the GNU General Public License Version 2.
 //    See the file COPYING.txt for the full license.
 
-
 #include "stdafx.h"
+
 #include "PerfectTransmitter.h"
 
 // ------------------------------------------------------------------- default constructor
@@ -73,7 +73,8 @@ PerfectTransmitter::tir(const ShadeRec& sr) const {
 
 
 // ------------------------------------------------------------------- f
-
+// 针对于反射材质以及漫反射-漫反射光线模拟计算，返回计算出来的颜色值。
+// 返回黑色。因为反射光线位于镜面反射方向上，不存在BRDF随机采样。
 RGBColor
 PerfectTransmitter::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
     return (black);

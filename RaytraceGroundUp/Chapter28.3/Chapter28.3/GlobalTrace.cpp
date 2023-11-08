@@ -3,8 +3,8 @@
 //    This C++ code is licensed under the GNU General Public License Version 2.
 //    See the file COPYING.txt for the full license.
 
-
 #include "stdafx.h"
+
 #include "GlobalTrace.h"
 #include "World.h"
 #include "ShadeRec.h"
@@ -52,7 +52,7 @@ GlobalTrace::trace_ray(const Ray ray, const int depth) const {
 // for color filtering
 
 RGBColor
-GlobalTrace::trace_ray(const Ray ray, double& tmin, const int depth) const {
+GlobalTrace::trace_ray(const Ray ray, float& tmin, const int depth) const {
     if (depth > world_ptr->vp.max_depth)
         return (black);
     else {

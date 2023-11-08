@@ -1,4 +1,4 @@
-#ifndef __FLAT_MESH_TRIANGLE__
+﻿#ifndef __FLAT_MESH_TRIANGLE__
 #define __FLAT_MESH_TRIANGLE__
 
 
@@ -9,7 +9,6 @@
 
 class FlatMeshTriangle: public MeshTriangle {    
     public:
-        
         FlatMeshTriangle(void);                                       
         
         FlatMeshTriangle(Mesh* _meshPtr, const int i0, const int i1, const int i2);        

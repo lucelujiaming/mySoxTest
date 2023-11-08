@@ -71,6 +71,10 @@ class World {
         // 在光线和全部对象之间进行相交测试的函数。
         ShadeRec
         hit_objects(const Ray& ray);
+	private:
+		void add_Phong_axis(bool bUseScale = false);
+		void set_back_plane();
+		void add_bunnies();
 };
 
 // 若光线跟踪器只能渲染单一球体，则该光线跟踪器不具备太多的实用价值。

@@ -1,6 +1,10 @@
-#ifndef __COMPOUND__
+﻿#ifndef __COMPOUND__
 #define __COMPOUND__
 
+//     Copyright (C) Kevin Suffern 2000-2007.
+//    This C++ code is for non-commercial purposes only.
+//    This C++ code is licensed under the GNU General Public License Version 2.
+//    See the file COPYING.txt for the full license.
 
 
 #include <vector> 
@@ -10,48 +14,48 @@ using std::vector;
 
 //-------------------------------------------------------------------------------- class Compound
 
-class Compound: public GeometricObject {    
+class Compound: public GeometricObject {
     public:
-        
-        Compound(void);                                           
 
-        virtual Compound*                                         
+        Compound(void);
+
+        virtual Compound*
         clone(void) const;
-    
-        Compound(const Compound& c);                             
 
-        ~Compound (void);                                       
+        Compound(const Compound& c);
 
-        Compound&                                                 
-        operator= (const Compound& c);    
-        
-        virtual void 
+        ~Compound (void);
+
+        Compound&
+        operator= (const Compound& c);
+
+        virtual void
         set_material(Material* material_ptr);
-        
-        virtual void                                             
-        add_object(GeometricObject* object_ptr);  
-        
-        int
-        get_num_objects(void);                        
 
-        virtual bool                                                              
+        virtual void
+        add_object(GeometricObject* object_ptr);
+
+        int
+        get_num_objects(void);
+
+        virtual bool
         hit(const Ray& ray, double& tmin, ShadeRec& s) const;
 
         virtual bool
         shadow_hit(const Ray& ray, float& tmin) const;
-            
-    protected:        
-        
-        vector<GeometricObject*> objects;
-        
-    private:
-    
-        void                                                     
-        delete_objects(void);                                
 
-        void                                                
+    protected:
+        // 存储所有的子对象的列表。
+        vector<GeometricObject*> objects;
+
+    private:
+
+        void
+        delete_objects(void);
+
+        void
         copy_objects(const vector<GeometricObject*>& rhs_objects);
-    
+
 };
 
 

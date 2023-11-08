@@ -1,4 +1,4 @@
-#ifndef __REFLECTIVE__
+﻿#ifndef __REFLECTIVE__
 #define __REFLECTIVE__
 
 #include "Phong.h"
@@ -35,7 +35,7 @@ class Reflective: public Phong {
         shade(ShadeRec& s);
         
     private:
-    
+        // 包括了一个完全镜面BRDF。
         PerfectSpecular* reflective_brdf;        
 };
 

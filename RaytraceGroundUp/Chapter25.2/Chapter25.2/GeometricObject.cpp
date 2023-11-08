@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 // this file contains the definition of the class GeometricObject 
 
@@ -11,6 +11,7 @@
 GeometricObject::GeometricObject(void)
     :     color(black),
         material_ptr(NULL),
+        // 初始状态下，GeometricObject默认将shadows设置为true。
         shadows(true)
 {}
 
@@ -119,10 +120,10 @@ GeometricObject::sample(void) {
 
 // ----------------------------------------------------------------------- pdf
 // returns the probability density function for area light shading
-        
+// As the dividend, It cannot return zero  
 float
 GeometricObject::pdf(const ShadeRec& sr) {
-    return (0.0);
+    return (1.0);
 }      
 
                                     

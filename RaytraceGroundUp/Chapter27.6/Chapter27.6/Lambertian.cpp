@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Lambertian.h"
 #include "Constants.h"
 
@@ -38,7 +38,6 @@ Lambertian::~Lambertian(void) {}
 
 Lambertian&
 Lambertian::operator= (const Lambertian& rhs) {
-
     if (this == &rhs)
         return (*this);
         
@@ -63,13 +62,15 @@ Lambertian::set_sampler(Sampler* s_ptr) {
 
 RGBColor
 Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
-    // pd¿É±íÊ¾ÎªRGBÑÕÉ«Öµ£¬ Òò¶ø¿É°´ÈçÏÂ·½Ê½±íÊ¾£º
-    //   pd = kd * cd / ¦Ğ
-    // ÆäÖĞ£¬kd±íÊ¾Âş·´ÉäÏµÊı£¬ÊÇÒ»¸ö0 ~ 1µÄÊı×Ö¡£caÎªÂş·´ÉäÑÕÉ«Öµ¡£
-    // ÕâÊ¹µÃÓÃ»§¿ÉÒÔ¿ìËÙµØĞŞ¸ÄÎïÌåµÄ·´Éä¹âÊı¾İ£¬²¢ÎªÏà¹ØµÄ±àÂë¹ı³ÌÌá¹©ÁË·½±ãĞÔ¡£
-    // ²Î¼û¹«Ê½13.19
+    // pdå¯è¡¨ç¤ºä¸ºRGBé¢œè‰²å€¼ï¼Œ å› è€Œå¯æŒ‰å¦‚ä¸‹æ–¹å¼è¡¨ç¤ºï¼š
+    //   pd = kd * cd / Ï€
+    // å…¶ä¸­ï¼Œkdè¡¨ç¤ºæ¼«åå°„ç³»æ•°ï¼Œæ˜¯ä¸€ä¸ª0 ~ 1çš„æ•°å­—ã€‚caä¸ºæ¼«åå°„é¢œè‰²å€¼ã€‚
+    // è¿™ä½¿å¾—ç”¨æˆ·å¯ä»¥å¿«é€Ÿåœ°ä¿®æ”¹ç‰©ä½“çš„åå°„å…‰æ•°æ®ï¼Œå¹¶ä¸ºç›¸å…³çš„ç¼–ç è¿‡ç¨‹æä¾›äº†æ–¹ä¾¿æ€§ã€‚
+    // å‚è§å…¬å¼13.19
     return (kd * cd * invPI);
 }
+
+
 
 // ---------------------------------------------------------------------- sample_f
 
@@ -77,25 +78,25 @@ Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const 
 // this is called in path_shade for any material with a diffuse shading component
 // the samples have to be stored with a cosine distribution
 
-// ×îÖÕ£¬Lambertian::sample_f() º¯Êı
+// æœ€ç»ˆï¼ŒLambertian::sample_f() å‡½æ•°
 RGBColor
 Lambertian::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const {
 
-    // ¹¹ÔìÕı½»»ùÏòÁ¿ÇÒw=n£¬
+    // æ„é€ æ­£äº¤åŸºå‘é‡ä¸”w=nï¼Œ
     Vector3D w = sr.normal;
     Vector3D v = Vector3D(0.0034, 1, 0.0071) ^ w;
     v.normalize();
     Vector3D u = v ^ w;
 
-    // ²¢ÓÚËæºó¶Ô³ÊÓàÏÒ·Ö²¼ÇÒ·¨Ïß¾ÓÖĞµÄ°ëÇòÄ£ĞÍ½øĞĞ²ÉÑù¡£
-    // ÕâÀï£¬ĞèÒªÔÚLambertianÀàĞÍBRDF Matte::diffuse_brdfÖĞ¶¨ÒåÒ»¸ö(¼Ì³Ğ)²ÉÑùÆ÷¶ÔÏó£¬
-    // ÇÒ²ÉÑùµã³ÊÓàÏÒ·Ö²¼¡£
+    // å¹¶äºéšåå¯¹å‘ˆä½™å¼¦åˆ†å¸ƒä¸”æ³•çº¿å±…ä¸­çš„åŠçƒæ¨¡å‹è¿›è¡Œé‡‡æ ·ã€‚
+    // è¿™é‡Œï¼Œéœ€è¦åœ¨Lambertianç±»å‹BRDF Matte::diffuse_brdfä¸­å®šä¹‰ä¸€ä¸ª(ç»§æ‰¿)é‡‡æ ·å™¨å¯¹è±¡ï¼Œ
+    // ä¸”é‡‡æ ·ç‚¹å‘ˆä½™å¼¦åˆ†å¸ƒã€‚
     Point3D sp = sampler_ptr->sample_hemisphere();
     wi = sp.x * u + sp.y * v + sp.z * w;
     wi.normalize();
-    // ¸ù¾İÊ½(18.6)¼ÆËãpdf=cos¦Èi/¦Ğ
+    // æ ¹æ®å¼(18.6)è®¡ç®—pdf=cosÎ¸i/Ï€
     pdf = sr.normal * wi * invPI;
-    // ·µ»Økd * cd/¦Ğ¡£
+    // è¿”å›kd * cd/Ï€ã€‚
     return (kd * cd * invPI);
 }
 
@@ -105,6 +106,6 @@ Lambertian::sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float
 
 RGBColor
 Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const {
-    // ²Î¼û¹«Ê½13.20
+    // å‚è§å…¬å¼13.20
     return (kd * cd);
 }

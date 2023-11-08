@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Reflective.h"
 
 // ---------------------------------------------------------------- default constructor
@@ -41,14 +41,12 @@ Reflective::operator= (const Reflective& rhs) {
     return (*this);
 }
 
-
 // ---------------------------------------------------------------- clone
 
 Reflective*                                        
 Reflective::clone(void) const {
     return (new Reflective(*this));
 }    
-
 
 // ---------------------------------------------------------------- destructor
 
@@ -59,19 +57,22 @@ Reflective::~Reflective(void) {
     }
 }
 
-
 // ------------------------------------------------------------------------------------ shade 
 // explained on page 501
 RGBColor
 Reflective::shade(ShadeRec& sr) {    
+    // 直接光照。
     RGBColor L(Phong::shade(sr));  // direct illumination
     
     Vector3D wo = -sr.ray.d;
     Vector3D wi;    
     RGBColor fr = reflective_brdf->sample_f(sr, wo, wi); 
+    // 反射光线的起点为碰撞点，方向为反射方向。
     Ray reflected_ray(sr.hit_point, wi); 
+    // 累加反射次数。
     reflected_ray.depth = sr.depth + 1;
     
+    // 调用sr.w.tracer_ptr->trace_ray完成递归。
     L += fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi);
                     
     return (L);

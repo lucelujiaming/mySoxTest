@@ -1,4 +1,4 @@
-#ifndef __POINT3D__
+﻿#ifndef __POINT3D__
 #define __POINT3D__
 
 // This file contains the defintion of the class Point3D

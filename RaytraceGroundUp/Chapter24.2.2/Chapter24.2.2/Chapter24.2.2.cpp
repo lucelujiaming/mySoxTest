@@ -10,8 +10,8 @@
 using namespace std;
 ofstream out;
 
-#define HORIZONTAL_RESOLUTION    600
-#define VERTICAL_RESOLUTION      600
+#define HORIZONTAL_RESOLUTION    400
+#define VERTICAL_RESOLUTION      400
 int
 main(void)
 {

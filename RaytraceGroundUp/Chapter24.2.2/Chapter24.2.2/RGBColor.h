@@ -1,4 +1,4 @@
-#ifndef __RGB_COLOR__
+﻿#ifndef __RGB_COLOR__
 #define __RGB_COLOR__
 
 // This file contains the declaration of the class RGBColor

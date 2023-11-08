@@ -70,6 +70,8 @@ Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const 
     return (kd * cd * invPI);
 }
 
+
+
 // ---------------------------------------------------------------------- sample_f
 
 // this generates a direction by sampling the hemisphere with a cosine distribution

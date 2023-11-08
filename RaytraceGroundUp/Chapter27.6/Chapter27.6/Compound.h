@@ -1,4 +1,4 @@
-#ifndef __COMPOUND__
+﻿#ifndef __COMPOUND__
 #define __COMPOUND__
 
 //     Copyright (C) Kevin Suffern 2000-2007.
@@ -48,7 +48,7 @@ class Compound: public GeometricObject {
         shadow_hit(const Ray& ray, float& tmin) const;
 
     protected:
-        
+        // 存储所有的子对象的列表。
         vector<GeometricObject*> objects;
 
     private:

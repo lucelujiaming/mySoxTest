@@ -38,7 +38,6 @@ Lambertian::~Lambertian(void) {}
 
 Lambertian&
 Lambertian::operator= (const Lambertian& rhs) {
-
     if (this == &rhs)
         return (*this);
         
@@ -55,6 +54,11 @@ Lambertian::operator= (const Lambertian& rhs) {
 
 RGBColor
 Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const {
+    // pd可表示为RGB颜色值， 因而可按如下方式表示：
+    //   pd = kd * cd / π
+    // 其中，kd表示漫反射系数，是一个0 ~ 1的数字。ca为漫反射颜色值。
+    // 这使得用户可以快速地修改物体的反射光数据，并为相关的编码过程提供了方便性。
+    // 参见公式13.19
     return (kd * cd * invPI);
 }
 
@@ -63,5 +67,6 @@ Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const 
 
 RGBColor
 Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const {
+    // 参见公式13.20
     return (kd * cd);
 }

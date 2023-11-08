@@ -1,4 +1,4 @@
-#ifndef __CONSTANTS__
+﻿#ifndef __CONSTANTS__
 #define __CONSTANTS__
 
 #include <stdlib.h>

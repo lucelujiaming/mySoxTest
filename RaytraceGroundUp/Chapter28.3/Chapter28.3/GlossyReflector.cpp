@@ -3,8 +3,8 @@
 //    This C++ code is licensed under the GNU General Public License Version 2.
 //    See the file COPYING.txt for the full license.
 
-
 #include "stdafx.h"
+
 #include "GlossyReflector.h"
 
 // ---------------------------------------------------------------- default constructor
@@ -77,8 +77,11 @@ GlossyReflector::shade(ShadeRec& sr) {
     Vector3D wi;
     float    pdf;
     RGBColor fr = glossy_specular_brdf->sample_f(sr, wo, wi, pdf);
+    // 反射光线的起点为碰撞点，方向为反射方向。
     Ray reflected_ray(sr.hit_point, wi);
 
+    // 调用sr.w.tracer_ptr->trace_ray完成递归。
+    // 在该函数中，辐射度与pdf进行除法运算。
     L += fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi) / pdf;
 
     return (L);
@@ -95,8 +98,11 @@ GlossyReflector::area_light_shade(ShadeRec& sr) {
     Vector3D wi;
     float    pdf;
     RGBColor fr = glossy_specular_brdf->sample_f(sr, wo, wi, pdf);
+    // 反射光线的起点为碰撞点，方向为反射方向。
     Ray reflected_ray(sr.hit_point, wi);
 
+    // 调用sr.w.tracer_ptr->trace_ray完成递归。
+    // 在该函数中，辐射度与pdf进行除法运算。
     L += fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * (sr.normal * wi) / pdf;
 
     return (L);

@@ -320,8 +320,6 @@ void World::build()
     //construct view plane， integrator， camera， and lights
     // int num_spheres=100000;
     int num_spheres=1000;
-    float volume=0.1/num_spheres;
-    float radius=pow(0.75*volume/3.14159, 0.333333);
 
     vp.set_hres(400);
     vp.set_vres(400);
@@ -340,17 +338,25 @@ void World::build()
     phong_ptr->set_cd(1, 1, 0); 
 
     const char* file_name = "Bunny69K.ply";
-    Grid* bunny_ptr=new Grid(new Mesh) ;
+    Grid* bunny_ptr = new Grid(new Mesh);
     bunny_ptr->read_smooth_triangles(file_name);
     bunny_ptr->set_material(phong_ptr);
-    bunny_ptr->setup_cells();
+	bunny_ptr->setup_cells();
+	// add_object(bunny_ptr);
+
+	//Instance* instance_ptr = new Instance(bunny_ptr);
+	//instance_ptr->translate(100, 100, 100);
+	//instance_ptr->scale(50, 50, 50);
+	//instance_ptr->set_material(phong_ptr);
+	//add_object(instance_ptr);
 
     int num_levels=8;                    //number of levels
     int instances_grid_res=10;           //initial number of bunnies in x-and z-directions
     double gap=0.05;                     //initial distance between instances
     double size=0.1;                      //bunny size
     Grid* current_grid_ptr = bunny_ptr;  //initially, just the bunny
-    for(int level=0; level<num_levels; level++) {
+    // for(int level=0; level<num_levels; level++) {
+
         Grid* instance_grid_ptr=new Grid;       //temporary grid
     
         for(int i=0; i<instances_grid_res; i++) {         //xw direction
@@ -360,7 +366,11 @@ void World::build()
 
               instance_ptr->set_object(current_grid_ptr); 
               instance_ptr->set_material(phong_ptr);
-              instance_ptr->translate(i*(size+gap) , 0.0, k*(size+gap) );
+			  instance_ptr->translate(i*(size + gap) - 0.5, k*(size + gap) - 0.5, 0.0);
+			  printf("The %dth bunny is at (%f, %f, 0.0)\r\n", 
+				  i * instances_grid_res + k,
+				  i*(size + gap) - 0.5, 
+				  k*(size + gap) - 0.5);
               instance_ptr->compute_bounding_box();
               instance_grid_ptr->add_object(instance_ptr);
             }
@@ -368,15 +378,16 @@ void World::build()
         size = instances_grid_res * size+(instances_grid_res-1) * gap;
         gap=0.05*size;
         instance_grid_ptr->setup_cells();
-        current_grid_ptr=current_grid_ptr;
-    }    
-    add_object(current_grid_ptr);
+		// current_grid_ptr = current_grid_ptr;
+		add_object(instance_grid_ptr);
+
+    // }    
 
     // 设定相机
     Pinhole* camera_ptr=new Pinhole;
     camera_ptr->set_eye(0, 0, 50);
-    camera_ptr->set_lookat(0, 0, -1);
-    camera_ptr->set_view_distance(4000);
+    camera_ptr->set_lookat(0, 0, -50);
+    camera_ptr->set_view_distance(8000);
     camera_ptr->compute_uvw();
     set_camera(camera_ptr);
 }

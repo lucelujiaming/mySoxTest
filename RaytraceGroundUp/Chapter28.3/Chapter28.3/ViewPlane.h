@@ -1,27 +1,27 @@
-#ifndef __VIEW_PLANE__
+ï»¿#ifndef __VIEW_PLANE__
 #define __VIEW_PLANE__
 
 #include "Sampler.h"
 
 //-------------------------------------------------------------------------------------- class ViewPlane
-// View PlaneÀà´æ´¢ÁËË®Æ½¡¢´¹Ö±·½ÏòÉÏµÄÈ«²¿ÏñËØÒÔ¼°ÏñËØ³ß´ç¡£
-// ÊÓÆ½ÃæÖÐ°üº¬ÁË¹¹³É³¡¾°äÖÈ¾´°¿ÚµÄÈ«²¿ÏñËØ¡£
-// ÔÚ±¾ÕÂÖÐ£¬ÊÓÆ½Ãæ½«´¹Ö±ÓÚZwÖá£¬ÆäÖÐµÄÏñËØ½«ÒÔË®Æ½¶àÐÐ·½Ê½ÅÅÁÐ¡£ÁíÍâ£¬zwÖá½«´©Ô½´°¿ÚÖÐÐÄÎ»ÖÃ¡£
+// View Planeç±»å­˜å‚¨äº†æ°´å¹³ã€åž‚ç›´æ–¹å‘ä¸Šçš„å…¨éƒ¨åƒç´ ä»¥åŠåƒç´ å°ºå¯¸ã€‚
+// è§†å¹³é¢ä¸­åŒ…å«äº†æž„æˆåœºæ™¯æ¸²æŸ“çª—å£çš„å…¨éƒ¨åƒç´ ã€‚
+// åœ¨æœ¬ç« ä¸­ï¼Œè§†å¹³é¢å°†åž‚ç›´äºŽZwè½´ï¼Œå…¶ä¸­çš„åƒç´ å°†ä»¥æ°´å¹³å¤šè¡Œæ–¹å¼æŽ’åˆ—ã€‚å¦å¤–ï¼Œzwè½´å°†ç©¿è¶Šçª—å£ä¸­å¿ƒä½ç½®ã€‚
 class ViewPlane {
 
     public:
         int             hres;                        // horizontal image resolution
         int             vres;                        // vertical image resolution
         float           s;                           // pixel size
-        // ÊÓÆ½Ãæ½«Ìá¹©Ö´ÐÐ¿¹¾â³Ý²Ù×÷Ê±µÄ²ÉÑùµãÊýÁ¿£¬Òò¶øÐèÒª²ÉÑùÊýÁ¿
+        // è§†å¹³é¢å°†æä¾›æ‰§è¡ŒæŠ—é”¯é½¿æ“ä½œæ—¶çš„é‡‡æ ·ç‚¹æ•°é‡ï¼Œå› è€Œéœ€è¦é‡‡æ ·æ•°é‡
         int             num_samples;                 // number of samples per pixel
-        // P400£º¹âÏßµÄ×î´ó·´Éä´ÎÊý¡£
+        // P400ï¼šå…‰çº¿çš„æœ€å¤§åå°„æ¬¡æ•°ã€‚
         int             max_depth;                   // max number of reflected bounce rays
         
         float           gamma;                       // gamma correction factor
         float           inv_gamma;                   // the inverse of the gamma correction factor
         bool            show_out_of_gamut;           // display red if RGBColor out of gamut
-        // ÊÓÆ½Ãæ½«Ìá¹©Ö´ÐÐ¿¹¾â³Ý²Ù×÷Ê±µÄ²ÉÑùµãÊýÁ¿£¬Òò¶øÐèÒª´æ´¢Ö¸Ïò²ÉÑùÆ÷¶ÔÏóµÄÖ¸Õë
+        // è§†å¹³é¢å°†æä¾›æ‰§è¡ŒæŠ—é”¯é½¿æ“ä½œæ—¶çš„é‡‡æ ·ç‚¹æ•°é‡ï¼Œå› è€Œéœ€è¦å­˜å‚¨æŒ‡å‘é‡‡æ ·å™¨å¯¹è±¡çš„æŒ‡é’ˆ
         Sampler*        sampler_ptr;
 
     public:
@@ -51,7 +51,7 @@ class ViewPlane {
         void
         set_samples(const int n);
 
-        // ÊÓÆ½Ãæ½«Ìá¹©Ö´ÐÐ¿¹¾â³Ý²Ù×÷Ê±µÄ²ÉÑùµãÊýÁ¿£¬Òò¶øÐèÒªÏàÓ¦µÄÉèÖÃº¯Êý
+        // è§†å¹³é¢å°†æä¾›æ‰§è¡ŒæŠ—é”¯é½¿æ“ä½œæ—¶çš„é‡‡æ ·ç‚¹æ•°é‡ï¼Œå› è€Œéœ€è¦ç›¸åº”çš„è®¾ç½®å‡½æ•°
         void set_sampler(Sampler* sp);
 
         void
@@ -107,7 +107,7 @@ ViewPlane::set_max_depth(int depth) {
     max_depth = depth;
 }
 
-// º¯Êý½«Ê¹ÓÃÒ»¸ö²ÉÑùÆ÷¶ÔÏóÖ¸Õë×÷Îª²ÎÊý£¬¸Ãº¯Êý¶ÔÓÚ²ÉÑùÆ÷µÄÀàÐÍ²¢Ã»ÓÐÈÎºÎÒªÇó¡£
+// å‡½æ•°å°†ä½¿ç”¨ä¸€ä¸ªé‡‡æ ·å™¨å¯¹è±¡æŒ‡é’ˆä½œä¸ºå‚æ•°ï¼Œè¯¥å‡½æ•°å¯¹äºŽé‡‡æ ·å™¨çš„ç±»åž‹å¹¶æ²¡æœ‰ä»»ä½•è¦æ±‚ã€‚
 inline void ViewPlane::set_sampler(Sampler* sp) {
     if(sampler_ptr) {
         delete sampler_ptr;
@@ -115,6 +115,7 @@ inline void ViewPlane::set_sampler(Sampler* sp) {
     }
     num_samples = sp->get_num_samples();
     sampler_ptr = sp;
+    // å¯†åº¦å…¬å¼: å°†ä½äºŽæ­£æ–¹å½¢å†…çš„é‡‡æ ·ç‚¹æ˜ å°„è‡³å¯¹åº”çš„åŠçƒä½“ä¸Šã€‚
     sampler_ptr->map_samples_to_hemisphere(50);
 }
 

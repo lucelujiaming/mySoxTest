@@ -1,4 +1,4 @@
-﻿#ifndef __CAMERA__
+#ifndef __CAMERA__
 #define __CAMERA__
 
 // This file contains the declaration of the base class Camera
@@ -60,12 +60,12 @@ class Camera {
 
     protected:
 
-        Point3D            eye;                // eye point
-        Point3D            lookat;                // lookat point
-        float            ra;                    // roll angle
-        Vector3D        u, v, w;            // orthonormal basis vectors
-        Vector3D        up;                    // up vector
-        float            exposure_time;
+        Point3D         eye;                   // 视点：eye point
+        Point3D         lookat;                // 观察点：lookat point
+        float           ra;                    // roll angle
+        Vector3D        u, v, w;               // 正交基向量：orthonormal basis vectors
+        Vector3D        up;                    // up向量：up vector
+        float           exposure_time;         // 曝光时间
 
         Camera&                                // assignment operator
         operator= (const Camera& camera);

@@ -12,27 +12,20 @@
 class AreaLight: public Light {
 
     public:
-
         AreaLight(void);
-
         AreaLight(const AreaLight& al);
 
         virtual Light* clone(void) const;
 
-        virtual
-        ~AreaLight(void);
+        virtual  ~AreaLight(void);
 
-        AreaLight&
-        operator= (const AreaLight& rhs);
+        AreaLight&   operator= (const AreaLight& rhs);
 
-        void
-        set_object(GeometricObject* obj_ptr);
+        void  set_object(GeometricObject* obj_ptr);
 
-        virtual Vector3D
-        get_direction(ShadeRec& s);
+        virtual Vector3D    get_direction(ShadeRec& s);
 
-        virtual RGBColor
-        L(ShadeRec& sr);
+        virtual RGBColor    L(ShadeRec& sr);
 
         virtual bool
         in_shadow(const Ray& ray, const ShadeRec& sr) const;

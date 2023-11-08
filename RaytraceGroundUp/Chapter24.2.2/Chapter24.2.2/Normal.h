@@ -1,4 +1,4 @@
-#ifndef __NORMAL__
+﻿#ifndef __NORMAL__
 #define __NORMAL__
 
 // This file contains the declaration of the class Normal

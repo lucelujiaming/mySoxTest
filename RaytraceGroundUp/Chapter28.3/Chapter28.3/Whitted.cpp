@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Whitted.h"
 #include "World.h"
 #include "ShadeRec.h"
@@ -25,26 +25,26 @@ Whitted::~Whitted(void) {}
 
 // -------------------------------------------------------------------- trace_ray
 // explained on page 499
-// Ê¹ÓÃdepth²ÎÊý´æ´¢ShadeRec¶ÔÏóÖÐ¸÷Ìõ¹âÏßµÄ·´Éä´ÎÊý¡£
+// ä½¿ç”¨depthå‚æ•°å­˜å‚¨ShadeRecå¯¹è±¡ä¸­å„æ¡å…‰çº¿çš„åå°„æ¬¡æ•°ã€‚
 RGBColor    
 Whitted::trace_ray(const Ray ray, const int depth) const {
-    // ´óÓÚ×î´ó·´Éä´ÎÊý£¬·µ»ØºÚÉ«¡£
+    // å¤§äºŽæœ€å¤§åå°„æ¬¡æ•°ï¼Œè¿”å›žé»‘è‰²ã€‚
     if (depth > world_ptr->vp.max_depth)
     {
         return(black);
     }
     else {
-        // Ê¹ÓÃÒ»¸öÁÙÊ±±äÁ¿±£´æÅö×²½á¹û¡£
+        // ä½¿ç”¨ä¸€ä¸ªä¸´æ—¶å˜é‡ä¿å­˜ç¢°æ’žç»“æžœã€‚
         ShadeRec sr(world_ptr->hit_objects(ray));    
-        // Èç¹û·¢ÉúÅö×²£¬
+        // å¦‚æžœå‘ç”Ÿç¢°æ’žï¼Œ
         if (sr.hit_an_object) {
-            // ±£´æÅö×²Éî¶È¡£
+            // ä¿å­˜ç¢°æ’žæ·±åº¦ã€‚
             sr.depth = depth;
-            // ±£´æÅö×²µÄ¹âÏß¡£
+            // ä¿å­˜ç¢°æ’žçš„å…‰çº¿ã€‚
             sr.ray = ray;
-            // µ÷ÓÃ·´Éä²ÄÖÊµÄShade·½·¨¡£
-            // Ò²¾ÍÊÇReflective::shadeº¯Êý¡£
-            // Õâ¸öº¯ÊýÄÚ²¿»áµ÷ÓÃsr.w.tracer_ptr->trace_rayÍê³ÉµÝ¹é¡£
+            // è°ƒç”¨åå°„æè´¨çš„Shadeæ–¹æ³•ã€‚
+            // ä¹Ÿå°±æ˜¯Reflective::shadeå‡½æ•°ã€‚
+            // è¿™ä¸ªå‡½æ•°å†…éƒ¨ä¼šè°ƒç”¨sr.w.tracer_ptr->trace_rayå®Œæˆé€’å½’ã€‚
             return (sr.material_ptr->shade(sr));   
         }
         else
@@ -54,29 +54,29 @@ Whitted::trace_ray(const Ray ray, const int depth) const {
 
 RGBColor    
 Whitted::trace_ray(const Ray ray, float& tmin, const int depth) const {
-    // ´óÓÚ×î´ó·´Éä´ÎÊý£¬·µ»ØºÚÉ«¡£
+    // å¤§äºŽæœ€å¤§åå°„æ¬¡æ•°ï¼Œè¿”å›žé»‘è‰²ã€‚
     if (depth > world_ptr->vp.max_depth)
     {
         return(black);
     }
     else {
-        // Ê¹ÓÃÒ»¸öÁÙÊ±±äÁ¿±£´æÅö×²½á¹û¡£
+        // ä½¿ç”¨ä¸€ä¸ªä¸´æ—¶å˜é‡ä¿å­˜ç¢°æ’žç»“æžœã€‚
         ShadeRec sr(world_ptr->hit_objects(ray));    
-        // Èç¹û·¢ÉúÅö×²£¬
+        // å¦‚æžœå‘ç”Ÿç¢°æ’žï¼Œ
         if (sr.hit_an_object) {
-            // ±£´æÅö×²Éî¶È¡£
+            // ä¿å­˜ç¢°æ’žæ·±åº¦ã€‚
             sr.depth = depth;
-            // ±£´æÅö×²µÄ¹âÏß¡£
+            // ä¿å­˜ç¢°æ’žçš„å…‰çº¿ã€‚
             sr.ray = ray;
-            // µ±¹âÏßÓë¶ÔÏó¼ä´æÔÚÅö×²Ê±£¬sr.t¸³ÖµÓÚtminÖÐ£»
+            // å½“å…‰çº¿ä¸Žå¯¹è±¡é—´å­˜åœ¨ç¢°æ’žæ—¶ï¼Œsr.tèµ‹å€¼äºŽtminä¸­ï¼›
             tmin = sr.t;
-            // µ÷ÓÃ·´Éä²ÄÖÊµÄShade·½·¨¡£
-            // Ò²¾ÍÊÇReflective::shadeº¯Êý¡£
-            // Õâ¸öº¯ÊýÄÚ²¿»áµ÷ÓÃsr.w.tracer_ptr->trace_rayÍê³ÉµÝ¹é¡£
+            // è°ƒç”¨åå°„æè´¨çš„Shadeæ–¹æ³•ã€‚
+            // ä¹Ÿå°±æ˜¯Reflective::shadeå‡½æ•°ã€‚
+            // è¿™ä¸ªå‡½æ•°å†…éƒ¨ä¼šè°ƒç”¨sr.w.tracer_ptr->trace_rayå®Œæˆé€’å½’ã€‚
             return (sr.material_ptr->shade(sr));   
         }
         else
-            // ·ñÔò£¬kHugeValue¸³ÖµÓÚtminÖÐ¡£
+            // å¦åˆ™ï¼ŒkHugeValueèµ‹å€¼äºŽtminä¸­ã€‚
             tmin = kHugeValue;
             return (world_ptr->background_color);
     }

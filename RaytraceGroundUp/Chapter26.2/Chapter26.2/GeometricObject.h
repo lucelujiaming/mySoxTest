@@ -1,4 +1,4 @@
-#ifndef __GEOMETRIC_OBJECT__
+﻿#ifndef __GEOMETRIC_OBJECT__
 #define __GEOMETRIC_OBJECT__
 
 
@@ -17,6 +17,9 @@
 //----------------------------------------------------------------------------------------------------- 
 // class GeometricObject
 
+// 全部几何对象均继承自基类Geometric Object。
+// 这是光线跟踪器框架中最为庞大的继承层次结构，大约包含了40个对象。
+// 在本章中，将使用某些简化的数据结构，包括Geometric Object 类、Plane类以及Sphere类。
 class GeometricObject {    
     public:    
 
@@ -30,6 +33,9 @@ class GeometricObject {
         virtual                                                 
         ~GeometricObject(void);    
         
+        // hit() 函数参数列表中的Shade Rec对象充当一个工具类，
+        // 用以存储光线跟踪器所需的全部信息，并对光线-对象间的碰撞点进行着色。
+        // 简单地讲，着色将会计算反射光线的颜色值，这一过程将会在本书中多次出现。
         virtual bool                                                  
         hit(const Ray& ray, double& t, ShadeRec& s) const = 0;    
 
@@ -85,10 +91,11 @@ class GeometricObject {
 
         mutable Material*   material_ptr;       // mutable allows the const functions Compound::hit, Instance::hit, and RegularGrid::hit to assign to material_ptr
 
-        RGBColor               color;                // only used for Bare Bones ray tracing
+        RGBColor               color;           // only used for Bare Bones ray tracing
     
         GeometricObject&                        
         operator= (const GeometricObject& rhs);
+        // 对象选项将确定对象自身是否具备投射阴影的能力。这对于环境光照下的遮挡计算将是十分必要的。
         bool shadows;
 };
 

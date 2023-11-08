@@ -30,7 +30,6 @@ class SmoothMeshTriangle: public MeshTriangle {
         shadow_hit(const Ray& ray, float& tmin) const;
 
     protected:
-    
         Normal 
         interpolate_normal(const float beta, const float gamma) const;
 };

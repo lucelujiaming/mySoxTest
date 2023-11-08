@@ -1,4 +1,4 @@
-#ifndef __SPHERE__
+﻿#ifndef __SPHERE__
 #define __SPHERE__
 
 // This file contains the declaration of the class Sphere
@@ -34,16 +34,19 @@ class Sphere: public GeometricObject {
 
         void
         set_radius(const double r);
-
+        // 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+        // 并把计算出来碰撞点和碰撞点法线方向，存入ShadeRec中。
         virtual bool
-        hit(const Ray& ray, double& t, ShadeRec& s) const;
-
+        hit(const Ray& ray, double& tmin, ShadeRec& s) const;
+        // 判断光线ray和物体是否相交。光线的时间取值范围为[tmin, ∞)
+        // 只判断是否相交。不计算碰撞点。
         virtual bool
         shadow_hit(const Ray& ray, float& tmin) const;
 
-    private:
 
         Point3D     center;               // center coordinates as a point
+    private:
+
         double         radius;                // the radius 
 
         static const double kEpsilon;   // for shadows and secondary rays

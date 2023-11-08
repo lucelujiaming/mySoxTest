@@ -2,7 +2,7 @@
 #define FRESNELTRANSMITTER_H
 
 #include "BTDF.h"
-
+// 一个BRDF用于处理透射计算
 class FresnelTransmitter: public BTDF {
     public:
 
@@ -23,7 +23,7 @@ class FresnelTransmitter: public BTDF {
 
         void
         set_eta_out(const float eo);
-
+        // 检测全内反射
         bool
         tir(const ShadeRec& sr) const;
 
@@ -35,14 +35,13 @@ class FresnelTransmitter: public BTDF {
 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
-
+        // 求解Fresnel方程。
         virtual float
         fresnel(const ShadeRec& sr) const;
 
     private:
-
-        float    eta_in;
-        float    eta_out;
+        float    eta_in;           // 输入折射率   
+        float    eta_out;          // 输出折射率
 };
 
 

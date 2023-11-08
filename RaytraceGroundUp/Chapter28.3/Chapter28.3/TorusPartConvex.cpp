@@ -196,6 +196,7 @@ TorusPartConvex::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 
 //---------------------------------------------------------------- shadow_hit
+
 #ifndef M_PI
 #define M_PI PI
 #endif

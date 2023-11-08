@@ -6,7 +6,7 @@
 #include "FresnelReflector.h"
 #include "FresnelTransmitter.h"
 
-
+// 透明材质。实现镜面高光的渲染操作。
 class Dielectric : public Phong
 {
     public:
@@ -52,7 +52,8 @@ class Dielectric : public Phong
         shade(ShadeRec& s);
 
     private:
-
+        // 鉴于颜色过滤仅出现于光线穿越介质时，因而Dielectric材质分别存储了
+        // 内、外过滤颜色值，且该过滤颜色值与BRDF、BTDF无关。
         RGBColor             cf_in;            // interior filter color
         RGBColor             cf_out;            // exterior filter color
 

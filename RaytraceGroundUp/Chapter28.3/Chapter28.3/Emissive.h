@@ -1,37 +1,36 @@
-﻿#ifndef __EMISSIVE__
+﻿
+#ifndef __EMISSIVE__
 #define __EMISSIVE__
 
 #include "Material.h"
 
 //----------------------------------------------------------------------------- class Emissive
-
+// 自发光材质。 仅讨论空间不变、各向同性的自发光材质。
+// 同时，本章将假设自发光材质不会反射任何光线，
+// 因而，当主光线或次级光线与自发光对象发生碰撞时，将不会产生其他光线。
 class Emissive: public Material {
 
     public:
-
         Emissive(void);
-
         Emissive(const Emissive& m);
-
-        virtual Material* clone(void) const;
-
-        Emissive& operator= (const Emissive& rhs);
-
+        virtual Material*      clone(void) const;
+        Emissive&       operator= (const Emissive& rhs);
         ~Emissive(void);
 
-        void scale_radiance(const float _ls);
+        void       scale_radiance(const float _ls);
 
-        void set_ce(const float r, const float g, const float b);
+        void       set_ce(const float r, const float g, const float b);
 
-        virtual RGBColor get_Le(ShadeRec& sr) const;
+        virtual RGBColor       get_Le(ShadeRec& sr) const;
 
-        virtual RGBColor shade(ShadeRec& sr);
+        virtual RGBColor       shade(ShadeRec& sr);
 
-        virtual RGBColor area_light_shade(ShadeRec& sr);
+        virtual RGBColor       area_light_shade(ShadeRec& sr);
 
         virtual RGBColor path_shade(ShadeRec& sr);
         
         virtual RGBColor global_shade(ShadeRec& sr);
+
     private:
         // 缩放系数ls
         float ls;        // radiance scaling facor

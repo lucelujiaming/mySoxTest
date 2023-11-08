@@ -1,4 +1,4 @@
-#ifndef __LIGHT__
+﻿#ifndef __LIGHT__
 #define __LIGHT__
 
 #include "Vector3D.h"
@@ -25,21 +25,20 @@ class Light {
 
         virtual
         ~Light(void);
-
+        // 返回碰撞点处的光线方向
         virtual Vector3D
         get_direction(ShadeRec& sr) = 0;
-
+        // 返回入射辐射度
         virtual RGBColor
         L(ShadeRec& sr);
 
         virtual bool
-        casts_shadows(void) const;
+        in_shadow(const Ray& ray, const ShadeRec& sr) const = 0;
+
+       virtual bool casts_shadows(void) const;
 
         virtual void
         set_shadows(bool val);
-
-        virtual bool
-        in_shadow(const Ray& ray, const ShadeRec& sr) const = 0;
 
         virtual float
         G(const ShadeRec& sr) const;
@@ -49,7 +48,13 @@ class Light {
 
     private:
 
+        // 各光源可开启/关闭相应的阴影投射操作。
         bool    shadows;    // does the light cast shadows or not
+        // 基类中不使用这两个成员变量，是因为对于区域光照和环境光照，
+        // 光源缩放系数，也就是亮度值ls位于对应光照所使用的发射材质中，
+        // 光源颜色值color也是这样。
+        // float        ls;
+        // RGBColor    color;
 
 };
 

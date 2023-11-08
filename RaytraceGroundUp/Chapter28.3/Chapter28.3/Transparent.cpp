@@ -87,14 +87,14 @@ Transparent::shade(ShadeRec& sr) {
     Vector3D wo = -sr.ray.d;
     Vector3D wi;
     RGBColor fr = reflective_brdf->sample_f(sr, wo, wi);    // computes wi
-    // ·´Éä¹âÏß
+    // åå°„å…‰çº¿
     Ray reflected_ray(sr.hit_point, wi);
 
-    // µ±³öÏÖÈ«ÄÚ·´ÉäÊ±£¬ 
+    // å½“å‡ºç°å…¨å†…åå°„æ—¶ï¼Œ 
     if (specular_btdf->tir(sr)) { // test total internal reflection
-        // ·øÉä¶È½öÍ¨¹ı·´Éä¹âÏßµÄ·µ»ØÖµÊµÏÖÊıÁ¿ÉÏµÄÔö¼Ó£¬ÇÒÎŞĞè³ËÒÔBRDFÒÔ¼°cos¦Èi¡£
+        // è¾å°„åº¦ä»…é€šè¿‡åå°„å…‰çº¿çš„è¿”å›å€¼å®ç°æ•°é‡ä¸Šçš„å¢åŠ ï¼Œä¸”æ— éœ€ä¹˜ä»¥BRDFä»¥åŠcosÎ¸iã€‚
         L += sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1);
-        // ´ËÊ±£¬ Ò²ÎŞĞèÁîBRDFÊ¹ÓÃkr=1ÕâÒ»Ìõ¼şÒÔ¼°Õı³£Çé¿öÏÂ(ÎŞÈ«ÄÚ·´ÉäÏÖÏó)µÄkrÖµ¡£
+        // æ­¤æ—¶ï¼Œ ä¹Ÿæ— éœ€ä»¤BRDFä½¿ç”¨kr=1è¿™ä¸€æ¡ä»¶ä»¥åŠæ­£å¸¸æƒ…å†µä¸‹(æ— å…¨å†…åå°„ç°è±¡)çš„krå€¼ã€‚
 
         // kr = 1.0
     }
@@ -102,10 +102,10 @@ Transparent::shade(ShadeRec& sr) {
         Vector3D wt;
         RGBColor ft = specular_btdf->sample_f(sr, wo, wt); // computes wt
         Ray transmitted_ray(sr.hit_point, wt);
-        // ¼ÆËã·´Éä¹âÏß
+        // è®¡ç®—åå°„å…‰çº¿
         L += fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1)
                 * fabs(sr.normal * wi);
-        // ¼ÆËãÍ¸Éä¹âÏß
+        // è®¡ç®—é€å°„å…‰çº¿
         L += ft * sr.w.tracer_ptr->trace_ray(transmitted_ray, sr.depth + 1)
                 * fabs(sr.normal * wt);
     }

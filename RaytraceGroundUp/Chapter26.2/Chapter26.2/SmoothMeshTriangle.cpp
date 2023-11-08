@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Constants.h"
 #include "SmoothMeshTriangle.h"
                         
@@ -53,7 +53,8 @@ SmoothMeshTriangle::~SmoothMeshTriangle(void) {}
 // ---------------------------------------------------------------- interpolate_normal
 
 Normal 
-SmoothMeshTriangle::interpolate_normal(const float beta, const float gamma) const {    
+SmoothMeshTriangle::interpolate_normal(const float beta, const float gamma) const {
+    // 参见公式23.1。
     Normal normal((1 - beta - gamma) * mesh_ptr->normals[index0] 
                         + beta * mesh_ptr->normals[index1] 
                                 + gamma * mesh_ptr->normals[index2]);

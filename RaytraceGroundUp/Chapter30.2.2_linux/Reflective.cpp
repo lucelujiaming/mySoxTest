@@ -1,3 +1,4 @@
+﻿#include "stdafx.h"
 #include "Reflective.h"
 
 // ---------------------------------------------------------------- default constructor

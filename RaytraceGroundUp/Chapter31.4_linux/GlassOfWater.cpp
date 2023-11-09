@@ -11,6 +11,7 @@
 // whole angular region (0 <= azimuth angle < 2 * pi) is used.
 // This would be more efficient
 
+#include "stdafx.h"
 
 #include "Disk.h"
 #include "OpenCylinderConvex.h"

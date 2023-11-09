@@ -320,7 +320,7 @@ Instance::scale(const double a, const double b, const double c) {
 
 
 //-------------------------------------------------------------------------------- translate
-
+// 平移变换
 void
 Instance::translate(const Vector3D& trans) {
 
@@ -343,7 +343,7 @@ Instance::translate(const Vector3D& trans) {
 
 
 //-------------------------------------------------------------------------------- translate
-
+// 平移变换
 void
 Instance::translate(const double dx, const double dy, const double dz) {
 
@@ -367,7 +367,9 @@ Instance::translate(const double dx, const double dy, const double dz) {
 
 
 //-------------------------------------------------------------------------------- rotate_x
-
+// 缩放变换
+// 这里，围绕各轴的正向旋转变换应遵循下列规则：
+// 如果在正轴内并朝向原点观察某一对象(亦即，沿负轴方向)，则逆时针旋转记为正向旋转。
 void
 Instance::rotate_x(const double theta) {
 
@@ -395,7 +397,9 @@ Instance::rotate_x(const double theta) {
 
 
 //-------------------------------------------------------------------------------- rotate_y
-
+// 缩放变换
+// 这里，围绕各轴的正向旋转变换应遵循下列规则：
+// 如果在正轴内并朝向原点观察某一对象(亦即，沿负轴方向)，则逆时针旋转记为正向旋转。
 void
 Instance::rotate_y(const double theta) {
 
@@ -424,7 +428,9 @@ Instance::rotate_y(const double theta) {
 
 
 //-------------------------------------------------------------------------------- rotate_z
-
+// 缩放变换
+// 这里，围绕各轴的正向旋转变换应遵循下列规则：
+// 如果在正轴内并朝向原点观察某一对象(亦即，沿负轴方向)，则逆时针旋转记为正向旋转。
 void
 Instance::rotate_z(const double theta) {
     double sin_theta = sin(theta * PI / 180.0);
@@ -449,6 +455,41 @@ Instance::rotate_z(const double theta) {
     forward_matrix = z_rotation_matrix * forward_matrix; 
 }
 
+//-------------------------------------------------------------------------------- mirror_x
+// X方向镜像变换
+void Instance::mirror_x() {
+	Matrix inv_x_mirror_matrix; 
+	inv_x_mirror_matrix.m[0][0] = -1;
+	inv_matrix = inv_matrix * inv_x_mirror_matrix;
+
+	Matrix x_mirror_matrix; 
+	x_mirror_matrix.m[0][0] = -1;
+	forward_matrix = x_mirror_matrix * forward_matrix;
+}
+
+//-------------------------------------------------------------------------------- mirror_y
+// Y方向镜像变换
+void Instance::mirror_y(){
+	Matrix inv_y_mirror_matrix;
+	inv_y_mirror_matrix.m[1][1] = -1;
+	inv_matrix = inv_matrix * inv_y_mirror_matrix;
+
+	Matrix y_mirror_matrix;
+	y_mirror_matrix.m[1][1] = -1;
+	forward_matrix = y_mirror_matrix * forward_matrix;
+}
+
+//-------------------------------------------------------------------------------- mirror_z
+// Z方向镜像变换
+void Instance::mirror_z(){
+	Matrix inv_z_mirror_matrix;
+	inv_z_mirror_matrix.m[2][2] = -1;
+	inv_matrix = inv_matrix * inv_z_mirror_matrix;
+
+	Matrix z_mirror_matrix;
+	z_mirror_matrix.m[2][2] = -1;
+	forward_matrix = z_mirror_matrix * forward_matrix;
+}
 
 //-------------------------------------------------------------------------------- shear
 

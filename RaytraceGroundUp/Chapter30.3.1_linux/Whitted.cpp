@@ -1,3 +1,4 @@
+﻿#include "stdafx.h"
 #include "Whitted.h"
 #include "World.h"
 #include "ShadeRec.h"

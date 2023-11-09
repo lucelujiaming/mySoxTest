@@ -4,6 +4,7 @@
 //    See the file COPYING.txt for the full license.
 
 
+#include "stdafx.h"
 #include "BTDF.h"
 
 // ------------------------------------------------------------------------ default constructor

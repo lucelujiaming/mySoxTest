@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SV_Matte.h"
 
 // ---------------------------------------------------------------- default constructor

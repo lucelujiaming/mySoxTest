@@ -6,6 +6,7 @@
 
 // This file contains the definition of the class BeveledBox
 
+#include "stdafx.h"
 #include "BeveledBox.h"
 #include "OpenCylinder.h"
 #include "Rectangle.h"

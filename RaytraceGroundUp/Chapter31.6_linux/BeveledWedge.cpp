@@ -9,6 +9,7 @@
 // There is code on the website for Instance, OpenCylinder, and Sphere
 // You will have to implement the other objects
 
+#include "stdafx.h"
 #include "BeveledWedge.h"
 
 #include "Constants.h"
@@ -386,9 +387,13 @@ BeveledWedge::BeveledWedge(    const double _y0,        // minimum y value
     bbox.y1 = y1;
     bbox.z1 = z1 + rb;
 
-    bool spans90 = phi0 < 90 and phi1 > 90;
-    bool spans180 = phi0 < 180 and phi1 > 180;
-    bool spans270 = phi0 < 270 and phi1 > 270;
+    //bool spans90 = phi0 < 90 and phi1 > 90;
+    //bool spans180 = phi0 < 180 and phi1 > 180;
+    //bool spans270 = phi0 < 270 and phi1 > 270;
+
+    bool spans90  = (phi0 < 90)  && (phi1 > 90);
+    bool spans180 = (phi0 < 180) && (phi1 > 180);
+    bool spans270 = (phi0 < 270) && (phi1 > 270);
 
     if (spans90 && spans180 && spans270) {
         bbox.x0 = -r1;

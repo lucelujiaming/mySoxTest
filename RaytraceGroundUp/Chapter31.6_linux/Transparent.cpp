@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Transparent.h"
 
 // ---------------------------------------------------------------- default constructor
@@ -104,7 +105,7 @@ Transparent::shade(ShadeRec& sr) {
         // 计算反射光线
         L += fr * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1)
                 * fabs(sr.normal * wi);
-        // 计算透射
+        // 计算透射光线
         L += ft * sr.w.tracer_ptr->trace_ray(transmitted_ray, sr.depth + 1)
                 * fabs(sr.normal * wt);
     }

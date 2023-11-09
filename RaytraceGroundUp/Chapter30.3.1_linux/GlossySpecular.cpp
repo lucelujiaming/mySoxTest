@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GlossySpecular.h"
 #include "MultiJittered.h"
 #include "Constants.h"
@@ -112,6 +112,7 @@ GlossySpecular::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) co
 
 
 // ----------------------------------------------------------------------------------- sample_f
+// this is used for indirect illumination
 // 该函数用于模拟光泽反射。参见Chapter25.1。
 // 用于计算反射光线的方向，并且返回计算出来的颜色值。
 // 使用Monte Calo积分实现。

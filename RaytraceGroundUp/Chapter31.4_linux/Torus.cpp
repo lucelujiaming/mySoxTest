@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Maths.h"    // for SolveQuartic
 #include "Torus.h"
 

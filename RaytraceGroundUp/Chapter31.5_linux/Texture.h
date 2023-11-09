@@ -25,7 +25,7 @@ class Texture {
 
         virtual                                             
         ~Texture(void);
-        
+        // 返回碰撞点处的RGB值。
         virtual RGBColor                                                                            
         get_color(const ShadeRec& sr) const = 0;
                 

@@ -53,30 +53,24 @@ class Instance: public GeometricObject {
         
         
         // affine tranformation functions
-        
-        void                                                
-        translate(const Vector3D& trans);
-        
-        void
-        translate(const double dx, const double dy, const double dz);    
-        
-        void                                                
-        scale(const Vector3D& s);
-        
-        void 
-        scale(const double a, const double b, const double c);
-        
-        virtual void                                        
-        rotate_x(const double r);
-        
-        virtual void                                        
-        rotate_y(const double r);
-        
-        virtual void                                        
-        rotate_z(const double r);
-        
-        void                                                
-        shear(const Matrix& m);
+        // 平移变换
+        void  translate(const Vector3D& trans);
+        void  translate(const double dx, const double dy, const double dz);    
+        // 缩放变换
+        void  scale(const Vector3D& s);
+        void  scale(const double a, const double b, const double c);
+        // 旋转变换
+		// 这里，围绕各轴的正向旋转变换应遵循下列规则：
+		// 如果在正轴内并朝向原点观察某一对象(亦即，沿负轴方向)，则逆时针旋转记为正向旋转。
+        virtual void rotate_x(const double r);
+        virtual void rotate_y(const double r);
+        virtual void rotate_z(const double r);
+		// 镜像变换
+		virtual void mirror_x();
+		virtual void mirror_y();
+		virtual void mirror_z();
+		// 剪切变换
+        void   shear(const Matrix& m);
         
         
     private:

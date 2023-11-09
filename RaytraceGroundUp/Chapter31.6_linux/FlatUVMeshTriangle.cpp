@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Constants.h"
 #include "FlatUVMeshTriangle.h"
 #include "ShadeRec.h"

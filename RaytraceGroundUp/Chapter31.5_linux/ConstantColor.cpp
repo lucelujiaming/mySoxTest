@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ConstantColor.h"
 
 // ---------------------------------------------------------------- default constructor

@@ -1,4 +1,4 @@
-// This file contains the definition of the Pinhole class
+﻿// This file contains the definition of the Pinhole class
 
 #include "stdafx.h"
 #include "Constants.h"
@@ -150,8 +150,8 @@ Pinhole::render_scene(const World& w) {
                 // 同时，还将返回各像素的颜色值。
                 // 但此处采取了一种间接的调用方案， 
                 // 即对该函数通过指向Tracer对象的tracer_ptr指针加以调用。
-                // L += w.tracer_ptr->trace_ray(ray, depth);
-                L += w.tracer_ptr->trace_ray(ray);
+                // L += w.tracer_ptr->trace_ray(ray);
+                L += w.tracer_ptr->trace_ray(ray, depth);
             }
             // 计算采样的平均值。
             L /= vp.num_samples;

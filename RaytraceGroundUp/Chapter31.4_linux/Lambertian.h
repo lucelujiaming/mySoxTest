@@ -2,6 +2,7 @@
 #define __LAMBERTIAN__
 
 #include "BRDF.h"
+#include "Sampler.h"
 // 光照完全漫反射
 class Lambertian: public BRDF {
 
@@ -23,10 +24,10 @@ class Lambertian: public BRDF {
         virtual RGBColor
         f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
 
-        // 返回双半球反射系数。 
         virtual RGBColor
         sample_f(const ShadeRec& sr, const Vector3D& wo, Vector3D& wi, float& pdf) const;
 
+        // 返回双半球反射系数。 
         virtual RGBColor
         rho(const ShadeRec& sr, const Vector3D& wo) const;
         // 设置环境光反射系数

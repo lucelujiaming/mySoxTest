@@ -11,6 +11,8 @@
 #define NULL (0)
 #endif
 
+
+
 // ----------------------------------------------------------------  default constructor
 
 InstanceTexture::InstanceTexture(void)

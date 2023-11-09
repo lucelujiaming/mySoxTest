@@ -1,3 +1,4 @@
+#include "stdafx.h"
 
 #include "OpenCylinder.h"
 #define kEpsilon 0.001

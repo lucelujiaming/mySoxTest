@@ -6,6 +6,7 @@
 //    See the file COPYING.txt for the full license.
 
 
+#include "stdafx.h"
 #include <iostream>
 #include <stdio.h>
 

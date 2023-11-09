@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SV_Lambertian.h"
 #include "Constants.h"
 

@@ -4,6 +4,7 @@
 //    See the file COPYING.txt for the full license.
 
 
+#include "stdafx.h"
 #include "Maths.h"    // for SolveQuartic
 #include "TorusPartConvex.h"
 
@@ -192,6 +193,10 @@ TorusPartConvex::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 
 //---------------------------------------------------------------- shadow_hit
+
+#ifndef M_PI
+#define M_PI PI
+#endif
 
 bool
 TorusPartConvex::shadow_hit(const Ray& ray, float& tmin) const {

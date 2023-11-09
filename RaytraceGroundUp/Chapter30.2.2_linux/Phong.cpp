@@ -1,3 +1,4 @@
+﻿#include "stdafx.h"
 #include "Phong.h"
 
 // ---------------------------------------------------------------- default constructor

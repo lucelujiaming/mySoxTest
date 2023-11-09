@@ -1,94 +1,97 @@
+﻿#include "stdafx.h"
 #include "Box.h"
 
 const double Box::kEpsilon = 0.001;
 
 // ----------------------------------------------------------------  default constructor
-
-Box::Box(void)
-    :     GeometricObject(),
-        x0(0.0),
-        y0(0.0),
-        z0(0.0),
-        x1(0.0),
-        y1(0.0),
-        z1(0.0)
+Box::Box (void)
+: x0(-1), x1(1), y0(-1), y1(1), z0(-1), z1(1)
 {}
 
 
-// ----------------------------------------------------------------  constructor
-// this constructs the normal
-
-Box::Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b)
-    :    GeometricObject(),
-        x0(0.0),
-        y0(0.0),
-        z0(0.0),
-        x1(0.0),
-        y1(0.0),
-        z1(0.0)
+Box::Box (const double _x0, const double _x1,
+                        const double _y0, const double _y1,
+                        const double _z0, const double _z1)
+:       x0(_x0),
+x1(_x1),
+y0(_y0),
+y1(_y1),
+z0(_z0),
+z1(_z1)
 {}
 
-
-// ----------------------------------------------------------------  constructor
-// this has the normal as an argument
-
-Box::Box(const Point3D& _p0, const Vector3D& _a, const Vector3D& _b, const Normal& n)
-    :    GeometricObject(),
-        x0(0.0),
-        y0(0.0),
-        z0(0.0),
-        x1(0.0),
-        y1(0.0),
-        z1(0.0)
+Box::Box (const Point3D p0, const Point3D p1)
+:       x0(p0.x),
+x1(p1.x),
+y0(p0.y),
+y1(p1.y),
+z0(p0.z),
+z1(p1.z)
 {}
-
-
-// ---------------------------------------------------------------- clone
-
-Box* 
-Box::clone(void) const {
-    return (new Box(*this));
-}
-
 
 // ---------------------------------------------------------------- copy constructor
 
-Box::Box (const Box& r)
-    :    GeometricObject(r),
-        x0(r.x0),
-        y0(r.y0),
-        z0(r.z0),
-        x1(r.x1),
-        y1(r.y1),
-        z1(r.z1)
+Box::Box(const Box& bbox)
+:       x0(bbox.x0),
+x1(bbox.x1),
+y0(bbox.y0),
+y1(bbox.y1),
+z0(bbox.z0),
+z1(bbox.z1)
 {}
 
 
 
 // ---------------------------------------------------------------- assignment operator
 
-Box& 
-Box::operator= (const Box& rhs) {
+Box&
+Box::operator=(const Box& rhs) {
+        if (this == &rhs)
+                return (*this);
 
-    if (this == &rhs)
+        GeometricObject::operator= (rhs);
+
+        x0      = rhs.x0;
+        x1      = rhs.x1;
+        y0      = rhs.y0;
+        y1      = rhs.y1;
+        z0      = rhs.z0;
+        z1      = rhs.z1;
+
         return (*this);
-
-    GeometricObject::operator=(rhs);
-    
-    x0 = rhs.x0;
-    y0 = rhs.y0;
-    z0 = rhs.z0;
-    x1 = rhs.x1;
-    y1 = rhs.y1;
-    z1 = rhs.z1;
-
-    return (*this);
 }
 
 
-// ---------------------------------------------------------------- destructor
+// ---------------------------------------------------------------- clone
 
-Box::~Box (void) {}
+Box*
+Box::clone(void) const {
+        return (new Box(*this));
+}
+
+
+
+// ----------------------------------------------------------------- get_normal
+// explained on page 361
+// 单独对法线加以计算。
+Normal    
+Box::get_normal(const int face_hit) const {
+    switch (face_hit) {
+        case 0:    return (Normal(-1, 0, 0));    // -x face
+        case 1:    return (Normal(0, -1, 0));    // -y face
+        case 2:    return (Normal(0, 0, -1));    // -z face
+        case 3:    return (Normal(1, 0, 0));    // +x face
+        case 4:    return (Normal(0, 1, 0));    // +y face
+        case 5:    return (Normal(0, 0, 1));    // +z face
+        default: return Normal(-999, -999, -999);
+    }
+
+}
+
+BBox
+Box::get_bounding_box(void) const {
+        return (BBox(x0,x1,y0,y1,z0,z1));
+}
 
 
 //------------------------------------------------------------------ get_bounding_box 
@@ -108,8 +111,13 @@ Box::~Box (void) {}
 bool      
 Box::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
-    double ox = ray.o.x; double oy = ray.o.y; double oz = ray.o.z;
-    double dx = ray.d.x; double dy = ray.d.y; double dz = ray.d.z;
+        double ox = ray.o.x;
+        double oy = ray.o.y;
+        double oz = ray.o.z;
+
+        double dx = ray.d.x;
+        double dy = ray.d.y;
+        double dz = ray.d.z;
 
     double tx_min, ty_min, tz_min;
     double tx_max, ty_max, tz_max;
@@ -210,8 +218,14 @@ Box::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 bool
 Box::shadow_hit(const Ray& ray, float& tmin) const {
 
-    double ox = ray.o.x; double oy = ray.o.y; double oz = ray.o.z;
-    double dx = ray.d.x; double dy = ray.d.y; double dz = ray.d.z;
+
+        double ox = ray.o.x;
+        double oy = ray.o.y;
+        double oz = ray.o.z;
+
+        double dx = ray.d.x;
+        double dy = ray.d.y;
+        double dz = ray.d.z;
 
     double tx_min, ty_min, tz_min;
     double tx_max, ty_max, tz_max;
@@ -288,32 +302,9 @@ Box::shadow_hit(const Ray& ray, float& tmin) const {
         else 
             tmin = t1;                // ray hits inside surface
 
+
         return (true);
     }
     else
         return (false);    
 }
-
-
-// ----------------------------------------------------------------- get_normal
-// explained on page 361
-// 单独对法线加以计算。
-Normal    
-Box::get_normal(const int face_hit) const {
-    switch (face_hit) {
-        case 0:    return (Normal(-1, 0, 0));    // -x face
-        case 1:    return (Normal(0, -1, 0));    // -y face
-        case 2:    return (Normal(0, 0, -1));    // -z face
-        case 3:    return (Normal(1, 0, 0));    // +x face
-        case 4:    return (Normal(0, 1, 0));    // +y face
-        case 5:    return (Normal(0, 0, 1));    // +z face
-        default: return Normal(-999, -999, -999);
-    }
-
-}
-
-
-
-
-
-

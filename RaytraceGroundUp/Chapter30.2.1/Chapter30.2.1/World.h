@@ -1,4 +1,5 @@
-﻿#ifndef __WORLD__
+﻿
+#ifndef __WORLD__
 #define __WORLD__
 
 // This file contains the declaration of the class World

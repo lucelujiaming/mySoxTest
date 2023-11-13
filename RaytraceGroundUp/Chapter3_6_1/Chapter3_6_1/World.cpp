@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 // this file contains the definition of the World class
 
 // #include "wxraytracer.h"

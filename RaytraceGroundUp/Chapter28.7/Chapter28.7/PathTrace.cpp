@@ -40,7 +40,8 @@ PathTrace::trace_ray(const Ray ray, const int depth) const {
             
             // 该函数与Whitted::trace_ray() 函数的唯一差别在于：
             // 该函数调用了material_ptr->path_shade()函数而非material_ptr->shade()函数。
-            return (sr.material_ptr->path_shade(sr));   
+            RGBColor rgbRet = sr.material_ptr->path_shade(sr);
+            return rgbRet;
         }
         else
             return (world_ptr->background_color);

@@ -401,6 +401,7 @@ Grid::read_smooth_triangles(const char* file_name) {
 /*    针对某一特定的三角形数据类型，着色类型（固定着色或平滑着色）                                 */
 /*    并根据所提供的函数参数进行相应的读取操作。                                                   */
 /***************************************************************************************************/
+# define LUJIAMING_DBG 1
 void
 Grid::read_ply_file(const char* file_name, const int triangle_type) {
     // Vertex definition
@@ -463,6 +464,7 @@ Grid::read_ply_file(const char* file_name, const int triangle_type) {
     int             num_obj_info;
     char**          obj_info;
 
+	float  xMin = 0, xMax = 0, yMin = 0, yMax = 0, zMin = 0, zMax = 0;
 
     // open a ply file for reading
     // 打开PLY文件。输入一个文件名。返回四个变量。
@@ -523,6 +525,22 @@ Grid::read_ply_file(const char* file_name, const int triangle_type) {
                 ply_get_element (ply, (void *) vertex_ptr);
                 // 放入顶点列表。
                 mesh_ptr->vertices.push_back(Point3D(vertex_ptr->x, vertex_ptr->y, vertex_ptr->z));
+#ifdef LUJIAMING_DBG
+				if (vertex_ptr->x < xMin)
+					xMin = vertex_ptr->x;
+				if (vertex_ptr->x > xMax)
+					xMax = vertex_ptr->x;
+
+				if (vertex_ptr->y < yMin)
+					yMin = vertex_ptr->y;
+				if (vertex_ptr->y > yMax)
+					yMax = vertex_ptr->y;
+				
+				if (vertex_ptr->z < zMin)
+					zMin = vertex_ptr->z;
+				if (vertex_ptr->z > zMax)
+					zMax = vertex_ptr->z;
+#endif
                 delete vertex_ptr;
             }
         }
@@ -621,7 +639,9 @@ Grid::read_ply_file(const char* file_name, const int triangle_type) {
     for (i = 0; i < num_obj_info; i++)
     {
         printf ("obj_info = '%s'\n", obj_info[i]);
-    }
+	}
+	printf("x = (%f, %f), y = (%f, %f), z = (%f, %f).\n", 
+		xMin, xMax, yMin, yMax, zMin, zMax);
 
     // close the ply file
     ply_close (ply);

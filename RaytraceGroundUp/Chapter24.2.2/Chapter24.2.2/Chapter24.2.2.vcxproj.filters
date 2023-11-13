@@ -198,6 +198,66 @@
     <ClInclude Include="World.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Torus.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TorusPart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TorusPartConcave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TorusPartConvex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidCylinder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SpherePartConcave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SpherePartConvex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCylinder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCylinderConcave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCylinderConvex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCylinderPartConcave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCylinderPartConvex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Disk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Annulus.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AnnulusPart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BeveledBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BeveledWedge.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Box.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AreaLighting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -375,6 +435,66 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Torus.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TorusPart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TorusPartConcave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TorusPartConvex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidCylinder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SpherePartConcave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SpherePartConvex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCylinder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCylinderConcave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCylinderConvex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCylinderPartConcave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCylinderPartConvex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Disk.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Annulus.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnulusPart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BeveledBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BeveledWedge.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Box.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AreaLighting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

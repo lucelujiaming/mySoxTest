@@ -568,7 +568,7 @@ void World::build()
     // checker_box_ptrl->set_size(0.2) ;
     checker_box_ptrl->set_color1(orange) ;
     checker_box_ptrl->set_color2(white) ;
-	
+
     SV_Matte* sv_matte_bunny_ptrl = new SV_Matte;
     sv_matte_bunny_ptrl->set_ka(0.75) ;
     sv_matte_bunny_ptrl->set_kd(0.75) ;

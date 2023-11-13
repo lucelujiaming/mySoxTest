@@ -1,9 +1,9 @@
-#ifndef __AMBIENTOCCLUDER__
+ï»¿#ifndef __AMBIENTOCCLUDER__
 #define __AMBIENTOCCLUDER__
 
 #include "Light.h"
 #include "Sampler.h"
-// »·¾³ÕÚµ²¹âÔ´¡£
+// ç¯å¢ƒé®æŒ¡å…‰æºã€‚
 class AmbientOccluder: public Light {
 
     public:
@@ -22,34 +22,34 @@ class AmbientOccluder: public Light {
 
         void
         scale_radiance(const float b);
-        // ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+        // è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
         void
         set_color(const float c);
-        // ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+        // è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
         void
         set_color(const RGBColor& c);
-        // ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+        // è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
         void
         set_color(const float r, const float g, const float b);
 
         void
         set_min_amount(int n);
-        // ·µ»Ø¸÷ÌõÒõÓ°¹âÏßµÄ·½Ïò¡£
+        // è¿”å›å„æ¡é˜´å½±å…‰çº¿çš„æ–¹å‘ã€‚
         virtual Vector3D
         get_direction(ShadeRec& sr);
-        // ÉèÖÃ²ÉÑùÆ÷¶ÔÏósp
+        // è®¾ç½®é‡‡æ ·å™¨å¯¹è±¡sp
         void
         set_sampler(Sampler* s_ptr);
-        // ·µ»ØÈëÉä·øÉä¶È
+        // è¿”å›å…¥å°„è¾å°„åº¦
         virtual RGBColor
         L(ShadeRec& s);
-        // ²âÊÔÒõÓ°ÊÇ·ñ±»Ä³Ò»¸ö¶ÔÏóÕÚµ²¡£
+        // æµ‹è¯•é˜´å½±æ˜¯å¦è¢«æŸä¸€ä¸ªå¯¹è±¡é®æŒ¡ã€‚
         bool
         in_shadow(const Ray& ray, const ShadeRec& sr) const;
 
         virtual bool
         casts_shadows(void) const;
-        // ¿ªÆô»ò¹Ø±ÕÒõÓ°¡£
+        // å¼€å¯æˆ–å…³é—­é˜´å½±ã€‚
         virtual void
         set_shadows(bool _s);
 
@@ -60,14 +60,14 @@ class AmbientOccluder: public Light {
         pdf(const ShadeRec& sr) const;
 
     private:
-        // ¹âÔ´Ëõ·ÅÏµÊı£¬Ò²¾ÍÊÇÁÁ¶ÈÖµ¡£
+        // å…‰æºç¼©æ”¾ç³»æ•°ï¼Œä¹Ÿå°±æ˜¯äº®åº¦å€¼ã€‚
         float        ls;
-        // ¹âÔ´ÑÕÉ«Öµ¡£
+        // å…‰æºé¢œè‰²å€¼ã€‚
         RGBColor    color;
-        // ÒõÓ°¼õÈõÒò×Ó¡£
+        // é˜´å½±å‡å¼±å› å­ã€‚
         float        min_amount;
         Vector3D    u, v, w;
-        // ²ÉÑùÆ÷Ö¸Õë
+        // é‡‡æ ·å™¨æŒ‡é’ˆ
         Sampler*    sampler_ptr;
 };
 
@@ -80,15 +80,15 @@ AmbientOccluder::scale_radiance(const float b) {
 }
 
 // ------------------------------------------------------------------------------- set_color
-// µ±¹âÏß·½Ïò±»×èµ²Ê±£¬ ¿ÉÊ¹ÓÃÊı¾İ³ÉÔ±min amountÒÔ·µ»Ø×îĞ¡µÄÑÕÉ«Öµ(·ÇºÚÉ«) ¡£
-// Óë·µ»ØºÚÉ«ÖµÏà±È£¬Ôö¼ÓÁË×ÅÉ«½á¹ûµÄÕæÊµ¸Ğ¡£
+// å½“å…‰çº¿æ–¹å‘è¢«é˜»æŒ¡æ—¶ï¼Œ å¯ä½¿ç”¨æ•°æ®æˆå‘˜min amountä»¥è¿”å›æœ€å°çš„é¢œè‰²å€¼(éé»‘è‰²) ã€‚
+// ä¸è¿”å›é»‘è‰²å€¼ç›¸æ¯”ï¼Œå¢åŠ äº†ç€è‰²ç»“æœçš„çœŸå®æ„Ÿã€‚
 inline void
 AmbientOccluder::set_min_amount(int n) {
     min_amount = n;
 }
 
 // ------------------------------------------------------------------------------- set_color
-// ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGB»Ò¶ÈÖµ¡£
+// è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBç°åº¦å€¼ã€‚
 inline void
 AmbientOccluder::set_color(const float c) {
     color.r = c; color.g = c; color.b = c;
@@ -96,7 +96,7 @@ AmbientOccluder::set_color(const float c) {
 
 
 // ------------------------------------------------------------------------------- set_color
-// ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGBColorÀàĞÍ¡£
+// è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBColorç±»å‹ã€‚
 inline void
 AmbientOccluder::set_color(const RGBColor& c) {
     color = c;
@@ -104,7 +104,7 @@ AmbientOccluder::set_color(const RGBColor& c) {
 
 
 // ------------------------------------------------------------------------------- set_color
-// ÉèÖÃ¹âÔ´ÑÕÉ«Öµ¡£²ÎÊıÎªRGBÈı¸öÖµ¡£
+// è®¾ç½®å…‰æºé¢œè‰²å€¼ã€‚å‚æ•°ä¸ºRGBä¸‰ä¸ªå€¼ã€‚
 inline void
 AmbientOccluder::set_color(const float r, const float g, const float b) {
     color.r = r; color.g = g; color.b = b;
@@ -121,7 +121,7 @@ AmbientOccluder::casts_shadows() const {
 
 
 // ---------------------------------------------------------------------- set_shadows
-// ¿ªÆô»ò¹Ø±ÕÒõÓ°¡£
+// å¼€å¯æˆ–å…³é—­é˜´å½±ã€‚
 inline void
 AmbientOccluder::set_shadows(bool _s) {
 

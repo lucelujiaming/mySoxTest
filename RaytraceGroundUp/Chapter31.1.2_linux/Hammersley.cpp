@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Hammersley.h"
 #include "Maths.h"
 

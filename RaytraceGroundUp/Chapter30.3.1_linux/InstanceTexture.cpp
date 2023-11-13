@@ -7,6 +7,10 @@
 #include "Constants.h"
 #include "InstanceTexture.h"
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
 
 
 // ----------------------------------------------------------------  default constructor

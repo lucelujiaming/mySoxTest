@@ -1,4 +1,4 @@
-#ifndef __VIEW_PLANE__
+﻿#ifndef __VIEW_PLANE__
 #define __VIEW_PLANE__
 
 #include "Sampler.h"

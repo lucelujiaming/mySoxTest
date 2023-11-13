@@ -38,7 +38,8 @@ RayCast::trace_ray(const Ray& ray) const {
     else
     {
         // 如果没有命中，返回背景颜色。
-        return (world_ptr->background_color);
+        RGBColor  backgroundColor = world_ptr->background_color;
+        return backgroundColor;
     }
 }
 

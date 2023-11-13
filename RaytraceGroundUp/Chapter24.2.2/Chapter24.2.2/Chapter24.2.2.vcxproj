@@ -81,12 +81,19 @@
   <ItemGroup>
     <ClInclude Include="Ambient.h" />
     <ClInclude Include="AmbientOccluder.h" />
+    <ClInclude Include="Annulus.h" />
+    <ClInclude Include="AnnulusPart.h" />
     <ClInclude Include="AreaLight.h" />
+    <ClInclude Include="AreaLighting.h" />
     <ClInclude Include="BBox.h" />
+    <ClInclude Include="BeveledBox.h" />
+    <ClInclude Include="BeveledWedge.h" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="BRDF.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Compound.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Disk.h" />
     <ClInclude Include="Emissive.h" />
     <ClInclude Include="EnvironmentLight.h" />
     <ClInclude Include="FishEye.h" />
@@ -109,6 +116,11 @@
     <ClInclude Include="MyRectangle.h" />
     <ClInclude Include="Normal.h" />
     <ClInclude Include="NRooks.h" />
+    <ClInclude Include="OpenCylinder.h" />
+    <ClInclude Include="OpenCylinderConcave.h" />
+    <ClInclude Include="OpenCylinderConvex.h" />
+    <ClInclude Include="OpenCylinderPartConcave.h" />
+    <ClInclude Include="OpenCylinderPartConvex.h" />
     <ClInclude Include="PerfectSpecular.h" />
     <ClInclude Include="Phong.h" />
     <ClInclude Include="Pinhole.h" />
@@ -119,6 +131,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayCast.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Reflective.h" />
     <ClInclude Include="Regular.h" />
     <ClInclude Include="RGBColor.h" />
@@ -126,13 +139,20 @@
     <ClInclude Include="ShadeRec.h" />
     <ClInclude Include="SmoothMeshTriangle.h" />
     <ClInclude Include="SmoothTriangle.h" />
+    <ClInclude Include="SolidCylinder.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereConcave.h" />
+    <ClInclude Include="SpherePartConcave.h" />
+    <ClInclude Include="SpherePartConvex.h" />
     <ClInclude Include="Spherical.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StereoCamera.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThinLens.h" />
+    <ClInclude Include="Torus.h" />
+    <ClInclude Include="TorusPart.h" />
+    <ClInclude Include="TorusPartConcave.h" />
+    <ClInclude Include="TorusPartConvex.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vector3D.h" />
@@ -143,12 +163,19 @@
   <ItemGroup>
     <ClCompile Include="Ambient.cpp" />
     <ClCompile Include="AmbientOccluder.cpp" />
+    <ClCompile Include="Annulus.cpp" />
+    <ClCompile Include="AnnulusPart.cpp" />
     <ClCompile Include="AreaLight.cpp" />
+    <ClCompile Include="AreaLighting.cpp" />
     <ClCompile Include="BBox.cpp" />
+    <ClCompile Include="BeveledBox.cpp" />
+    <ClCompile Include="BeveledWedge.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="BRDF.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chapter24.2.2.cpp" />
     <ClCompile Include="Compound.cpp" />
+    <ClCompile Include="Disk.cpp" />
     <ClCompile Include="Emissive.cpp" />
     <ClCompile Include="EnvironmentLight.cpp" />
     <ClCompile Include="FishEye.cpp" />
@@ -171,6 +198,11 @@
     <ClCompile Include="MyRectangle.cpp" />
     <ClCompile Include="Normal.cpp" />
     <ClCompile Include="NRooks.cpp" />
+    <ClCompile Include="OpenCylinder.cpp" />
+    <ClCompile Include="OpenCylinderConcave.cpp" />
+    <ClCompile Include="OpenCylinderConvex.cpp" />
+    <ClCompile Include="OpenCylinderPartConcave.cpp" />
+    <ClCompile Include="OpenCylinderPartConvex.cpp" />
     <ClCompile Include="PerfectSpecular.cpp" />
     <ClCompile Include="Phong.cpp" />
     <ClCompile Include="Pinhole.cpp" />
@@ -181,6 +213,7 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RayCast.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Reflective.cpp" />
     <ClCompile Include="Regular.cpp" />
     <ClCompile Include="RGBColor.cpp" />
@@ -188,8 +221,11 @@
     <ClCompile Include="ShadeRec.cpp" />
     <ClCompile Include="SmoothMeshTriangle.cpp" />
     <ClCompile Include="SmoothTriangle.cpp" />
+    <ClCompile Include="SolidCylinder.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereConcave.cpp" />
+    <ClCompile Include="SpherePartConcave.cpp" />
+    <ClCompile Include="SpherePartConvex.cpp" />
     <ClCompile Include="Spherical.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -197,6 +233,10 @@
     </ClCompile>
     <ClCompile Include="StereoCamera.cpp" />
     <ClCompile Include="ThinLens.cpp" />
+    <ClCompile Include="Torus.cpp" />
+    <ClCompile Include="TorusPart.cpp" />
+    <ClCompile Include="TorusPartConcave.cpp" />
+    <ClCompile Include="TorusPartConvex.cpp" />
     <ClCompile Include="Tracer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vector3D.cpp" />

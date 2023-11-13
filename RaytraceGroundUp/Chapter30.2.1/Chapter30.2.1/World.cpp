@@ -546,7 +546,7 @@ void World::build()
     vp.set_max_depth(10) ;
 
     tracer_ptr = new Whitted(this);
-	// add_Phong_axis();
+	add_Phong_axis();
 	set_back_plane();
 
     GlossyReflector* reflective_ptr1 = new GlossyReflector;
@@ -611,11 +611,9 @@ void World::build()
 	//add whole grid up to this level
 	instance_ptr->set_object(bunny_ptr);
 	instance_ptr->set_material(phong_bunny_ptr);
-	instance_ptr->rotate_y(180);
-	instance_ptr->rotate_x(180);
-	instance_ptr->rotate_z(180);
+	instance_ptr->mirror_y();
 	instance_ptr->scale(400.0, 400.0, 400.0);
-	instance_ptr->translate(0.0, 0.0, 50.0);
+	instance_ptr->translate(150.0, -20.0, 150.0);
 	instance_ptr->compute_bounding_box();
 	add_object(instance_ptr);
 
@@ -631,13 +629,13 @@ void World::build()
 	//add_object(box_ptr);
 
     PointLight *light_ptr = new PointLight();
-    light_ptr->set_location(250, 250, 150);
+    light_ptr->set_location(250, -250, 150);
     light_ptr->scale_radiance(3.0);
     add_light(light_ptr);
 
     // 设定相机
     Pinhole* pinhole_ptr = new Pinhole;
-    pinhole_ptr->set_eye(250, 150, 200);
+    pinhole_ptr->set_eye(250, -150, 200);
     pinhole_ptr->set_lookat(0, 0, 0);
     pinhole_ptr->set_view_distance(400);
     pinhole_ptr->compute_uvw();

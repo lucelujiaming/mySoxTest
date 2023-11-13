@@ -16,7 +16,17 @@ const double    kHugeValue    = 1.0E10;
 const RGBColor    black(0.0);
 const RGBColor    white(1.0);
 const RGBColor    red(1.0, 0.0, 0.0);
-const RGBColor blue(0.0, 0.0, 1.0);
+const RGBColor    green(0.0, 1.0, 0.0);
+const RGBColor	  blue(0.0, 0.0, 1.0);
+
+const RGBColor	  yellow(1.0, 1.0, 0.0);
+const RGBColor	  olive(0.5, 0.5, 0.0);   // 橄榄色
+const RGBColor	  purple(0.5, 0.0, 0.5);  // 紫色
+const RGBColor	  teal(0.0, 0.5, 0.5);    // Teal为蓝绿色,其实就是青色
+
+const RGBColor	  orange(1.0, 0.64, 0.0);
+const RGBColor	  lightblue(0.68, 0.84, 0.9);
+
 
 const float     invRAND_MAX = 1.0 / (float)RAND_MAX;
 

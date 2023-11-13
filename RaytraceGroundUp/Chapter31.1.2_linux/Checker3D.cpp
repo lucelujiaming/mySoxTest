@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Checker3D.h"
 
 

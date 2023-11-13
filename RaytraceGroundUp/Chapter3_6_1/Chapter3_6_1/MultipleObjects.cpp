@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "MultipleObjects.h"
 #include "World.h"
 

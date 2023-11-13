@@ -45,12 +45,39 @@ extern ofstream out;
 #include "MyRectangle.h"
 #include "Emissive.h"
 #include "AreaLight.h"
+#include "AreaLighting.h"
 
 #include "SphereConcave.h"
 #include "EnvironmentLight.h"
 
 #include "Triangle.h"
+#include "Disk.h"
+#include "Rectangle.h"
+#include "OpenCylinder.h"
+#include "Torus.h"
+
+#include "OpenCylinderConvex.h"
+#include "OpenCylinderConcave.h"
+#include "OpenCylinderPartConcave.h"
+#include "OpenCylinderPartConvex.h"
+
+#include "SpherePartConvex.h"
+#include "SpherePartConcave.h"
+
+#include "TorusPartConvex.h"
+#include "TorusPartConcave.h"
+#include "TorusPart.h"
+
+#include "SolidCylinder.h"
+
 #include "Instance.h"
+
+#include "BeveledBox.h"
+#include "BeveledWedge.h"
+
+#include "Annulus.h"
+#include "AnnulusPart.h"
+
 
 #include "Grid.h"
 #include "SmoothMeshTriangle.h"
@@ -58,6 +85,9 @@ extern ofstream out;
 #include "Whitted.h"
 #include "Reflective.h"
 
+
+
+#include "Box.h"
 // -------------------------------------------------------------------- default constructor
 
 // tracer_ptr is set to NULL because the build functions will always construct the appropriate tracer
@@ -316,19 +346,278 @@ double randf()
     return (double)(rand()/(double)RAND_MAX);
 }
 
+#define AXIS_DIAMETER      (2)
+#define AXIS_RADIUS        (AXIS_DIAMETER/2)
+#define AXIS_LENGTH        (300)
+#define AXIS_SCALE         (100)
+#define AXIS_ORIGIN_SIZE   (6)
+void World::add_Phong_axis(bool bUseScale)
+{
+	Phong * phong_origin_ptr = new Phong;
+	phong_origin_ptr->set_cd(yellow);
+	phong_origin_ptr->set_ka(0.25);
+	phong_origin_ptr->set_kd(0.8);
+	phong_origin_ptr->set_ks(0.15);
+	phong_origin_ptr->set_exp(50);
+
+	Phong * phong_positivex_axis_ptr = new Phong;
+	phong_positivex_axis_ptr->set_cd(red);
+	phong_positivex_axis_ptr->set_ka(0.25);
+	phong_positivex_axis_ptr->set_kd(0.8);
+	phong_positivex_axis_ptr->set_ks(0.15);
+	phong_positivex_axis_ptr->set_exp(50);
+
+	Phong * phong_negativex_axis_ptr = new Phong;
+	phong_negativex_axis_ptr->set_cd(olive);
+	phong_negativex_axis_ptr->set_ka(0.25);
+	phong_negativex_axis_ptr->set_kd(0.8);
+	phong_negativex_axis_ptr->set_ks(0.15);
+	phong_negativex_axis_ptr->set_exp(50);
+
+	Phong * phong_positivey_axis_ptr = new Phong;
+	phong_positivey_axis_ptr->set_cd(green);
+	phong_positivey_axis_ptr->set_ka(0.25);
+	phong_positivey_axis_ptr->set_kd(0.8);
+	phong_positivey_axis_ptr->set_ks(0.15);
+	phong_positivey_axis_ptr->set_exp(50);
+
+	Phong * phong_negativey_axis_ptr = new Phong;
+	phong_negativey_axis_ptr->set_cd(teal);
+	phong_negativey_axis_ptr->set_ka(0.25);
+	phong_negativey_axis_ptr->set_kd(0.8);
+	phong_negativey_axis_ptr->set_ks(0.15);
+	phong_negativey_axis_ptr->set_exp(50);
+
+	Phong * phong_positivez_axis_ptr = new Phong;
+	phong_positivez_axis_ptr->set_cd(blue);
+	phong_positivez_axis_ptr->set_ka(0.25);
+	phong_positivez_axis_ptr->set_kd(0.8);
+	phong_positivez_axis_ptr->set_ks(0.15);
+	phong_positivez_axis_ptr->set_exp(50);
+
+	Phong * phong_negativez_axis_ptr = new Phong;
+	phong_negativez_axis_ptr->set_cd(purple);
+	phong_negativez_axis_ptr->set_ka(0.25);
+	phong_negativez_axis_ptr->set_kd(0.8);
+	phong_negativez_axis_ptr->set_ks(0.15);
+	phong_negativez_axis_ptr->set_exp(50);
+
+	Box* box_axis_ptr = new Box(Point3D(0.0), Point3D(1.0));
+	// X axis
+	Instance* box_positivex_axis_ptr = new Instance(box_axis_ptr);
+	box_positivex_axis_ptr->set_material(phong_positivex_axis_ptr);
+	box_positivex_axis_ptr->scale(AXIS_LENGTH, AXIS_DIAMETER, AXIS_DIAMETER);
+	box_positivex_axis_ptr->translate(0, -AXIS_RADIUS, -AXIS_RADIUS);
+	add_object(box_positivex_axis_ptr);
+	Instance* box_negativex_axis_ptr = new Instance(box_axis_ptr);
+	box_negativex_axis_ptr->set_material(phong_negativex_axis_ptr);
+	box_negativex_axis_ptr->scale(AXIS_LENGTH, AXIS_DIAMETER, AXIS_DIAMETER);
+	box_negativex_axis_ptr->translate(-AXIS_LENGTH, -AXIS_RADIUS, -AXIS_RADIUS);
+	add_object(box_negativex_axis_ptr);
+	Instance* box_positive_xscale_axis_ptr = new Instance(box_axis_ptr);
+	// use negative material on positive scale
+	box_positive_xscale_axis_ptr->set_material(phong_negativex_axis_ptr);
+	box_positive_xscale_axis_ptr->scale(AXIS_DIAMETER, AXIS_DIAMETER * 2, AXIS_DIAMETER * 2);
+	box_positive_xscale_axis_ptr->translate(AXIS_SCALE, -AXIS_DIAMETER, -AXIS_DIAMETER);
+	add_object(box_positive_xscale_axis_ptr);
+
+	Instance* box_positivey_axis_ptr = new Instance(box_axis_ptr);
+	box_positivey_axis_ptr->set_material(phong_positivey_axis_ptr);
+	box_positivey_axis_ptr->scale(AXIS_DIAMETER, AXIS_LENGTH, AXIS_DIAMETER);
+	add_object(box_positivey_axis_ptr);
+	Instance* box_negativey_axis_ptr = new Instance(box_axis_ptr);
+	box_negativey_axis_ptr->set_material(phong_negativey_axis_ptr);
+	box_negativey_axis_ptr->scale(AXIS_DIAMETER, AXIS_LENGTH, AXIS_DIAMETER);
+	box_negativey_axis_ptr->translate(-AXIS_RADIUS, -AXIS_LENGTH, -AXIS_RADIUS);
+	add_object(box_negativey_axis_ptr);
+	Instance* box_positive_yscale_axis_ptr = new Instance(box_axis_ptr);
+	// use negative material on positive scale
+	box_positive_yscale_axis_ptr->set_material(phong_negativey_axis_ptr);
+	box_positive_yscale_axis_ptr->scale(AXIS_DIAMETER * 2, AXIS_DIAMETER, AXIS_DIAMETER * 2);
+	box_positive_yscale_axis_ptr->translate(-AXIS_RADIUS, AXIS_SCALE, -AXIS_RADIUS);
+	add_object(box_positive_yscale_axis_ptr);
+
+	Instance* box_positivez_axis_ptr = new Instance(box_axis_ptr);
+	box_positivez_axis_ptr->set_material(phong_positivez_axis_ptr);
+	box_positivez_axis_ptr->scale(AXIS_DIAMETER, AXIS_DIAMETER, AXIS_LENGTH);
+	add_object(box_positivez_axis_ptr);
+	Instance* box_negativez_axis_ptr = new Instance(box_axis_ptr);
+	box_negativez_axis_ptr->set_material(phong_negativez_axis_ptr);
+	box_negativez_axis_ptr->scale(AXIS_DIAMETER, AXIS_DIAMETER, AXIS_LENGTH);
+	box_negativez_axis_ptr->translate(-AXIS_RADIUS, -AXIS_RADIUS, -AXIS_LENGTH);
+	add_object(box_negativez_axis_ptr);
+	Instance* box_positive_zscale_axis_ptr = new Instance(box_axis_ptr);
+	// use negative material on positive scale
+	box_positive_zscale_axis_ptr->set_material(phong_negativez_axis_ptr);
+	box_positive_zscale_axis_ptr->scale(AXIS_DIAMETER * 2, AXIS_DIAMETER * 2, AXIS_DIAMETER);
+	box_positive_zscale_axis_ptr->translate(-AXIS_RADIUS, -AXIS_RADIUS, AXIS_SCALE);
+	add_object(box_positive_zscale_axis_ptr);
+
+	Sphere *sphere_ptr = new Sphere;
+	sphere_ptr->set_center(0.0, 0.0, 0.0);
+	sphere_ptr->set_radius(AXIS_ORIGIN_SIZE);
+	sphere_ptr->set_material(phong_origin_ptr);
+	add_object(sphere_ptr);
+}
+
+void World::add_bunnies()
+{
+	Phong * phong_bunny_ptr = new Phong;
+	phong_bunny_ptr->set_cd(0.7, 0.1, 0.5);
+	phong_bunny_ptr->set_ka(0.25);
+	phong_bunny_ptr->set_kd(0.8);
+	phong_bunny_ptr->set_ks(0.15);
+	phong_bunny_ptr->set_exp(50);
+
+	const char* file_name = "Bunny69K.ply";
+	Grid* bunny_ptr = new Grid(new Mesh);
+	bunny_ptr->read_smooth_triangles(file_name);
+	bunny_ptr->set_material(phong_bunny_ptr);
+	bunny_ptr->setup_cells();
+
+	int num_levels = 8;                    //number of levels
+	int instances_grid_res = 2;           //initial number of bunnies in x-and z-directions
+	double gap = 0.05;                     //initial distance between instances
+	double size = 2;                      //bunny size
+	Grid* current_grid_ptr = bunny_ptr;  //initially, just the bunny
+	Grid* instance_grid_ptr = new Grid;       //temporary grid
+
+	for (int i = 0; i<instances_grid_res; i++) {         //xw direction
+		for (int k = 0; k<instances_grid_res; k++) {    //zw direction
+			Instance* instance_ptr = new Instance;
+			//add whole grid up to this level
+
+			instance_ptr->set_object(current_grid_ptr);
+			instance_ptr->set_material(phong_bunny_ptr);
+			instance_ptr->translate(i*(size + gap) - 0.5, k*(size + gap) - 0.5, 0.0);
+			instance_ptr->scale(20.0, 20.0, 20.0);
+			instance_ptr->rotate_y(-45);
+			printf("The %dth bunny is at (%f, %f, 0.0)\r\n",
+				i * instances_grid_res + k,
+				i*(size + gap) - 0.5,
+				k*(size + gap) - 0.5);
+			instance_ptr->compute_bounding_box();
+			instance_grid_ptr->add_object(instance_ptr);
+		}
+	}
+	size = instances_grid_res * size + (instances_grid_res - 1) * gap;
+	gap = 0.05*size;
+	instance_grid_ptr->setup_cells();
+	// current_grid_ptr = current_grid_ptr;
+	add_object(instance_grid_ptr);
+}
+
+void World::set_back_plane()
+{
+	Phong * phong_plane_ptr = new Phong;
+	phong_plane_ptr->set_cd(yellow);
+	phong_plane_ptr->set_ka(0.25);
+	phong_plane_ptr->set_kd(0.8);
+	phong_plane_ptr->set_ks(0.15);
+	phong_plane_ptr->set_exp(50);
+
+	Plane *plane_ptr = new Plane;
+	plane_ptr->a = Vector3D(-200.0);
+	plane_ptr->n = Vector3D(0.0072, 0.0034, 1.0);
+	plane_ptr->set_color(0.0, 0.0, 0.7);
+	plane_ptr->set_material(phong_plane_ptr);
+	add_object(plane_ptr);
+}
+
+#define WALL_THICKNESS    5
+void World::create_cornell_box(int iWidth, int iHeight)
+{
+	// 
+	Phong * phong_right_ptr = new Phong;
+	phong_right_ptr->set_cd(red);
+	phong_right_ptr->set_ka(0.25);
+	phong_right_ptr->set_kd(0.8);
+	phong_right_ptr->set_ks(0.15);
+	phong_right_ptr->set_exp(50);
+
+	Phong * phong_left_ptr = new Phong;
+	phong_left_ptr->set_cd(olive);
+	phong_left_ptr->set_ka(0.25);
+	phong_left_ptr->set_kd(0.8);
+	phong_left_ptr->set_ks(0.15);
+	phong_left_ptr->set_exp(50);
+
+	Phong * phong_top_ptr = new Phong;
+	phong_top_ptr->set_cd(green);
+	phong_top_ptr->set_ka(0.25);
+	phong_top_ptr->set_kd(0.8);
+	phong_top_ptr->set_ks(0.15);
+	phong_top_ptr->set_exp(50);
+
+	Phong * phong_bottom_ptr = new Phong;
+	phong_bottom_ptr->set_cd(teal);
+	phong_bottom_ptr->set_ka(0.25);
+	phong_bottom_ptr->set_kd(0.8);
+	phong_bottom_ptr->set_ks(0.15);
+	phong_bottom_ptr->set_exp(50);
+
+	Phong * phong_back_ptr = new Phong;
+	phong_back_ptr->set_cd(purple);
+	phong_back_ptr->set_ka(0.25);
+	phong_back_ptr->set_kd(0.8);
+	phong_back_ptr->set_ks(0.15);
+	phong_back_ptr->set_exp(50);
+
+	Box* box_ptr = new Box(Point3D(0.0), Point3D(1.0));
+
+	Instance* box_back_ptr = new Instance(box_ptr);
+	box_back_ptr->set_material(phong_back_ptr);
+	box_back_ptr->scale(iWidth, iHeight, WALL_THICKNESS);
+	box_back_ptr->translate(-iWidth / 2, -iHeight / 2, 0.0);
+	add_object(box_back_ptr);
+
+	Instance* box_left_ptr = new Instance(box_ptr);
+	box_left_ptr->set_material(phong_left_ptr);
+	box_left_ptr->scale(iWidth, iHeight, WALL_THICKNESS);
+	box_left_ptr->translate(-iWidth / 2, -iHeight / 2, 0.0);
+	box_left_ptr->rotate_y(90);
+	box_left_ptr->translate(-iWidth / 2, 0.0, iWidth / 2);
+	add_object(box_left_ptr);
+
+	Instance* box_right_ptr = new Instance(box_ptr);
+	box_right_ptr->set_material(phong_right_ptr);
+	box_right_ptr->scale(iWidth, iHeight, WALL_THICKNESS);
+	box_right_ptr->translate(-iWidth / 2, -iHeight / 2, 0.0);
+	box_right_ptr->rotate_y(90);
+	box_right_ptr->translate(iWidth / 2, 0.0, iWidth / 2);
+	add_object(box_right_ptr);
+
+	Instance* box_top_ptr = new Instance(box_ptr);
+	box_top_ptr->set_material(phong_top_ptr);
+	box_top_ptr->scale(iWidth + WALL_THICKNESS, iWidth, WALL_THICKNESS);
+	box_top_ptr->translate(-iWidth / 2, -iHeight / 2, 0.0);
+	box_top_ptr->rotate_x(90);
+	box_top_ptr->translate(0.0, iHeight / 2, iWidth / 2 + 2 * WALL_THICKNESS);
+	add_object(box_top_ptr);
+
+	Instance* box_bottom_ptr = new Instance(box_ptr);
+	box_bottom_ptr->set_material(phong_bottom_ptr);
+	box_bottom_ptr->scale(iWidth + WALL_THICKNESS, iWidth, WALL_THICKNESS);
+	box_bottom_ptr->translate(-iWidth / 2, -iHeight / 2, 0.0);
+	box_bottom_ptr->rotate_x(90);
+	box_bottom_ptr->translate(0.0, -iHeight / 2, iWidth / 2 + 2 * WALL_THICKNESS);
+	add_object(box_bottom_ptr);
+}
+
 // #include "BuildRedSphere.cpp"
-void World::build()
+void World::build(char * file_name)
 {
     //construct view plane， integrator， camera， and lights
     // int num_spheres=100000;
-    int num_samples = 1;
-    // vp.set_hres(800) ;
-    // vp.set_vres(800) ;
+    int num_samples = 4;
+    // vp.set_hres(600) ;
+    // vp.set_vres(400) ;
     vp.set_samples(num_samples) ;
 	vp.set_max_depth(30);
 	background_color = blue;
     
     tracer_ptr=new Whitted(this) ;
+
     Reflective* reflective_ptr1=new Reflective;
     reflective_ptr1->set_ka(0.25) ;
     reflective_ptr1->set_kd(0.5) ;
@@ -339,58 +628,36 @@ void World::build()
     reflective_ptr1->set_cr(white) ;
 
     Phong * phong_plane_ptr = new Phong;
-    phong_plane_ptr->set_cd(0.5, 0.0, 0.5);
+    phong_plane_ptr->set_cd(yellow);
     phong_plane_ptr->set_ka(0.25);
     phong_plane_ptr->set_kd(0.8);
     phong_plane_ptr->set_ks(0.15);
     phong_plane_ptr->set_exp(50);
 
-    Phong * phong_sphere1_ptr = new Phong;
-    phong_sphere1_ptr->set_cd(0.75, 1.0, 0.0);
-    phong_sphere1_ptr->set_ka(0.25);
-    phong_sphere1_ptr->set_kd(0.8);
-    phong_sphere1_ptr->set_ks(0.15);
-    phong_sphere1_ptr->set_exp(50);
 
-    Phong * phong_sphere2_ptr = new Phong;
-    phong_sphere2_ptr->set_cd(0.0, 0.5, 1.0);
-    phong_sphere2_ptr->set_ka(0.25);
-    phong_sphere2_ptr->set_kd(0.8);
-    phong_sphere2_ptr->set_ks(0.15);
-    phong_sphere2_ptr->set_exp(50);
+	Phong * phong_bunny_ptr = new Phong;
+	phong_bunny_ptr->set_cd(0.7, 0.1, 0.5);
+	phong_bunny_ptr->set_ka(0.25);
+	phong_bunny_ptr->set_kd(0.8);
+	phong_bunny_ptr->set_ks(0.15);
+	phong_bunny_ptr->set_exp(50);
 
-	const char* file_name = "Bunny69K.ply";
+	// add_bunnies();
+	// const char* file_name = "Bunny69K.ply";
 	Grid* bunny_ptr = new Grid(new Mesh);
 	bunny_ptr->read_smooth_triangles(file_name);
 	bunny_ptr->set_material(reflective_ptr1);
 	bunny_ptr->setup_cells();
-	add_object(bunny_ptr);
 
-	Grid* instance_grid_ptr = new Grid; 
 	Instance* instance_ptr = new Instance;
 	//add whole grid up to this level
 	instance_ptr->set_object(bunny_ptr);
 	instance_ptr->set_material(reflective_ptr1);
-	instance_ptr->translate(0.5, 0.5, 0.0);
-	instance_ptr->scale(100, 100, 100.0);
+	instance_ptr->scale(400.0, 400.0, 400.0);
+	instance_ptr->mirror_y();
+	instance_ptr->translate(150.0, -20.0, 150.0);
 	instance_ptr->compute_bounding_box();
-	instance_grid_ptr->add_object(instance_ptr);
-	instance_grid_ptr->setup_cells();
-	// current_grid_ptr = current_grid_ptr;
-	add_object(instance_grid_ptr);
-
-	//Grid* bunny_two_ptr = new Grid(new Mesh);
-	//bunny_two_ptr->read_smooth_triangles(file_name);
-	//bunny_two_ptr->set_material(reflective_ptr1);
-	//bunny_two_ptr->setup_cells();
-
-	//Instance* ellipsoid_ptr = new Instance(bunny_two_ptr);
-	//ellipsoid_ptr->set_material(reflective_ptr1);
-	//ellipsoid_ptr->translate(200, 300, 100);
-	//ellipsoid_ptr->scale(200, 300, 100);
-	//ellipsoid_ptr->rotate_x(-45);
-	//ellipsoid_ptr->translate(0, 1, 0);
-	//add_object(ellipsoid_ptr);
+	add_object(instance_ptr);
 
     Plane *plane_ptr = new Plane;
     plane_ptr->a = Vector3D(-200.0);
@@ -399,19 +666,18 @@ void World::build()
     plane_ptr->set_material(phong_plane_ptr);
     add_object(plane_ptr);
 
-
-
     PointLight *light_ptr = new PointLight();
-    light_ptr->set_location(250, 250, 150);
+    light_ptr->set_location(250, -250, 150);
     light_ptr->scale_radiance(3.0);
     add_light(light_ptr);
 
     // 设定相机
-    Pinhole* camera_ptr=new Pinhole;
-    camera_ptr->set_eye(0, 0, 50);
-    camera_ptr->set_lookat(0, 0, -50);
-    camera_ptr->set_view_distance(8000);
-    camera_ptr->compute_uvw();
-    set_camera(camera_ptr);
+    Pinhole* pinhole_ptr = new Pinhole;
+    pinhole_ptr->set_eye(250, -150, 200);
+    pinhole_ptr->set_lookat(0, 0, 0);
+    pinhole_ptr->set_view_distance(400);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
+
 }
 

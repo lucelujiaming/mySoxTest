@@ -200,7 +200,9 @@ Matte::path_shade(ShadeRec& sr) {
     // 创建折射光线。
     Ray         reflected_ray(sr.hit_point, wi);
     // 使用折射光线递归调用。
-    return (f * sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1) * ndotwi / pdf);
+    RGBColor rgbNext =sr.w.tracer_ptr->trace_ray(reflected_ray, sr.depth + 1);
+    RGBColor rgbRet = (f * rgbNext * ndotwi / pdf);
+    return rgbRet;
 }
 
 // ---------------------------------------------------------------- global_shade

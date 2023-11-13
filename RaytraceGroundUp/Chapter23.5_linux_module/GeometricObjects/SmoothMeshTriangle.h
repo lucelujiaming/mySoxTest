@@ -1,4 +1,4 @@
-#ifndef __SMOOTH_MESH_TRIANGLE__
+﻿#ifndef __SMOOTH_MESH_TRIANGLE__
 #define __SMOOTH_MESH_TRIANGLE__
 
 // SmoothMeshTriangle is a MeshTriangle that uses smooth shading with an interpolated normal at each hit point

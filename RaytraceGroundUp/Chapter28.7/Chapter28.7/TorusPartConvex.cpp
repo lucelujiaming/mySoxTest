@@ -5,6 +5,9 @@
 
 
 #include "stdafx.h"
+#ifdef _WIN32
+#include "Math.h"    
+#endif
 #include "Maths.h"    // for SolveQuartic
 #include "TorusPartConvex.h"
 

@@ -6,6 +6,7 @@
 
 // <math.h> is # included in Texture.h
 
+#include "stdafx.h"
 #include "Maths.h"
 #include "PlaneChecker.h"
 

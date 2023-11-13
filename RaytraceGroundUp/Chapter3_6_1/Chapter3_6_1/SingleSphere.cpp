@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SingleSphere.h"
 #include "World.h"
 #include "ShadeRec.h"

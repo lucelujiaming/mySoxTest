@@ -1,4 +1,4 @@
-#ifndef __PLANE__
+﻿#ifndef __PLANE__
 #define __PLANE__
 
 #include "GeometricObject.h"

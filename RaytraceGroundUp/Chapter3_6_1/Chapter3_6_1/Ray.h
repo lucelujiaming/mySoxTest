@@ -1,4 +1,4 @@
-#ifndef __RAY__
+﻿#ifndef __RAY__
 #define __RAY__
 
 #include "Point3D.h"

@@ -1,4 +1,4 @@
-#ifndef __SHADE_REC__
+﻿#ifndef __SHADE_REC__
 #define __SHADE_REC__
 
 // this file contains the declaration of the class ShadeRec

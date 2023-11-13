@@ -13,7 +13,7 @@ ofstream out;
 #define HORIZONTAL_RESOLUTION    600
 #define VERTICAL_RESOLUTION      600
 int
-main(void)
+main(char argc, char ** argv)
 {
     out.open("fileppm.ppm", ios::out);
     out << "P3\n"
@@ -21,8 +21,16 @@ main(void)
     World w;
     w.vp.set_hres(HORIZONTAL_RESOLUTION);
     w.vp.set_vres(VERTICAL_RESOLUTION);
-
-    w.build();
+    if(argc == 2)
+    {
+        cout << "argv[1] == " << argv[1] << endl;
+    //    return (0);
+        w.build(argv[1]);
+    }
+    else
+    {
+        w.build("Bunny69K.ply");
+    }
     // w.render_scene();
     w.camera_ptr->render_scene(w);
 

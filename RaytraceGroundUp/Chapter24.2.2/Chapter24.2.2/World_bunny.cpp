@@ -321,9 +321,9 @@ void World::build()
 {
     //construct view plane， integrator， camera， and lights
     // int num_spheres=100000;
-    int num_samples = 1;
-    // vp.set_hres(800) ;
-    // vp.set_vres(800) ;
+    int num_samples = 4;
+    // vp.set_hres(600) ;
+    // vp.set_vres(400) ;
     vp.set_samples(num_samples) ;
 	vp.set_max_depth(30);
 	background_color = blue;
@@ -339,32 +339,37 @@ void World::build()
     reflective_ptr1->set_cr(white) ;
 
     Phong * phong_plane_ptr = new Phong;
-    phong_plane_ptr->set_cd(0.5, 0.0, 0.5);
+    phong_plane_ptr->set_cd(yellow);
     phong_plane_ptr->set_ka(0.25);
     phong_plane_ptr->set_kd(0.8);
     phong_plane_ptr->set_ks(0.15);
     phong_plane_ptr->set_exp(50);
 
-    Phong * phong_sphere1_ptr = new Phong;
-    phong_sphere1_ptr->set_cd(0.75, 1.0, 0.0);
-    phong_sphere1_ptr->set_ka(0.25);
-    phong_sphere1_ptr->set_kd(0.8);
-    phong_sphere1_ptr->set_ks(0.15);
-    phong_sphere1_ptr->set_exp(50);
 
-    Phong * phong_sphere2_ptr = new Phong;
-    phong_sphere2_ptr->set_cd(0.0, 0.5, 1.0);
-    phong_sphere2_ptr->set_ka(0.25);
-    phong_sphere2_ptr->set_kd(0.8);
-    phong_sphere2_ptr->set_ks(0.15);
-    phong_sphere2_ptr->set_exp(50);
+	Phong * phong_bunny_ptr = new Phong;
+	phong_bunny_ptr->set_cd(0.7, 0.1, 0.5);
+	phong_bunny_ptr->set_ka(0.25);
+	phong_bunny_ptr->set_kd(0.8);
+	phong_bunny_ptr->set_ks(0.15);
+	phong_bunny_ptr->set_exp(50);
 
+	// add_bunnies();
 	const char* file_name = "Bunny69K.ply";
 	Grid* bunny_ptr = new Grid(new Mesh);
 	bunny_ptr->read_smooth_triangles(file_name);
-	bunny_ptr->set_material(reflective_ptr1);
+	bunny_ptr->set_material(phong_bunny_ptr);
 	bunny_ptr->setup_cells();
-	add_object(bunny_ptr);
+
+	Instance* instance_ptr = new Instance;
+	//add whole grid up to this level
+	instance_ptr->set_object(bunny_ptr);
+	instance_ptr->set_material(phong_bunny_ptr);
+	instance_ptr->rotate_y(45);
+	instance_ptr->mirror_y();
+	instance_ptr->scale(400.0, 400.0, 400.0);
+	instance_ptr->translate(200.0, -80.0, 100.0);
+	instance_ptr->compute_bounding_box();
+	add_object(instance_ptr);
 
     Plane *plane_ptr = new Plane;
     plane_ptr->a = Vector3D(-200.0);
@@ -374,16 +379,17 @@ void World::build()
     add_object(plane_ptr);
 
     PointLight *light_ptr = new PointLight();
-    light_ptr->set_location(250, 250, 150);
+    light_ptr->set_location(250, -250, 150);
     light_ptr->scale_radiance(3.0);
     add_light(light_ptr);
 
     // 设定相机
-    Pinhole* camera_ptr=new Pinhole;
-    camera_ptr->set_eye(0, 0, 4);
-    camera_ptr->set_lookat(0, 0, -5);
-    camera_ptr->set_view_distance(400);
-    camera_ptr->compute_uvw();
-    set_camera(camera_ptr);
+    Pinhole* pinhole_ptr = new Pinhole;
+    pinhole_ptr->set_eye(250, -150, 200);
+    pinhole_ptr->set_lookat(0, 0, 0);
+    pinhole_ptr->set_view_distance(400);
+    pinhole_ptr->compute_uvw();
+    set_camera(pinhole_ptr);
+
 }
 

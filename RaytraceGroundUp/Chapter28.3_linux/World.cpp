@@ -45,6 +45,7 @@ extern ofstream out;
 #include "MyRectangle.h"
 #include "Emissive.h"
 #include "AreaLight.h"
+#include "AreaLighting.h"
 
 #include "SphereConcave.h"
 #include "EnvironmentLight.h"
@@ -355,12 +356,12 @@ void World::build()
     //construct view plane， integrator， camera， and lights
     // int num_spheres=100000;
     int num_samples = 1;
-    vp.set_hres(600) ;
-    vp.set_vres(400) ;
+    // vp.set_hres(800) ;
+    // vp.set_vres(800) ;
     vp.set_samples(num_samples) ;
     vp.set_max_depth(10) ;
 
-    tracer_ptr=new PathTrace(this) ;
+    tracer_ptr = new Whitted(this);
     GlossyReflector* reflective_ptr1=new GlossyReflector;
     reflective_ptr1->set_ka(0.25) ;
     reflective_ptr1->set_kd(0.5) ;
@@ -369,24 +370,53 @@ void World::build()
     reflective_ptr1->set_exp(100) ;
     reflective_ptr1->set_kr(0.75) ;
     reflective_ptr1->set_cr(white) ;
+    reflective_ptr1->set_samples(num_samples, 0.5);
 
-    Phong * phong_ptr = new Phong;
-    phong_ptr->set_ka(0.25);
-    phong_ptr->set_kd(0.65);
-    phong_ptr->set_cd(1, 1, 0);
+    Phong * phong_plane_ptr = new Phong;
+    phong_plane_ptr->set_cd(0.5, 0.0, 0.5);
+    phong_plane_ptr->set_ka(0.25);
+    phong_plane_ptr->set_kd(0.8);
+    phong_plane_ptr->set_ks(0.15);
+    phong_plane_ptr->set_exp(50);
 
+    // 28.4.1Fresnel效果
+    // 对于曲面对象， 采用Fresnel方程所得到的结果往往比较微妙， 例如27.7小节中的透明球体。
+    // 在对其进行考察之前， 程序清单28.5显示了折射率为1.5时Dielectric材质的构建过程，
+    // 相同的镜面高光也出现于27.7小节的相关代码中且不包含颜色过滤操作。
     Dielectric*dielectric_ptr=new Dielectric;
     dielectric_ptr->set_ks(0.2) ;
-
     dielectric_ptr->set_exp(2000) ;
     dielectric_ptr->set_eta_in(1.5) ;
     dielectric_ptr->set_eta_out(1.0) ;
     dielectric_ptr->set_cf_in(1.0) ;
     dielectric_ptr->set_cf_out(1.0) ;
 
-    Sphere* sphere_ptr1= new Sphere(Point3D(0.0, 4.5, 0.0) , 3.0) ;
-    sphere_ptr1->set_material(dielectric_ptr) ;
-    add_object(sphere_ptr1) ;
+
+    Sphere *sphere_ptr = new Sphere;
+    sphere_ptr->set_center(-50, -120, 50);
+    sphere_ptr->set_radius(80.0);
+    sphere_ptr->set_color(0.5, 0.0, 0.0);
+    sphere_ptr->set_material(reflective_ptr1);
+    add_object(sphere_ptr);
+
+    sphere_ptr = new Sphere;
+    sphere_ptr->set_center(10, 120, 50);
+    sphere_ptr->set_radius(100.0);
+    sphere_ptr->set_color(0.5, 1.0, 0.0);
+    sphere_ptr->set_material(dielectric_ptr);
+    add_object(sphere_ptr);
+
+    Plane *plane_ptr = new Plane;
+    plane_ptr->a = Vector3D(0.0);
+    plane_ptr->n = Vector3D(0.6, 0.3, 0.7);
+    plane_ptr->set_color(0.0, 0.0, 0.5);
+    plane_ptr->set_material(phong_plane_ptr);
+    add_object(plane_ptr);
+
+    PointLight *light_ptr = new PointLight();
+    light_ptr->set_location(250, 250, 150);
+    light_ptr->scale_radiance(3.0);
+    add_light(light_ptr);
 
     // 设定相机
     Pinhole* pinhole_ptr = new Pinhole;

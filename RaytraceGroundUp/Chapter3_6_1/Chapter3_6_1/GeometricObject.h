@@ -1,4 +1,4 @@
-#ifndef __GEOMETRIC_OBJECT__
+﻿#ifndef __GEOMETRIC_OBJECT__
 #define __GEOMETRIC_OBJECT__
 
 

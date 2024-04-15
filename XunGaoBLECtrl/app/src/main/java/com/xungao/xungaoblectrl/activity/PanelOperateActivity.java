@@ -21,14 +21,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * 类名: TestActivity
- * 作者: 陈海明
- * 时间: 2017-08-14 11:30
+ * 类名: PanelOperateActivity
  * 描述: NULL
  */
-public class TestActivity extends BaseActivity {
+public class PanelOperateActivity extends BaseActivity {
 
-    private static final String TAG = "TestActivity";
+    private static final String TAG = "PanelOperateActivity";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -49,7 +47,7 @@ public class TestActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_panel_operate);
         // ButterKnife俗称黄油刀,是控件注入框架,可以帮助开发者避免重复初始化控件的工作,简单快捷的初始化布局中的控件,极大提升开发效率。
         ButterKnife.bind(this);
         setToolbar();
@@ -87,7 +85,7 @@ public class TestActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.btn_senddiy:
                 if (TextUtils.isEmpty(edMsg.getText().toString())){
-                    Toast.makeText(TestActivity.this, "请输入消息!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PanelOperateActivity.this, "请输入消息!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // 发送数据
@@ -105,12 +103,12 @@ public class TestActivity extends BaseActivity {
         mBleController.WriteBuffer(value, new OnWriteCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(TestActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PanelOperateActivity.this, "ok", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int state) {
-                Toast.makeText(TestActivity.this, "fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PanelOperateActivity.this, "fail", Toast.LENGTH_SHORT).show();
             }
         });
     }

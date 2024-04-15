@@ -4,8 +4,6 @@ import android.bluetooth.BluetoothDevice;
 
 /**
  * 类名: ScanCallback
- * 作者: 陈海明
- * 时间: 2017-08-18 10:49
  * 描述: 扫描回调
  */
 public interface ScanCallback  {

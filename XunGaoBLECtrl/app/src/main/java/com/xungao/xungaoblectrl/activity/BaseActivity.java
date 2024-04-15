@@ -10,8 +10,6 @@ import com.gyf.barlibrary.ImmersionBar;
 
 /**
  * 类名: BaseActivity
- * 作者: 陈海明
- * 时间: 2017-08-10 11:58
  * 描述: NULL
  */
 public class BaseActivity extends AppCompatActivity {

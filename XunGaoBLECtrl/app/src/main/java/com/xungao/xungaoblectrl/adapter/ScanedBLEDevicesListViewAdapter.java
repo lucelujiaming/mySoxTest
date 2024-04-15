@@ -17,13 +17,13 @@ import java.util.List;
 /**
  * 已扫描到的设备适配器
  */
-public class ListViewAdapter extends BaseAdapter {
+public class ScanedBLEDevicesListViewAdapter extends BaseAdapter {
     private Activity mContext;
     public List<BluetoothDevice> mBleDevices;
     // Rssi信号强度，表示距离自己的距离。单位为米。
     private List<Double> mRssis;
 
-    public ListViewAdapter(Activity mContext) {
+    public ScanedBLEDevicesListViewAdapter(Activity mContext) {
         this.mContext = mContext;
         mBleDevices = new ArrayList<BluetoothDevice>();
         mRssis = new ArrayList<Double>();
@@ -75,16 +75,16 @@ public class ListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder viewHolder;
+        ScanedBLEDevicesViewHolder viewHolder;
         if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.list_item, viewGroup, false);
-            viewHolder = new ViewHolder();
+            view = LayoutInflater.from(mContext).inflate(R.layout.scaned_bledevices_list_item, viewGroup, false);
+            viewHolder = new ScanedBLEDevicesViewHolder();
             viewHolder.txt_name = (TextView) view.findViewById(R.id.txt_name);
             viewHolder.txt_mac = (TextView) view.findViewById(R.id.txt_mac);
             viewHolder.txt_rssi = (TextView) view.findViewById(R.id.txt_rssi);
             view.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) view.getTag();
+            viewHolder = (ScanedBLEDevicesViewHolder) view.getTag();
         }
         BluetoothDevice mdevice = mBleDevices.get(i);
         Double mrssi = mRssis.get(i);
@@ -98,7 +98,7 @@ public class ListViewAdapter extends BaseAdapter {
     }
 }
 
-class ViewHolder {
+class ScanedBLEDevicesViewHolder {
     TextView txt_name;
     TextView txt_mac;
     TextView txt_rssi;

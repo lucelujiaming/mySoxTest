@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.xungao.xungaoblectrl.R;
-import com.xungao.xungaoblectrl.adapter.ListViewAdapter;
+import com.xungao.xungaoblectrl.adapter.ScanedBLEDevicesListViewAdapter;
 import com.xungao.xungaoblectrl.bleUtils.BleController;
 import com.xungao.xungaoblectrl.bleUtils.callback.ConnectCallback;
 import com.xungao.xungaoblectrl.bleUtils.callback.ScanCallback;
@@ -32,16 +32,16 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.mlistview)
-    ListView mListview;
-    @BindView(R.id.btn_new)
-    ImageButton btnNew;
+    @BindView(R.id.scaned_bledevices_listview)
+    ListView mScanedBLEDevicesListview;
+    @BindView(R.id.btn_scan)
+    ImageButton btnScan;
 
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
     private ProgressDialog progressDialog;
     private BleController mBleController;//蓝牙工具类
     private String mDeviceAddress;//当前连接的mac地址
-    private ListViewAdapter mListAdspter;
+    private ScanedBLEDevicesListViewAdapter mScanedBLEDevicesListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +79,14 @@ public class MainActivity extends BaseActivity {
      * 初始化listview
      */
     private void initListview() {
-        mListAdspter = new ListViewAdapter(MainActivity.this);
-        mListview.setAdapter(mListAdspter);
-        mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mScanedBLEDevicesListAdapter = new ScanedBLEDevicesListViewAdapter(MainActivity.this);
+        mScanedBLEDevicesListview.setAdapter(mScanedBLEDevicesListAdapter);
+        mScanedBLEDevicesListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgressDialog("请稍候!", "正在连接...");
                 // 获得选中item的BluetoothDevice对象。
-                final BluetoothDevice device = mListAdspter.getDevice(position);
+                final BluetoothDevice device = mScanedBLEDevicesListAdapter.getDevice(position);
                 if (device == null)
                     return;
                 // 获得BLE地址。
@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onConnSuccess() {
                         hideProgressDialog();
-                        startActivity(MainActivity.this, TestActivity.class);
+                        startActivity(MainActivity.this, PanelOperateActivity.class);
                     }
 
                     @Override
@@ -111,11 +111,11 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.btn_new})
+    @OnClick({R.id.btn_scan})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_new:
-                mListAdspter.clear();
+            case R.id.btn_scan:
+                mScanedBLEDevicesListAdapter.clear();
                 scanDevices(true);
                 break;
         }
@@ -130,14 +130,14 @@ public class MainActivity extends BaseActivity {
         mBleController.ScanBle(enable, new ScanCallback() {
             @Override
             public void onSuccess() {
-                if (mListAdspter.mBleDevices.size() < 0) {
+                if (mScanedBLEDevicesListAdapter.mBleDevices.size() < 0) {
                     Toast.makeText(MainActivity.this, "未搜索到Ble设备", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onScanning(BluetoothDevice device, int rssi, byte[] scanRecord) {
-                mListAdspter.addDevice(device, getDistance(rssi));
+                mScanedBLEDevicesListAdapter.addDevice(device, getDistance(rssi));
             }
         });
     }

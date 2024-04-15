@@ -2,9 +2,7 @@ package com.xungao.xungaoblectrl.bleUtils.callback;
 
 /**
  * 类名: OnReceiverCallback
- * 作者: 陈海明
- * 时间: 2017-08-18 13:55
- * 描述: NULL
+ * 描述: 接收回调
  */
 public interface OnReceiverCallback {
     void onReceiver(byte[] value);

@@ -26,7 +26,7 @@
     </android.support.v7.widget.Toolbar>
 
     <ListView
-        android:id="@+id/mlistview"
+        android:id="@+id/scaned_bledevices_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar" />
@@ -34,7 +34,7 @@
 
 
     <ImageButton
-        android:id="@+id/btn_new"
+        android:id="@+id/btn_scan"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="bottom|right"

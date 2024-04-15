@@ -2,9 +2,7 @@ package com.xungao.xungaoblectrl.bleUtils.callback;
 
 /**
  * 类名: ConnectCallback
- * 作者: 陈海明
- * 时间: 2017-08-18 13:53
- * 描述: 连接回到
+ * 描述: 连接回调
  */
 public interface ConnectCallback {
     /**

@@ -5,8 +5,6 @@ import android.bluetooth.BluetoothDevice;
 
 /**
  * 类名: BleDeviceScanCallback
- * 作者: 陈海明
- * 时间: 2017-08-18 11:05
  * 描述: 扫描成功的回调
  */
 public class BleDevceScanCallback implements BluetoothAdapter. LeScanCallback {

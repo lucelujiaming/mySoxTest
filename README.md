@@ -18,3 +18,5 @@
 
 **xungaoMacAddress** is linux driver on AS3310
 
+**XunGaoBLECtrl** is Android App which use BLE
+

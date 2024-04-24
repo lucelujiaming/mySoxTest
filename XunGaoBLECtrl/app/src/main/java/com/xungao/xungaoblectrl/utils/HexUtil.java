@@ -44,4 +44,66 @@ public class HexUtil {
         }
         return sb.toString();
     }
+
+    public static float bytesToFloat(byte[] b) {
+        int accum = 0;
+        accum= accum|(b[0] & 0xff) << 0;
+        accum= accum|(b[1] & 0xff) << 8;
+        accum= accum|(b[2] & 0xff) << 16;
+        accum= accum|(b[3] & 0xff) << 24;
+        return Float.intBitsToFloat(accum);
+    }
+
+    /**
+     * byte数组到int的转换(小端)
+     * @param bytes
+     * @return
+     */
+    public static int bytes2IntLittle(byte[] bytes )
+    {
+        int int1=bytes[0]&0xff;
+        int int2=(bytes[1]&0xff)<<8;
+        int int3=(bytes[2]&0xff)<<16;
+        int int4=(bytes[3]&0xff)<<24;
+        return int1|int2|int3|int4;
+    }
+    /**
+     * byte数组到int的转换(大端)
+     * @param bytes
+     * @return
+     */
+    public static int bytes2IntBig(byte[] bytes )
+    {
+        int int1=bytes[3]&0xff;
+        int int2=(bytes[2]&0xff)<<8;
+        int int3=(bytes[1]&0xff)<<16;
+        int int4=(bytes[0]&0xff)<<24;
+        return int1|int2|int3|int4;
+    }
+
+    /**
+     * 转换short为byte
+     *
+     * @param b
+     * @param s
+     *            需要转换的short
+     * @param index
+     *            第几位开始存放
+     */
+    public static void short2byteArray(byte b[], short s, int index) {
+        b[index + 1] = (byte) (s >> 8);
+        b[index + 0] = (byte) (s >> 0);
+    }
+
+    /**
+     * 通过byte数组取到short
+     *
+     * @param b
+     * @param index
+     *            第几位开始取
+     * @return
+     */
+    public static short byteArray2short(byte[] b, int index) {
+        return (short) (((b[index + 1] << 8) | b[index + 0] & 0xff));
+    }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--填充设置-->
+    <solid android:color="@color/mediumaquamarine"/>
+    <!--圆角设置-->
+    <corners android:radius="12dp"/>
+</shape>

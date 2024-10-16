@@ -27,6 +27,62 @@
         android:layout_below="@+id/toolbar"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="设备列表"
+            android:gravity="center"
+            android:background="#44BBBB"
+            android:textColor="#FFFFFF"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/txt_seqnum"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="序号"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="名称"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/txt_value"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="设定值"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/txt_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="单位"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/panel_info_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_below="@id/toolbar" >
+        </ListView>
+
+
+        <!--  发送用控件  -->
         <EditText
             android:id="@+id/ed_msg"
             android:layout_width="match_parent"
@@ -40,7 +96,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="right"
             >
             <Button
                 android:id="@+id/btn_senddiy"
@@ -53,17 +109,10 @@
                 android:id="@+id/btn_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:text="刷新列表" />
 
         </LinearLayout>
-
-        <ListView
-            android:id="@+id/panel_info_listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_below="@id/toolbar" />
+        <!--  end of 发送用控件  -->
 
         <TextView
             android:id="@+id/tv_recv_title"
@@ -71,6 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             android:text="收到的消息"
             android:layout_below="@id/panel_info_listview"/>
 
@@ -80,13 +130,16 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"
+            android:visibility="gone"
             android:textColor="@color/mediumaquamarine"
             android:layout_below="@id/tv_recv_title" />
         <TextView
+            android:id="@+id/tv_msg_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"
+            android:visibility="gone"
             android:textColor="@color/mediumaquamarine"
             android:layout_below="@id/tv_msg" />
     </LinearLayout>

@@ -18,6 +18,8 @@ import java.util.List;
  * 已扫描到的设备适配器
  */
 public class ScanedBLEDevicesListViewAdapter extends BaseAdapter {
+    private static final String DEVICE_PREFIX = "FHM-";
+
     private Activity mContext;
     public List<BluetoothDevice> mBleDevices;
     // Rssi信号强度，表示距离自己的距离。单位为米。
@@ -30,11 +32,18 @@ public class ScanedBLEDevicesListViewAdapter extends BaseAdapter {
     }
 
     public void addDevice(BluetoothDevice device, Double rssi) {
+        // Only add FHM-**** and set with AT+NAME=FHM-****
         if (!mBleDevices.contains(device)) {
-                mBleDevices.add(device);
-                mRssis.add(rssi);
+            String name = device.getName();
+            if(name != null)
+            {
+                if(name.startsWith(DEVICE_PREFIX)) {
+                    mBleDevices.add(device);
+                    mRssis.add(rssi);
+                    notifyDataSetChanged();
+                }
+            }
         }
-        notifyDataSetChanged();
     }
 
     public BluetoothDevice getDevice(int position) {

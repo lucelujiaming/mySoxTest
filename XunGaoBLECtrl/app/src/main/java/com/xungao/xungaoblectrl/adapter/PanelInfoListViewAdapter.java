@@ -100,6 +100,7 @@ public class PanelInfoListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         PanelInfoViewHolder viewHolder;
+
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.panel_info_list_item, viewGroup, false);
             viewHolder = new PanelInfoViewHolder();

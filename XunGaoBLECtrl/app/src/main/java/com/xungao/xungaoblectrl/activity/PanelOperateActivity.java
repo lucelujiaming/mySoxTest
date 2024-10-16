@@ -1,6 +1,8 @@
 package com.xungao.xungaoblectrl.activity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,16 +17,22 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.xungao.xungaoblectrl.R;
 import com.xungao.xungaoblectrl.adapter.PanelInfoListViewAdapter;
 import com.xungao.xungaoblectrl.bleUtils.BleController;
 import com.xungao.xungaoblectrl.bleUtils.callback.OnReceiverCallback;
 import com.xungao.xungaoblectrl.bleUtils.callback.OnWriteCallback;
+import com.xungao.xungaoblectrl.utils.EnumInfo;
 import com.xungao.xungaoblectrl.utils.HexUtil;
 import com.xungao.xungaoblectrl.utils.PanelDeviceInfo;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +57,7 @@ public class PanelOperateActivity extends BaseActivity {
     private static final Integer DATA_TYPE_DOUBLE = 0x04;
 
     private static final Integer CMD_MOD_PANELINFO_ACK_OK = 0xC8;
+    private static final Integer CMD_MOD_PANELINFO_ACK_RO = 0x193;
 
     private static final String TAG = "PanelOperateActivity";
 
@@ -88,6 +97,15 @@ public class PanelOperateActivity extends BaseActivity {
         ButterKnife.bind(this);
         setToolbar();
         initListview();
+        //
+        final TextView textTitle  = (TextView) findViewById(R.id.tv_recv_title);
+        final TextView textMsg = (TextView) findViewById(R.id.tv_msg);
+        final TextView textMsg2 = (TextView) findViewById(R.id.tv_msg_2);
+        textTitle.setVisibility(View.GONE);
+        textMsg.setVisibility(View.GONE);
+        textMsg2.setVisibility(View.GONE);
+
+        btnSend.setEnabled(false);
         //获得实例
         mBleController = BleController.getInstance();
         // mPanelInfoCount = 0 ;
@@ -103,16 +121,18 @@ public class PanelOperateActivity extends BaseActivity {
                     // mPanelInfoCount = 0;
                     mPanelInfoListAdapter.clear();
                     // Add Column Header
-                    PanelDeviceInfo objPanelDeviceInfo = new PanelDeviceInfo();
-                    objPanelDeviceInfo.seqnum = "序号";
-                    objPanelDeviceInfo.name   = "名字";
-                    objPanelDeviceInfo.dataType = 0;
-                    objPanelDeviceInfo.dataFormat = 0;
-                    objPanelDeviceInfo.unit = "(单位)";
-                    objPanelDeviceInfo.value = "设定值";
-                    mPanelInfoListAdapter.addDevice(objPanelDeviceInfo);
+                    // PanelDeviceInfo objPanelDeviceInfo = new PanelDeviceInfo();
+                    // objPanelDeviceInfo.seqnum = "序号";
+                    // objPanelDeviceInfo.name   = "名称";
+                    // objPanelDeviceInfo.dataType = 0;
+                    // objPanelDeviceInfo.dataFormat = 0;
+                    // objPanelDeviceInfo.unit = "(单位)";
+                    // objPanelDeviceInfo.value = "设定值";
+                    // mPanelInfoListAdapter.addDevice(objPanelDeviceInfo);
                     FillPanelList(value);
                     Write(mPanelInfoListAck);
+                    btnSend.setEnabled(true);
+                    
                 }
                 // 这个数据包发送一次，就会收到很多次。好像是蓝牙本身的特性。无法解决。
                 else if(value[0] == CMD_PANELINFO_IMPLEMENT_RSP)
@@ -128,6 +148,18 @@ public class PanelOperateActivity extends BaseActivity {
                     {
                         updateElementInPanelList(iSeq);
                     }
+                    else if(shortRetCode == CMD_MOD_PANELINFO_ACK_RO)
+                    {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PanelOperateActivity.this);
+                        builder.setMessage("该值为只读变量，无法修改！");
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // 用户点击确定按钮后执行的操作
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
                 }
             }
         });
@@ -142,14 +174,33 @@ public class PanelOperateActivity extends BaseActivity {
     private int AddPanelList(byte[] value, int iPos)
     {
         PanelDeviceInfo objPanelDeviceInfo = new PanelDeviceInfo();
-        if(iPos <= value.length)
+        // java.lang.ArrayIndexOutOfBoundsException: length=4; index=4
+        if((iPos > 0) && (iPos + 4 < value.length))
         {
             objPanelDeviceInfo.seqnum = String.valueOf(value[iPos]);
             Integer iNameLen = Integer.valueOf(value[iPos + 1]);
+            Integer iEnumOptionsLen = 0;
             byte byteName[] = new byte[iNameLen];
-            System.arraycopy(value, iPos + 2, byteName, 0, iNameLen);
-            objPanelDeviceInfo.name = new String(byteName);
+            Integer copyPos = iPos + 2;
+            if(value.length - copyPos < iNameLen)
+            {
+                Toast.makeText(PanelOperateActivity.this, objPanelDeviceInfo.name + "的值错误!", Toast.LENGTH_SHORT).show();
+                return -1;
+            }
+            System.arraycopy(value, copyPos, byteName, 0, iNameLen);
+            objPanelDeviceInfo.name = new String(byteName, StandardCharsets.UTF_8);
+            if(objPanelDeviceInfo.name == null)
+            {
+                Toast.makeText(PanelOperateActivity.this, objPanelDeviceInfo.name + "的值错误!", Toast.LENGTH_SHORT).show();
+                return -1;
+            }
 
+            copyPos = iPos + 4 + iNameLen;
+            if((copyPos > 0) && (value.length - copyPos <= 0))
+            {
+                Toast.makeText(PanelOperateActivity.this, objPanelDeviceInfo.name + "的值错误!", Toast.LENGTH_SHORT).show();
+                return -1;
+            }
             objPanelDeviceInfo.dataType = Integer.valueOf(value[iPos + 2 + iNameLen]);
             objPanelDeviceInfo.dataFormat  = Integer.valueOf(value[iPos + 3 + iNameLen]);
             Integer iUnit = Integer.valueOf(value[iPos + 4 + iNameLen]);
@@ -162,16 +213,69 @@ public class PanelOperateActivity extends BaseActivity {
                 objPanelDeviceInfo.unit  = " ";
             }
 
-
             byte byteValue[] = new byte[4];
-            if((objPanelDeviceInfo.dataType == DATA_TYPE_ENUM) || (objPanelDeviceInfo.dataType == DATA_TYPE_INT))
+            copyPos = iPos + 5 + iNameLen;
+            if(value.length - copyPos < 4)
             {
-                System.arraycopy(value, iPos + 5 + iNameLen, byteValue, 0, 4);
+                Toast.makeText(PanelOperateActivity.this, objPanelDeviceInfo.name + "的值错误!", Toast.LENGTH_SHORT).show();
+                return -1;
+            }
+
+            if((objPanelDeviceInfo.dataType == DATA_TYPE_INT))
+            {
+                System.arraycopy(value, copyPos, byteValue, 0, 4);
                 objPanelDeviceInfo.value = String.valueOf(HexUtil.bytes2IntBig(byteValue));
+            }
+            else if(objPanelDeviceInfo.dataType == DATA_TYPE_ENUM) {
+                System.arraycopy(value, copyPos, byteValue, 0, 4);
+                // Old Enum
+                if(byteValue[1] == 0x00)
+                {
+                    objPanelDeviceInfo.value = String.valueOf(HexUtil.bytes2IntBig(byteValue));
+                }
+                // New Enum
+                else {
+                    objPanelDeviceInfo.arrayEnumOptions = new ArrayList<EnumInfo>();
+                    Integer iEnumOptionsCount = Integer.valueOf(byteValue[1]);
+                    // Set value of Enum
+                    Integer currentValue = Integer.valueOf(byteValue[0]);
+                    // objPanelDeviceInfo.value = String.valueOf(HexUtil.bytes2IntBig(byteValue));
+                    objPanelDeviceInfo.value = "未定义";
+                    for(int i = 0; i < iEnumOptionsCount; i++)
+                    {
+                        copyPos = iPos + 7 + iNameLen + iEnumOptionsLen;
+                        EnumInfo objEnumOption  = new EnumInfo();
+                        objEnumOption.enumNumber = Integer.valueOf(value[copyPos]);
+                        copyPos = iPos + 8 + iNameLen + iEnumOptionsLen;
+                        Integer iEnumOptionNameLen = Integer.valueOf(value[copyPos]);
+
+                        copyPos = iPos + 9 + iNameLen + iEnumOptionsLen;
+                        byte byteEnumOptionName[] = new byte[iEnumOptionNameLen];
+                        System.arraycopy(value, copyPos, byteEnumOptionName, 0, iEnumOptionNameLen);
+                        objEnumOption.enumName = new String(byteEnumOptionName, StandardCharsets.UTF_8);
+                        if(objEnumOption.enumName == null)
+                        {
+                            Toast.makeText(PanelOperateActivity.this, objEnumOption.enumName + "的值错误!", Toast.LENGTH_SHORT).show();
+                            return -1;
+                        }
+                        if(currentValue == objEnumOption.enumNumber)
+                        {
+                            objPanelDeviceInfo.value = objEnumOption.enumName;
+                        }
+                        objPanelDeviceInfo.arrayEnumOptions.add(objEnumOption);
+                        // EnumOption includes value, length of name and name.
+                        iEnumOptionsLen += iEnumOptionNameLen + 2;
+                    }
+                }
+                // Enum return here
+                objPanelDeviceInfo.modValue = objPanelDeviceInfo.value;
+                mPanelInfoListAdapter.addDevice(objPanelDeviceInfo);
+                // 5 + enum value(1) + option count(1) + iEnumOptionsLen
+                return iNameLen + 7 + iEnumOptionsLen;
             }
             else if(objPanelDeviceInfo.dataType == DATA_TYPE_FLOAT)
             {
-                System.arraycopy(value, iPos + 5 + iNameLen, byteValue, 0, 4);
+                System.arraycopy(value, copyPos, byteValue, 0, 4);
                 float fValue = HexUtil.bytesToFloat(byteValue);
                 if(objPanelDeviceInfo.dataFormat > 0)
                 {
@@ -186,7 +290,7 @@ public class PanelOperateActivity extends BaseActivity {
             }
             else
             {
-                System.arraycopy(value, iPos + 5 + iNameLen, byteValue, 0, 4);
+                System.arraycopy(value, copyPos, byteValue, 0, 4);
                 objPanelDeviceInfo.value = String.valueOf(HexUtil.bytes2IntBig(byteValue));
             }
             objPanelDeviceInfo.modValue = objPanelDeviceInfo.value;
@@ -221,54 +325,146 @@ public class PanelOperateActivity extends BaseActivity {
      * 初始化listview
      */
     private void initListview() {
+        // View headerView = LayoutInflater.from(this).inflate(R.layout.panel_info_list_header, null, false);
+        // 创建头部视图
+        View headerView = LayoutInflater.from(this).inflate(R.layout.panel_info_list_header, mPanleInfoListview, false);
+        mPanleInfoListview.addHeaderView(headerView);
+
         mPanelInfoListAdapter = new PanelInfoListViewAdapter(PanelOperateActivity.this);
         mPanleInfoListview.setAdapter(mPanelInfoListAdapter);
 
-        View headerView = LayoutInflater.from(this).inflate(R.layout.panel_info_list_header, null, false);
-        mPanleInfoListview.addHeaderView(headerView);
+        // View headerView = getLayoutInflater().inflate(R.layout.panel_info_list_header, null);
+        // mPanleInfoListview.setFixedHeader(headerView);
 
         mPanleInfoListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Not deal wiht the first line of listView,
+                // if(position == 1)
+                // {
+                //      return;
+                // }
                 // position should skip Listhead: 序号，名字，设定值(单位)。
                 final PanelDeviceInfo device = mPanelInfoListAdapter.getDevice(position - 1);
                 // Toast.makeText(PanelOperateActivity.this, strToast, Toast.LENGTH_SHORT).show();
 
-                // 在Activity中创建和显示自定义对话框
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.modify_panel_info, null);
-                // 获取布局中的控件
-                final EditText item_value = (EditText) dialogView.findViewById(R.id.item_value);
-                final Button btnModify = (Button) dialogView.findViewById(R.id.btn_modify);
-                final Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
-                item_value.setText(device.value);
+                if((device.dataType == DATA_TYPE_ENUM) && (device.arrayEnumOptions != null)) {
+                    // 在Activity中创建和显示自定义对话框
+                    LayoutInflater inflater = getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.modify_enum_panel_info, null);
+                    // 获取布局中的控件
+                    final RadioGroup radioGroup = new RadioGroup(PanelOperateActivity.this);
+                    radioGroup.setOrientation(RadioGroup.VERTICAL);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(PanelOperateActivity.this);
-                builder.setView(dialogView);
-                final AlertDialog alertDialog = builder.create();
-                btnModify.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // TODO Auto-generated method stub
-                        String strValue = item_value.getText().toString();
-                        String strToast = new String();
-                        strToast = device.name + " change into " + strValue + device.unit;
-                        Toast.makeText(PanelOperateActivity.this, strToast, Toast.LENGTH_SHORT).show();
-                        ModifyDeviceValue(device, strValue);
-                        device.modValue = strValue;
-                        alertDialog.dismiss();// 对话框消失
+                    // 循环添加RadioButton
+                    for (int i = 0; i < device.arrayEnumOptions.size(); i++) {
+                        RadioButton radioButton = new RadioButton(PanelOperateActivity.this);
+                        EnumInfo objEnumInfo = device.arrayEnumOptions.get(i);
+                        radioButton.setText(objEnumInfo.enumNumber + " - " + objEnumInfo.enumName);
+                        radioButton.setId(objEnumInfo.enumNumber);
+                        radioButton.setButtonTintList(ColorStateList.valueOf(Color.GREEN));
+                        if(objEnumInfo.enumName == device.value)
+                        {
+                            radioButton.setChecked(true);
+                        }
+                        else
+                        {
+                            radioButton.setChecked(false);
+                        }
+                        radioGroup.addView(radioButton);
                     }
-                });
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // TODO Auto-generated method stub
 
-                        alertDialog.dismiss();// 对话框消失
-                    }
-                });
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                alertDialog.show();
+                    final LinearLayout radioGroupLayout = (LinearLayout) dialogView.findViewById(R.id.enum_radio_group);
+                    radioGroupLayout.addView(radioGroup);
+
+                    // 设置监听器来响应用户的选择
+                    radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(RadioGroup group, int checkedId) {
+                            // 通过checkedId可以得知哪个RadioButton被选中
+                            for (int i = 0; i < device.arrayEnumOptions.size(); i++) {
+                                EnumInfo objEnumInfo = device.arrayEnumOptions.get(i);
+                                if(checkedId == objEnumInfo.enumNumber)
+                                {
+                                    Toast.makeText(PanelOperateActivity.this,
+                                            objEnumInfo.enumName + " selected", Toast.LENGTH_SHORT).show();
+                                    break;
+                                }
+                            }
+                        }
+                    });
+
+                    final Button btnModify = (Button) dialogView.findViewById(R.id.enum_btn_modify);
+                    final Button btnCancel = (Button) dialogView.findViewById(R.id.enum_btn_cancel);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PanelOperateActivity.this);
+                    builder.setView(dialogView);
+                    final AlertDialog alertDialog = builder.create();
+                    btnModify.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
+                            Integer Id = radioGroup.getCheckedRadioButtonId();
+                            ModifyDeviceValue(device, Id.toString());
+
+                            for (int i = 0; i < device.arrayEnumOptions.size(); i++) {
+                                EnumInfo objEnumInfo = device.arrayEnumOptions.get(i);
+                                if(Id == objEnumInfo.enumNumber)
+                                {
+                                    device.modValue = objEnumInfo.enumName;
+                                    break;
+                                }
+                            }
+                            alertDialog.dismiss();// 对话框消失
+                        }
+                    });
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
+                            alertDialog.dismiss();// 对话框消失
+                        }
+                    });
+                    alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    alertDialog.show();
+                }
+                else {
+                    // 在Activity中创建和显示自定义对话框
+                    LayoutInflater inflater = getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.modify_panel_info, null);
+                    // 获取布局中的控件
+                    final EditText item_value = (EditText) dialogView.findViewById(R.id.item_value);
+                    final Button btnModify = (Button) dialogView.findViewById(R.id.btn_modify);
+                    final Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+                    item_value.setText(device.value);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PanelOperateActivity.this);
+                    builder.setView(dialogView);
+                    final AlertDialog alertDialog = builder.create();
+                    btnModify.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
+                            String strValue = item_value.getText().toString();
+                            // String strToast = new String();
+                            // strToast = device.name + " change into " + strValue + device.unit;
+                            // Toast.makeText(PanelOperateActivity.this, strToast, Toast.LENGTH_SHORT).show();
+                            ModifyDeviceValue(device, strValue);
+                            device.modValue = strValue;
+                            alertDialog.dismiss();// 对话框消失
+                        }
+                    });
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
+
+                            alertDialog.dismiss();// 对话框消失
+                        }
+                    });
+                    alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    alertDialog.show();
+                }
             }
         });
     }
@@ -318,6 +514,7 @@ public class PanelOperateActivity extends BaseActivity {
                 // 发送数据
                 // Write(mShockinstructions);
                 Write(mReadPanelInfo);
+                btnSend.setEnabled(false);
                 break;
         }
     }
@@ -343,12 +540,12 @@ public class PanelOperateActivity extends BaseActivity {
         mBleController.WriteBuffer(value, new OnWriteCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(PanelOperateActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(PanelOperateActivity.this, "ok", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int state) {
-                Toast.makeText(PanelOperateActivity.this, "fail", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(PanelOperateActivity.this, "fail", Toast.LENGTH_SHORT).show();
             }
         });
     }

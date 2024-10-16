@@ -1,8 +1,6 @@
 package com.xungao.xungaoblectrl.utils;
 
-/**
- * Created by lucelu on 2024/4/16.
- */
+import java.util.ArrayList;
 
 public class PanelDeviceInfo {
     public String seqnum ;
@@ -13,4 +11,6 @@ public class PanelDeviceInfo {
     public String unit ;
     public String value ;
     public String modValue ;
+    // Only used by Enum type
+    public ArrayList<EnumInfo> arrayEnumOptions;
 }

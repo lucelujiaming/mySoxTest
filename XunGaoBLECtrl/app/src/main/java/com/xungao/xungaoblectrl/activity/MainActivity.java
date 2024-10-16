@@ -102,7 +102,9 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onConnFailed() {
                         hideProgressDialog();
-                        Toast.makeText(MainActivity.this, "连接超时，请重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "连接超时，请重试。", Toast.LENGTH_SHORT).show();
+                        // 连接失败以后，直接返回。
+                        finish();
                     }
                 });
 

@@ -281,6 +281,7 @@ public class BleController {
                 if (!isConnectok && !isMybreak) {
                     Log.e(TAG, "connect timeout");
                     disConnection();
+                    // 断开以后，重新连接。
                     reConnect();
                 } else {
                     isMybreak = false;

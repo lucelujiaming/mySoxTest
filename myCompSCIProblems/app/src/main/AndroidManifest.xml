@@ -17,7 +17,8 @@
         </activity>
         <activity android:name=".SimpleMathActivity" />
         <activity android:name=".SearchProblemActivity" />
-        <activity android:name=".ConstraintProblemActivity"></activity>
+        <activity android:name=".ConstraintProblemActivity" />
+        <activity android:name=".RailwayGraphActivity"></activity>
     </application>
 
 </manifest>

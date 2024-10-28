@@ -13,9 +13,11 @@ public class CSP<V, D> {
     // 集合variables是一个用来存放变量的List类型，
     // 例如参加会议的三个人
     private List<V> variables;
+
     // Map类型的domains则把变量映射为可取值的列表（这些变量的值域），
     // 例如参加会议的每一个人各自的可用时间。每一个人都有一系列可用时间。
     private Map<V, List<D>> domains;
+
     // Map类型的constraints则把每个变量映射为其所受约束的列表。
     // 每一个变量都有一个映射出来的其所受约束的列表。
     // 也就是说，有一个Map，Map中每一个变量都有一个约束列表。约束列表中每一个元素都是一个Constraint对象。

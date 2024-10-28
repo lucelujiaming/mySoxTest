@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_constraint_problem"
+    android:id="@+id/activity_railway_graph"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.jiaming.mycompsciproblems.ConstraintProblemActivity">
+    tools:context="com.jiaming.mycompsciproblems.RailwayGraphActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,31 +17,19 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/map_coloring"
+            android:id="@+id/print_railway_graph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="地图着色问题" />
+            android:text="打印高铁网络" />
 
         <Button
-            android:id="@+id/eight_queens"
+            android:id="@+id/print_weight_railway_graph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="八皇后问题" />
-
-        <Button
-            android:id="@+id/words_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="单词搜索问题" />
-
-        <Button
-            android:id="@+id/send_more_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="字谜问题" />
+            android:text="打印带权重的高铁网络" />
 
         <TextView
-            android:id="@+id/test_constraint_result"
+            android:id="@+id/test_railway_graph_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="" />

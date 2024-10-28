@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         btnSearch.setOnClickListener(this);
         Button btnConstraint = (Button)findViewById(R.id.constraint_problem);
         btnConstraint.setOnClickListener(this);
+        Button btnGraph = (Button)findViewById(R.id.graph_problem);
+        btnGraph.setOnClickListener(this);
 
     }
 
@@ -42,6 +44,12 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 Intent intentConstraintProblem = new Intent(MainActivity.this,ConstraintProblemActivity.class);
                 // 启动intent对应的Activity
                 startActivity(intentConstraintProblem);
+                break;
+            case R.id.graph_problem:
+                // 创建需要启动的Activity对应的Intent
+                Intent intentGraphProblem = new Intent(MainActivity.this,RailwayGraphActivity.class);
+                // 启动intent对应的Activity
+                startActivity(intentGraphProblem);
                 break;
         }
     }

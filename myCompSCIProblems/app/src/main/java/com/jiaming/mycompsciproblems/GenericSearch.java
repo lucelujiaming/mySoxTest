@@ -158,7 +158,7 @@ public class GenericSearch {
         // frontier is where we've yet to go
         Queue<Node<T>> frontier = new LinkedList<>();
         // 如果一个Node没有parent，则使用null来表示。
-        frontier.offer(new Node<T>(initial, null));
+        frontier.offer(new Node<>(initial, null));
 
         // 用集合来记录已经搜索过的状态，命名为explored。
         // explored is where we've been

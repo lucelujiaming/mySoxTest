@@ -8,13 +8,21 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class RailwayGraphActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnPrintRailwayGraph;
+    private Button btnBfsRailwayGraph;
+
     private Button btnPrintWeightRailwayGraph;
+    private Button btnJarnikWeightRailwayGraph;
+    private Button btnDijkstraWeightRailwayGraph;
 
     private TextView textRailwayGraphResult;
+
+    UnweightedGraph<String> cityGraph = null;
+    WeightedGraph<String> cityWeightGraph = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,18 +31,26 @@ public class RailwayGraphActivity extends AppCompatActivity implements View.OnCl
 
         btnPrintRailwayGraph = (Button)findViewById(R.id.print_railway_graph);
         btnPrintRailwayGraph.setOnClickListener(this);
+        btnBfsRailwayGraph = (Button)findViewById(R.id.bfs_railway_graph);
+        btnBfsRailwayGraph.setOnClickListener(this);
+
         btnPrintWeightRailwayGraph = (Button)findViewById(R.id.print_weight_railway_graph);
         btnPrintWeightRailwayGraph.setOnClickListener(this);
+        btnJarnikWeightRailwayGraph = (Button)findViewById(R.id.jarnik_weight_railway_graph);
+        btnJarnikWeightRailwayGraph.setOnClickListener(this);
+        btnDijkstraWeightRailwayGraph = (Button)findViewById(R.id.dijkstra_weight_railway_graph);
+        btnDijkstraWeightRailwayGraph.setOnClickListener(this);
 
         textRailwayGraphResult = (TextView)findViewById(R.id.test_railway_graph_result);
     }
 
     @Override
     public void onClick(View v) {
+        String strOutResult = new String();
         switch (v.getId()) {
             case R.id.print_railway_graph:
                 // Represents the 15 largest MSAs in the United States
-                UnweightedGraph<String> cityGraph = new UnweightedGraph<>(
+                cityGraph = new UnweightedGraph<>(
                         Arrays.asList("Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago", "Boston",
                                 "New York", "Atlanta", "Miami", "Dallas", "Houston", "Detroit", "Philadelphia", "Washington"));
 
@@ -65,9 +81,14 @@ public class RailwayGraphActivity extends AppCompatActivity implements View.OnCl
                 cityGraph.addEdge("New York", "Philadelphia");
                 cityGraph.addEdge("Philadelphia", "Washington");
                 System.out.println(cityGraph.toString());
-                String strOutResult = new String();
-                strOutResult +=  cityGraph.toString();
-
+                strOutResult =  cityGraph.toString();
+                textRailwayGraphResult.setText(strOutResult);
+                break;
+            case R.id.bfs_railway_graph:
+                if(cityGraph == null)
+                {
+                    break;
+                }
                 // GenericSearch.Node<String> bfsResult = GenericSearch.bfs("Boston",
                 //         v -> v.equals("Miami"),
                 //         cityGraph::neighborsOf);
@@ -77,12 +98,12 @@ public class RailwayGraphActivity extends AppCompatActivity implements View.OnCl
                         cityGraph::neighborsOf);
                 if (bfsResult == null) {
                     System.out.println("No solution found using breadth-first search!");
-                    strOutResult += "No solution found using breadth-first search!";
+                    strOutResult = "No solution found using breadth-first search!";
                 } else {
                     List<String> path = GenericSearch.nodeToPath(bfsResult);
                     System.out.println("Path from Boston to Miami:");
                     System.out.println(path);
-                    strOutResult += "Path from Boston to Miami:\n";
+                    strOutResult = "Path from Boston to Miami:\n";
                     for (String entry : path) {
                         strOutResult += " -> " + entry + "\n";
                     }
@@ -91,7 +112,7 @@ public class RailwayGraphActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.print_weight_railway_graph:
                 // Represents the 15 largest MSAs in the United States
-                WeightedGraph<String> cityWeightGraph = new WeightedGraph<>(
+                cityWeightGraph = new WeightedGraph<>(
                         Arrays.asList("Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago", "Boston",
                                 "New York", "Atlanta", "Miami", "Dallas", "Houston", "Detroit", "Philadelphia", "Washington"));
 
@@ -123,7 +144,42 @@ public class RailwayGraphActivity extends AppCompatActivity implements View.OnCl
                 cityWeightGraph.addEdge("Philadelphia", "Washington", 123);
 
                 System.out.println(cityWeightGraph);
-                textRailwayGraphResult.setText(cityWeightGraph.toString());
+                strOutResult = cityWeightGraph.toString();
+                textRailwayGraphResult.setText(strOutResult);
+                break;
+            case R.id.jarnik_weight_railway_graph:
+                if(cityWeightGraph == null)
+                {
+                    break;
+                }
+                List<WeightedEdge> mst = cityWeightGraph.mst(0);
+                strOutResult = "Run mst : ";
+                strOutResult += cityWeightGraph.printWeightedPath(mst);
+
+                textRailwayGraphResult.setText(strOutResult);
+                break;
+            case R.id.dijkstra_weight_railway_graph:
+                if(cityWeightGraph == null)
+                {
+                    break;
+                }
+                WeightedGraph.DijkstraResult dijkstraResult = cityWeightGraph.dijkstra("Los Angeles");
+                Map<String, Double> nameDistance = cityWeightGraph.distanceArrayToDistanceMap(dijkstraResult.distances);
+                System.out.println("Distances from Los Angeles:");
+                strOutResult = "Distances from Los Angeles: \n";
+                nameDistance.forEach((name, distance) -> System.out.println(name + " : " + distance));
+                for (Map.Entry<String, Double> entry : nameDistance.entrySet()) {
+                    strOutResult += entry.getKey() + " : " + entry.getValue() + "\n";
+                }
+
+                System.out.println(); // spacing
+
+                System.out.println("Shortest path from Los Angeles to Boston: ");
+                strOutResult += "\nShortest path from Los Angeles to Boston: \n";
+                List<WeightedEdge> path = cityWeightGraph.pathMapToPath(cityWeightGraph.indexOf("Los Angeles"), cityWeightGraph.indexOf("Boston"),
+                        dijkstraResult.pathMap);
+                strOutResult += cityWeightGraph.printWeightedPath(path);
+                textRailwayGraphResult.setText(strOutResult);
                 break;
         }
     }

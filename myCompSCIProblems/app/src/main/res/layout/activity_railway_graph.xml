@@ -10,28 +10,62 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jiaming.mycompsciproblems.RailwayGraphActivity">
 
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/print_railway_graph"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打印高铁网络" />
+            android:layout_below="@+id/toolbar"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/print_railway_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打印高铁网络" />
 
-        <Button
-            android:id="@+id/print_weight_railway_graph"
+            <Button
+                android:id="@+id/bfs_railway_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="深度遍历找路径" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打印带权重的高铁网络" />
+            android:layout_below="@+id/toolbar"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/print_weight_railway_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打印带权重的高铁网络" />
 
-        <TextView
-            android:id="@+id/test_railway_graph_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/jarnik_weight_railway_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jarnik寻路" />
+
+            <Button
+                android:id="@+id/dijkstra_weight_railway_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dijkstra寻路" />
+        </LinearLayout>
+
+            <TextView
+                android:id="@+id/test_railway_graph_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

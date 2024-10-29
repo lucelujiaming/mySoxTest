@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         btnConstraint.setOnClickListener(this);
         Button btnGraph = (Button)findViewById(R.id.graph_problem);
         btnGraph.setOnClickListener(this);
+        Button btnGenetic = (Button)findViewById(R.id.genetic_problem);
+        btnGenetic.setOnClickListener(this);
 
     }
 
@@ -50,6 +52,12 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 Intent intentGraphProblem = new Intent(MainActivity.this,RailwayGraphActivity.class);
                 // 启动intent对应的Activity
                 startActivity(intentGraphProblem);
+                break;
+            case R.id.genetic_problem:
+                // 创建需要启动的Activity对应的Intent
+                Intent intentGeneticProblem = new Intent(MainActivity.this,GeneticAlgorithmActivity.class);
+                // 启动intent对应的Activity
+                startActivity(intentGeneticProblem);
                 break;
         }
     }

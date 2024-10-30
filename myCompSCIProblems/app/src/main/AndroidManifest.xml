@@ -19,7 +19,8 @@
         <activity android:name=".SearchProblemActivity" />
         <activity android:name=".ConstraintProblemActivity" />
         <activity android:name=".RailwayGraphActivity" />
-        <activity android:name=".GeneticAlgorithmActivity"></activity>
+        <activity android:name=".GeneticAlgorithmActivity" />
+        <activity android:name=".KMeansActivity"></activity>
     </application>
 
 </manifest>

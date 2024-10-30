@@ -132,20 +132,16 @@ public class MCState {
             }
         }
         // Only works in java 11
-        successors_states_list.removeIf(MCState::isIllegal);
-
-        // boolean isFoundIllegal = true;
-        // while (isFoundIllegal) {
-        //     isFoundIllegal = false;
-        //     for (MCState objMCState : successors_states_list) {
-        //         if (objMCState.isLegal() == false) {
-        //             successors_states_list.remove(objMCState);
-        //             isFoundIllegal = true;
-        //             break;
-        //         }
-        //     }
-        // }
-        return  successors_states_list;
+        // Remove illegal elements means keep legal elements
+        // successors_states_list.removeIf(MCState::isIllegal);
+        // return  successors_states_list;
+        List<MCState> filter_states_list = new ArrayList<>();
+        for (MCState objMCState : successors_states_list) {
+            if (objMCState.isLegal()) {
+                filter_states_list.add(objMCState);
+            }
+        }
+        return filter_states_list;
     }
 
     // 于传教士和食人族问题而言，我们也需要一种能将结果状态列表打印成能让人理解的一系列解答步骤的方法。

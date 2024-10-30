@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         btnGraph.setOnClickListener(this);
         Button btnGenetic = (Button)findViewById(R.id.genetic_problem);
         btnGenetic.setOnClickListener(this);
+        Button btnKMeans = (Button)findViewById(R.id.kmeans_clustering);
+        btnKMeans.setOnClickListener(this);
 
     }
 
@@ -59,6 +61,13 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 // 启动intent对应的Activity
                 startActivity(intentGeneticProblem);
                 break;
+            case R.id.kmeans_clustering:
+                // 创建需要启动的Activity对应的Intent
+                Intent intentKMeansProblem = new Intent(MainActivity.this,KMeansActivity.class);
+                // 启动intent对应的Activity
+                startActivity(intentKMeansProblem);
+                break;
         }
     }
 }
+

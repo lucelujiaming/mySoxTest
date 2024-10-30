@@ -28,6 +28,12 @@
             android:layout_height="wrap_content"
             android:text="SendMoreMoney方程" />
 
+        <Button
+            android:id="@+id/test_list_compression"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="优化列表压缩" />
+
         <TextView
             android:id="@+id/test_genetic_result"
             android:layout_width="wrap_content"

@@ -99,34 +99,37 @@
                     android:text="清除" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toolbar"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/missionaries_problem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:text="传教士问题" />
+                <TextView
+                    android:id="@+id/missionaries_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/path_steps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
 
-            <LinearLayout
+            <com.jiaming.mycompsciproblems.MyTilesView
+                android:id="@+id/maze_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/toolbar"
-                android:orientation="horizontal">
-                    <com.jiaming.mycompsciproblems.MyTilesView
-                        android:id="@+id/maze_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-            </LinearLayout>
+                android:layout_height="wrap_content" />
 
-            <Button
-                android:id="@+id/missionaries_problem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:text="传教士问题" />
-            <TextView
-                android:id="@+id/missionaries_result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

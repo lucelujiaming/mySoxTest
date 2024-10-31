@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         btnGenetic.setOnClickListener(this);
         Button btnKMeans = (Button)findViewById(R.id.kmeans_clustering);
         btnKMeans.setOnClickListener(this);
+        Button btnNeuralNetwork = (Button)findViewById(R.id.neural_network);
+        btnNeuralNetwork.setOnClickListener(this);
 
     }
 
@@ -66,6 +68,12 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 Intent intentKMeansProblem = new Intent(MainActivity.this,KMeansActivity.class);
                 // 启动intent对应的Activity
                 startActivity(intentKMeansProblem);
+                break;
+            case R.id.neural_network:
+                // 创建需要启动的Activity对应的Intent
+                Intent intentNeuralNetwork = new Intent(MainActivity.this,NeuralNetworkActivity.class);
+                // 启动intent对应的Activity
+                startActivity(intentNeuralNetwork);
                 break;
         }
     }

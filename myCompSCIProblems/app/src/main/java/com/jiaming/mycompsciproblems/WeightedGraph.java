@@ -36,7 +36,7 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
             sb.append(vertexAt(i));
             sb.append(" -> ");
             // sb.append(Arrays.toString(edgesOf(i).stream()
-            //         .map(we -> "(" + vertexAt(we.v) + ", " + we.weight + ")").toArray()));
+            //         .map(we -> "(" + vertexAt(we.v) + ", " + we.weights + ")").toArray()));
             List<WeightedEdge> objWeightedEdge = edgesOf(i);
             for (WeightedEdge edge : objWeightedEdge){
                 sb.append("(" + vertexAt(edge.v) + ", " + edge.weight + ")");

@@ -21,7 +21,8 @@
         <activity android:name=".RailwayGraphActivity" />
         <activity android:name=".GeneticAlgorithmActivity" />
         <activity android:name=".KMeansActivity" />
-        <activity android:name=".NeuralNetworkActivity"></activity>
+        <activity android:name=".NeuralNetworkActivity" />
+        <activity android:name=".AdversarialSearchActivity"></activity>
     </application>
 
 </manifest>

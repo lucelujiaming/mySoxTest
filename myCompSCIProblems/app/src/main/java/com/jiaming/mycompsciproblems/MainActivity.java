@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         btnKMeans.setOnClickListener(this);
         Button btnNeuralNetwork = (Button)findViewById(R.id.neural_network);
         btnNeuralNetwork.setOnClickListener(this);
+        Button btnAdversarialSearch = (Button)findViewById(R.id.adversarial_search);
+        btnAdversarialSearch.setOnClickListener(this);
 
     }
 
@@ -74,6 +76,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 Intent intentNeuralNetwork = new Intent(MainActivity.this,NeuralNetworkActivity.class);
                 // 启动intent对应的Activity
                 startActivity(intentNeuralNetwork);
+            case R.id.adversarial_search:
+                // 创建需要启动的Activity对应的Intent
+                Intent intentAdversarialSearch = new Intent(MainActivity.this,AdversarialSearchActivity.class);
+                // 启动intent对应的Activity
+                startActivity(intentAdversarialSearch);
                 break;
         }
     }

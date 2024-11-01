@@ -57,5 +57,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="神经网络问题" />
+        <Button
+            android:id="@+id/adversarial_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="对抗搜索问题" />
     </LinearLayout>
 </RelativeLayout>

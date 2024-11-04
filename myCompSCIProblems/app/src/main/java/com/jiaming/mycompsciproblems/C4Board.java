@@ -66,8 +66,6 @@ public class C4Board implements Board<Integer> {
     }
 
     // 我们在position这个二维C4Piece类型数组中存储当前位置。
-    // 大多数情况下，二维数组都会以行优先的方式进行索引。
-    // 这是考虑到四子棋是由7列组成的并且为了使C4Board类的其余部分编写起来容易一些。
     private C4Piece[][] position;
     // 例如，数组columnCount记录了给定列中每次有多少个棋子。
     // 由于每次落子本质上都是选择没有被填充的列，因此这使得生成合法的落子方式非常容易。
@@ -76,6 +74,8 @@ public class C4Board implements Board<Integer> {
 
     // 初始化一个空白的C4Board。
     public C4Board() {
+        // 大多数情况下，二维数组都会以行优先的方式进行索引。
+        // 这是考虑到四子棋是由7列组成的并且为了使C4Board类的其余部分编写起来容易一些。
         position = new C4Piece[NUM_COLUMNS][NUM_ROWS];
         for (C4Piece[] col : position) {
             Arrays.fill(col, C4Piece.E);
@@ -100,7 +100,6 @@ public class C4Board implements Board<Integer> {
         this.turn = turn;
     }
 
-    // 私有辅助方法countSegment()返回特定段中黑色或红色棋子的数量。
     @Override
     public Piece getTurn() {
         return turn;
@@ -108,11 +107,16 @@ public class C4Board implements Board<Integer> {
 
     @Override
     public C4Board move(Integer location) {
+        // 复制一份棋盘位置状态信息。
         C4Piece[][] tempPosition = Arrays.copyOf(position, position.length);
         for (int col = 0; col < NUM_COLUMNS; col++) {
             tempPosition[col] = Arrays.copyOf(position[col], position[col].length);
         }
+        // 根据输入标记对应的位置。
         tempPosition[location][columnCount[location]] = turn;
+        // C4Board是一种非正式的不可变数据结构，所以不应该对TTTBoard进行修改。
+        // 每个回合都会生成一个包含当前回合所下的棋的新的C4Board。
+        // 这样处理会为我们带来便利，那就是当搜索分支时，我们不会无意间对仍处于分析如何下棋状态的棋盘做出改动。
         return new C4Board(tempPosition, turn.opposite());
     }
 
@@ -129,9 +133,7 @@ public class C4Board implements Board<Integer> {
         return legalMoves;
     }
 
-    // 接下来是检查棋局胜负的方法isWin()。该方法检查棋盘中的所有段，
-    // 并通过countSegment()方法来查看是否有段是由四个相同颜色的棋子所组成的，
-    // 以此来确定是否分出胜负。
+    // 私有辅助方法countSegment()返回特定段中黑色或红色棋子的数量。
     private int countSegment(C4Location[] segment, C4Piece color) {
         int count = 0;
         for (C4Location location : segment) {
@@ -141,7 +143,10 @@ public class C4Board implements Board<Integer> {
         }
         return count;
     }
-    //
+
+    // 接下来是检查棋局胜负的方法isWin()。该方法检查棋盘中的所有段，
+    // 并通过countSegment()方法来查看是否有段是由四个相同颜色的棋子所组成的，
+    // 以此来确定是否分出胜负。
     @Override
     public boolean isWin() {
         for (C4Location[] segment : SEGMENTS) {
@@ -160,11 +165,11 @@ public class C4Board implements Board<Integer> {
         if ((blackCount > 0) || (redCount > 0)) {
             return 0.0;
         }
-        int count = Math.max(blackCount, redCount);
-        double score = 0.0;
         // 最后，为了对整个棋局进行评估，我们将会对其全部的段逐一进行评估，
         // 将评估的结果进行累加并返回。
-        // 含有两种颜色棋子的段被认为是毫无价值的。
+        int count = Math.max(blackCount, redCount);
+        // 含有两种颜色棋子的段被认为是毫无价值的，被评估为0。
+        double score = 0.0;
         // 由两个相同颜色的棋子和两个空格所构成的段会被评估为1。
         if (count == 2) {
             score = 1.0;
@@ -209,3 +214,4 @@ public class C4Board implements Board<Integer> {
         return sb.toString();
     }
 }
+

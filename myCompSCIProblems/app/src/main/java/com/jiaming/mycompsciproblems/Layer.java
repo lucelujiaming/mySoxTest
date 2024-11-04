@@ -40,6 +40,7 @@ public class Layer {
         }
         outputCache = new double[numNeurons];
     }
+
     // 当信号在神经网络中前馈时，Layer必须让每个神经元都对其进行处理。
     public double[] output(double[] inputs) {
         // 请注意，层中的每个神经元都会接收到上一层中每个神经元传入的信号。outputs()正是如此处理的。
@@ -60,6 +61,8 @@ public class Layer {
     // 图7.4和图7.5中分别给出了公式的描述。
     // 下面的两个方法只是机械地将公式转换成了代码。稍后在反向传播过程中神经网络对象将会调用这两个方法。
     public void calculateDeltasForOutputLayer(double[] expected) {
+        // 输出层的delta计算方法：
+        //   本层输出的偏导数 * (预期输出 - 本层输出)
         for (int n = 0; n < neurons.size(); n++) {
             neurons.get(n).delta = neurons.get(n).
                     derivativeActivationFunction.applyAsDouble(neurons.get(n).outputCache)
@@ -68,6 +71,11 @@ public class Layer {
     }
 
     public void calculateDeltasForHiddenLayer(Layer nextlayer) {
+        // 输入层和隐藏层的delta的计算方法为：
+        //   本层输出的偏导数 * 下一层误差delta的反向传播。
+        // 下一层误差delta的反向传播为：
+        //   下一层误差delta * 下一层的比重。
+        // 具体的解释可以参见《《深度学习入门：基于Python的理论与实现》》的第5章。
         for (int i = 0; i < neurons.size(); i++) {
             int index = i;
             double[] nextWeights = nextlayer.neurons.stream().mapToDouble(

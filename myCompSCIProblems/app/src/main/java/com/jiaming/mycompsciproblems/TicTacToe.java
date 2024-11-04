@@ -9,6 +9,7 @@ public class TicTacToe {
     private TTTBoard board = new TTTBoard();
     private Scanner scanner = new Scanner(System.in);
 
+    // 获得用户输入。
     private Integer getPlayerMove() {
         Integer playerMove = -1;
         while (!board.getLegalMoves().contains(playerMove)) {

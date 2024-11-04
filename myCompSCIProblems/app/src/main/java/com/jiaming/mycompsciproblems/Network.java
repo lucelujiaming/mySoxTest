@@ -23,14 +23,21 @@ public class Network<T> {
         if(layerStructure.length < 3) {
             throw new IllegalArgumentException("Error: Should be at least 3 layers (1 input, 1 hidden, 1 output).");
         }
-        Layer inputLayer = new Layer(Optional.empty(),
-                layerStructure[0], learningRate,
-                activationFunction, derivativeActivationFunction);
+        // 创建输入层。神经元个数由layerStructure[0]指定。
+        // input layer
+        Layer inputLayer = new Layer(
+                Optional.empty(),       // 输入层没有前一层。
+                layerStructure[0],      // 神经元个数
+                // 在这个简单的网络中，假设网络中的所有层都将采用相同的神经元激活函数和学习率。
+                learningRate, activationFunction, derivativeActivationFunction);
         layers.add(inputLayer);
 
+        // 创建隐藏层和输出层。神经元个数由layerStructure[1]和layerStructure[2]等元素指定。
+        // hidden layers and output layer
         for (int i = 1; i < layerStructure.length; i++) {
-            Layer nextLayer = new Layer(Optional.of(layers.get(i - 1)),
-                    layerStructure[i],
+            Layer nextLayer = new Layer(
+                    Optional.of(layers.get(i - 1)),    // 指定前一层
+                    layerStructure[i],                 // 神经元个数
                     // 在这个简单的网络中，假设网络中的所有层都将采用相同的神经元激活函数和学习率。
                     learningRate, activationFunction, derivativeActivationFunction);
             layers.add(inputLayer);
@@ -54,7 +61,10 @@ public class Network<T> {
     // 它会把给定输入集的预期输出值传递给calculateDeltasForOutputLayer()。
     // 该方法将用预期输出值求出误差，以供计算delta时使用。
     private void backpropagate(double[] expected) {
+        // lastLayer初始化为最后一层，也就是输出层的索引。
         int lastLayer = layers.size() - 1;
+        // 调用输出层的calculateDeltasForOutputLayer()方法。
+        // 这个函数会更新自己的delta。
         layers.get(lastLayer).calculateDeltasForOutputLayer(expected);
         for (int i = lastLayer - 1; i >= 0; i--) {
             layers.get(i).calculateDeltasForHiddenLayer(layers.get(i + 1));

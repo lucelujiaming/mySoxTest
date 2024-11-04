@@ -7,8 +7,9 @@ import java.util.List;
 // 井字棋的棋盘由3行3列共9个位置组成。为简单起见，可以使用一维数组来表示这9个位置。
 // 每个位置的数字标识（也就是数组中的索引）可以随意设定。
 public class TTTBoard implements Board<Integer> {
-    // 棋盘的状态保存在TTTBoard类中。TTTBoard中会记录两种不同的状态：位置（由上述一维数组来表示）和轮到哪位玩家下棋。
+    // 棋盘的状态保存在TTTBoard类中。TTTBoard中会记录两种不同的状态：
     private static final int NUM_SQUARES = 9;
+    // 位置（由上述一维数组来表示）和轮到哪位玩家下棋。
     private TTTPiece[] position;
     private TTTPiece turn;
 
@@ -16,8 +17,8 @@ public class TTTBoard implements Board<Integer> {
         this.position = position;
         this.turn = turn;
     }
-    // 默认棋盘是一个尚未开始下棋的空棋盘。TTTBoard的无参构造函数用来初始化这样的空棋盘，
     public TTTBoard() {
+        // 默认棋盘是一个尚未开始下棋的空棋盘。TTTBoard的无参构造函数用来初始化这样的空棋盘，
         position = new TTTPiece[NUM_SQUARES];
         Arrays.fill(position, TTTPiece.E);
         // 并且由X先走棋（井字棋中通常由X玩家先走棋）。
@@ -30,14 +31,19 @@ public class TTTBoard implements Board<Integer> {
         return turn;
     }
 
-    // 在井字棋游戏中，空的方格都是可以落子的。
     @Override
     public TTTBoard move(Integer location) {
+        // 复制一份棋盘位置状态信息。
         TTTPiece[] tempPosition = Arrays.copyOf(position, position.length);
+        // 根据输入标记对应的位置。
         tempPosition[location] = turn;
+        // TTTBoard是一种非正式的不可变数据结构，所以不应该对TTTBoard进行修改。
+        // 每个回合都会生成一个包含当前回合所下的棋的新的TTTBoard。
+        // 这样处理会为我们带来便利，那就是当搜索分支时，我们不会无意间对仍处于分析如何下棋状态的棋盘做出改动。
         return new TTTBoard(tempPosition, turn.opposite());
     }
 
+    // 在井字棋游戏中，空的方格都是可以落子的。
     // getLegalMoves()用来查找棋盘上所有空着的方格并以列表的形式返回。
     @Override
     public List<Integer> getLegalMoves() {
@@ -60,7 +66,7 @@ public class TTTBoard implements Board<Integer> {
                 || checkPos(0, 4, 8) || checkPos(2, 4, 6);                          // 同一对角线。
     }
 
-    // 检查三个位置是否都是一样的。
+    // 检查三个位置是否都是一样的。而且不是空。
     private boolean checkPos(int p0, int p1, int p2) {
         return position[p0] == position[p1] && position[p0] == position[p2]
                 && position[p0] != TTTPiece.E;

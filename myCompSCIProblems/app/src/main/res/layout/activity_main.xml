@@ -61,6 +61,6 @@
             android:id="@+id/adversarial_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="对抗搜索问题" />
+            android:text="对抗搜索问题和其他" />
     </LinearLayout>
 </RelativeLayout>

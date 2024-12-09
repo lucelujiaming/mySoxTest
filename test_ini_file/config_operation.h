@@ -1,7 +1,7 @@
 #ifndef CONFIG_OPERATION_H
 #define CONFIG_OPERATION_H
 
-/* 读写的Key必须存在。 */
+/* 下面是读写函数，不支持新增。读写的Key必须存在。 */
 int get_ini_key_string(const char* title, const char* key, char* buf, const char* filename);
 int put_ini_key_string(const char* title, const char* key, char* val, const char* filename);
 

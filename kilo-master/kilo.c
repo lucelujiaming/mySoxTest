@@ -41,8 +41,8 @@
 #define _USE_LIST_H_
 
 #include <termios.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <errno.h>
 #include <string.h>
@@ -58,6 +58,12 @@
 
 #ifdef _USE_LIST_H_
 #include "list.h"
+#endif
+
+#ifndef BOOL
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
 #endif
 
 /* Syntax highlight types */
@@ -108,18 +114,25 @@ enum EDIT_TYPE{
     MERGE_LINE,
 };
 
-struct editorContext {
+struct editorPos {
     int cx,cy;  /* Cursor x and y position in characters */
     int rowoff;     /* Offset of row displayed. */
     int coloff;     /* Offset of column displayed. */
+};
+
+struct editorContext {
+    struct editorPos editorPosBefore;
+    struct editorPos editorPosAfter;
     enum EDIT_TYPE type;   /* operation type which use to revert */
     char content[80];
     int charInput;
     struct list_head list;
 };
 
-LIST_HEAD(forward_operation_list);
+// Used by undo
 LIST_HEAD(backward_operation_list);
+// Used by redo
+LIST_HEAD(forward_operation_list);
 #endif
 
 
@@ -1459,13 +1472,15 @@ void editorMoveCursor(int key) {
 }
 
 #ifdef _USE_LIST_H_
-void record_pressedKey(int c, enum EDIT_TYPE type)
+void record_pressedKey(int c, enum EDIT_TYPE type, 
+                    struct editorPos posBefore, BOOL is_clear_forward)
 {
     struct editorContext * operation = malloc(sizeof(struct editorContext));
-    operation->cx = E.cx;
-    operation->cy = E.cy;
-    operation->rowoff = E.rowoff;
-    operation->coloff = E.coloff;
+    operation->editorPosBefore = posBefore;
+    operation->editorPosAfter.cx = E.cx;
+    operation->editorPosAfter.cy = E.cy;
+    operation->editorPosAfter.rowoff = E.rowoff;
+    operation->editorPosAfter.coloff = E.coloff;
     operation->type = type;
     operation->charInput = c;
     memset(operation->content, 0x00, 80);
@@ -1473,7 +1488,17 @@ void record_pressedKey(int c, enum EDIT_TYPE type)
     {
         strcpy(operation->content, E.clipboard);
     }
-    list_add_tail(&operation->list, &forward_operation_list);
+    list_add_tail(&operation->list, &backward_operation_list);
+    if(is_clear_forward)
+    {
+        struct editorContext * ptr = 0;
+        struct editorContext * next = 0;
+        // To use this macro, we have to remove -std=c99
+        list_for_each_entry_safe(ptr, next, &forward_operation_list, list) {
+           list_del(&ptr->list);
+           free(ptr);
+        }
+    }
 }
 
 int getPreviousChar(void) {
@@ -1497,23 +1522,71 @@ int getPreviousChar(void) {
 }
 
 
+void redo_pressedKey()
+{
+    // int filerow = 0;
+    if(list_empty(&forward_operation_list))
+    {
+        editorSetStatusMessage("No Redo history");
+        return;
+    }
+    // 1 - Get last element from forward_operation_list
+    struct editorContext * operation = list_entry(
+            forward_operation_list.prev, struct editorContext, list);
+    editorSetStatusMessage("You Redo: <%c> and <%s> with %d",
+        operation->charInput, operation->content, operation->type);
+    
+    E.cx = operation->editorPosBefore.cx;
+    E.cy = operation->editorPosBefore.cy;
+    E.rowoff = operation->editorPosBefore.rowoff;
+    E.coloff = operation->editorPosBefore.coloff;
+    
+    switch(operation->type){
+    case INSERT_CHAR:
+        editorInsertChar(operation->charInput);
+        editorSetStatusMessage("INSERT_CHAR: <%c> and <%s> with (%d, %d)",
+            operation->charInput, operation->content, E.dirty);
+        break;
+    case BACKSPACE_CHAR:
+        editorBackSpaceChar();
+        break;
+    case INSERT_WORD:
+        editorInsertWord();
+        break;
+    case INSERT_LINE:
+        editorInsertLine();
+        break;
+    case MERGE_LINE:
+        editorMergeLine();
+        break;
+    default:
+        break;
+    }
+    // Need not call free(operation);
+    // 2 - Remove from forward_operation_list
+    list_del(forward_operation_list.prev);
+    // 3 - Add to forward_operation_list
+    list_add_tail(&operation->list, &backward_operation_list);
+}
+
 void undo_pressedKey()
 {
     int filerow = 0, iDirty = 0;
-    if(list_empty(&forward_operation_list))
+    if(list_empty(&backward_operation_list))
     {
-        editorSetStatusMessage("No Edit history");
+        editorSetStatusMessage("No Edit history for undo");
         return;
     }
+    // 1 - Get last element from backward_operation_list
     struct editorContext * operation = list_entry(
-            forward_operation_list.prev, struct editorContext, list);
-    editorSetStatusMessage("You input: <%c> and <%s> with %d",
+            backward_operation_list.prev, struct editorContext, list);
+    editorSetStatusMessage("You undo: <%c> and <%s> with %d",
         operation->charInput, operation->content, operation->type);
     
-    E.cx = operation->cx;
-    E.cy = operation->cy;
-    E.rowoff = operation->rowoff;
-    E.coloff = operation->coloff;
+    E.cx = operation->editorPosAfter.cx;
+    E.cy = operation->editorPosAfter.cy;
+    E.rowoff = operation->editorPosAfter.rowoff;
+    E.coloff = operation->editorPosAfter.coloff;
     
     switch(operation->type){
     case INSERT_CHAR:
@@ -1553,8 +1626,21 @@ void undo_pressedKey()
     default:
         break;
     }
-        
-    list_del(forward_operation_list.prev);
+    // Need not call free(operation);
+    // 2 - Remove from backward_operation_list
+    list_del(backward_operation_list.prev);
+    // 3 - Add to forward_operation_list
+    list_add_tail(&operation->list, &forward_operation_list);
+}
+
+struct editorPos getCurrentPos()
+{
+    struct editorPos objPos;
+    objPos.cx = E.cx;
+    objPos.cy = E.cy;
+    objPos.rowoff = E.rowoff;
+    objPos.coloff = E.coloff;
+    return objPos;
 }
 
 #endif
@@ -1565,15 +1651,19 @@ void undo_pressedKey()
 void editorProcessKeypress(int fd) {
     /* When the file is modified, requires Ctrl-q to be pressed N times
      * before actually quitting. */
+    struct editorPos editorPosBefore;
     static int quit_times = KILO_QUIT_TIMES;
     int d = 0, iDirty = 0;
     int c = editorReadKey(fd);
     memset(E.debugmsg, 0x00, 80);
+#ifdef _USE_LIST_H_
+        editorPosBefore = getCurrentPos();
+#endif
     switch(c) {
     case ENTER:         /* Enter */
         editorInsertNewline();
 #ifdef _USE_LIST_H_
-        record_pressedKey(c, INSERT_CHAR);
+        record_pressedKey(c, INSERT_CHAR, editorPosBefore, TRUE);
 #endif
         break;
     case CTRL_A:        /* Ctrl-a */
@@ -1605,14 +1695,14 @@ void editorProcessKeypress(int fd) {
         d = getPreviousChar();
         editorBackSpaceChar();
 #ifdef _USE_LIST_H_
-        record_pressedKey(d, BACKSPACE_CHAR);
+        record_pressedKey(d, BACKSPACE_CHAR, editorPosBefore, TRUE);
 #endif
         break;
     case CTRL_J:        /* Ctrl-j */
         sprintf(E.debugmsg, "Ctrl-j");
         editorMergeLine();
 #ifdef _USE_LIST_H_
-        record_pressedKey(c, MERGE_LINE);
+        record_pressedKey(c, MERGE_LINE, editorPosBefore, TRUE);
 #endif
         break;
     case CTRL_L: /* ctrl+l, clear screen */
@@ -1663,14 +1753,14 @@ void editorProcessKeypress(int fd) {
             editorInsertWord();
             E.dirty = iDirty + 1;
 #ifdef _USE_LIST_H_
-            record_pressedKey(c, INSERT_WORD);
+            record_pressedKey(c, INSERT_WORD, editorPosBefore, TRUE);
 #endif
         }
         else
         {
             editorInsertLine();
 #ifdef _USE_LIST_H_
-            record_pressedKey(c, INSERT_LINE);
+            record_pressedKey(c, INSERT_LINE, editorPosBefore, TRUE);
 #endif
         }
         break;
@@ -1682,6 +1772,9 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_Y:        /* Ctrl-j */
         sprintf(E.debugmsg, "Ctrl-y");
+#ifdef _USE_LIST_H_
+        redo_pressedKey();
+#endif
         break;
     case CTRL_Z:        /* Ctrl-j */
         sprintf(E.debugmsg, "Ctrl-z");
@@ -1693,7 +1786,7 @@ void editorProcessKeypress(int fd) {
         d = getPreviousChar();
         editorBackSpaceChar();
 #ifdef _USE_LIST_H_
-        record_pressedKey(d, BACKSPACE_CHAR);
+        record_pressedKey(d, BACKSPACE_CHAR, editorPosBefore, TRUE);
 #endif
         break;
     case DEL_KEY:
@@ -1701,7 +1794,7 @@ void editorProcessKeypress(int fd) {
         d = getPreviousChar();
         editorBackSpaceChar();
 #ifdef _USE_LIST_H_
-        record_pressedKey(d, BACKSPACE_CHAR);
+        record_pressedKey(d, BACKSPACE_CHAR, editorPosBefore, TRUE);
 #endif
         break;
     case PAGE_UP:
@@ -1730,7 +1823,7 @@ void editorProcessKeypress(int fd) {
     default:
         editorInsertChar(c);
 #ifdef _USE_LIST_H_
-        record_pressedKey(c, INSERT_CHAR);
+        record_pressedKey(c, INSERT_CHAR, editorPosBefore, TRUE);
 #endif
         break;
     }
@@ -1783,7 +1876,7 @@ static void usage(void)
     printf("    CTRL-N: Go to line\r\n");
     printf("    CTRL-S: Save\r\n");
     printf("    CTRL-V: Paste word or line\r\n");
-    printf("    CTRL-Y: Redo(Not implement yet)\r\n");
+    printf("    CTRL-Y: Redo\r\n");
     printf("    CTRL-Z: Undo\r\n");
     printf("    CTRL-Q: Quit\r\n");
 }

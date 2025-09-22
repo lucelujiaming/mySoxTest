@@ -16,9 +16,11 @@ Keys:
     CTRL-N: Go to line(New Add)
     CTRL-S: Save
     CTRL-V: Paste word or line(New Add)
-    CTRL-Y: Redo(Not implement)(New Add)
+    CTRL-Y: Redo(New Add)
     CTRL-Z: Undo(New Add)
     CTRL-Q: Quit
+
+NOTICE: kilo has the refcount error in E.dirty, I will fix it after the national day.
 
 Kilo does not depend on any library (not even curses). It uses fairly standard
 VT100 (and similar terminals) escape sequences. The project is in alpha

@@ -1,0 +1,12 @@
+TOP_DIR = /media/user1/V3SSDK_BUILDROOT/v3ssdk/buildroot/out/
+CROSS = $(TOP_DIR)host/bin/arm-buildroot-linux-gnueabihf-
+
+CC = $(CROSS)gcc
+
+all: kilo
+
+kilo: kilo.c
+	$(CC) -o kilo_arm kilo.c -Wall -W -pedantic -std=c99 
+
+clean:
+	rm kilo_arm

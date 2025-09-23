@@ -941,10 +941,14 @@ void editorMergeLine()
     /* Handle the case of column 0, we need to move the current line
      * on the right of the previous one. */
     filecol = E.row[filerow-1].size;
+    // Save E.dirty
+    int iDirty = E.dirty;
     // Append current line to previous line and update previous line
     editorRowAppendString(&E.row[filerow-1],row->chars,row->size);
     // Delete current line.
     editorDelRow(filerow);
+    // Restore E.dirty
+    E.dirty = iDirty;
     // We have deleted current line, so we need not update current line.
     row = NULL;
     if (E.cy == 0)
@@ -962,6 +966,7 @@ void editorMergeLine()
 }
 
 /* Delete the char at the current prompt position. */
+/* Fix E.dirty ref count problem. */
 void editorBackSpaceChar(void) {
     int filerow = E.rowoff+E.cy;
     int filecol = E.coloff+E.cx;
@@ -976,13 +981,15 @@ void editorBackSpaceChar(void) {
     if (filecol == 0) {
         /* Handle the case of column 0, we need to move the current line
          * on the right of the previous one. */
-        // ????????????????????????????????
-        // It seemed that when I backspace a line, it would make E.coloff be neagtive number
         filecol = E.row[filerow-1].size;
+        // Save E.dirty
+        int iDirty = E.dirty;
         // Append current line to previous line and update previous line
         editorRowAppendString(&E.row[filerow-1],row->chars,row->size);
         // Delete current line.
         editorDelRow(filerow);
+        // Restore E.dirty
+        E.dirty = iDirty;
         // We have deleted current line, so we need not update current line.
         row = NULL;
         if (E.cy == 0)
@@ -1002,7 +1009,11 @@ void editorBackSpaceChar(void) {
         }
     /* We delete a char in a line. */
     } else {
+        // Save E.dirty
+        int iDirty = E.dirty;
         editorRowDelChar(row,filecol-1);
+        // Restore E.dirty
+        E.dirty = iDirty;
         /* We delete a char in a line, we need decrease the cx. */
         if (E.cx == 0 && E.coloff)
             E.coloff--;
@@ -1193,12 +1204,12 @@ void editorRefreshScreen(void) {
     if (len > E.screencols) len = E.screencols;
     abAppend(&ab,status,len);
     /* Print enough space and rstatus */
-    // sprintf(strDebugMsg, "%s-<%d>", E.debugmsg, E.dirty);
-    sprintf(strDebugMsg, "%s", E.debugmsg);
+    sprintf(strDebugMsg, "%s-<%d>", E.debugmsg, E.dirty);
+    // sprintf(strDebugMsg, "%s", E.debugmsg);
     int iDebugMsgLen = strlen(strDebugMsg);
-    char cursorInfo[LINE_CONTENT_LENGTH];
-    sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
-        E.cx, E.cy, E.rowoff, E.coloff);
+    char cursorInfo[LINE_CONTENT_LENGTH] = {0};
+    // sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
+    //    E.cx, E.cy, E.rowoff, E.coloff);
     int iCursorInfoLen = strlen(cursorInfo);
     while(len < E.screencols) {
         /* If Left cols can fill rstatus, we print rstatus. */
@@ -1576,6 +1587,7 @@ int getPreviousChar(void) {
 void redo_pressedKey()
 {
     // int filerow = 0;
+    int iDirty = 0;
     if(list_empty(&forward_operation_list))
     {
         editorSetStatusMessage("No Redo history");
@@ -1584,19 +1596,18 @@ void redo_pressedKey()
     // 1 - Get last element from forward_operation_list
     struct editorContext * operation = list_entry(
             forward_operation_list.prev, struct editorContext, list);
-    editorSetStatusMessage("You Redo: <%c> and <%s> with %d",
-        operation->charInput, operation->content, operation->type);
+    // editorSetStatusMessage("You Redo: <%c> and <%s> with %d",
+    //     operation->charInput, operation->content, operation->type);
     
     E.cx = operation->editorPosBefore.cx;
     E.cy = operation->editorPosBefore.cy;
     E.rowoff = operation->editorPosBefore.rowoff;
     E.coloff = operation->editorPosBefore.coloff;
     
+    iDirty = E.dirty;
     switch(operation->type){
     case INSERT_CHAR:
         editorInsertChar(operation->charInput);
-        editorSetStatusMessage("INSERT_CHAR: <%c> and <%s> with (%d, %d)",
-            operation->charInput, operation->content, E.dirty);
         break;
     case BACKSPACE_CHAR:
         editorBackSpaceChar();
@@ -1612,6 +1623,10 @@ void redo_pressedKey()
         break;
     default:
         break;
+    }
+    if(iDirty >= 0)
+    {
+        E.dirty = iDirty + 1;
     }
     // Need not call free(operation);
     // 2 - Remove from forward_operation_list
@@ -1631,20 +1646,18 @@ void undo_pressedKey()
     // 1 - Get last element from backward_operation_list
     struct editorContext * operation = list_entry(
             backward_operation_list.prev, struct editorContext, list);
-    editorSetStatusMessage("You undo: <%c> and <%s> with %d",
-        operation->charInput, operation->content, operation->type);
+    // editorSetStatusMessage("You undo: <%c> and <%s> with %d",
+    //    operation->charInput, operation->content, operation->type);
     
     E.cx = operation->editorPosAfter.cx;
     E.cy = operation->editorPosAfter.cy;
     E.rowoff = operation->editorPosAfter.rowoff;
     E.coloff = operation->editorPosAfter.coloff;
     
+    iDirty = E.dirty;
     switch(operation->type){
     case INSERT_CHAR:
         editorBackSpaceChar();
-        iDirty = E.dirty;
-        if(E.dirty >= 2)
-            E.dirty -= 2;
         editorSetStatusMessage("INSERT_CHAR: <%c> and <%s> with (%d, %d)",
             operation->charInput, operation->content, iDirty, E.dirty);
         break;
@@ -1655,27 +1668,23 @@ void undo_pressedKey()
         else {
             editorInsertChar(operation->charInput);
         }
-        if(E.dirty >= 2)
-            E.dirty -= 2;
         break;
     case INSERT_WORD:
-        iDirty = E.dirty;
         editorRemoveWord();
-        if(E.dirty >= 1)
-            E.dirty = iDirty - 1;
         break;
     case INSERT_LINE:
-        iDirty = E.dirty;
         filerow = E.rowoff+E.cy;
         editorDelRow(filerow);
-        if(E.dirty >= 1)
-            E.dirty = iDirty - 1;
         break;
     case MERGE_LINE:
         editorInsertNewline();
         break;
     default:
         break;
+    }
+    if(iDirty >= 1)
+    {
+        E.dirty = iDirty - 1;
     }
     // Need not call free(operation);
     // 2 - Remove from backward_operation_list
@@ -1810,7 +1819,9 @@ void editorProcessKeypress(int fd) {
         }
         else
         {
+            iDirty = E.dirty;
             editorInsertLine();
+            E.dirty = iDirty + 1;
 #ifdef _USE_LIST_H_
             record_pressedKey(c, INSERT_LINE, editorPosBefore, TRUE);
 #endif

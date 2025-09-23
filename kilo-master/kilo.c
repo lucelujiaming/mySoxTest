@@ -85,9 +85,9 @@
 struct editorSyntax {
     char **filematch;
     char **keywords;
-    char singleline_comment_start[2];
-    char multiline_comment_start[3];
-    char multiline_comment_end[3];
+    char singleline_comment_start[3];
+    char multiline_comment_start[8];
+    char multiline_comment_end[8];
     int flags;
 };
 
@@ -258,6 +258,28 @@ char *C_HL_keywords[] = {
         "void|","short|","auto|","const|","bool|",NULL
 };
 
+char *python_HL_extensions[] = {".py", NULL};
+char *python_HL_keywords[] = {
+    "False", "None", "True", "and", "as", "assert", 
+    "break", "class", "continue", "def", "del", 
+    "elif", "else", "except", "finally", "for", 
+    "from", "global", "if", "import", "in", 
+    "is", "lambda", "nonlocal", "not", "or", 
+    "pass", "raise", "return", "try", "while", "with", "yield",NULL
+};
+
+char *java_HL_extensions[] = {".java", NULL};
+char *java_HL_keywords[] = {
+    "abstract", "assert", "boolean", "break", "byte", "case", 
+    "catch", "char", "class", "const", "continue", "default", 
+    "do", "double", "else", "enum", "extends", "final", "finally", 
+    "float", "for", "goto", "if", "implements", "import", "instanceof", 
+    "int", "interface", "long", "native", "new", "package", "private", 
+    "protected", "public", "record", "return", "strictfp", "short", 
+    "static", "super", "switch", "synchronized", "this", "throw", 
+    "throws", "transient", "try", "void", "volatile", "while",NULL
+};
+
 /* Here we define an array of syntax highlights by extensions, keywords,
  * comments delimiters and flags. */
 struct editorSyntax HLDB[] = {
@@ -267,7 +289,21 @@ struct editorSyntax HLDB[] = {
         C_HL_keywords,
         "//","/*","*/",
         HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS
-    }
+    },
+    {
+        /* C / C++ */
+        python_HL_extensions,
+        python_HL_keywords,
+        "#","'''","'''",
+        HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS
+    },
+    {
+        /* java */
+        java_HL_extensions,
+        java_HL_keywords,
+        "//","/*","*/",
+        HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS
+    },
 };
 
 #define HLDB_ENTRIES (sizeof(HLDB)/sizeof(HLDB[0]))
@@ -485,7 +521,13 @@ void editorUpdateSyntax(erow *row) {
 
     while(*p) {
         /* Handle // comments. */
-        if (prev_sep && *p == scs[0] && *(p+1) == scs[1]) {
+        if (strlen(scs) == 2 && prev_sep && *p == scs[0] && *(p+1) == scs[1]) {
+            /* From here to end is a comment */
+            memset(row->hl+i,HL_COMMENT,row->size-i);
+            return;
+        }
+        /* Handle # comments. */
+        else if (strlen(scs) == 1 && prev_sep && *p == scs[0]) {
             /* From here to end is a comment */
             memset(row->hl+i,HL_COMMENT,row->size-i);
             return;
@@ -494,9 +536,20 @@ void editorUpdateSyntax(erow *row) {
         /* Handle multi line comments. */
         if (in_comment) {
             row->hl[i] = HL_MLCOMMENT;
-            if (*p == mce[0] && *(p+1) == mce[1]) {
+            /* Handle C type end comments. */
+            if (strlen(mce) == 2 && *p == mce[0] && *(p+1) == mce[1]) {
                 row->hl[i+1] = HL_MLCOMMENT;
                 p += 2; i += 2;
+                in_comment = 0;
+                prev_sep = 1;
+                continue;
+            }
+            /* Handle ''' comments. */
+            else if (strlen(mce) == 3 &&
+                    *p == mce[0] && *(p+1) == mce[1] && *(p+2) == mce[2]) {
+                row->hl[i+1] = HL_MLCOMMENT;
+                row->hl[i+2] = HL_MLCOMMENT;
+                p += 3; i += 3;
                 in_comment = 0;
                 prev_sep = 1;
                 continue;
@@ -505,10 +558,22 @@ void editorUpdateSyntax(erow *row) {
                 p++; i++;
                 continue;
             }
-        } else if (*p == mcs[0] && *(p+1) == mcs[1]) {
+        /* Handle C type start comments. */
+        } else if (strlen(mcs) == 2 &&
+                    *p == mcs[0] && *(p+1) == mcs[1]) {
             row->hl[i] = HL_MLCOMMENT;
             row->hl[i+1] = HL_MLCOMMENT;
             p += 2; i += 2;
+            in_comment = 1;
+            prev_sep = 0;
+            continue;
+        /* Handle ''' comments. */
+        } else if (strlen(mcs) == 3 &&
+                    *p == mcs[0] && *(p+1) == mcs[1] && *(p+2) == mcs[2]) {
+            row->hl[i] = HL_MLCOMMENT;
+            row->hl[i+1] = HL_MLCOMMENT;
+            row->hl[i+2] = HL_MLCOMMENT;
+            p += 3; i += 3;
             in_comment = 1;
             prev_sep = 0;
             continue;

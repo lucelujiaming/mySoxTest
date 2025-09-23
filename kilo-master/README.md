@@ -7,6 +7,8 @@ A screencast is available here: https://asciinema.org/a/90r2i9bq8po03nazhqtsifks
 
 Usage: kilo `<filename>`
 
+Support files: java, c, c++, python
+
 Keys:
     CTRL-C: Copy current word(New Add)
     CTRL-G: Jump to end of file(New Add)
@@ -22,7 +24,9 @@ Keys:
     CTRL-$: Go to end of line(New Add)
     CTRL-Q: Quit
 
-NOTICE: kilo has the refcount error in E.dirty, I will fix it after the national day.
+NOTICE: kilo has the refcount error in E.dirty, I try to fix it in 09/23/25 and check later.
+        kilo has a bug in horizonal scroll, I fix it in 09/23/25.
+        Maybe I could try to add a function of line number.
 
 Kilo does not depend on any library (not even curses). It uses fairly standard
 VT100 (and similar terminals) escape sequences. The project is in alpha

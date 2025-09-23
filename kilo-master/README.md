@@ -18,6 +18,8 @@ Keys:
     CTRL-V: Paste word or line(New Add)
     CTRL-Y: Redo(New Add)
     CTRL-Z: Undo(New Add)
+    CTRL-^: Go to start of line(New Add)
+    CTRL-$: Go to end of line(New Add)
     CTRL-Q: Quit
 
 NOTICE: kilo has the refcount error in E.dirty, I will fix it after the national day.
@@ -33,3 +35,4 @@ style CLI.
 
 Kilo was written by Salvatore Sanfilippo aka antirez and is released
 under the BSD 2 clause license.
+

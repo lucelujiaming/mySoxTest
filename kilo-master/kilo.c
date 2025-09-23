@@ -66,6 +66,8 @@
 #define FALSE 0
 #endif
 
+#define LINE_CONTENT_LENGTH 80
+
 /* Syntax highlight types */
 #define HL_NORMAL 0
 #define HL_NONPRINT 1
@@ -124,7 +126,7 @@ struct editorContext {
     struct editorPos editorPosBefore;
     struct editorPos editorPosAfter;
     enum EDIT_TYPE type;   /* operation type which use to revert */
-    char content[80];
+    char content[LINE_CONTENT_LENGTH];
     int charInput;
     struct list_head list;
 };
@@ -134,6 +136,11 @@ LIST_HEAD(backward_operation_list);
 // Used by redo
 LIST_HEAD(forward_operation_list);
 #endif
+
+enum CLIPBOARD_MODE{
+    COPY_WORD = 0,
+    COPY_LINE,
+};
 
 
 struct editorConfig {
@@ -147,11 +154,11 @@ struct editorConfig {
     erow *row;      /* Rows */
     int dirty;      /* File modified but not saved. */
     char *filename; /* Currently open filename */
-    char statusmsg[80];   /* status message on the bottom of screen */
+    char statusmsg[LINE_CONTENT_LENGTH];   /* status message on the bottom of screen */
     time_t statusmsg_time;
-    char debugmsg[80];    /* debug message on the bottom of screen */
-    char clipboard[80];   /* clipboard */
-    int clipboard_mode; 
+    char debugmsg[LINE_CONTENT_LENGTH];    /* debug message on the bottom of screen */
+    char clipboard[LINE_CONTENT_LENGTH];   /* clipboard */
+    enum CLIPBOARD_MODE clipboard_mode; 
     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
 };
 
@@ -186,8 +193,7 @@ enum KEY_ACTION{
         CTRL_X   = 24,        /* Ctrl-x or Ctrl-X */
         CTRL_Y   = 25,        /* Ctrl-y or Ctrl-Y */
         CTRL_Z   = 26,        /* Ctrl-z or Ctrl-Z */
-        ESC      = 27,        /* Escape */
-        CTRL_SHARP   = 27,    /* Ctrl-# or Ctrl-{ */
+        ESC      = 27,        /* Escape, Ctrl-# or Ctrl-{ */
         CTRL_DOLLAR  = 28,    /* Ctrl-$ or Ctrl-| */
         CTRL_PERCENT = 29,    /* CTRL-% or Ctrl-} */
         CTRL_HAT     = 30,    /* CTRL-^ */
@@ -629,15 +635,18 @@ void editorUpdateRow(erow *row) {
     unsigned int tabs = 0, nonprint = 0;
     int j, idx;
 
-   /* Create a version of the row we can directly print on the screen,
+    /* Create a version of the row we can directly print on the screen,
      * respecting tabs, substituting non printable characters with '?'. */
-    free(row->render);
+    if(row->render) {
+        free(row->render);
+    }
     for (j = 0; j < row->size; j++)
         if (row->chars[j] == TAB) tabs++;
 
     unsigned long long allocsize =
         (unsigned long long) row->size + tabs*8 + nonprint*9 + 1;
     if (allocsize > UINT32_MAX) {
+        printf("row->size = %d, tabs = %d, nonprint = %d\n", row->size, tabs, nonprint);
         printf("Some line of the edited file is too long for kilo\n");
         exit(1);
     }
@@ -684,8 +693,11 @@ void editorInsertRow(int at, char *s, size_t len) {
 /* Free row's heap allocated stuff. */
 void editorFreeRow(erow *row) {
     free(row->render);
+    row->render = NULL;
     free(row->chars);
+    row->chars = NULL;
     free(row->hl);
+    row->hl = NULL;
 }
 
 /* Remove the row at the specified position, shifting the remainign on the
@@ -777,6 +789,13 @@ void editorInsertChar(int c) {
     int filecol = E.coloff+E.cx;
     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
 
+    if(filecol < 0)
+    {
+        sprintf(E.debugmsg, "filecol=%d, E.coloff=%d, E.cx=%d", 
+            filecol, E.coloff, E.cx);
+        return;
+    }
+
     /* If the row where the cursor is currently located does not exist in our
      * logical representaion of the file, add enough empty rows as needed. */
     if (!row) {
@@ -863,9 +882,9 @@ void editorCopyLine(void) {
     {
         return;
     }
-    memset(E.clipboard, 0x00, 80);
+    memset(E.clipboard, 0x00, LINE_CONTENT_LENGTH);
     sprintf(E.clipboard, "%s", row->chars);
-    E.clipboard_mode = 1;
+    E.clipboard_mode = COPY_LINE;
 }
 
 
@@ -897,12 +916,12 @@ void editorCopyWord(void) {
         }
         wordEndPos++;
     }
-    if((wordEndPos > wordStartPos) && (wordEndPos - wordStartPos < 80))
+    if((wordEndPos > wordStartPos) && (wordEndPos - wordStartPos < LINE_CONTENT_LENGTH))
     {
-        memset(E.clipboard, 0x00, 80);
+        memset(E.clipboard, 0x00, LINE_CONTENT_LENGTH);
         memcpy(E.clipboard, row->chars + wordStartPos, wordEndPos - wordStartPos);
-        E.clipboard_mode = 0;
-        memset(E.debugmsg, 0x00, 80);
+        E.clipboard_mode = COPY_WORD;
+        memset(E.debugmsg, 0x00, LINE_CONTENT_LENGTH);
         memcpy(E.debugmsg, row->chars + wordStartPos, wordEndPos - wordStartPos);
     }
     
@@ -957,6 +976,8 @@ void editorBackSpaceChar(void) {
     if (filecol == 0) {
         /* Handle the case of column 0, we need to move the current line
          * on the right of the previous one. */
+        // ????????????????????????????????
+        // It seemed that when I backspace a line, it would make E.coloff be neagtive number
         filecol = E.row[filerow-1].size;
         // Append current line to previous line and update previous line
         editorRowAppendString(&E.row[filerow-1],row->chars,row->size);
@@ -970,10 +991,14 @@ void editorBackSpaceChar(void) {
             E.cy--;
         /* Cursor in the end position of old previous line. */
         E.cx = filecol;
+        // sprintf(E.debugmsg, "cx,screencols=<%d, %d>", E.cx, E.screencols);
         if (E.cx >= E.screencols) {
-            int shift = (E.screencols-E.cx)+1;
+            // This calculation is wrong.
+            // int shift = (E.screencols-E.cx)+1;
+            int shift = (E.cx - E.screencols)+1;
             E.cx -= shift;
             E.coloff += shift;
+            // sprintf(E.debugmsg, "%s, shift,E.coloff=<%d, %d>",E.debugmsg, shift, E.coloff);
         }
     /* We delete a char in a line. */
     } else {
@@ -1093,7 +1118,7 @@ void editorRefreshScreen(void) {
 
         if (filerow >= E.numrows) {
             if (E.numrows == 0 && y == E.screenrows/3) {
-                char welcome[80];
+                char welcome[LINE_CONTENT_LENGTH];
                 int welcomelen = snprintf(welcome,sizeof(welcome),
                     "Kilo editor -- verison %s\x1b[0K\r\n", KILO_VERSION);
                 int padding = (E.screencols-welcomelen)/2;
@@ -1160,7 +1185,7 @@ void editorRefreshScreen(void) {
                                         the end of the line, including the cursor position, 
                                         without affecting the line attributes. */
     abAppend(&ab,"\x1b[7m",4);       /* Negative Display */
-    char status[80], rstatus[80];
+    char status[LINE_CONTENT_LENGTH], rstatus[LINE_CONTENT_LENGTH];
     int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
         E.filename, E.numrows, E.dirty ? "(modified)" : "");
     int rlen = snprintf(rstatus, sizeof(rstatus),
@@ -1168,11 +1193,22 @@ void editorRefreshScreen(void) {
     if (len > E.screencols) len = E.screencols;
     abAppend(&ab,status,len);
     /* Print enough space and rstatus */
-    sprintf(strDebugMsg, "%s-<%d>", E.debugmsg, E.dirty);
+    // sprintf(strDebugMsg, "%s-<%d>", E.debugmsg, E.dirty);
+    sprintf(strDebugMsg, "%s", E.debugmsg);
     int iDebugMsgLen = strlen(strDebugMsg);
+    char cursorInfo[LINE_CONTENT_LENGTH];
+    sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
+        E.cx, E.cy, E.rowoff, E.coloff);
+    int iCursorInfoLen = strlen(cursorInfo);
     while(len < E.screencols) {
         /* If Left cols can fill rstatus, we print rstatus. */
-        if (E.screencols - (len + iDebugMsgLen + 2)  == rlen) {
+        if (E.screencols - (len + iDebugMsgLen + iCursorInfoLen + 4)  == rlen) {
+            if(iCursorInfoLen > 0)
+            {
+                abAppend(&ab,cursorInfo, iCursorInfoLen);
+            }
+            abAppend(&ab,"-",1);
+            abAppend(&ab,"-",1);
             if(iDebugMsgLen > 0)
             {
                 abAppend(&ab,strDebugMsg, iDebugMsgLen);
@@ -1405,9 +1441,11 @@ void editorMoveCursor(int key) {
     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
 
     switch(key) {
+    // It seemed that when I backspace a line, it would make E.coloff be neagtive number
     case ARROW_LEFT:
         if (E.cx == 0) {
-            if (E.coloff) {
+            // if (E.coloff) {
+            if (E.coloff > 0) {
                 E.coloff--;
             } else {
                 if (filerow > 0) {
@@ -1483,7 +1521,7 @@ void record_pressedKey(int c, enum EDIT_TYPE type,
     operation->editorPosAfter.coloff = E.coloff;
     operation->type = type;
     operation->charInput = c;
-    memset(operation->content, 0x00, 80);
+    memset(operation->content, 0x00, LINE_CONTENT_LENGTH);
     if((type == INSERT_WORD) || (type == INSERT_LINE))
     {
         strcpy(operation->content, E.clipboard);
@@ -1500,6 +1538,19 @@ void record_pressedKey(int c, enum EDIT_TYPE type,
         }
     }
 }
+
+/* Insert the specified char at the current prompt position. */
+void editorJumpToStart() {
+    E.cx = 0;
+}
+
+/* Insert the specified char at the current prompt position. */
+void editorJumpToEnd() {
+    int filerow = E.rowoff+E.cy;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    E.cx = strlen(row->chars);
+}
+
 
 int getPreviousChar(void) {
     int filerow = E.rowoff+E.cy;
@@ -1655,7 +1706,7 @@ void editorProcessKeypress(int fd) {
     static int quit_times = KILO_QUIT_TIMES;
     int d = 0, iDirty = 0;
     int c = editorReadKey(fd);
-    memset(E.debugmsg, 0x00, 80);
+    memset(E.debugmsg, 0x00, LINE_CONTENT_LENGTH);
 #ifdef _USE_LIST_H_
         editorPosBefore = getCurrentPos();
 #endif
@@ -1735,6 +1786,7 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_R:        /* Ctrl-r */
         sprintf(E.debugmsg, "Ctrl-r");
+        editorRefreshScreen();
         break;
     case CTRL_S:        /* Ctrl-s */
         editorSave();
@@ -1742,12 +1794,12 @@ void editorProcessKeypress(int fd) {
     case CTRL_T:        /* Ctrl-t */
         sprintf(E.debugmsg, "Ctrl-t");
         break;
-    case CTRL_U:        /* Ctrl-j */
+    case CTRL_U:        /* Ctrl-u */
         sprintf(E.debugmsg, "Ctrl-u");
         break;
-    case CTRL_V:        /* Ctrl-j */
+    case CTRL_V:        /* Ctrl-v */
         sprintf(E.debugmsg, "Ctrl-v");
-        if(E.clipboard_mode == 0)
+        if(E.clipboard_mode == COPY_WORD)
         {
             iDirty = E.dirty;
             editorInsertWord();
@@ -1764,23 +1816,37 @@ void editorProcessKeypress(int fd) {
 #endif
         }
         break;
-    case CTRL_W:        /* Ctrl-j */
+    case CTRL_W:        /* Ctrl-w */
         sprintf(E.debugmsg, "Ctrl-w");
         break;
-    case CTRL_X:        /* Ctrl-j */
+    case CTRL_X:        /* Ctrl-x */
         sprintf(E.debugmsg, "Ctrl-x");
         break;
-    case CTRL_Y:        /* Ctrl-j */
+    case CTRL_Y:        /* Ctrl-y */
         sprintf(E.debugmsg, "Ctrl-y");
 #ifdef _USE_LIST_H_
         redo_pressedKey();
 #endif
         break;
-    case CTRL_Z:        /* Ctrl-j */
+    case CTRL_Z:        /* Ctrl-z */
         sprintf(E.debugmsg, "Ctrl-z");
 #ifdef _USE_LIST_H_
         undo_pressedKey();
 #endif
+        break;
+    case CTRL_DOLLAR:        /* Ctrl-$ or Ctrl-| */
+        sprintf(E.debugmsg, "Ctrl-$");
+        editorJumpToEnd();
+        break;
+    case CTRL_PERCENT:        /* CTRL-% or Ctrl-} */
+        sprintf(E.debugmsg, "Ctrl-%%");
+        break;
+    case CTRL_HAT:        /* CTRL-^ */
+        sprintf(E.debugmsg, "Ctrl-^");
+        editorJumpToStart();
+        break;
+    case CTRL_AND:        /* CTRL-& or Ctrl-? */
+        sprintf(E.debugmsg, "Ctrl-&");
         break;
     case BACKSPACE:     /* Backspace */
         d = getPreviousChar();

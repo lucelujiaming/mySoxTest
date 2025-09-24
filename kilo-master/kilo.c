@@ -124,6 +124,8 @@ enum EDIT_TYPE{
     INSERT_LINE,
     MERGE_LINE,
     DELETE_WORD,
+    REVERT_CHAR,
+    EXHANGE_WORDS,
 };
 
 struct editorPos {
@@ -1060,7 +1062,6 @@ void editorCopyWord(void) {
     
 }
 
-
 void editorDeleteWord() {
     BOOL bIsEndWordOfLine = FALSE;
     int i = 0;
@@ -1150,6 +1151,165 @@ void editorDeleteWord() {
         // d = getPreviousChar();
         editorBackSpaceChar();
     }
+}
+
+BOOL editorRevertCase() {
+    int filerow = E.rowoff+E.cy;
+    int filecol = E.coloff+E.cx;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    
+    memset(E.clipboard, 0x00, LINE_CONTENT_LENGTH);
+    memset(E.debugmsg, 0x00, LINE_CONTENT_LENGTH);
+    /* If we delete in the beginning, we need not to do anything. */ 
+    if (!row)
+    {   
+        sprintf(E.debugmsg, "row empty");
+        return FALSE;
+    }
+    if(isupper(row->chars[filecol]))
+    {
+        row->chars[filecol] = tolower(row->chars[filecol]);
+    }
+    else if(islower(row->chars[filecol]))
+    {
+        row->chars[filecol] = toupper(row->chars[filecol]);
+    }
+    else {
+        return FALSE;
+    }
+    editorUpdateRow(row);
+    return TRUE;
+}
+
+BOOL editorExchangeWords() {
+    BOOL bIsEndWordOfLine = FALSE;
+    int iSpaceCount = 0;
+    int filerow = E.rowoff+E.cy;
+    int filecol = E.coloff+E.cx;
+    int wordStartPos = filecol, wordEndPos = filecol;
+    int secondWordStartPos = filecol, secondWordEndPos = filecol;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    
+    memset(E.clipboard, 0x00, LINE_CONTENT_LENGTH);
+    memset(E.debugmsg, 0x00, LINE_CONTENT_LENGTH);
+    /* If we delete in the beginning, we need not to do anything. */ 
+    if (!row)
+    {   
+        sprintf(E.debugmsg, "row empty");
+        return FALSE;
+    }
+    // if current word is not sapce
+    if(!isspace(row->chars[wordStartPos])) {
+        // When wordStartPos is zero, wordStartPos should be zero
+        while(wordStartPos > 0)
+        {
+            // When we find the space before current word we need to 
+            // go back to the start of current word.
+            if(isspace(row->chars[wordStartPos]))
+            {
+                wordStartPos++;
+                break;
+            }
+            wordStartPos--;
+        }
+        
+        while(wordEndPos >= 0)
+        {
+            // When we remove a word we need to remove 
+            // the following space at the same time.
+            if(isspace(row->chars[wordEndPos]))
+            {
+                wordEndPos++;
+                break;
+            }
+            // We can not remove a whole line
+            else if(row->chars[wordEndPos]== '\0') {
+                bIsEndWordOfLine = TRUE;
+                break;
+            }
+            wordEndPos++;
+        }
+    }
+    
+    if(bIsEndWordOfLine == TRUE) {
+        sprintf(E.debugmsg, "%d: wordPos=(%d, %d) at %d", 
+                __LINE__, wordStartPos, wordEndPos, filecol);
+        return FALSE;
+    }
+    if((wordEndPos > wordStartPos) && 
+        (wordEndPos - wordStartPos < LINE_CONTENT_LENGTH))
+    {
+        bIsEndWordOfLine = FALSE;
+        secondWordStartPos = wordEndPos;
+        while(secondWordStartPos > 0)
+        {
+            // When we find the space before current word we need to 
+            // go back to the start of current word.
+            if(isspace(row->chars[secondWordStartPos]))
+            {
+                secondWordStartPos++;
+            }
+            // We can not remove a whole line
+            else if(row->chars[secondWordStartPos]== '\0') {
+                bIsEndWordOfLine = TRUE;
+                break;
+            }
+            else {
+                break;
+            }
+        }
+        if(bIsEndWordOfLine == TRUE) {
+            sprintf(E.debugmsg, "%d: wordPos=(%d, %d) at %d", 
+                    __LINE__, wordStartPos, wordEndPos, filecol);
+            return FALSE;
+        }
+        iSpaceCount = secondWordStartPos - wordEndPos;
+        
+        secondWordEndPos = secondWordStartPos;
+        while(secondWordEndPos >= 0)
+        {
+            // When we remove a word we need to remove 
+            // the following space at the same time.
+            if(isspace(row->chars[secondWordEndPos]))
+            {
+                wordEndPos++;
+                break;
+            }
+            // We can not remove a whole line
+            else if(row->chars[secondWordEndPos]== '\0') {
+                bIsEndWordOfLine = TRUE;
+                break;
+            }
+            secondWordEndPos++;
+        }
+        // if(bIsEndWordOfLine == TRUE) {
+        //      sprintf(E.debugmsg, "%d: secondWordPos=(%d, %d) at %d", 
+        //              __LINE__, secondWordStartPos, secondWordEndPos, filecol);
+        //     return FALSE;
+        // }
+        if((secondWordEndPos > secondWordStartPos) &&
+            (secondWordEndPos - secondWordStartPos < LINE_CONTENT_LENGTH))
+        {
+            // We use E.clipboard to switch words
+            memcpy(E.clipboard, 
+                row->chars + secondWordStartPos, secondWordEndPos - secondWordStartPos);
+            sprintf(E.debugmsg, "%d: iSpaceCount=(%d)", __LINE__, iSpaceCount);
+            for(int i = 0; i < iSpaceCount + 1; i++) {
+                memcpy(E.clipboard + secondWordEndPos - secondWordStartPos + i, "  ", 1);
+            }
+            memcpy(E.clipboard + secondWordEndPos - secondWordStartPos + 1 + iSpaceCount, 
+                row->chars + wordStartPos, wordEndPos - wordStartPos);
+            memcpy(row->chars + wordStartPos, E.clipboard, secondWordEndPos - wordStartPos);
+            editorUpdateRow(row);
+            // sprintf(E.debugmsg, "%d: secondWordPos=(%d, %d) at %d", 
+            //        __LINE__, secondWordStartPos, secondWordEndPos, filecol);
+            E.dirty++;
+            return TRUE;
+        }
+    }
+    sprintf(E.debugmsg, "%d: wordPos=(%d, %d) at %d", 
+            __LINE__, wordStartPos, wordEndPos, filecol);
+    return FALSE;
 }
 
 void editorMergeLine()
@@ -1822,6 +1982,19 @@ int getPreviousChar(void) {
     }
 }
 
+int getCurrentChar(void) {
+    int filerow = E.rowoff+E.cy;
+    int filecol = E.coloff+E.cx;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    
+    /* If we delete in the beginning, we need not to do anything. */ 
+    if (!row || (filecol == 0 && filerow == 0))
+    {
+        return -1;
+    }
+    return row->chars[filecol];
+}
+
 
 void redo_pressedKey()
 {
@@ -1862,6 +2035,12 @@ void redo_pressedKey()
         break;
     case DELETE_WORD:
         editorRemoveWord(operation->content);
+        break;
+    case REVERT_CHAR:
+        editorRevertCase();
+        break;
+    case EXHANGE_WORDS:
+        editorExchangeWords();
         break;
     default:
         break;
@@ -1924,6 +2103,12 @@ void undo_pressedKey()
     case DELETE_WORD:
         sprintf(E.debugmsg, "<%s>", operation->content);
         editorInsertWord(operation->content);
+        break;
+    case REVERT_CHAR:
+        editorRevertCase();
+        break;
+    case EXHANGE_WORDS:
+        editorExchangeWords();
         break;
     default:
         break;
@@ -2056,6 +2241,14 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_U:        /* Ctrl-u */
         sprintf(E.debugmsg, "Ctrl-u");
+        BOOL bRevert = editorRevertCase();
+        if(bRevert) {
+#ifdef _USE_LIST_H_
+            record_pressedKey(getCurrentChar(), 
+                    REVERT_CHAR, editorPosBefore, TRUE);
+#endif     
+        }
+        editorMoveCursor(ARROW_RIGHT);
         break;
     case CTRL_V:        /* Ctrl-v */
         sprintf(E.debugmsg, "Ctrl-v");
@@ -2085,6 +2278,10 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_X:        /* Ctrl-x */
         sprintf(E.debugmsg, "Ctrl-x");
+        editorExchangeWords();
+#ifdef _USE_LIST_H_
+            record_pressedKey(c, EXHANGE_WORDS, editorPosBefore, TRUE);
+#endif
         break;
     case CTRL_Y:        /* Ctrl-y */
         sprintf(E.debugmsg, "Ctrl-y");

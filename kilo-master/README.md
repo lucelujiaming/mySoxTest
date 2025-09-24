@@ -19,10 +19,10 @@ Keys:
     CTRL-L: Copy current line(New Add)
     CTRL-N: Go to line(New Add)
     CTRL-S: Save
-    CTRL-U: Switch uppercase and lowercase(Not implement yet)
+    CTRL-U: Switch uppercase and lowercase
     CTRL-V: Paste word or line(New Add)
     CTRL-W: Move forward by word
-    CTRL-X: switch word(Not implement yet)
+    CTRL-X: switch word(New Add)
     CTRL-Y: Redo(New Add)
     CTRL-Z: Undo(New Add)
     CTRL-^: Go to start of line(New Add)

@@ -10,14 +10,19 @@ Usage: kilo `<filename>`
 Support files: java, c, c++, python
 
 Keys:
+    CTRL-B: Move backward by word(New Add)
     CTRL-C: Copy current word(New Add)
+    CTRL-D: remove word(New Add)
     CTRL-G: Jump to end of file(New Add)
     CTRL-F: Find string in file (ESC to exit search, arrows to navigate)
     CTRL-J: Merge current line to previous line(New Add)
     CTRL-L: Copy current line(New Add)
     CTRL-N: Go to line(New Add)
     CTRL-S: Save
+    CTRL-U: Switch uppercase and lowercase(Not implement yet)
     CTRL-V: Paste word or line(New Add)
+    CTRL-W: Move forward by word
+    CTRL-X: switch word(Not implement yet)
     CTRL-Y: Redo(New Add)
     CTRL-Z: Undo(New Add)
     CTRL-^: Go to start of line(New Add)

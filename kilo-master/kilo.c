@@ -68,6 +68,15 @@
 
 #define LINE_CONTENT_LENGTH 80
 
+
+/* Syntax highlight types */
+enum MOVE_TYPE{
+    MOVE_FORWARD_BY_WORD = 0,
+    MOVE_BACKWARD_BY_WORD,
+    MOVE_FORWARD_BY_SECTION,
+    MOVE_BACKWARD_BY_SECTION
+};
+
 /* Syntax highlight types */
 #define HL_NORMAL 0
 #define HL_NONPRINT 1
@@ -114,6 +123,7 @@ enum EDIT_TYPE{
     INSERT_WORD,
     INSERT_LINE,
     MERGE_LINE,
+    DELETE_WORD,
 };
 
 struct editorPos {
@@ -139,7 +149,10 @@ LIST_HEAD(forward_operation_list);
 
 enum CLIPBOARD_MODE{
     COPY_WORD = 0,
+    COPY_ENTER,
     COPY_LINE,
+    REMOVE_WORD,
+    SWITCH_WORD,
 };
 
 
@@ -212,6 +225,7 @@ enum KEY_ACTION{
         PAGE_DOWN
 };
 
+void editorMoveCursor(int key);
 void editorBackSpaceChar(void);
 void editorSetStatusMessage(const char *fmt, ...);
 
@@ -914,18 +928,18 @@ fixcursor:
 }
 
 
-void editorInsertWord()
+void editorInsertWord(char * strContent)
 {
-    for(int i = 0; i < (int)strlen(E.clipboard); i++)
+    for(int i = 0; i < (int)strlen(strContent); i++)
     {
-        editorInsertChar(E.clipboard[i]);
+        editorInsertChar(strContent[i]);
     }
 }
 
 
-void editorRemoveWord()
+void editorRemoveWord(char * strContent)
 {
-    for(int i = 0; i < (int)strlen(E.clipboard); i++)
+    for(int i = 0; i < (int)strlen(strContent); i++)
     {
         editorBackSpaceChar();
     }
@@ -952,6 +966,60 @@ void editorCopyLine(void) {
     E.clipboard_mode = COPY_LINE;
 }
 
+void editorLargeJump(enum MOVE_TYPE moveType) {
+    int i = 0;
+    int filerow = E.rowoff+E.cy;
+    int filecol = E.coloff+E.cx;
+    int wordStartPos = filecol, wordEndPos = filecol;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    /* If we delete in the beginning, we need not to do anything. */ 
+    if (!row)
+    {
+        return;
+    }
+    if((moveType == MOVE_FORWARD_BY_WORD) || (moveType == MOVE_BACKWARD_BY_WORD)) {
+        while(wordStartPos >= 0)
+        {
+            if(is_separator(row->chars[wordStartPos]))
+            {
+                break;
+            }
+            wordStartPos--;
+        }
+        
+        while(wordEndPos >= 0)
+        {
+            if(is_separator(row->chars[wordEndPos]))
+            {
+                break;
+            }
+            wordEndPos++;
+        }
+    }
+    switch(moveType) {
+    case MOVE_FORWARD_BY_WORD:
+        // sprintf(E.debugmsg, "MOVE_FORWARD_BY_WORD for %d step(s).", wordEndPos - filecol);
+        for(i = 0; i <= wordEndPos - filecol; i++)
+        {
+            editorMoveCursor(ARROW_RIGHT);
+        }
+        break;
+    case MOVE_BACKWARD_BY_WORD:
+        // sprintf(E.debugmsg, "MOVE_BACKWARD_BY_WORD for %d step(s).", filecol - wordStartPos);
+        for(i = 0; i <= filecol - wordStartPos; i++)
+        {
+            editorMoveCursor(ARROW_LEFT);
+        }
+        break;
+    case MOVE_FORWARD_BY_SECTION:
+        break;
+    case MOVE_BACKWARD_BY_SECTION:
+        break;
+    default:
+        sprintf(E.debugmsg, "Unsupported move type");
+        break;
+    }
+}
 
 void editorCopyWord(void) {
     int filerow = E.rowoff+E.cy;
@@ -992,6 +1060,97 @@ void editorCopyWord(void) {
     
 }
 
+
+void editorDeleteWord() {
+    BOOL bIsEndWordOfLine = FALSE;
+    int i = 0;
+    int filerow = E.rowoff+E.cy;
+    int filecol = E.coloff+E.cx;
+    int wordStartPos = filecol, wordEndPos = filecol;
+    erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+    
+    memset(E.clipboard, 0x00, LINE_CONTENT_LENGTH);
+    memset(E.debugmsg, 0x00, LINE_CONTENT_LENGTH);
+    /* If we delete in the beginning, we need not to do anything. */ 
+    if (!row)
+    {   
+        sprintf(E.debugmsg, "row empty");
+        return;
+    }
+    // if current word is not sapce
+    if(!isspace(row->chars[wordStartPos])) {
+        // When wordStartPos is zero, wordStartPos should be zero
+        while(wordStartPos > 0)
+        {
+            // When we find the space before current word we need to 
+            // go back to the start of current word.
+            if(isspace(row->chars[wordStartPos]))
+            {
+                wordStartPos++;
+                break;
+            }
+            wordStartPos--;
+        }
+        
+        while(wordEndPos >= 0)
+        {
+            // When we remove a word we need to remove 
+            // the following space at the same time.
+            if(isspace(row->chars[wordEndPos]))
+            {
+                wordEndPos++;
+                break;
+            }
+            // We can not remove a whole line
+            else if(row->chars[wordEndPos]== '\0') {
+                bIsEndWordOfLine = TRUE;
+                break;
+            }
+            wordEndPos++;
+        }
+    }
+    if((wordEndPos > wordStartPos) && (wordEndPos - wordStartPos < LINE_CONTENT_LENGTH))
+    {
+        memcpy(E.clipboard, row->chars + wordStartPos, wordEndPos - wordStartPos);
+        E.clipboard_mode = REMOVE_WORD;
+        // memcpy(E.debugmsg, row->chars + wordStartPos, wordEndPos - wordStartPos);
+        sprintf(E.debugmsg, "wordPos=(%d, %d) at %d", 
+            wordStartPos, wordEndPos, filecol);
+
+        if(bIsEndWordOfLine == TRUE) {
+            for(i = 0; i <= wordEndPos - filecol - 1; i++)
+            {
+                editorMoveCursor(ARROW_RIGHT);
+            }
+        }
+        else {
+            for(i = 0; i <= wordEndPos - filecol - 1; i++)
+            {
+                editorMoveCursor(ARROW_RIGHT);
+            }
+        }
+        
+        for(i = 0; i < wordEndPos - wordStartPos; i++)
+        {
+            editorBackSpaceChar();
+        }
+    }
+    else if(wordEndPos == wordStartPos) {
+        if(row->chars[wordStartPos] == '\0') {
+            E.clipboard_mode = COPY_ENTER;
+            sprintf(E.debugmsg, "CHAR=<ENTER>");
+        }
+        else {
+            memcpy(E.clipboard, row->chars + wordStartPos, 1);
+            E.clipboard_mode = COPY_WORD;
+            sprintf(E.debugmsg, "CHAR=%d", row->chars[wordStartPos]);
+        }
+        
+        editorMoveCursor(ARROW_RIGHT);
+        // d = getPreviousChar();
+        editorBackSpaceChar();
+    }
+}
 
 void editorMergeLine()
 {
@@ -1273,8 +1432,9 @@ void editorRefreshScreen(void) {
     // sprintf(strDebugMsg, "%s", E.debugmsg);
     int iDebugMsgLen = strlen(strDebugMsg);
     char cursorInfo[LINE_CONTENT_LENGTH] = {0};
+    // Used for debug purpose.
     // sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
-    //    E.cx, E.cy, E.rowoff, E.coloff);
+    //     E.cx, E.cy, E.rowoff, E.coloff);
     int iCursorInfoLen = strlen(cursorInfo);
     while(len < E.screencols) {
         /* If Left cols can fill rstatus, we print rstatus. */
@@ -1598,9 +1758,13 @@ void record_pressedKey(int c, enum EDIT_TYPE type,
     operation->type = type;
     operation->charInput = c;
     memset(operation->content, 0x00, LINE_CONTENT_LENGTH);
-    if((type == INSERT_WORD) || (type == INSERT_LINE))
+    if((type == INSERT_WORD) || (type == DELETE_WORD) || (type == INSERT_LINE))
     {
         strcpy(operation->content, E.clipboard);
+    }
+    if(E.clipboard_mode == COPY_ENTER)
+    {
+        operation->type = MERGE_LINE;
     }
     list_add_tail(&operation->list, &backward_operation_list);
     if(is_clear_forward)
@@ -1618,13 +1782,23 @@ void record_pressedKey(int c, enum EDIT_TYPE type,
 /* Insert the specified char at the current prompt position. */
 void editorJumpToStart() {
     E.cx = 0;
+    E.coloff = 0;
 }
 
 /* Insert the specified char at the current prompt position. */
 void editorJumpToEnd() {
     int filerow = E.rowoff+E.cy;
     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
-    E.cx = strlen(row->chars);
+    int rowLength = strlen(row->chars);
+    if(rowLength > E.screencols)
+    {
+        E.coloff = (rowLength - E.screencols) + 1;
+        E.cx = E.screencols - 1;
+    }
+    else
+    {
+        E.cx = rowLength;
+    }
 }
 
 
@@ -1678,13 +1852,16 @@ void redo_pressedKey()
         editorBackSpaceChar();
         break;
     case INSERT_WORD:
-        editorInsertWord();
+        editorInsertWord(operation->content);
         break;
     case INSERT_LINE:
         editorInsertLine();
         break;
     case MERGE_LINE:
         editorMergeLine();
+        break;
+    case DELETE_WORD:
+        editorRemoveWord(operation->content);
         break;
     default:
         break;
@@ -1735,7 +1912,7 @@ void undo_pressedKey()
         }
         break;
     case INSERT_WORD:
-        editorRemoveWord();
+        editorRemoveWord(operation->content);
         break;
     case INSERT_LINE:
         filerow = E.rowoff+E.cy;
@@ -1743,6 +1920,10 @@ void undo_pressedKey()
         break;
     case MERGE_LINE:
         editorInsertNewline();
+        break;
+    case DELETE_WORD:
+        sprintf(E.debugmsg, "<%s>", operation->content);
+        editorInsertWord(operation->content);
         break;
     default:
         break;
@@ -1796,6 +1977,7 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_B:        /* Ctrl-b */
         sprintf(E.debugmsg, "Ctrl-b");
+        editorLargeJump(MOVE_BACKWARD_BY_WORD);
         break;
     case CTRL_C:        /* Ctrl-c */
         /* We ignore ctrl-c, it can't be so simple to lose the changes
@@ -1804,6 +1986,10 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_D:        /* Ctrl-d */
         sprintf(E.debugmsg, "Ctrl-d");
+        editorDeleteWord();
+#ifdef _USE_LIST_H_
+        record_pressedKey(c, DELETE_WORD, editorPosBefore, TRUE);
+#endif
         break;
     case CTRL_E:        /* Ctrl-e */
         sprintf(E.debugmsg, "Ctrl-e");
@@ -1873,16 +2059,17 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_V:        /* Ctrl-v */
         sprintf(E.debugmsg, "Ctrl-v");
-        if(E.clipboard_mode == COPY_WORD)
+        if((E.clipboard_mode == COPY_WORD) || 
+            (E.clipboard_mode == REMOVE_WORD))
         {
             iDirty = E.dirty;
-            editorInsertWord();
+            editorInsertWord(E.clipboard);
             E.dirty = iDirty + 1;
 #ifdef _USE_LIST_H_
             record_pressedKey(c, INSERT_WORD, editorPosBefore, TRUE);
 #endif
         }
-        else
+        else if(E.clipboard_mode == COPY_LINE)
         {
             iDirty = E.dirty;
             editorInsertLine();
@@ -1894,6 +2081,7 @@ void editorProcessKeypress(int fd) {
         break;
     case CTRL_W:        /* Ctrl-w */
         sprintf(E.debugmsg, "Ctrl-w");
+        editorLargeJump(MOVE_FORWARD_BY_WORD);
         break;
     case CTRL_X:        /* Ctrl-x */
         sprintf(E.debugmsg, "Ctrl-x");

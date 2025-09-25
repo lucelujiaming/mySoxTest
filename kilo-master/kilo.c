@@ -1078,7 +1078,7 @@ void editorDeleteWord() {
         sprintf(E.debugmsg, "row empty");
         return;
     }
-    // if current word is not sapce
+    // if current word is not space
     if(!isspace(row->chars[wordStartPos])) {
         // When wordStartPos is zero, wordStartPos should be zero
         while(wordStartPos > 0)
@@ -1108,6 +1108,28 @@ void editorDeleteWord() {
                 break;
             }
             wordEndPos++;
+        }
+    }
+    // if current word is space, combine all of space.
+    else {
+        while(wordEndPos >= 0)
+        {
+            // When we remove a word we need to remove 
+            // the following space at the same time.
+            if(isspace(row->chars[wordEndPos]))
+            {
+                wordEndPos++;
+            }
+            // We can not remove a whole line
+            else if(row->chars[wordEndPos]== '\0') {
+                bIsEndWordOfLine = TRUE;
+                break;
+            }
+            // We reach the next word
+            else {
+                // wordEndPos--;
+                break;
+            }
         }
     }
     if((wordEndPos > wordStartPos) && (wordEndPos - wordStartPos < LINE_CONTENT_LENGTH))
@@ -1593,8 +1615,8 @@ void editorRefreshScreen(void) {
     int iDebugMsgLen = strlen(strDebugMsg);
     char cursorInfo[LINE_CONTENT_LENGTH] = {0};
     // Used for debug purpose.
-    // sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
-    //     E.cx, E.cy, E.rowoff, E.coloff);
+    sprintf(cursorInfo, "(E.cx/cy/rowoff/coloff=<%d,%d,%d,%d>)", 
+         E.cx, E.cy, E.rowoff, E.coloff);
     int iCursorInfoLen = strlen(cursorInfo);
     while(len < E.screencols) {
         /* If Left cols can fill rstatus, we print rstatus. */
@@ -1845,7 +1867,14 @@ void editorMoveCursor(int key) {
                 E.coloff--;
             } else {
                 if (filerow > 0) {
-                    E.cy--;
+                    // E.cy--;
+                    // We can not decrease it simply.
+                    // We need to scroll when E.cy is zero.
+                    if (E.cy == 0) {
+                        if (E.rowoff) E.rowoff--;
+                    } else {
+                        E.cy -= 1;
+                    }
                     E.cx = E.row[filerow-1].size;
                     if (E.cx > E.screencols-1) {
                         E.coloff = E.cx-E.screencols+1;
@@ -2008,8 +2037,8 @@ void redo_pressedKey()
     // 1 - Get last element from forward_operation_list
     struct editorContext * operation = list_entry(
             forward_operation_list.prev, struct editorContext, list);
-    // editorSetStatusMessage("You Redo: <%c> and <%s> with %d",
-    //     operation->charInput, operation->content, operation->type);
+    editorSetStatusMessage("You Redo: <%c> and <%s> with %d",
+         operation->charInput, operation->content, operation->type);
     
     E.cx = operation->editorPosBefore.cx;
     E.cy = operation->editorPosBefore.cy;
@@ -2034,6 +2063,10 @@ void redo_pressedKey()
         editorMergeLine();
         break;
     case DELETE_WORD:
+        for(int i = 0; i < (int)strlen(operation->content); i++)
+        {
+            editorMoveCursor(ARROW_RIGHT);
+        }
         editorRemoveWord(operation->content);
         break;
     case REVERT_CHAR:

@@ -19,7 +19,7 @@ Keys:
     CTRL-L: Copy current line(New Add)
     CTRL-N: Go to line(New Add)
     CTRL-S: Save
-    CTRL-U: Switch uppercase and lowercase
+    CTRL-U: Switch uppercase and lowercase(New Add)
     CTRL-V: Paste word or line(New Add)
     CTRL-W: Move forward by word
     CTRL-X: switch word(New Add)
@@ -29,8 +29,9 @@ Keys:
     CTRL-$: Go to end of line(New Add)
     CTRL-Q: Quit
 
-NOTICE: kilo has the refcount error in E.dirty, I try to fix it in 09/23/25 and check later.
-        kilo has a bug in horizonal scroll, I fix it in 09/23/25.
+NOTICE: kilo has the refcount error in E.dirty, I try to fix it in 09/23/2025 and check later.
+        kilo has a bug in horizonal scroll, I fix it in 09/23/2025.
+        kilo would not scroll up with ARROW_LEFT, I fix it in 09/25/2025.
         Maybe I could try to add a function of line number.
 
 Kilo does not depend on any library (not even curses). It uses fairly standard

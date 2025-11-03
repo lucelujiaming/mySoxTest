@@ -1,0 +1,74 @@
+#include <stdint.h>
+#include <stdio.h>
+
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#define CH32V006_PATH "/dev/ch32v006"
+
+void print_buffer(char * cFunc, char * cDataPtr, int iLen)
+{
+    printf("%s return  %d\n", cFunc, iLen);
+    for(int i = 0 ; i < iLen; i++)
+    {
+     	printf("<%02X> ", cDataPtr[i]);
+    }
+    printf("\nEnd of %s and len is %d\n", cFunc, iLen);
+    
+}
+
+int main(int argc, char ** argv)
+{    
+    FILE *fp = NULL ;
+    char cData[32];
+    int iReadLen = 0;
+    
+    fp = fopen(CH32V006_PATH, "rb+");
+    if (fp == NULL)
+    {
+		printf("fopen %s failed\n", CH32V006_PATH);
+        return -1;
+    }
+    memset(cData, 0x00, 12);
+    iReadLen = fread(cData, sizeof(char), 16, fp);
+    if(iReadLen > 0)
+    {
+        print_buffer("read", cData, iReadLen);
+    }
+    fclose(fp);
+        
+    for(int i = 0 ; i < 16; i++)
+    {
+     	cData[i] = 0x10 + i;
+    }
+    
+    fp = fopen(CH32V006_PATH, "rb+");
+    int iWriteLen = fwrite(cData, sizeof(char), 16, fp);
+    printf("white return  %d\n", iWriteLen);
+    fclose(fp);
+    
+    fp = fopen(CH32V006_PATH, "rb+");
+    fseek(fp, 0, SEEK_SET);
+    printf("fseek to  0\n");
+    iWriteLen = fwrite(cData, sizeof(char), 16, fp);
+    printf("white return  %d\n", iWriteLen);
+    fclose(fp);
+    
+    fp = fopen(CH32V006_PATH, "rb+");
+    memset(cData, 0x00, 16);
+    iReadLen = fread(cData, sizeof(char), 16, fp);
+    if(iReadLen > 0)
+    {
+        print_buffer("read", cData, iReadLen);
+    }
+    fclose(fp);
+    return 0;
+}
+

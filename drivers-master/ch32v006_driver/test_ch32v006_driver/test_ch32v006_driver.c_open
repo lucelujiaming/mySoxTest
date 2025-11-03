@@ -1,0 +1,57 @@
+#include <stdint.h>
+#include <stdio.h>
+
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#define CH32V006_PATH "/dev/ch32v006"
+
+void print_buffer(char * cFunc, char * cDataPtr, int iLen)
+{
+    printf("%s return  %d\n", cFunc, iLen);
+    for(int i = 0 ; i < iLen; i++)
+    {
+     	printf("<%02X> ", cDataPtr[i]);
+    }
+    printf("\nEnd of %s and len is %d\n", cFunc, iLen);
+    
+}
+
+int main(int argc, char ** argv)
+{    
+    int fd ;
+    char cData[32];
+    memset(cData, 0x00, 12);
+    fd = open(CH32V006_PATH, O_RDWR);
+    if (fd == -1)
+    {
+		printf("fopen %s failed\n", CH32V006_PATH);
+        return -1;
+    }
+    
+    int iReadLen = read(fd, cData, 16);
+    print_buffer("read", cData, 16);
+    
+    seek(fd, 0, SEEK_SET);
+    for(int i = 0 ; i < iReadLen; i++)
+    {
+     	cData[i] = 0x10 + i;
+    }
+    int iWriteLen = write(fd, cData, 16);
+    printf("white return  %d\n", iWriteLen);
+    
+    memset(cData, 0x00, 16);
+    iReadLen = read(fd, cData, 16);
+    print_buffer("read", cData, 16);
+    
+    close(fd);
+    return 0;
+}
+

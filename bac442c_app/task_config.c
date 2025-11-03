@@ -66,7 +66,7 @@ extern void delay_ms(uint16_t time);
 
 void BSP_SystemInit(void)
 {
-    uint32_t vect, base, offset;
+//    uint32_t vect, base, offset;
     
     IWDG_ReloadCounter();
     NVIC_Def_Configuration();
@@ -99,14 +99,14 @@ void BSP_Init(void)
         BacnetInit(); 
     }
     
-    HAL_USART3_DMA_Configuration(38400, 0, 0, 256);
-    
     HAL_Relay_Configuration();
     HAL_PWM_TIM1_OC1_Configuration();
     
     //
     Modbus_Sevice_Init();
     
+    printf("[%s:%s:%d] VAV_Init  \n", 
+                __FILE__, __FUNCTION__, __LINE__);
     VAV_Init();
     
 
@@ -155,17 +155,21 @@ void Task_Control(void)
 //       }
 //   }
 
-void Task_Modbus(void)
+void Task_Modbus(int fd)
 {
     uint16_t len;
     
-    len= HAL_USART3_DMA_Received();
+    len= HAL_USART3_DMA_Received(fd);
     if(len)    
     {
+        // printf("[%s:%s:%d] len = %d \n", 
+        //        __FILE__, __FUNCTION__, __LINE__, len);
         len= Modbus_Slave_Analysis(MB_RTU, 1, HAL_USART3_GetBuff(), len);
         if(len)
         {
-            HAL_USART3_DMA_Send(len);
+            // printf("[%s:%s:%d] HAL_USART3_DMA_Send len = %d \n", 
+            //      __FILE__, __FUNCTION__, __LINE__, len);
+            HAL_USART3_DMA_Send(fd, len);
             
             tmr_panel_comm= 0;
         }

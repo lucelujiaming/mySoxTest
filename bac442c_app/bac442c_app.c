@@ -64,10 +64,36 @@ static void* taskActuator(void *arg){
 }
 
 
+/***********************************************************************
+ * 函数名：open_and_new_rtu_slave
+ *   功能：打开液晶屏的端口。
+ * 入口参数： 无。
+ *   返回值： 返回端口文件句柄。
+ ***********************************************************************/
+int open_lcd_port()
+{
+    // char cDevicePath[20];
+    
+    int   lcd_fd; // , send_res;
+
+    lcd_fd = open("/dev/ttyS2", O_RDWR|O_NOCTTY/*|O_NDELAY*/);
+    printf("lcd open...\n");
+    printf("lcd open return %d\n", lcd_fd);
+    if (lcd_fd == -1) {
+        printf("INSTRUMENT_UART_DEVICE open error");
+        exit(1);
+    }
+    return lcd_fd;
+}
+
+
 static void* taskModbus(void *arg){
+    int   lcd_fd = 0; // , send_res;
+    lcd_fd = open_lcd_port();
+    HAL_USART3_DMA_Configuration(lcd_fd, 38400, 0, 0, 256);
     while (1)
     {
-        Task_Modbus();
+        Task_Modbus(lcd_fd);
     }
 
     return (void*)NULL;
@@ -124,7 +150,7 @@ int main(int argc, char ** argv)
     pthread_t task_actuator_thread;
     pthread_t task_control_thread;
     
-	BSP_Init();
+    BSP_Init();
     // pthread_create(&task_mstp_thread, NULL, taskMSTP, NULL);
     // pthread_create(&task_mstp_recieve_thread, NULL, taskMSTPRcv, NULL);
     pthread_create(&task_bacnet_thread, NULL, taskBacnet, NULL);

@@ -24,10 +24,10 @@ static volatile uint16_t RS485_Send_Length, RS485_Recieve_Length;
 static struct mstp_port_struct_t* RS485_MSTP_Port;
 
 static uint16_t rcv_len= 0;
-static uint16_t tm_Turnaround;
+// static uint16_t tm_Turnaround;
 static uint16_t TturnaroundMax;
 static USART_EVENT UsartEvent;
-static uint16_t Usart_DMA_SIZE;
+// static uint16_t Usart_DMA_SIZE;
 static uint8_t *Usart_Buff= NULL;
 
 //{To be Modified
@@ -35,7 +35,7 @@ static uint8_t *Usart_Buff= NULL;
 #define USART1_SILENCE_MSTP	(40L)
 
 
-static char* Usartx= "/dev/tty1";
+// static char* Usartx= "/dev/tty1";
 static void hardware_config(void)
 {
 }
@@ -52,11 +52,13 @@ USART_EVENT HAL_USART1_GetEvent(void)
 	return UsartEvent;
 }
 
+/*
 static void uart_dma_configuration()
 {
     // 使能DMA串口发送和接受请求
 }
-
+ */
+ 
 void HAL_USART1_ProtocolSet(uint8_t protol)
 {
 	usart_Protolcol= protol;

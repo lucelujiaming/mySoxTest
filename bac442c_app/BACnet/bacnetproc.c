@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <string.h>
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
@@ -13,10 +15,47 @@
 
 static uint8_t BACnet_Recieve_Buffer[MAX_MPDU];
 
+int getLocalIP(char * cLocalIP, int iLocalIPLen)
+{
+    memset(cLocalIP, 0x00, iLocalIPLen);
+    FILE * fp = fopen("/root/app/current_first_ip", "r");
+    if(fp < 0)
+    {
+        printf("open failed: %s\r\n", "/root/app/current_first_ip");
+        return 0;
+    }
+    int nReadLen = fread(cLocalIP, sizeof(char), iLocalIPLen, fp);
+    printf("cLocalIP = %s \r\n", cLocalIP);
+    fclose(fp);
+    return nReadLen;
+}
+
+int addMaskToLocalIP(char * cLocalIP, int iLocalIPLen)
+{
+    char * cLastPoint = strrchr(cLocalIP, '.');
+    if(cLastPoint)
+    {
+        strcpy(cLastPoint + 1, "255");
+        printf("cLocalMask = <%s>. \r\n", cLocalIP);
+        return cLastPoint - cLocalIP;
+    }
+    return -1;
+}
+
 void BacnetInit()
 {
-    bip_set_addr(inet_addr("192.168.168.129"));
-    bip_set_broadcast_addr(inet_addr("192.168.168.255"));
+    char cLocalIP[32];
+    int nReadLen = getLocalIP(cLocalIP, 32);
+    if(nReadLen > 0)
+    {
+        bip_set_addr(inet_addr(cLocalIP));
+        addMaskToLocalIP(cLocalIP, 32);
+        bip_set_broadcast_addr(inet_addr(cLocalIP));
+    }
+    else {
+        bip_set_addr(inet_addr("192.168.168.129"));
+        bip_set_broadcast_addr(inet_addr("192.168.168.255"));
+    }
 
     bip_set_port(47808);
     bip_init(NULL);    
@@ -54,8 +93,6 @@ void BacnetTask(void)
     {
         if(!i_am)
         {
-            printf("[%s:%s:%d] i_am = %s  \n", 
-                __FILE__, __FUNCTION__, __LINE__, i_am?"true":"false");
             sleep(2);
             
             delay_cnt++;

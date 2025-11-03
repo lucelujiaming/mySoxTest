@@ -77,7 +77,7 @@ int Device_Read_Property_Local(BACNET_READ_PROPERTY_DATA * rpdata);
 bool Device_Write_Property_Local(BACNET_WRITE_PROPERTY_DATA * wp_data);
 
 #if (_CARRIER_CONTROLS_ == 0)
-    const char* str_devcie_name= "bac211v";  
+    const char* str_devcie_name= "bac422v";  
 #else
     const char* str_devcie_name= "bac-utc-c";
 #endif

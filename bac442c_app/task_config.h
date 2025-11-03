@@ -29,7 +29,7 @@ void IWDG_ReloadCounter(void);
 void Task_Control(void);
 // void Task_MSTP(void);
 // void Task_MSTP_Recieve(void);
-void Task_Modbus(void);
+void Task_Modbus(int fd);
 void Task_Actuator(void);
 void App_OS_TimeTickHook(void);
 

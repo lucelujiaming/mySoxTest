@@ -9,7 +9,7 @@ bac442c_app:
 	$(CC) -D__UNIX__ BACnet/*.c BACnet/src/*.c BACnet/handler/*.c \
                 VAV/*.c Filter/*.c Util/*.c HAL/*.c Modbus/*.c\
                 DRV/*.c  *.c \
-                -g -O -I. \
+                -Wall -g -O -I. \
                 -IBACnet/ \
                 -IBACnet/include \
                 -IModbus/ \

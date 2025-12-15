@@ -12,6 +12,21 @@
 
 #include "modbus_udp.h"
 
+int modbus_udp_server_set_socket_timeout(int sockfd, int timeout_seconds) {
+    struct timeval tv;
+    tv.tv_sec = timeout_seconds;
+    tv.tv_usec = 0;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv) < 0) {
+        perror("Error setting SO_RCVTIMEO");
+        return -1;
+    }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof tv) < 0) {
+        perror("Error setting SO_SNDTIMEO");
+        return -1;
+    }
+    return 0;
+}
+
 int modbus_udp_server_init(int iPort)
 {
 	int modbus_fd = 0;
@@ -32,6 +47,7 @@ int modbus_udp_server_init(int iPort)
 
 	int opt = 1;
 	setsockopt(modbus_fd, SOL_SOCKET, SO_REUSEADDR, &opt,sizeof(opt));
+    modbus_udp_server_set_socket_timeout(modbus_fd, 3);
 	
     // 绑定套接字到指定的IP地址和端口
     if (bind(modbus_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {

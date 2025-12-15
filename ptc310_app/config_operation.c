@@ -67,9 +67,9 @@ int append_ini_key_string(const char* title, const char* key, char* val, const c
     if (iFound == 1)
     {
         remove(filename);         // 删除原文件
-		printf("PARAM_Save remove %s\n", filename);
+		// printf("PARAM_Save remove %s\n", filename);
         rename(sLine, filename);  // 将临时文件更新到原文件
-		printf("PARAM_Save rename %s to %s\n", filename, sLine);
+		// printf("PARAM_Save rename %s to %s\n", filename, sLine);
     }
     return iFound;
 }
@@ -121,9 +121,9 @@ int delete_ini_key_string(const char* title, const char* key, const char* filena
     if (iFound == 1)
     {
         remove(filename);         // 删除原文件
-		printf("PARAM_Save remove %s\n", filename);
+		// printf("PARAM_Save remove %s\n", filename);
         rename(sLine, filename);  // 将临时文件更新到原文件
-		printf("PARAM_Save rename %s to %s\n", filename, sLine);
+		// printf("PARAM_Save rename %s to %s\n", filename, sLine);
     }
     return iFound;
 }
@@ -214,7 +214,7 @@ int set_ini_key_string(const char* title, const char* key, char* val, const char
                     flag = 2;// 更改值，方便写入文件
                     sprintf(cEqualPtr + 1, " %s\n", val);
                     iFound = 0;
-					printf("PARAM_Save write %s = %s\n", key, val);
+					// printf("PARAM_Save write %s = %s\n", key, val);
                 }
             }
             else {
@@ -231,9 +231,9 @@ int set_ini_key_string(const char* title, const char* key, char* val, const char
     if (iFound == 0)
     {
         remove(filename);         // 删除原文件
-		printf("PARAM_Save remove %s\n", filename);
+		// printf("PARAM_Save remove %s\n", filename);
         rename(sLine, filename);  // 将临时文件更新到原文件
-		printf("PARAM_Save rename %s to %s\n", filename, sLine);
+		// printf("PARAM_Save rename %s to %s\n", filename, sLine);
     }
     return iFound;
 }

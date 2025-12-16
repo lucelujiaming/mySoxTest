@@ -47,7 +47,6 @@ int modbus_tcp_server_init(int iPort, struct sockaddr_in * serverAddr)
 
 	int opt = 1;
 	setsockopt(modbus_fd, SOL_SOCKET, SO_REUSEADDR, &opt,sizeof(opt));
-    modbus_tcp_server_set_socket_timeout(modbus_fd, 3);
 	
     // 绑定套接字到指定的IP地址和端口
     if (bind(modbus_fd, (struct sockaddr *)serverAddr, sizeof(*serverAddr)) < 0) {

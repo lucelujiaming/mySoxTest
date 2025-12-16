@@ -1342,6 +1342,7 @@ static void* thread_modbus_tcp_operation(void *arg)
         }
         printf("accept return new_socket = %d\n", new_socket);
     
+        modbus_tcp_server_set_socket_timeout(new_socket, 3);
         while (1)
         {
             //获取查询请求报文
@@ -1389,6 +1390,8 @@ static void* thread_modbus_tcp_operation(void *arg)
                 { 
                     printf("socket disconnected\n");
                     close(new_socket);
+                    iModbusNetworkTimeout = 1;
+                    set_ini_key_string("System", "ModbusNetworkTimeout", "1", SYS_CONFIG_FILE_NAME);
                     break; 
                 } 
             }
@@ -1545,6 +1548,8 @@ static void* thread_modbus_rtu_over_tcp_operation(void *arg)
             exit(EXIT_FAILURE);
         }
         printf("accept return new_socket = %d\n", new_socket);
+        modbus_tcp_server_set_socket_timeout(new_socket, 3);
+        
         
         while (1)
         {
@@ -1593,6 +1598,8 @@ static void* thread_modbus_rtu_over_tcp_operation(void *arg)
                 { 
                     printf("socket disconnected\n");
                     close(new_socket);
+                    iModbusNetworkTimeout = 1;
+                    set_ini_key_string("System", "ModbusNetworkTimeout", "1", SYS_CONFIG_FILE_NAME);
                     break; 
                 } 
             }
@@ -1642,6 +1649,7 @@ static void* thread_modbus_rtu_over_tcp_operation(void *arg)
             }
             else if (ret < 0)
             {
+                    printf("read failed\n");
                 if(errno == EWOULDBLOCK || errno == EAGAIN) {
                     printf("recvfrom timeout\n");
                     iModbusNetworkTimeout = 1;

@@ -582,7 +582,6 @@ void MSTP_IN_rx_bpdu(port_t *prt, bpdu_t *bpdu, int size)
 
     ++(prt->num_rx_bpdu);
 
-    // INFO("prt->BpduGuardPort = %d", prt->BpduGuardPort);
     if(prt->BpduGuardPort)
     {
         prt->BpduGuardError = true;
@@ -591,7 +590,6 @@ void MSTP_IN_rx_bpdu(port_t *prt, bpdu_t *bpdu, int size)
         MSTP_OUT_shutdown_port(prt);
         return;
     }
-    // INFO("prt->bpduFilterPort = %d", prt->bpduFilterPort);
 
     if(prt->bpduFilterPort)
     {
@@ -600,21 +598,18 @@ void MSTP_IN_rx_bpdu(port_t *prt, bpdu_t *bpdu, int size)
         ++(prt->num_rx_bpdu_filtered);
         return;
     }
-    // INFO("br->bridgeEnabled = %d", br->bridgeEnabled);
 
     if(!br->bridgeEnabled)
     {
         INFO_PRTNAME(br, prt, "Received BPDU while bridge is disabled");
         return;
     }
-    // INFO("prt->rcvdBpdu = %d", prt->rcvdBpdu);
 
     if(prt->rcvdBpdu)
     {
         ERROR_PRTNAME(br, prt, "Port hasn't processed previous BPDU");
         return;
     }
-    // INFO("bpdu->protocolIdentifier = %d", bpdu->protocolIdentifier);
 
     /* 14.4 Validation */
     if((TCN_BPDU_SIZE > size) || (0 != bpdu->protocolIdentifier))
@@ -623,7 +618,6 @@ bpdu_validation_failed:
         INFO_PRTNAME(br, prt, "BPDU validation failed");
         return;
     }
-    // INFO("bpdu->bpduType = %d", bpdu->bpduType);
     switch(bpdu->bpduType)
     {
         case bpduTypeTCN:
@@ -691,7 +685,6 @@ bpdu_validation_failed:
             goto bpdu_validation_failed;
     }
 
-    // INFO("bpdu->protocolVersion = %d", bpdu->protocolVersion);
     if((protoSTP == bpdu->protocolVersion) && (bpduTypeTCN == bpdu->bpduType))
     {
         ++(prt->num_rx_tcn);
@@ -712,7 +705,6 @@ bpdu_validation_failed:
         INFO_PRTNAME(br, prt, "Clear Bridge assurance inconsistency");
     }
     updtbrAssuRcvdInfoWhile(prt);
-    // INFO("br_state_machines_run bpdu->protocolVersion = %d", bpdu->protocolVersion);
 
     br_state_machines_run(br);
 }
@@ -2624,22 +2616,6 @@ static void updtRolesTree(tree_t *tree)
          * is not Disabled, but check (infoIs == ioReceived) covers
          * the case (infoIs != ioDisabled).
          */
-         // if(prt->restrictedRole)
-         // {
-         //     INFO("TRUE portPriority = %d, DesignatedBridgeID=%d, BridgeIdentifier=%d",
-         //              ptp->portPriority,
-         //              ptp->portPriority.DesignatedBridgeID,
-         //              tree->BridgeIdentifier);
-         //     INFO("TRUE ptp->infoIs = %d and ioReceived=%d", ptp->infoIs, ioReceived);
-         // }
-         // else
-         // {
-         //     INFO("FALSE portPriority = %d, DesignatedBridgeID=%d, BridgeIdentifier=%d",
-         //              ptp->portPriority,
-         //              ptp->portPriority.DesignatedBridgeID,
-         //              tree->BridgeIdentifier);
-         //     INFO("FALSE ptp->infoIs = %d and ioReceived=%d", ptp->infoIs, ioReceived);
-         // }
         if((ioReceived == ptp->infoIs) && !prt->restrictedRole
            && cmp(ptp->portPriority.DesignatedBridgeID, !=,
                   tree->BridgeIdentifier)
@@ -2664,9 +2640,6 @@ static void updtRolesTree(tree_t *tree)
                 assign(root_path_priority.IntRootPathCost,
                        __constant_cpu_to_be32(0));
             }
-                           
-            // INFO("root_path_priority = %d, tree->rootPriority=%d",
-            //          ptp->portPriority, tree->rootPriority);
             if(betterorsamePriority(&root_path_priority, &tree->rootPriority,
                                     ptp->portId, tree->rootPortId, cist))
             {
@@ -2692,7 +2665,6 @@ static void updtRolesTree(tree_t *tree)
     /* c) Set new rootTimes */
     if(root_ptp)
     {
-        INFO("root_ptp->portTimes = %d", root_ptp->portTimes);
         assign(tree->rootTimes, root_ptp->portTimes);
         port_t *prt = root_ptp->port;
         if(prt->rcvdInternal)
@@ -3343,7 +3315,7 @@ static bool PTSM_run(port_t *prt, bool dry_run)
 }
 
 /* 13.32  Port Information state machine */
-#define PISM_ENABLE_LOG
+
 #ifdef PISM_ENABLE_LOG
 #define PISM_LOG(_fmt, _args...) SMLOG_MSTINAME(ptp, _fmt, ##_args)
 #else
@@ -3514,8 +3486,6 @@ static bool PISM_run(per_tree_port_t *ptp, bool dry_run)
         PISM_to_DISABLED(ptp, false);
         return false;
     }
-    // INFO("PISM ptp->PISM_state = %d and PISM_RECEIVE=%d", 
-    //                            ptp->PISM_state, PISM_RECEIVE);
 
     switch(ptp->PISM_state)
     {
@@ -3566,7 +3536,6 @@ static bool PISM_run(per_tree_port_t *ptp, bool dry_run)
              *  - updtXstInfo = updtCistInfo, if tree is CIST
              *                  updtMstiInfo, if tree is MSTI.
              */
-            // INFO("PISM_CURRENT ptp->MSTID = %d ", ptp->MSTID);
             if(0 == ptp->MSTID)
             { /* CIST */
                 rcvdXstMsg = ptp->rcvdMsg; /* 13.25.12 */
@@ -3601,7 +3570,6 @@ static bool PISM_run(per_tree_port_t *ptp, bool dry_run)
             }
             return false;
         case PISM_RECEIVE:
-            // INFO("PISM_RECEIVE ptp->rcvdInfo = %d", ptp->rcvdInfo);
             switch(ptp->rcvdInfo)
             {
                 case SuperiorDesignatedInfo:
@@ -3693,7 +3661,7 @@ static bool PRSSM_run(tree_t *tree, bool dry_run)
 }
 
 /* 13.34  Port Role Transitions state machine */
-#define PRTSM_ENABLE_LOG
+
 #ifdef PRTSM_ENABLE_LOG
 #define PRTSM_LOG(_fmt, _args...) SMLOG_MSTINAME(ptp, _fmt, ##_args)
 #else

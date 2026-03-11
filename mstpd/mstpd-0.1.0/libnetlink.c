@@ -120,8 +120,6 @@ int rtnl_wilddump_request(struct rtnl_handle *rth, int family, int type)
 	req.nlh.nlmsg_seq = rth->dump = ++rth->seq;
 	req.g.rtgen_family = family;
 
-    INFO("rtnl_wilddump_request ............");
-
 	return sendto(rth->fd, (void *)&req, sizeof(req), 0,
 		      (struct sockaddr *)&nladdr, sizeof(nladdr));
 }
@@ -133,7 +131,6 @@ int rtnl_send(struct rtnl_handle *rth, const char *buf, int len)
 	memset(&nladdr, 0, sizeof(nladdr));
 	nladdr.nl_family = AF_NETLINK;
 
-    INFO("rtnl_send ............");
 	return sendto(rth->fd, buf, len, 0, (struct sockaddr *)&nladdr,
 		      sizeof(nladdr));
 }
@@ -350,8 +347,7 @@ int rtnl_talk(struct rtnl_handle *rtnl, struct nlmsghdr *n, pid_t peer,
 							       h->nlmsg_len);
 						return 0;
 					}
-					// ERROR("RTNETLINK answers");
-                    ERROR("RTNETLINK answers and error is %d", errno);
+					ERROR("RTNETLINK answers");
 				}
 				return -1;
 			}

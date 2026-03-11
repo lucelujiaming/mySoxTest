@@ -34,7 +34,6 @@
 struct epoll_event_handler
 {
     int fd;
-    int sll_ifindex;
     void *arg;
     void (*handler) (uint32_t events, struct epoll_event_handler * p);
     struct epoll_event *ref_ev; /* if set, epoll loop has reference to this,

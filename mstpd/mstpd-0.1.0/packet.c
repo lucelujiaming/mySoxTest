@@ -33,7 +33,6 @@
 #include <linux/if_packet.h>
 #include <linux/filter.h>
 #include <asm/byteorder.h>
-#include <sys/ioctl.h>
 
 #include "epoll_loop.h"
 #include "netif_utils.h"
@@ -41,11 +40,7 @@
 #include "packet.h"
 #include "log.h"
 
-static struct epoll_event_handler eth0_packet_event;
-static struct epoll_event_handler eth1_packet_event;
-
-
-// #define PACKET_DEBUG 1
+static struct epoll_event_handler packet_event;
 
 #ifdef PACKET_DEBUG
 static void dump_packet(const unsigned char *buf, int cc)
@@ -102,16 +97,8 @@ void packet_send(int ifindex, const struct iovec *iov, int iov_count, int len)
             dump_packet(iov[i].iov_base, iov[i].iov_len);
     }
 #endif
-    // INFO("packet_send ............");
-    // l = sendmsg(packet_event.fd, &msg, 0);
-    if(ifindex == eth0_packet_event.sll_ifindex)
-    {
-        l = sendmsg(eth0_packet_event.fd, &msg, 0);
-    }
-    else if(ifindex == eth1_packet_event.sll_ifindex)
-    {
-        l = sendmsg(eth1_packet_event.fd, &msg, 0);
-    }
+
+    l = sendmsg(packet_event.fd, &msg, 0);
 
     if(l < 0)
     {
@@ -145,23 +132,7 @@ static void packet_rcv(uint32_t events, struct epoll_event_handler *h)
     dump_packet(buf, cc);
 #endif
 
-    // LOG("h->fd %d, ethXX_packet_event::fd (%d, %d)", 
-    //    h->fd, eth0_packet_event.fd, eth1_packet_event.fd);
-    
-    if(h == &eth0_packet_event)
-    {
-        // LOG("eth0_packet_event::sll_ifindex %d, cc %d", sl.sll_ifindex, cc);
-        bridge_bpdu_rcv(eth0_packet_event.sll_ifindex, buf, cc);
-    }
-    else if(h == &eth1_packet_event)
-    {
-        // LOG("eth1_packet_event::sll_ifindex %d, cc %d", sl.sll_ifindex, cc);
-        bridge_bpdu_rcv(eth1_packet_event.sll_ifindex, buf, cc);
-    }
-    else 
-    {
-        LOG("ethXXXX_packet_event::sll_ifindex %d, cc %d", sl.sll_ifindex, cc);
-    }
+    bridge_bpdu_rcv(sl.sll_ifindex, buf, cc);
 }
 
 /* Berkeley Packet filter code to filter out spanning tree packets.
@@ -185,96 +156,33 @@ static struct sock_filter stp_filter[] = {
  */
 int packet_sock_init(void)
 {
-    int s_eth0, s_eth1;
-    struct ifreq ifr_eth0, ifr_eth1;
-    char bind_eth0_addr[] = "eth0";
-    char bind_eth1_addr[] = "eth1";
+    int s;
     struct sock_fprog prog =
     {
         .len = sizeof(stp_filter) / sizeof(stp_filter[0]),
         .filter = stp_filter,
     };
 
-    s_eth0 = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_802_2));
-    if(s_eth0 < 0)
+    s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_802_2));
+    if(s < 0)
     {
         ERROR("socket failed: %m");
         return -1;
     }
 
-    if(setsockopt(s_eth0, SOL_SOCKET, SO_ATTACH_FILTER, &prog, sizeof(prog)) < 0)
-    {
-        ERROR("setsockopt(SO_ATTACH_FILTER) packet filter failed: %m");
-    }
-    else if(setsockopt(s_eth0, SOL_SOCKET, SO_BINDTODEVICE, 
-                    bind_eth0_addr, sizeof(bind_eth0_addr)) < 0)
-    {
-        ERROR("setsockopt(SO_BINDTODEVICE) packet filter failed: %m");
-    }
-    else if(fcntl(s_eth0, F_SETFL, O_NONBLOCK) < 0)
-    {
+    if(setsockopt(s, SOL_SOCKET, SO_ATTACH_FILTER, &prog, sizeof(prog)) < 0)
+        ERROR("setsockopt packet filter failed: %m");
+    else if(fcntl(s, F_SETFL, O_NONBLOCK) < 0)
         ERROR("fcntl set nonblock failed: %m");
-    }
     else
     {
-        eth0_packet_event.fd = s_eth0;
-        eth0_packet_event.handler = packet_rcv;
+        packet_event.fd = s;
+        packet_event.handler = packet_rcv;
 
-        if(0 != add_epoll(&eth0_packet_event))
-        {
-            close(s_eth0);
-            return -1;
-        }
-        
-        strncpy(ifr_eth0.ifr_name, bind_eth0_addr, sizeof(bind_eth0_addr));
-        if (ioctl(s_eth0, SIOCGIFINDEX, &ifr_eth0) == -1) {
-            perror("ioctl");
-            close(s_eth0);
-            return -1;
-        }
-        eth0_packet_event.sll_ifindex = ifr_eth0.ifr_ifindex;
+        if(0 == add_epoll(&packet_event))
+            return 0;
     }
 
-    s_eth1 = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_802_2));
-    if(s_eth1 < 0)
-    {
-        ERROR("socket failed: %m");
-        return -1;
-    }
-
-    if(setsockopt(s_eth1, SOL_SOCKET, SO_ATTACH_FILTER, &prog, sizeof(prog)) < 0)
-    {
-        ERROR("setsockopt(SO_ATTACH_FILTER) packet filter failed: %m");
-    }
-    else if(setsockopt(s_eth1, SOL_SOCKET, SO_BINDTODEVICE, 
-                    bind_eth1_addr, sizeof(bind_eth1_addr)) < 0)
-    {
-        ERROR("setsockopt(SO_BINDTODEVICE) packet filter failed: %m");
-    }
-    else if(fcntl(s_eth1, F_SETFL, O_NONBLOCK) < 0)
-    {
-        ERROR("fcntl set nonblock failed: %m");
-    }
-    else
-    {
-        eth1_packet_event.fd = s_eth1;
-        eth1_packet_event.handler = packet_rcv;
-
-        if(0 != add_epoll(&eth1_packet_event))
-        {
-            close(s_eth0);
-            close(s_eth1);
-            return -1;
-        }
-        strncpy(ifr_eth1.ifr_name, bind_eth1_addr, sizeof(bind_eth1_addr));
-        if (ioctl(s_eth1, SIOCGIFINDEX, &ifr_eth1) == -1) {
-            perror("ioctl");
-            close(s_eth0);
-            close(s_eth1);
-            return -1;
-        }
-        eth1_packet_event.sll_ifindex = ifr_eth1.ifr_ifindex;
-    }
-
-    return 0;
+    close(s);
+    return -1;
 }

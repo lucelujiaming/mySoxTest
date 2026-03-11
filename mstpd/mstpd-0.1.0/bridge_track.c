@@ -122,15 +122,9 @@ static port_t * find_if(bridge_t * br, int if_index)
     port_t *prt;
     list_for_each_entry(prt, &br->ports, br_list)
     {
-        // INFO("prt->sysdeps.if_index=%d and find_if(%d)", 
-        //                    prt->sysdeps.if_index, if_index);
         if(prt->sysdeps.if_index == if_index)
-        {
-            // INFO("Found if");
             return prt;
-        }
     }
-    // INFO("NOT Found");
     return NULL;
 }
 
@@ -383,17 +377,12 @@ void bridge_bpdu_rcv(int if_index, const unsigned char *data, int len)
 
     list_for_each_entry(br, &bridges, list)
     {
-        // INFO("find_if(%d)", if_index);
-        if((prt = find_if(br, if_index))) {
-            // INFO("Found prt");
+        if((prt = find_if(br, if_index)))
             break;
-        }
     }
-    if(!prt) {
-        // INFO("prt is NULL");
+    if(!prt)
         return;
-    }
-    // INFO("prt is not NULL");
+
     /* sanity checks */
     TSTM(br == prt->bridge,, "Bridge mismatch. This bridge is '%s' but port "
         "'%s' belongs to bridge '%s'", br->sysdeps.name, prt->bridge->sysdeps.name);
@@ -415,8 +404,6 @@ void bridge_bpdu_rcv(int if_index, const unsigned char *data, int len)
     l = __be16_to_cpu(h->len8023);
     TST(l <= ETH_DATA_LEN && l <= len - ETH_HLEN && l >= LLC_PDU_LEN_U, );
     TST(h->d_sap == LLC_SAP_BSPAN && h->s_sap == LLC_SAP_BSPAN && (h->llc_ctrl & 0x3) == LLC_PDU_TYPE_U,);
-
-    // INFO("Enter MSTP_IN_rx_bpdu");
 
     MSTP_IN_rx_bpdu(prt,
                     /* Don't include LLC header */
@@ -557,7 +544,7 @@ void MSTP_OUT_set_ageing_time(port_t *prt, unsigned int ageingTime)
 
 void MSTP_OUT_tx_bpdu(port_t *prt, bpdu_t * bpdu, int size)
 {
-    char *bpdu_type = NULL, *tcflag = NULL;
+    char *bpdu_type, *tcflag;
     bridge_t *br = prt->bridge;
 
     switch(bpdu->protocolVersion)
@@ -589,7 +576,7 @@ void MSTP_OUT_tx_bpdu(port_t *prt, bpdu_t * bpdu, int size)
     if((protoSTP == bpdu->protocolVersion) && (bpduTypeTCN == bpdu->bpduType))
     {
         ++(prt->num_tx_tcn);
-        LOG_PRTNAME(br, prt, "sending %s BPDU 11111", bpdu_type);
+        LOG_PRTNAME(br, prt, "sending %s BPDU", bpdu_type);
     }
     else
     {
@@ -599,7 +586,7 @@ void MSTP_OUT_tx_bpdu(port_t *prt, bpdu_t * bpdu, int size)
             ++(prt->num_tx_tcn);
             tcflag = ", tcFlag";
         }
-        // INFO_PRTNAME(br, prt, "sending %s BPDU%s 44444", bpdu_type, tcflag);
+        LOG_PRTNAME(br, prt, "sending %s BPDU%s", bpdu_type, tcflag);
     }
 
     struct llc_header h;
@@ -615,10 +602,6 @@ void MSTP_OUT_tx_bpdu(port_t *prt, bpdu_t * bpdu, int size)
         { .iov_base = bpdu, .iov_len = size }
     };
 
-    if(bpdu_type && tcflag)
-    {
-        INFO_PRTNAME(br, prt, "sending %s BPDU%s 22222", bpdu_type, tcflag);
-    }
     packet_send(prt->sysdeps.if_index, iov, 2, sizeof(h) + size);
 }
 

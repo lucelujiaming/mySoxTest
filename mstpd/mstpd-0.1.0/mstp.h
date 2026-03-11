@@ -126,7 +126,6 @@ typedef struct
     /* only bits 7..4, bits 3..0 are zero on Tx and ignored on Rx */
     __u8 bridgeIdentifierPriority;
     /* only bits 7..4, bits 3..0 are zero on Tx and ignored on Rx */
-    // 端口标识符的可管理部件，也叫做端口优先级(14.8.2, Table 17-2)。
     __u8 portIdentifierPriority;
     __u8 remainingHops;
 } __attribute__((packed)) msti_configuration_message_t;
@@ -385,22 +384,16 @@ typedef struct
 
     /* Per-bridge configuration parameters */
     mst_configuration_identifier_t MstConfigId; /* 13.24.b */
-    // 桥的强制协议版本参数。取值0表示STP兼容模式，2表示普通模式。缺省为2。
     protocol_version_t ForceProtocolVersion; /* 13.22.e */
     __u8 MaxHops;             /* 13.22.o */
-    // STP桥(17.4)使用的，把根端口和指定端口迁移到转发态的延时(Table 17-1)。
     __u8 Forward_Delay;       /* 13.22.f */
-    // 根桥发送的最大信息生存时间(Table 17-1)。
     __u8 Max_Age;             /* 13.22.i */
     /* The 802.1Q-2005 (13.22.j) says that this parameter is substituted by
      * the per-port Hello Time, but we still need it for compatibility
      * with old STP implementations.
      */
-    // 指定端口发送配置消息的周期(Table 17-1)。
     __u8 Hello_Time;
     unsigned int Transmit_Hold_Count; /* 13.22.g */
-    // mdelayWhile和edgeDelayWhile定时器(17.17.4, 17.17.1)的初始值。
-    // 根据本规范对于所有RSTP实现来说是固定的(Table 17-1)。
     unsigned int Migrate_Time;        /* 13.22.h */
     unsigned int Ageing_Time;  /* 8.8.3 */
 
@@ -423,23 +416,16 @@ typedef struct
     struct list_head ports;
 
     /* 13.23.(c,f,g) Per-bridge per-tree variables */
-    // BridgeIdentifier: 分配给网桥的唯一标识符。包含网桥标识符优先级和网桥地址
     bridge_identifier_t BridgeIdentifier;
-    // 根端口的端口标识符。这是根优先级向量的第五部分，参见17.6。
     port_identifier_t rootPortId;
-    // 网桥的根优先级向量的第四部分，参见17.6。
     port_priority_vector_t rootPriority;
 
     /* 13.23.d This is totally calculated from BridgeIdentifier */
-    // 网桥优先级向量
     port_priority_vector_t BridgePriority;
 
     /* 13.23.e Some waste of space here, as MSTIs only use
      * remainingHops member of the struct times_t,
      * but saves extra checks and improves readability */
-    // BridgeTimes: 网桥定时器。包含四个部分：网桥转发延时、网桥Hello时间、
-    //              最大老化时间的当前值，而消息生存时间为0。
-    // rootTimes: 含网桥的操作定时器参数值，其值来自于portTimes或BridgeTimes。
     times_t BridgeTimes, rootTimes;
 
     /* 12.8.1.1.3.(b,c,d) */
@@ -468,19 +454,11 @@ typedef struct
     list_entry((prt)->trees.next, per_tree_port_t, port_list)
 
     /* 13.21.(a,b,c) Per-port timers */
-    // edgeDelayWhile: 边缘延时定时器。在端口被识别为operEdgePort之前，
-    //                 是尚未接收到BPDU的剩余时间。
-    // helloWhen: Hello定时器。用来确保在每个HelloTime周期内，
-    //            指定端口至少发送一个BPDU。
-    // mdelayWhile: 迁迁移延时定时器。端口协议迁移状态机使用。
-    //            本定时器初始值为MigrateTime(17.13.9)。
     unsigned int mdelayWhile, helloWhen, edgeDelayWhile;
 
     /* 13.24.(b,c,e,f,g,j,k,l,m,n,o,p,q,r,aw) Per-port variables */
     unsigned int txCount;
     bool operEdge, portEnabled, infoInternal, rcvdInternal;
-    // 可以人工配置，以强制端口协议迁移状态机以MigrateTime (17.13.9)周期发送RST BPDU，
-    // 以测试是否LAN上的所有STP桥(17.4)是否已经被删除，以及端口是否可以连续发送RSTP BPDU。
     bool mcheck, rcvdBpdu, rcvdRSTP, rcvdSTP, rcvdTcAck, rcvdTcn, sendRSTP;
     bool tcAck, newInfo, newInfoMsti;
 
@@ -489,13 +467,10 @@ typedef struct
 
     /* Per-port configuration parameters */
     bool restrictedRole, restrictedTcn; /* 13.24.(h,i) */
-    // PortPathCost: 端口到根桥的路径开销(17.3.1, 17.5, 17.6)。
     __u32 ExternalPortPathCost; /* 13.22.p */
     __u32 AdminExternalPortPathCost; /* 0 = calculate from speed */
     admin_p2p_t AdminP2P; /* 6.4.3 */
-    // 端口的AdminEdgePort参数(14.8.2)。
     bool AdminEdgePort; /* 13.22.k */
-    // 桥的老化时间参数(7.9.2, Table 7-5)。
     bool AutoEdge; /* 13.22.m */
     bool BpduGuardPort;
     bool BpduGuardError;
@@ -540,46 +515,14 @@ typedef struct
     int state; /* BR_STATE_xxx */
 
     /* 13.21.(d,e,f,g,h) Per-port per-tree timers */
-    // fdWhile: 转发延时定时器。用于延迟端口状态迁移，
-    //          直到其它网桥接收到生成树信息为止。
-    // rbWhile: 最近后备定时器。当端口是后备端口是，维持在初始值，HelloTime的两倍。
-    // rcvdInfoWhile: 已接收信息定时器。在本端口接收的生成树信息老化之前，
-    //                接收下一条配置消息的剩余时间。
-    // rrWhile: 最近根定时器。
-    // tcWhile: 拓扑变化定时器。当本定时器运行时发送TCN消息。
     unsigned int fdWhile, rrWhile, rbWhile, tcWhile, rcvdInfoWhile;
 
     /* 13.24.(s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af,ag,ai,aj,ak,ap,as,at,au,av)
      * Per-port per-tree variables */
-    // agree: 
-    // 本状态机负责改变端口状态(7.4)。端口角色迁移状态机通过设置learn和forward变量
-    // 来请求改变端口状态，端口状态迁移状态机在端口状态发生改变后，
-    // 更新变量learning和forwarding。
-    // agree (17.19.3).如果所有其它端口的synced变量值均为TRUE，则本变量为TRUE。
-    //           发送Agreement标志位为TRUE的RST BPDU，且如果proposed为TRUE，
-    //           则agree变量第一次为TRUE时，proposed变量被复位。
-    // agreed (17.19.3).当端口接收到角色为根端口、替换端口或后备端口的RST BPDU，
-    //           Agreement标志位为1，消息优先级低于或等于端口优先级，则本变量设置为TRUE。
-    //           当agreed变量被设置为TRUE，指定端口就知道它的临桥已经被配置好了，
-    //           不用延时，可以立刻进入转发态。
     bool agree, agreed, disputed, forward, forwarding, learn, learning;
     port_info_t rcvdInfo;
-    // 用来指示端口的生成树信息的来源或状态。
     port_info_origin_t infoIs;
-    // Figure 17-8显示了端口角色状态机把指定端口状态迁移到转发态所交换的消息，
-    // 使用了如下的状态机变量：
-    //    proposing (17.19.24).由没有处于转发态的指定端口设置，
-    //              并且放在RST BPDU的Proposal位，发送给临桥的根端口或替换端口。
-    //    proposed (17.19.23).当接收到具有指定端口角色的RST BPDU，且其Proposal位
-    //              被设置时，本变量被设置为TRUE。如果变量agree为FALSE，本变量会
-    //              导致桥上其它所有端口的sync变量设置为TRUE。
-    //    sync (17.19.39).是否设置端口迁移到丢弃态，端口是边缘端口或synced变量
-    //              为TRUE(表示已经失步)的例外。
-    //    synced (17.19.40).当端口处于丢弃态或变量agree为TRUE时，设置本变量为TRUE。
     bool proposed, proposing, rcvdMsg, rcvdTc, reRoot, reselect, selected;
-    // fdbFlush: 由拓扑改变状态机设置，用来指示过滤数据库删除该端口的所有数据。
-    // 
-    // 
     bool fdbFlush, tcProp, updtInfo, sync, synced;
     port_identifier_t portId;
     port_role_t role, selectedRole;
@@ -587,27 +530,17 @@ typedef struct
     /* 13.24.(al,an,aq) Some waste of space here, as MSTIs don't use
      * RootID and ExtRootPathCost members of the struct port_priority_vector_t,
      * but saves extra checks and improves readability */
-    // designatedPriority: 端口的指定优先级向量的前四个部分。
-    //                     指定优先级向量的第五个部分是portId。
-    // msgPriority: 所接收BPDU内消息优先级向量的前四个部分
     port_priority_vector_t designatedPriority, msgPriority, portPriority;
 
     /* 13.24.(am,ao,ar) Some waste of space here, as MSTIs only use
      * remainingHops member of the struct times_t,
      * but saves extra checks and improves readability */
-    // designatedTimes: 包含了一组定时器参数的值
-    //                  (Message Age, Max Age, Forward Delay, and Hello Time)，
-    //                  当updtInfo位TRUE时，用于更新端口时间。
-    //                  由updtRolesTree()程序(17.21.25)负责更新。
-    // msgTimes: 包含了所接收BPDU的定时器参数的值(Message Age, Max Age, 
-    //           Forward Delay, and Hello Time)。
     times_t designatedTimes, msgTimes, portTimes;
 
     /* 13.24.(ax,ay) Per-port per-MSTI variables, not applicable to CIST */
     bool master, mastered;
 
     /* Per-port per-tree configuration parameters */
-    // PortPathCost: 端口到根桥的路径开销(17.3.1, 17.5, 17.6)。
     __u32 InternalPortPathCost; /* 13.22.q */
     __u32 AdminInternalPortPathCost; /* 0 = calculate from speed */
 
@@ -678,7 +611,6 @@ typedef struct
     bridge_identifier_t regional_root;
     unsigned int internal_path_cost;
     bool enabled; /* not in standard */
-    // 桥的老化时间参数(7.9.2, Table 7-5)。
     unsigned int Ageing_Time;
     __u8 max_hops;
     __u8 bridge_hello_time;
